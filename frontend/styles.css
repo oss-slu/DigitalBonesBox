@@ -34,57 +34,6 @@ header h1 {
     margin: 0;
     font-size: 1.5rem;
 }
-/* Dropdown menu styling */
-nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-}
-
-nav ul li {
-    position: relative;
-}
-
-nav ul li a {
-    color: white;
-    text-decoration: none;
-    padding: 14px 16px;
-    display: block;
-}
-
-nav ul li a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Dropdown content (hidden by default) */
-nav ul li .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: white;
-    color: var(--text-color);
-    min-width: 160px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
-
-/* Links inside the dropdown */
-nav ul li .dropdown-content a {
-    color: var(--text-color);
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-/* Change background on hover */
-nav ul li .dropdown-content a:hover {
-    background-color: var(--background-color);
-}
-
-/* Show the dropdown menu on hover */
-nav ul li:hover .dropdown-content {
-    display: block;
-}
 
 .settings a {
     color: white;
