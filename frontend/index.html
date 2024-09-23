@@ -3,20 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bone Box Dashboard</title>
+    <title>Digital Bone Box</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Bone Box - Anatomy Dashboard</h1>
-        <div class="nav">
-            <a href="#bony-pelvis" class="button">Bony Pelvis</a>
-            <a href="#lower-limb" class="button">Lower Limb</a>
-            <a href="#skull" class="button">Skull</a>
-            <a href="#upper-limb" class="button">Upper Limb</a>
-            <a href="#thorax" class="button">Thorax</a>
-            <a href="#vertebrae" class="button">Vertebrae</a>
-        </div>
+        <header>
+            <h1>Digital Bones Box - Anatomy Dashboard</h1>
+            <div class="settings">
+                <a href="#settings"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+        </header>
+        <main>
+            <aside class="sidebar">
+                <h2>Quick Links</h2>
+                <ul>
+                    <li><a href="#recent">Recent Views</a></li>
+                    <li><a href="#favorites">Favorites</a></li>
+                    <li><a href="#notes">My Notes</a></li>
+                </ul>
+            </aside>
+            <section class="nav">
+                <h2>Anatomy Sections</h2>
+                <a href="#bony-pelvis" class="button">Bony Pelvis</a>
+                <a href="#lower-limb" class="button">Lower Limb</a>
+                <a href="#skull" class="button">Skull</a>
+                <a href="#upper-limb" class="button">Upper Limb</a>
+                <a href="#thorax" class="button">Thorax</a>
+                <a href="#vertebrae" class="button">Vertebrae</a>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2024 Bone Box - Anatomy Dashboard</p>
+        </footer>
     </div>
 </body>
 </html>
