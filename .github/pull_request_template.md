@@ -1,4 +1,4 @@
-# 1. Reference to the Issue
+Fixes #<ISSUE_NUMBER>
 ## What it is: 
 This is a way to connect the pull request to a specific issue (typically a bug, feature request, or task) listed in the project's issue tracker.
 ## How to write it: 
