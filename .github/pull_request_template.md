@@ -1,9 +1,6 @@
 Fixes #<ISSUE_NUMBER>
 
-# 2. What was Changed
-## What it is: 
-A concise summary of the modifications you've made in your code.
-## How to write it: 
+# 1. What was Changed
 Describe the changes in a straightforward manner, focusing on the end results or the functionality that is impacted. Avoid mentioning specific files or technical details here.
 
 # 2. Why it was Changed
