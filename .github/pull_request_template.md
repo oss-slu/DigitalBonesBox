@@ -16,8 +16,6 @@ A justification or reasoning behind the changes—explaining why the modificatio
 ## How to write it: 
 Describe the problem that prompted the change or how the new feature can benefit users.
 
-# 4. How it was Changed
-## What it is: 
-A more technical explanation of the specific changes made, which is very useful for reviewers to understand your approach.
+# 3. How it was Changed
 ## How to write it: 
 Detail the methods or techniques used to implement the changes. You can also mention any challenges you faced or alternatives you considered.
