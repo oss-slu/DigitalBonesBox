@@ -10,10 +10,8 @@ A concise summary of the modifications you've made in your code.
 ## How to write it: 
 Describe the changes in a straightforward manner, focusing on the end results or the functionality that is impacted. Avoid mentioning specific files or technical details here.
 
-# 3. Why it was Changed
+# 2. Why it was Changed
 ## What it is: 
-A justification or reasoning behind the changes—explaining why the modification was necessary.
-## How to write it: 
 Describe the problem that prompted the change or how the new feature can benefit users.
 
 # 3. How it was Changed
