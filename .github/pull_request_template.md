@@ -1,8 +1,4 @@
 Fixes #<ISSUE_NUMBER>
-## What it is: 
-This is a way to connect the pull request to a specific issue (typically a bug, feature request, or task) listed in the project's issue tracker.
-## How to write it: 
-Use the syntax "Fixes #<issue_number>" or "Closes #<issue_number>" to automatically link the PR to that issue. This tells GitHub to close the issue automatically when the PR is merged.
 
 # 2. What was Changed
 ## What it is: 
