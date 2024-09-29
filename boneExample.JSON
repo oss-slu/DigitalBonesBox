@@ -1,11 +1,11 @@
 {
-    "bones": [
+    "Bones": [
         {
-        "Bone Id": 7123, 
-        "Bone name": "Cranium",
-        "Bone Description": "Commonly called the skull, the cranium is composed of 22 bones and is divided into two regions: the neurocranium (which protects the brain) and the viscerocranium (which forms the face). The skull also supports tendinous muscle attachments and allows neurovascular passage between intracranial and extracranial anatomy.",
-        "Bone Image Path": "https://example.com/images/Skull.png",
-        "Annotations": []
+            "Bone Id": 1, 
+            "Bone Name": "Cranium",
+            "Bone Description": "Commonly called the skull, the cranium is composed of 22 bones and is divided into two regions: the neurocranium (which protects the brain) and the viscerocranium (which forms the face). The skull also supports tendinous muscle attachments and allows neurovascular passage between intracranial and extracranial anatomy.",
+            "Bone Image Path": "https://example.com/images/Skull.png",
+            "Annotations": []
         }
 
 ]
