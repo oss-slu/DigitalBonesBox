@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bone Information Viewer</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <style>
+        .container {
+            width: 80%;
+            margin: auto;
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .annotations {
+            text-align: left;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Bone Viewer</h1>
+
+        <!-- Button to load bone data -->
+        <button hx-get="/load-bone" hx-target="#bone-data">Load Bone Data</button>
+
+        <!-- Section to display bone information -->
+        <div id="bone-data">
+            <h2>Bone Name: <span id="bone-name"></span></h2>
+            <p id="bone-description"></p>
+            <div id="bone-image-container">
+                <img id="bone-image" src="" alt="Bone Image">
+            </div>
+            <div class="annotations" id="bone-annotations">
+                <h3>Annotations</h3>
+                <ul id="annotations-list"></ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
