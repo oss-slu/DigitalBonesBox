@@ -1,0 +1,19 @@
+{
+    "boneset": [
+        {
+            "id": "1",
+            "name": "Upper Limb",
+            "description": "A collection of bones that make up the upper limb, including the arm and hand.",
+            "image": "images/upper_limb.png",
+            "bones": ["22", "23", "24"]  
+        },
+        {
+            "id": "2",
+            "name": "Lower Limb",
+            "description": "A collection of bones that comprise the lower limb, including the leg and foot.",
+            "image": "images/lower_limb.png",
+            "bones": ["32", "33", "34"]  
+        }
+    ]
+
+}
