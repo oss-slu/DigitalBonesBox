@@ -6,6 +6,11 @@
     <link rel="stylesheet" href="styles.css">
     <title>Editor View</title>
     <script src="https://unpkg.com/htmx.org"></script>
+    <script>
+        function getJsonData() {
+            return JSON.parse(document.getElementById('json-editor').value || '{}');
+        }
+    </script>
 </head>
 <body>
     <h1>Editor View</h1>
@@ -15,7 +20,7 @@
             hx-post="/publish" 
             hx-trigger="click" 
             hx-target="#response" 
-            hx-vals="{ 'message': 'Updated data' }">Publish Changes</button>
+            hx-vals="{ 'message': 'Updated data', 'jsonData': getJsonData() }">Publish Changes</button>
     <div id="response"></div>
 </body>
 </html>
