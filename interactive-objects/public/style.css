@@ -1,0 +1,9 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+textarea {
+    width: 100%;
+    margin-bottom: 10px;
+}

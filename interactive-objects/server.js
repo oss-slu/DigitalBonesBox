@@ -1,28 +1,31 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const simpleGit = require('simple-git');
 const path = require('path');
+
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
+const git = simpleGit('C:\\DigitalBonesBox'); 
 
-// Sample data
-const objectInfo = {
-    '1': 'This is Object 1. It has various features.',
-    '2': 'This is Object 2. It has various features.'
-};
+app.use(express.static('public'));
+app.use(bodyParser.json());
 
+// Endpoint to commit and push changes
+app.post('/publish', async (req, res) => {
+    const { message } = req.body;
 
-app.use(express.static(path.join(__dirname, 'public')));
+    try {
+        await git.add('./*'); // Add all changes
+        await git.commit(`Automated publish at ${new Date().toISOString()}: ${message}`);
+        await git.push('origin', 'data'); // Push to the 'data' branch
 
-app.get('/object-info/:id', (req, res) => {
-    const id = req.params.id;
-    const info = objectInfo[id];
-    if (info) {
-        res.send(info);
-    } else {
-        res.status(404).send('Object not found');
+        res.status(200).send('Changes published successfully!');
+    } catch (error) {
+        console.error('Error publishing changes:', error);
+        res.status(500).send('Failed to publish changes.');
     }
 });
 
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });

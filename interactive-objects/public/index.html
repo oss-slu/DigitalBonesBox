@@ -3,80 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Objects</title>
-    <script src="https://unpkg.com/htmx.org@1.9.3"></script>
-    <!--maybe link css in sep file-->
+    <link rel="stylesheet" href="styles.css">
+    <title>Editor View</title>
+    <script src="https://unpkg.com/htmx.org"></script>
 </head>
 <body>
-<h1>Interact with digital objects using HTMX</h1>
-<p>Feel free to hover over the objects.</p>
-<div id="container">
-    <div class="object">
-        <span class="object-text" 
-              hx-get="/object-info/1" 
-              hx-trigger="mouseover" 
-              hx-target="#tooltip" 
-              hx-swap="innerHTML">
-            Object 1
-            <!--try to create nested objects?-->
-        </span>
-    </div>
-    <div class="object">
-        <span class="object-text" 
-              hx-get="/object-info/2" 
-              hx-trigger="mouseover" 
-              hx-target="#tooltip" 
-              hx-swap="innerHTML">
-            Object 2
-        </span>
-    </div>
-</div>
-
-<div id="tooltip" class="tooltip" style="position: absolute; display: none;"></div>
-
-<script>
-    const tooltip = document.getElementById('tooltip');
-
-    // To check when a tooltip should be visible (when on element)
-    document.addEventListener('mouseover', function(event) {
-        const target = event.target.closest('.object-text');
-        if (target) {
-            tooltip.style.display = 'block';
-            tooltip.style.left = event.pageX + 'px';
-            tooltip.style.top = event.pageY + 'px';
-            tooltip.dataset.hovered = 'true'; 
-        }
-    });
-
-    // move tooltip with the mouse movement
-    document.addEventListener('mousemove', function(event) {
-        if (tooltip.style.display === 'block') {
-            tooltip.style.left = event.pageX + 'px';
-            tooltip.style.top = event.pageY + 'px';
-        }
-    });
-
-    // move out of text? tooltip meeds to be hidden and clear text
-    document.addEventListener('mouseout', function(event) {
-        const target = event.target.closest('.object-text');
-        const tooltipHovered = tooltip.dataset.hovered === 'true';
-        
-        if (target || tooltipHovered) return; 
-        
-        tooltip.style.display = 'none';
-        delete tooltip.dataset.hovered; 
-    });
-
-    // To avoid Flickering text?
-    tooltip.addEventListener('mouseover', function() {
-        tooltip.dataset.hovered = 'true';
-    });
-
-    tooltip.addEventListener('mouseout', function() {
-        tooltip.dataset.hovered = 'false';
-        tooltip.style.display = 'none'; 
-    });
-</script>
-
+    <h1>Editor View</h1>
+    <textarea id="json-editor" rows="10" cols="50"></textarea>
+    <br>
+    <button id="publish-button" 
+            hx-post="/publish" 
+            hx-trigger="click" 
+            hx-target="#response" 
+            hx-vals="{ 'message': 'Updated data' }">Publish Changes</button>
+    <div id="response"></div>
 </body>
 </html>
