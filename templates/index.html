@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bone Information Viewer</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <style>
+        .container {
+            width: 80%;
+            margin: auto;
+            text-align: left;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .annotations {
+            text-align: left;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upper Limb Set</h1>
+        <text>
+            Upper limb bones include the Humerus, Radius, and Ulna.
+        </text>
+
+        <!-- Section to display bone information -->
+        <div id="bone-name">
+            <h2>Humerus: <span id="bone-name"></span></h2>
+            <p id="bone-description"></p>
+            <div class="Short Description" id="bone-annotations">
+                <li>Only bone of the upper arm.</li>
+                <li>The longest bone in the body that is not present in the leg.</li>
+
+
+            <h2>Radius: <span id="bone-name"></span></h2>
+            <p id="bone-description"></p>
+            <div class="Short Description" id="bone-annotations">
+                <li>One of the two lower arm bones.</li>
+                <li>Though these bones twist around each other, the radius is on the side of the thumb.</li>
+
+
+            <h2>Ulna: <span id="bone-name"></span></h2>
+            <p id="bone-description"></p>
+            <div class="Short Description" id="bone-annotations">
+                <li>The other lower arm bone.</li>
+                <li>Slightly longer than the radius, always ends on the side of the pinky.</li>
+
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
