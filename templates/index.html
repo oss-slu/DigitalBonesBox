@@ -23,37 +23,68 @@
 </head>
 <body>
     <div class="container">
-        <h1>Upper Limb Set</h1>
+        <!-- <h1>Upper Limb Set</h1>
         <text>
-            Upper limb bones include the Humerus, Radius,
-        </text>
+            Upper limb bones include the Humerus, Radius, and Ulna.
+        </text> -->
 
         <!-- Section to display bone information -->
-        <div id="bone-name">
-            <h2>Humerus: <span id="bone-name"></span></h2>
+         <div id="dataDisplay"> 
+
+
+         <!-- </div> -->
+        <!-- <div id="bone-name">
+            <h2>LoadItems: <span id="bone-name"></span>
+                <a href="#" hx-get="/Data_Directory/Annotation_Directory/AnnotationHumerus1.JSON?Annotation Body" hx-target="#bone-annotations" hx-swap="innerHTML"a>Load Annotations</a>
+            </h2>
             <p id="bone-description"></p>
             <div class="Short Description" id="bone-annotations">
-                <li>Only bone of the upper arm.</li>
-                <li>The longest bone in the body that is not present in the leg.</li>
+                -->
 
+            <!-- <h2>Radius: <span id="bone-name"></span><a href="#">Link to Bone</a></h2>
 
-            <h2>Radius: <span id="bone-name"></span></h2>
             <p id="bone-description"></p>
             <div class="Short Description" id="bone-annotations">
                 <li>One of the two lower arm bones.</li>
                 <li>Though these bones twist around each other, the radius is on the side of the thumb.</li>
 
 
-            <h2>Ulna: <span id="bone-name"></span></h2>
+            <h2>Ulna: <span id="bone-name"></span><a href="#">Link to Bone</a></h2>
             <p id="bone-description"></p>
             <div class="Short Description" id="bone-annotations">
                 <li>The other lower arm bone.</li>
-                <li>Slightly longer than the radius, always ends on the side of the pinky.</li>
+                <li>Slightly longer than the radius, always ends on the side of the pinky.</li> -->
 
 
-            </div>
-        </div>
+            <!-- </div> --->
+         </div>
     </div>
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Data_Directory/boneSet.json')
+                .then(response => response.json())
+                .then(data => {
+                    const dataDisplay = document.getElementById("dataDisplay");
+        
+                    // Create HTML elements to display the JSON data
+                    const nameElement = document.createElement("p");
+                    nameElement.textContent = data.name;
+        
+                    const ageElement = document.createElement("p");
+                    ageElement.textContent = "Bones: " + data.bones + "\n";
+        
+        
+                    // Append the elements to the "dataDisplay" div
+                    dataDisplay.appendChild(nameElement);
+                    dataDisplay.appendChild(ageElement);
+                })
+                .catch(error => console.error("Error fetching JSON data:", error));
+        });
+            </script>
+        
 
 </body>
+
+    
 </html>

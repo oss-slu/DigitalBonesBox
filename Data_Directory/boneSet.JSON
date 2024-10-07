@@ -1,0 +1,8 @@
+{
+    "name": "Upper Limb Bones",
+    "bones": [
+           "Humerus",
+           "Ulna",
+           "Radius"
+     ]
+ }
