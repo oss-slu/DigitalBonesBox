@@ -62,9 +62,17 @@
       connectedCallback() {
         const button = this.shadowRoot.getElementById('publish-button');
         button.addEventListener('click', async () => {
-          // For now, simulate the publish action
-          alert('Publish action triggered');
-        // I dont know the idea behind this quite yet looking for tips
+          try {
+            const response = await fetch('/publish', { method: 'POST' });
+            if (response.ok) {
+              alert('Publish action completed');
+            } else {
+              alert('Failed to publish');
+            }
+          } catch (error) {
+            alert('Error: ' + error);
+          }
+          // I dont know the idea behind this quite yet looking for tips
         });
       }
     }
