@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bone Information Viewer</title>
+    <title>Bone Set Viewer</title>
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <style>
         .container {
@@ -62,7 +62,7 @@
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {
-            fetch('/Data_Directory/boneSet.json')
+            fetch('/databones/json/boneset.json')
                 .then(response => response.json())
                 .then(data => {
                     const dataDisplay = document.getElementById("dataDisplay");
@@ -72,7 +72,7 @@
                     nameElement.textContent = data.name;
         
                     const ageElement = document.createElement("p");
-                    ageElement.textContent = "Bones: " + data.bones + "\n";
+                    ageElement.textContent = "Bones: " + data   .bones + "\n";
         
         
                     // Append the elements to the "dataDisplay" div
