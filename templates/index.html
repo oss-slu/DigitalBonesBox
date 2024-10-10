@@ -3,88 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bone Set Viewer</title>
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <title>Bone Information Viewer</title>
     <style>
         .container {
             width: 80%;
             margin: auto;
             text-align: left;
         }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
         .annotations {
             text-align: left;
             margin-top: 20px;
         }
+        ul {
+            list-style-type: disc;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- <h1>Upper Limb Set</h1>
-        <text>
-            Upper limb bones include the Humerus, Radius, and Ulna.
-        </text> -->
 
-        <!-- Section to display bone information -->
-         <div id="dataDisplay"> 
+    <h1>Bone Information Viewer</h1>
 
+    <!-- Button to Load the Bone Sets -->
+    <button id="load-sets-button">Load Sets</button>
 
-         <!-- </div> -->
-        <!-- <div id="bone-name">
-            <h2>LoadItems: <span id="bone-name"></span>
-                <a href="#" hx-get="/Data_Directory/Annotation_Directory/AnnotationHumerus1.JSON?Annotation Body" hx-target="#bone-annotations" hx-swap="innerHTML"a>Load Annotations</a>
-            </h2>
-            <p id="bone-description"></p>
-            <div class="Short Description" id="bone-annotations">
-                -->
-
-            <!-- <h2>Radius: <span id="bone-name"></span><a href="#">Link to Bone</a></h2>
-
-            <p id="bone-description"></p>
-            <div class="Short Description" id="bone-annotations">
-                <li>One of the two lower arm bones.</li>
-                <li>Though these bones twist around each other, the radius is on the side of the thumb.</li>
-
-
-            <h2>Ulna: <span id="bone-name"></span><a href="#">Link to Bone</a></h2>
-            <p id="bone-description"></p>
-            <div class="Short Description" id="bone-annotations">
-                <li>The other lower arm bone.</li>
-                <li>Slightly longer than the radius, always ends on the side of the pinky.</li> -->
-
-
-            <!-- </div> --->
-         </div>
+    <!-- Container for the Boneset Names and IDs -->
+    <div id="bone-sets-container">
+        <h2>Bonesets</h2>
+        <ul id="bone-set-list"></ul>
     </div>
+
     <script>
+        // Corrected GitHub raw URL
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
+        const BONESET_JSON_PATH = 'boneset.json';
 
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('/databones/json/boneset.json')
-                .then(response => response.json())
-                .then(data => {
-                    const dataDisplay = document.getElementById("dataDisplay");
-        
-                    // Create HTML elements to display the JSON data
-                    const nameElement = document.createElement("p");
-                    nameElement.textContent = data.name;
-        
-                    const ageElement = document.createElement("p");
-                    ageElement.textContent = "Bones: " + data   .bones + "\n";
-        
-        
-                    // Append the elements to the "dataDisplay" div
-                    dataDisplay.appendChild(nameElement);
-                    dataDisplay.appendChild(ageElement);
-                })
-                .catch(error => console.error("Error fetching JSON data:", error));
-        });
-            </script>
-        
+        async function fetchJSON(path) {
+            const response = await fetch(GITHUB_RAW_URL + path);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }
 
+        // Function to load the boneset data and display it
+        function loadBoneSets() {
+            fetchJSON(BONESET_JSON_PATH)
+            .then(data => {
+                console.log(data);  // Check the fetched data
+
+                const boneSetList = document.getElementById('bone-set-list');
+                boneSetList.innerHTML = '';  // Clear any previous data
+
+                // Iterate through each boneset and display the name and bone IDs
+                data.boneset.forEach(set => {
+                    // Create a list item for the boneset name
+                    const li = document.createElement('li');
+                    li.textContent = set.name;
+                    boneSetList.appendChild(li);
+
+                    // Create a sublist for the bone IDs
+                    const subList = document.createElement('ul');
+                    set.bones.forEach(bone => {
+                        const subLi = document.createElement('li');
+                        subLi.textContent = `ID: ${bone}`;
+                        subList.appendChild(subLi);
+                    });
+
+                    // Append the sublist under the boneset name
+                    boneSetList.appendChild(subList);
+                });
+            })
+            .catch(error => console.error('Error loading bonesets:', error));
+        }
+
+        // Add event listener to the button to load the bone sets on click
+        document.getElementById('load-sets-button').addEventListener('click', loadBoneSets);
+    </script>
 </body>
-
-    
 </html>
