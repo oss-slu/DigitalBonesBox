@@ -48,7 +48,7 @@
         }
     </style>
     <script>
-        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/main/data/';
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/';
         const BONE_JSON_PATH = 'bones.json';
         const ANNOTATIONS_JSON_PATH = 'annotations.json';
 
@@ -65,7 +65,7 @@
                 // Assuming boneData contains a bone object with the necessary properties
                 document.getElementById('bone-name').textContent = boneData.name;
                 document.getElementById('bone-description').textContent = boneData.description;
-                document.getElementById('bone-image').src = GITHUB_RAW_URL + boneData.image_path;
+                document.getElementById('bone-image').src = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/images/femur.jpg';
 
                 // Display annotations
                 const annotationsList = document.getElementById('annotations-list');
@@ -98,7 +98,7 @@
         </div>
         <div class="image-section">
             <h3>Image</h3>
-            <img id="bone-image" src="https://example.com/path/to/femur-image.jpg" alt="Bone Image">
+            <img id="bone-image" src="https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/images/femur.jpg" alt="Bone Image">
         </div>
     </div>
 </body>
