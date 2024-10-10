@@ -1,7 +1,0 @@
-{
-    "id": "1",
-    "name": "Bone_name_example skull",
-    "description": "Skull is hard and protects brain",
-    "image_path": " path_to_skull_in_project_directry",
-    "annotations": ["11"]
-}
