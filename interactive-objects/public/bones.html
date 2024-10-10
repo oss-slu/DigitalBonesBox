@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bone Editor</title>
+    <script src="https://unpkg.com/htmx.org"></script>
+</head>
+<body>
+    <div id="editor-view">
+        <h1>Bone Editor</h1>
+        <button id="load-bones">Load Bones</button>
+        <div id="bones-container"></div>
+    </div>
+
+    <script>
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
+        const BONES_JSON_PATH = 'bones.json';
+        const ANNOTATIONS_JSON_PATH = 'annotations.json';
+
+        async function fetchJSON(path) {
+            const url = GITHUB_RAW_URL + path;
+            console.log('Fetching data from:', url);
+
+            const response = await fetch(url);
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+        }
+
+        document.getElementById('load-bones').addEventListener('click', async () => {
+            try {
+                const [bonesData, annotationsData] = await Promise.all([
+                    fetchJSON(BONES_JSON_PATH),
+                    fetchJSON(ANNOTATIONS_JSON_PATH)
+                ]);
+                displayBones(bonesData, annotationsData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('bones-container').innerText = 'Failed to load bones data.';
+            }
+        });
+
+        function displayBones(bonesData, annotationsData) {
+            const container = document.getElementById('bones-container');
+            container.innerHTML = ''; // Clear previous content
+
+            bonesData.bones.forEach(bone => {
+                const boneElement = document.createElement('div');
+                boneElement.classList.add('bone'); // Optional class for styling
+
+                const title = document.createElement('h2');
+                title.textContent = bone.name;
+
+                const description = document.createElement('p');
+                description.textContent = bone.description;
+
+                const annotationsList = document.createElement('ul');
+                bone.annotations.forEach(annotationId => {
+                    const annotation = annotationsData.annotations.find(a => a.annotation_id === annotationId.toString());
+                    if (annotation) {
+                        const annotationItem = document.createElement('li');
+                        annotationItem.textContent = annotation.text;
+                        annotationsList.appendChild(annotationItem);
+                    }
+                });
+
+                boneElement.appendChild(title);
+                boneElement.appendChild(description);
+                boneElement.appendChild(annotationsList);
+                container.appendChild(boneElement);
+            });
+        }
+    </script>
+</body>
+</html>

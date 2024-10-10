@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bone Editor</title>
+    <script src="https://unpkg.com/htmx.org"></script>
+</head>
+<body>
+    <div id="editor-view">
+        <h1>Bone Editor</h1>
+        <button id="load-bones">Load Bones</button>
+        <div id="bones-container"></div>
+    </div>
+
+    <script>
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
+        const BONE_JSON_PATH = 'boneset.json';
+
+        async function fetchJSON() {
+            const url = GITHUB_RAW_URL + BONE_JSON_PATH;
+            console.log('Fetching data from:', url); // Log the URL
+
+            const response = await fetch(url);
+            console.log('Response status:', response.status); // Log the response status
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok: ' + response.statusText);
+            }
+            return response.json();
+        }
+
+        document.getElementById('load-bones').addEventListener('click', async () => {
+            try {
+                const bonesData = await fetchJSON();
+                displayBones(bonesData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('bones-container').innerText = 'Failed to load bones data.';
+            }
+        });
+
+        function displayBones(bonesData) {
+            const container = document.getElementById('bones-container');
+            container.innerHTML = ''; // Clear previous content
+
+            bonesData.boneset.forEach(boneSet => {
+                const boneSetElement = document.createElement('div');
+                boneSetElement.classList.add('bone-set'); // Optional class for styling
+
+                const title = document.createElement('h2');
+                title.textContent = boneSet.name; // Display boneset name
+
+                const boneList = document.createElement('ul');
+                boneSet.bones.forEach(boneId => {
+                    const boneItem = document.createElement('li');
+                    boneItem.textContent = `Bone ID: ${boneId}`; // Display each bone ID
+                    boneList.appendChild(boneItem);
+                });
+
+                boneSetElement.appendChild(title);
+                boneSetElement.appendChild(boneList);
+                container.appendChild(boneSetElement);
+            });
+        }
+    </script>
+</body>
+</html>
