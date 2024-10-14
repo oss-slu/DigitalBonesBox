@@ -42,8 +42,8 @@ function displayImage(file) {
             const img = document.createElement('img');
             img.src = e.target.result;
             img.alt = "Uploaded Bone Image";
-            img.style.maxWidth = "100%";
-            img.style.height = "100%";
+            img.style.maxWidth = "50%";
+            img.style.height = "auto";
 
             imagePreview.innerHTML = "";
             imagePreview.appendChild(img);
