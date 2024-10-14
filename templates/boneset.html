@@ -24,18 +24,62 @@
     <h1>Bone Information Viewer</h1>
 
     <!-- Button to Load the Bone Sets -->
-    <button id="load-sets-button">Load Sets</button>
+     <div>
+        <button id="load-button">Load Options</button>
+
+     </div>
+
+    <label for="bonesets">Choose a Boneset:</label>
+
+
+    <select id="bonesets">
+        <option value="--Please choose an option--"></option>
+      
+    </select>       
+    <script>
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
+        const BONESET_JSON_PATH = 'boneset.json';
+
+        async function fetchJSON(path) {
+            const response = await fetch(GITHUB_RAW_URL + path);
+            return response.json();
+        }
+
+        async function populateDropdown() {
+            const data = await fetchJSON(BONESET_JSON_PATH);
+            const dropdown = document.getElementById('boneset-select');
+
+    // Clear existing options
+            dropdown.innerHTML = '<option value="">--Please choose an option--</option>';
+
+    // Add new options from JSON data
+            data.boneset.forEach(bone => {
+                const option = document.createElement('option');
+                option.value = bone.id;
+                option.textContent = bone.name;
+                dropdown.appendChild(option);
+            });
+        }
+
+// Add event listener for the button
+        document.getElementById('load-button').addEventListener('click', populateDropdown);
+    </script>
+
+    <div>
+        <button id="load-sets-button">Load Sets</button>
+    </div>
 
     <!-- Container for the Boneset Names and IDs -->
     <div id="bone-sets-container">
-        <h2>Bonesets</h2>
+        <h2>Boneset</h2>
         <ul id="bone-set-list"></ul>
     </div>
 
+  
+
     <script>
         // Corrected GitHub raw URL
-        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
-        const BONESET_JSON_PATH = 'boneset.json';
+        
 
         async function fetchJSON(path) {
             const response = await fetch(GITHUB_RAW_URL + path);
