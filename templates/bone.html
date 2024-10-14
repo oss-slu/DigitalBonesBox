@@ -11,6 +11,17 @@
         <h1>Bone Editor</h1>
         <button id="load-bones">Load Bones</button>
         <div id="bones-container"></div>
+
+        <!-- Image Upload Section -->
+        <div class="image-upload-container">
+            <h2>Upload Bone Image</h2>
+            <input type="file" id="imageUpload" accept="image/png, image/jpeg" />
+            <div id="imagePreview" class="image-preview">
+                <p>No image uploaded. Please upload a bone image.</p>
+            </div>
+            <p id="feedbackMessage" class="feedback"></p>
+        </div>
+    </div>
     </div>
 
     <script>
@@ -75,5 +86,6 @@
             });
         }
     </script>
+    <script src="uploadHandler.js"></script>
 </body>
 </html>
