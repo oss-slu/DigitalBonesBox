@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bone Information Viewer</title>
+    <style>
+        .container {
+            width: 80%;
+            margin: auto;
+            text-align: left;
+        }
+        .annotations {
+            text-align: left;
+            margin-top: 20px;
+        }
+        ul {
+            list-style-type: disc;
+        }
+        .navigation-buttons {
+            margin-top: 20px;
+        }
+        .navigation-buttons button {
+            padding: 10px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Bone Information Viewer</h1>
+
+    <!-- Button to Load the Bone Sets -->
+    <button id="load-sets-button">Load Sets</button>
+
+    <!-- Container for the Boneset Names and IDs -->
+    <div id="bone-sets-container">
+        <h2>Bonesets</h2>
+        <ul id="bone-set-list"></ul>
+        
+        <!-- Next and Previous buttons -->
+        <div class="navigation-buttons">
+            <button id="previous-set-button">Previous</button>
+            <button id="next-set-button">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
+        const BONESET_JSON_PATH = 'boneset.json';
+        let bonesetData = [];
+        let currentIndex = 0;
+
+        // Function to fetch the boneset data
+        async function fetchJSON(path) {
+            const response = await fetch(GITHUB_RAW_URL + path);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }
+
+        // Function to display the boneset at the current index
+        function displayBoneSet(index) {
+            const boneSetList = document.getElementById('bone-set-list');
+            boneSetList.innerHTML = '';  // Clear previous data
+
+            const set = bonesetData[index];
+            if (set) {
+                // Display boneset name
+                const li = document.createElement('li');
+                li.textContent = set.name;
+                boneSetList.appendChild(li);
+
+                // Create a sublist for the bone IDs
+                const subList = document.createElement('ul');
+                set.bones.forEach(bone => {
+                    const subLi = document.createElement('li');
+                    subLi.textContent = `ID: ${bone}`;
+                    subList.appendChild(subLi);
+                });
+
+                // Append the sublist under the boneset name
+                boneSetList.appendChild(subList);
+            }
+        }
+
+        // Function to load the boneset data
+        function loadBoneSets() {
+            fetchJSON(BONESET_JSON_PATH)
+            .then(data => {
+                bonesetData = data.boneset;
+                currentIndex = 0; // Start from the first set
+                displayBoneSet(currentIndex);  // Display the first boneset
+            })
+            .catch(error => console.error('Error loading bonesets:', error));
+        }
+
+        // Function to go to the previous boneset
+        function previousBoneSet() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                displayBoneSet(currentIndex);
+            }
+        }
+
+        // Function to go to the next boneset
+        function nextBoneSet() {
+            if (currentIndex < bonesetData.length - 1) {
+                currentIndex++;
+                displayBoneSet(currentIndex);
+            }
+        }
+
+        // Add event listener to the button to load the bone sets on click
+        document.getElementById('load-sets-button').addEventListener('click', loadBoneSets);
+        
+        // Event listeners for navigation buttons
+        document.getElementById('previous-set-button').addEventListener('click', previousBoneSet);
+        document.getElementById('next-set-button').addEventListener('click', nextBoneSet);
+    </script>
+</body>
+</html>
