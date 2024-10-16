@@ -24,9 +24,6 @@
     <h1>Bone Information Viewer</h1>
 
     <!-- Button to Load the Bone Sets -->
-     <div>
-        <button id="load-button">Load Options</button>
-     </div>
 
     <label for="bonesets">Choose a Boneset:</label>
 
@@ -61,12 +58,10 @@
         }
 
 // Add event listener for the button
-        document.getElementById('load-button').addEventListener('click', populateDropdown);
+
+            document.addEventListener('DOMContentLoaded', populateDropdown);
     </script>
     
-    <div>
-        <button id="load-sets-button">Load Sets</button>
-    </div>
 
     <!-- Container for the Boneset Names and IDs -->
     <div id="bone-sets-container">
@@ -75,54 +70,56 @@
     </div>
 
     <script>
-        // Corrected GitHub raw URL
+        // Function to fetch the boneset data from the JSON file
         async function fetchBonesetData() {
             const response = await fetch(GITHUB_RAW_URL + BONESET_JSON_PATH);
             const data = await response.json();
             return data.boneset;
         }
-
-        // Function to load the boneset data and display it
+    
+        // Function to load and display the selected boneset when dropdown changes
         async function loadBoneSets() {
-        const dropdown = document.getElementById('boneset-select');
-        const selectedOption = dropdown.options[dropdown.selectedIndex];
-        const selectedBoneName = selectedOption.textContent;
-
-        try {
-            const bonesets = await fetchBonesetData();
-            console.log(bonesets);  // Check the fetched data
-
-            const boneSetList = document.getElementById('bone-set-list');
-            boneSetList.innerHTML = '';  // Clear any previous data
-
-            // Find the selected boneset based on the dropdown selection
-            const selectedSet = bonesets.find(set => set.name === selectedBoneName);
-
-            if (selectedSet) {
-                // Create a list item for the selected boneset name
-                const li = document.createElement('li');
-                li.textContent = selectedSet.name;
-                boneSetList.appendChild(li);
-
-                // Create a sublist for the bone IDs
-                const subList = document.createElement('ul');
-                selectedSet.bones.forEach(bone => {
-                    const subLi = document.createElement('li');
-                    subLi.textContent = `ID: ${bone}`;
-                    subList.appendChild(subLi);
-                });
-
-                // Append the sublist under the boneset name
-                boneSetList.appendChild(subList);
-            } else {
-                boneSetList.textContent = 'No bone set found for the selected option.';
+            const dropdown = document.getElementById('boneset-select');
+            const selectedOption = dropdown.options[dropdown.selectedIndex];
+            const selectedBoneName = selectedOption.textContent;
+    
+            try {
+                const bonesets = await fetchBonesetData();
+                console.log(bonesets);  // Check the fetched data
+    
+                const boneSetList = document.getElementById('bone-set-list');
+                boneSetList.innerHTML = '';  // Clear any previous data
+    
+                // Find the selected boneset based on the dropdown selection
+                const selectedSet = bonesets.find(set => set.name === selectedBoneName);
+    
+                if (selectedSet) {
+                    // Create a list item for the selected boneset name
+                    const li = document.createElement('li');
+                    li.textContent = selectedSet.name;
+                    boneSetList.appendChild(li);
+    
+                    // Create a sublist for the bone IDs
+                    const subList = document.createElement('ul');
+                    selectedSet.bones.forEach(bone => {
+                        const subLi = document.createElement('li');
+                        subLi.textContent = `ID: ${bone}`;
+                        subList.appendChild(subLi);
+                    });
+    
+                    // Append the sublist under the boneset name
+                    boneSetList.appendChild(subList);
+                } else {
+                    boneSetList.textContent = 'No bone set found for the selected option.';
+                }
+            } catch (error) {
+                console.error('Error loading bonesets:', error);
             }
-        } catch (error) {
-            console.error('Error loading bonesets:', error);
         }
-    }
-        // Add event listener to the button to load the bone sets on click
-        document.getElementById('load-sets-button').addEventListener('click', loadBoneSets);
+    
+        // Attach event listener to the dropdown to trigger loading when selection changes
+        document.getElementById('boneset-select').addEventListener('change', loadBoneSets);
     </script>
+    
 </body>
 </html>
