@@ -14,9 +14,10 @@
     </div>
 
     <script>
-        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
-        const BONES_JSON_PATH = 'bones.json';
-        const ANNOTATIONS_JSON_PATH = 'annotations.json';
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/';
+        const BONES_JSON_PATH = 'json/bones.json';
+        const ANNOTATIONS_JSON_PATH = 'json/annotations.json';
+        const IMAGES_PATH = 'images/';
 
         async function fetchJSON(path) {
             const url = GITHUB_RAW_URL + path;
@@ -57,6 +58,20 @@
 
                 const description = document.createElement('p');
                 description.textContent = bone.description;
+
+                if (bone.name.toLowerCase() === 'femur') {
+                    const image = document.createElement('img');
+                    image.src = GITHUB_RAW_URL + IMAGES_PATH + 'femur.jpg';
+                    image.alt = 'Image of the Femur';
+                    boneElement.appendChild(image);
+                }
+
+                if (bone.name.toLowerCase() === 'skull') {
+                    const image = document.createElement('img');
+                    image.src = GITHUB_RAW_URL + IMAGES_PATH + 'skull.jpg';
+                    image.alt = 'Image of the Skull';
+                    boneElement.appendChild(image);
+                }
 
                 const annotationsList = document.createElement('ul');
                 bone.annotations.forEach(annotationId => {
