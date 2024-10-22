@@ -23,32 +23,91 @@
 
     <h1>Bone Information Viewer</h1>
 
-    <!-- Button to Load the Bone Sets -->
-
+    <!-- Dropdown for Boneset Selection -->
     <label for="bonesets">Choose a Boneset:</label>
-
-
     <select id="boneset-select">
         <option value="">--Please choose an option--</option>
-    </select>       
+    </select>
+
+    <!-- Button to Load the Bone Sets -->
+    <button id="load-sets-button">Load Sets</button>
+
+    <!-- Container for the Boneset Names and IDs -->
+    <div id="bone-sets-container">
+        <h2>Bonesets</h2>
+        <ul id="bone-set-list"></ul>
+    </div>
+    
+    <div class="navigation-buttons">
+        <button id="prev-button" disabled>Previous</button>
+        <button id="next-button" disabled>Next</button>
+    </div>
 
     <script>
         const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
         const BONESET_JSON_PATH = 'boneset.json';
+
+        let boneSets = [];
+        let currentSetIndex = 0;
 
         async function fetchJSON(path) {
             const response = await fetch(GITHUB_RAW_URL + path);
             return response.json();
         }
 
+        function displayBoneSet(index) {
+            const boneSetList = document.getElementById('bone-set-list');
+            boneSetList.innerHTML = '';  // Clear any previous data
+
+            const set = boneSets[index];
+            
+            // Create a list item for the boneset name
+            const li = document.createElement('li');
+            li.textContent = set.name;
+            boneSetList.appendChild(li);
+
+            // Create a sublist for the bone IDs
+            const subList = document.createElement('ul');
+            set.bones.forEach(bone => {
+                const subLi = document.createElement('li');
+                subLi.textContent = `ID: ${bone}`;
+                subList.appendChild(subLi);
+            });
+
+            // Append the sublist under the boneset name
+            boneSetList.appendChild(subList);
+
+            // Update navigation button states
+            document.getElementById('prev-button').disabled = (index === 0);
+            document.getElementById('next-button').disabled = (index === boneSets.length - 1);
+        }
+
+        // Function to load the boneset data and display it
+        function loadBoneSets() {
+            fetchJSON(BONESET_JSON_PATH)
+            .then(data => {
+                console.log(data);  // Check the fetched data
+                boneSets = data.boneset;
+                currentSetIndex = 0; // Start at the first set
+                displayBoneSet(currentSetIndex);  // Display the first set
+
+                document.getElementById('prev-button').disabled = false;
+                document.getElementById('next-button').disabled = false;
+
+                //the following lines displayed all the sets fetched, so I changed it to display one
+                // Iterate through each boneset and display the name and bone IDs
+            })
+            .catch(error => console.error('Error loading bonesets:', error));
+        }
+
         async function populateDropdown() {
             const data = await fetchJSON(BONESET_JSON_PATH);
             const dropdown = document.getElementById('boneset-select');
 
-    // Clear existing options
-            // dropdown.innerHTML = '<option value="">--Please choose an option--</option>';
+            // Clear existing options
+            dropdown.innerHTML = '<option value="">--Please choose an option--</option>';
 
-    // Add new options from JSON data
+            // Add new options from JSON data
             data.boneset.forEach(bone => {
                 const option = document.createElement('option');
                 option.value = bone.id;
@@ -57,19 +116,6 @@
             });
         }
 
-// Add event listener for the button
-
-            document.addEventListener('DOMContentLoaded', populateDropdown);
-    </script>
-    
-
-    <!-- Container for the Boneset Names and IDs -->
-    <div id="bone-sets-container">
-        <h2>Boneset</h2>
-        <ul id="bone-set-list"></ul>
-    </div>
-
-    <script>
         // Function to fetch the boneset data from the JSON file
         async function fetchBonesetData() {
             const response = await fetch(GITHUB_RAW_URL + BONESET_JSON_PATH);
@@ -78,7 +124,7 @@
         }
     
         // Function to load and display the selected boneset when dropdown changes
-        async function loadBoneSets() {
+        async function loadBoneSetsDropdown() {
             const dropdown = document.getElementById('boneset-select');
             const selectedOption = dropdown.options[dropdown.selectedIndex];
             const selectedBoneName = selectedOption.textContent;
@@ -116,9 +162,30 @@
                 console.error('Error loading bonesets:', error);
             }
         }
-    
+
+        document.getElementById('prev-button').addEventListener('click', () => {
+            if (currentSetIndex > 0) {
+                currentSetIndex--;
+                displayBoneSet(currentSetIndex);
+            }
+        });
+
+        // Event listener for the "Next" button
+        document.getElementById('next-button').addEventListener('click', () => {
+            if (currentSetIndex < boneSets.length - 1) {
+                currentSetIndex++;
+                displayBoneSet(currentSetIndex);
+            }
+        });
+
+        // Add event listener to the button to load the bone sets on click
+        document.getElementById('load-sets-button').addEventListener('click', loadBoneSets);
+
         // Attach event listener to the dropdown to trigger loading when selection changes
-        document.getElementById('boneset-select').addEventListener('change', loadBoneSets);
+        document.getElementById('boneset-select').addEventListener('change', loadBoneSetsDropdown);
+
+        // Populate the dropdown on page load
+        document.addEventListener('DOMContentLoaded', populateDropdown);
     </script>
     
 </body>
