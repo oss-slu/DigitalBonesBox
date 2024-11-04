@@ -126,35 +126,14 @@
             const dropdown = document.getElementById('boneset-select');
             const selectedOption = dropdown.options[dropdown.selectedIndex];
             const selectedBoneName = selectedOption.textContent;
-    
             try {
                 const bonesets = await fetchBonesetData();
-                console.log(bonesets);  // Check the fetched data
-    
-                const boneSetList = document.getElementById('bone-set-list');
-                boneSetList.innerHTML = '';  // Clear any previous data
-    
                 // Find the selected boneset based on the dropdown selection
                 const selectedSet = bonesets.find(set => set.name === selectedBoneName);
-    
                 if (selectedSet) {
-                    // Create a list item for the selected boneset name
-                    const li = document.createElement('li');
-                    li.textContent = selectedSet.name;
-                    boneSetList.appendChild(li);
-    
-                    // Create a sublist for the bone IDs
-                    const subList = document.createElement('ul');
-                    selectedSet.bones.forEach(bone => {
-                        const subLi = document.createElement('li');
-                        subLi.textContent = `ID: ${bone}`;
-                        subList.appendChild(subLi);
-                    });
-    
-                    // Append the sublist under the boneset name
-                    boneSetList.appendChild(subList);
+                    renderBoneSet(selectedSet);  // Use the reusable function here
                 } else {
-                    boneSetList.textContent = 'No bone set found for the selected option.';
+                    document.getElementById('bone-set-list').textContent = 'No bone set found for the selected option.';
                 }
             } catch (error) {
                 console.error('Error loading bonesets:', error);
