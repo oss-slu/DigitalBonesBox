@@ -62,21 +62,8 @@
             return response.json();
         }
 
-        // Populate dropdown menu with boneset names
-        async function populateDropdown() {
-            const dropdown = document.getElementById('boneset-select');
-            dropdown.innerHTML = '<option value="">--Please choose an option--</option>';
-
-            boneSets.forEach(bone => {
-                const option = document.createElement('option');
-                option.value = bone.id;
-                option.textContent = bone.name;
-                dropdown.appendChild(option);
-            });
-        }
-
-        // Display boneset details in the main content area
-        function displayBoneSet(boneSet) {
+        // Reusable function to render a boneset
+        function renderBoneSet(boneSet) {
             const boneSetList = document.getElementById('bone-set-list');
             boneSetList.innerHTML = '';
 
@@ -91,6 +78,19 @@
                 subList.appendChild(subLi);
             });
             boneSetList.appendChild(subList);
+        }
+
+        // Populate dropdown menu with boneset names
+        async function populateDropdown() {
+            const dropdown = document.getElementById('boneset-select');
+            dropdown.innerHTML = '<option value="">--Please choose an option--</option>';
+
+            boneSets.forEach(bone => {
+                const option = document.createElement('option');
+                option.value = bone.id;
+                option.textContent = bone.name;
+                dropdown.appendChild(option);
+            });
         }
 
         // Debounce search for the search bar input
@@ -122,7 +122,7 @@
                 listItem.onclick = () => {
                     document.getElementById('search-bar').value = set.name;
                     resultsContainer.innerHTML = '';
-                    displayBoneSet(set);  // Display selected bone set in main area
+                    renderBoneSet(set);  // Display selected bone set in main area
                 };
                 resultsContainer.appendChild(listItem);
             });
@@ -133,7 +133,7 @@
         document.getElementById('boneset-select').addEventListener('change', () => {
             const selectedId = document.getElementById('boneset-select').value;
             const selectedSet = boneSets.find(set => set.id === selectedId);
-            if (selectedSet) displayBoneSet(selectedSet);
+            if (selectedSet) renderBoneSet(selectedSet);
         });
 
         // Load the boneset data as soon as the page loads
@@ -146,7 +146,7 @@
             populateDropdown();
 
             // Display the first boneset in the list
-            displayBoneSet(boneSets[currentSetIndex]);
+            renderBoneSet(boneSets[currentSetIndex]);
 
             // Enable the navigation buttons
             document.getElementById('prev-button').disabled = false;
@@ -157,7 +157,7 @@
         document.getElementById('prev-button').addEventListener('click', () => {
             if (currentSetIndex > 0) {
                 currentSetIndex--;
-                displayBoneSet(boneSets[currentSetIndex]);
+                renderBoneSet(boneSets[currentSetIndex]);
                 document.getElementById('next-button').disabled = false;
                 if (currentSetIndex === 0) {
                     document.getElementById('prev-button').disabled = true;
@@ -168,7 +168,7 @@
         document.getElementById('next-button').addEventListener('click', () => {
             if (currentSetIndex < boneSets.length - 1) {
                 currentSetIndex++;
-                displayBoneSet(boneSets[currentSetIndex]);
+                renderBoneSet(boneSets[currentSetIndex]);
                 document.getElementById('prev-button').disabled = false;
                 if (currentSetIndex === boneSets.length - 1) {
                     document.getElementById('next-button').disabled = true;
