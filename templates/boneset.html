@@ -6,142 +6,225 @@
     <title>Bone Information Viewer</title>
     <style>
         .container {
-            width: 80%;
+            display: flex;
+            width: 100%;
             margin: auto;
-            text-align: left;
+            padding: 20px;
         }
-        .annotations {
-            text-align: left;
-            margin-top: 20px;
+
+        .sidebar {
+            width: 20%;
+            background-color: #f1f1f1;
+            padding: 10px;
         }
-        ul {
-            list-style-type: disc;
+
+        .content {
+            width: 80%;
+            padding: 10px;
         }
-        #search-results li {
-            cursor: pointer;
-            margin-top: 5px;
+
+        h2, h3 {
+            margin-top: 0;
         }
+
+        /* Style for dropdowns and bone information */
+        select, input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .bone-info img {
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 5px 10px;
+        }
+/* Sidebar and button styling */
+.sidebar {
+            width: 250px; /* Sidebar width */
+            background-color: #f1f1f1;
+            padding: 10px;
+            transition: transform 0.3s ease;
+            transform: translateX(0); /* Sidebar is visible by default */
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            position: relative; /* Position sidebar */
+        }
+
+/* When sidebar is hidden, translate it fully off-screen */
+.sidebar.hidden {
+    transform: translateX(-100%); /* Sidebar hidden */
+}
+
+/* Sidebar toggle button styling */
+#toggle-sidebar {
+    position: absolute; /* Position the button above the sidebar */
+    top: -40px; /* Move the button above the sidebar */
+    left: 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    z-index: 1000; /* Ensure the button stays on top */
+}
+
+/* Adjust content when sidebar is expanded or collapsed */
+.content {
+            flex-grow: 1; /* Allow content area to grow and fill available space */
+            padding: 10px;
+            transition: margin-left 0.3s ease; /* Smooth transition when sidebar toggles */
+            margin-left: 0px; /* Content starts next to sidebar by default */
+        }
+
+        /* When sidebar is hidden, adjust content margin to use full width */
+        .content.expanded {
+            margin-left: 0; /* Content takes full width when sidebar is hidden */   
+        }
+            
+
     </style>
 </head>
 <body>
 
-    <h1>Bone Information Viewer</h1>
+<div class="container">
 
-    <!-- Search Bar -->
-    <input type="text" id="search-bar" placeholder="Search bone sets" style="margin-bottom: 10px;">
-    <ul id="search-results"></ul> <!-- Container for search results -->
+    
+    <!-- Sidebar with Navigation -->
+    <div class="sidebar">
+             <!-- Toggle Button -->
+        `
+            <button id="toggle-sidebar" class="toggle-btn">
+                Navigation ☰
+            </button>        
+        
+        <div>
+        <ul>
+            <li><span>🔍</span> Search</li>
+            <li><span>📞</span> Contact</li>
+            <li><span>⏰</span> Recent</li>
+            <li><span>❓</span> Help</li>
+        </ul>
+        </div>
+    </div>
 
-    <!-- Dropdown for Boneset Selection -->
-    <div>
-        <label for="bonesets">Choose a Boneset:</label>
-        <select id="boneset-select" style="margin-bottom: 10px;">
-            <option value="">--Please choose an option--</option>
+    <!-- Main Content Area -->
+    <div class="content">
+        <h2>Bone Information Viewer</h2>
+        
+        <!-- Dropdown for Boneset Selection -->
+        <label for="boneset-select">Bone set</label>
+        <select id="boneset-select">
+            <option value="">--Select a Boneset--</option>
         </select>
+        
+        <!-- Dropdown for Bone Selection within Boneset -->
+        <label for="bone-select">Find bone</label>
+        <select id="bone-select">
+            <option value="">--Select a Bone--</option>
+        </select>
+        
+        <!-- Display Selected Bone Set and Bone Information -->
+        <div class="bone-info">
+            <h3 id="bone-title">Selected Bone Information</h3>
+            <p id="bone-description">A description will appear here.</p>
+            <img id="bone-image" src="" alt="Bone Image" />
+            <button id="edit-button" style="display: none;">Edit</button>
+        </div>
     </div>
+</div>
 
-    <!-- Container for the Boneset Names and IDs -->
-    <div id="bone-sets-container">
-        <h2>Bonesets</h2>
-        <ul id="bone-set-list"></ul>
-    </div>
-    
-    <div class="navigation-buttons">
-        <button id="prev-button" disabled>Previous</button>
-        <button id="next-button" disabled>Next</button>
-    </div>
-    
-    <script>
-        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
-        const BONESET_JSON_PATH = 'boneset.json';
-        let boneSets = []; // This will hold the fetched boneset data
-        let currentSetIndex = 0;
-        let timeoutId;
+<script>
+    const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
+    const BONESET_JSON_PATH = 'boneset.json';
 
-        async function fetchJSON(path) {
-            const response = await fetch(GITHUB_RAW_URL + path);
-            return response.json();
+    let boneSets = [];
+
+    // Function to fetch JSON data
+    async function fetchJSON(path) {
+        const response = await fetch(GITHUB_RAW_URL + path);
+        return response.json();
+    }
+
+    // Populate boneset dropdown
+    async function populateBoneSetDropdown() {
+        if (boneSets.length === 0) {
+            const data = await fetchJSON(BONESET_JSON_PATH);
+            boneSets = data.boneset;
         }
+        
+        const bonesetSelect = document.getElementById('boneset-select');
+        bonesetSelect.innerHTML = '<option value="">--Select a Boneset--</option>';
+        
+        boneSets.forEach(boneSet => {
+            const option = document.createElement('option');
+            option.value = boneSet.id;
+            option.textContent = boneSet.name;
+            bonesetSelect.appendChild(option);
+        });
+    }
 
-        // Populate dropdown menu
-        async function populateDropdown() {
-            if (boneSets.length === 0) {
-                const data = await fetchJSON(BONESET_JSON_PATH);
-                boneSets = data.boneset; // Store the data globally
-            }
-            const dropdown = document.getElementById('boneset-select');
-            dropdown.innerHTML = '<option value="">--Please choose an option--</option>';
-
-            boneSets.forEach(bone => {
+    // Populate bones dropdown based on selected boneset
+    function populateBonesDropdown(boneSetId) {
+        const boneSelect = document.getElementById('bone-select');
+        boneSelect.innerHTML = '<option value="">--Select a Bone--</option>';
+        
+        const selectedBoneSet = boneSets.find(boneSet => boneSet.id === boneSetId);
+        if (selectedBoneSet) {
+            selectedBoneSet.bones.forEach(boneId => {
                 const option = document.createElement('option');
-                option.value = bone.id;
-                option.textContent = bone.name;
-                dropdown.appendChild(option);
+                option.value = boneId;
+                option.textContent = `Bone ID: ${boneId}`;
+                boneSelect.appendChild(option);
             });
         }
+    }
 
-        // Display boneset details in main content area
-        function displayBoneSet(boneSet) {
-            const boneSetList = document.getElementById('bone-set-list');
-            boneSetList.innerHTML = '';
+    // Display information about the selected boneset
+    function displayBoneSetInfo(boneSet) {
+        document.getElementById('bone-title').textContent = `Selected bone from bone set: ${boneSet.name}`;
+        document.getElementById('bone-description').textContent = boneSet.description;
+        document.getElementById('bone-image').src = boneSet.image;
+        document.getElementById('edit-button').style.display = 'block';
+    }
 
-            const li = document.createElement('li');
-            li.textContent = boneSet.name;
-            boneSetList.appendChild(li);
+    // Event listeners for dropdowns
+    document.addEventListener('DOMContentLoaded', () => {
+        populateBoneSetDropdown();
 
-            const subList = document.createElement('ul');
-            boneSet.bones.forEach(bone => {
-                const subLi = document.createElement('li');
-                subLi.textContent = `ID: ${bone}`;
-                subList.appendChild(subLi);
-            });
-            boneSetList.appendChild(subList);
-        }
-
-        // Debounce search for the search bar input
-        function debouncedSearch() {
-            clearTimeout(timeoutId);
-            const searchTerm = document.getElementById('search-bar').value.trim().toLowerCase();
+        document.getElementById('boneset-select').addEventListener('change', (event) => {
+            const selectedBoneSetId = event.target.value;
+            populateBonesDropdown(selectedBoneSetId);
             
-            timeoutId = setTimeout(() => {
-                displaySearchResults(searchTerm);
-            }, 300);
-        }
-
-        // Display search results based on search term
-        async function displaySearchResults(searchTerm) {
-            if (boneSets.length === 0) {
-                const data = await fetchJSON(BONESET_JSON_PATH);
-                boneSets = data.boneset;
+            const selectedBoneSet = boneSets.find(boneSet => boneSet.id === selectedBoneSetId);
+            if (selectedBoneSet) {
+                displayBoneSetInfo(selectedBoneSet);
             }
-            const resultsContainer = document.getElementById('search-results');
-            resultsContainer.innerHTML = '';
-
-            const filteredBonesets = boneSets.filter(set => 
-                set.name.toLowerCase().includes(searchTerm)
-            );
-
-            filteredBonesets.forEach(set => {
-                const listItem = document.createElement('li');
-                listItem.textContent = set.name;
-                listItem.onclick = () => {
-                    document.getElementById('search-bar').value = set.name;
-                    resultsContainer.innerHTML = '';
-                    displayBoneSet(set);  // Display selected bone set in main area
-                };
-                resultsContainer.appendChild(listItem);
-            });
-        }
-
-        // Event listeners for search bar and dropdown
-        document.getElementById('search-bar').addEventListener('input', debouncedSearch);
-        document.getElementById('boneset-select').addEventListener('change', () => {
-            const selectedId = document.getElementById('boneset-select').value;
-            const selectedSet = boneSets.find(set => set.id === selectedId);
-            if (selectedSet) displayBoneSet(selectedSet);
         });
 
-        // Populate dropdown on page load
-        document.addEventListener('DOMContentLoaded', populateDropdown);
-    </script>
+        document.getElementById('bone-select').addEventListener('change', (event) => {
+            const selectedBoneId = event.target.value;
+            console.log(`Selected Bone ID: ${selectedBoneId}`);
+        });
+    });
+
+        // Sidebar Toggle
+        document.getElementById('toggle-sidebar').addEventListener('click', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const content = document.querySelector('.content');
+
+            // Toggle the "hidden" class on the sidebar
+            sidebar.classList.toggle('hidden');
+            
+            // Toggle the "expanded" class on the content
+            content.classList.toggle('expanded');
+        });
+</script>
+
 </body>
 </html>
