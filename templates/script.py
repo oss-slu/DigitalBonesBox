@@ -1,51 +1,40 @@
 import xml.etree.ElementTree as ET
+import os
+import shutil
 
-# Load and parse the XML file
-def load_xml(file_path):
-    try:
-        tree = ET.parse(file_path)
-        root = tree.getroot()
-        print(f"XML loaded successfully from {file_path}")
-        return tree, root
-    except ET.ParseError as e:
-        print(f"Failed to parse XML: {e}")
-        return None, None
+def extract_images_from_xml(xml_folder_path, media_folder_path, output_dir):
+    # Ensure the output directory exists
+    os.makedirs(output_dir, exist_ok=True)
 
-# Access elements in the XML
-def get_element_data(root, element_tag):
-    elements = root.findall(element_tag)
-    for elem in elements:
-        print(ET.tostring(elem, encoding="utf-8").decode("utf-8"))
+    # Loop through each XML file in the XML folder
+    for xml_file_name in os.listdir(xml_folder_path):
+        if xml_file_name.endswith('.xml'):
+            xml_file_path = os.path.join(xml_folder_path, xml_file_name)
+            
+            # Parse the XML file
+            tree = ET.parse(xml_file_path)
+            root = tree.getroot()
 
-# Modify elements in the XML
-def modify_element(root, element_tag, new_text):
-    elements = root.findall(element_tag)
-    for elem in elements:
-        elem.text = new_text
-    print(f"Updated text of '{element_tag}' to '{new_text}'")
+            # Search for image references in the XML file
+            for element in root.iter():  # Adjust this to specific tags if necessary
+                target = element.attrib.get('Target')
+                if target and target.startswith('../media/'):
+                    # Construct the full path to the media file
+                    media_file_name = os.path.basename(target)
+                    media_file_path = os.path.join(media_folder_path, media_file_name)
 
-# Save the modified XML to a new file
-def save_xml(tree, output_path):
-    try:
-        tree.write(output_path, encoding="utf-8", xml_declaration=True)
-        print(f"XML saved successfully to {output_path}")
-    except Exception as e:
-        print(f"Failed to save XML: {e}")
+                    # Define the output path for the image
+                    output_image_path = os.path.join(output_dir, media_file_name)
+
+                    # Copy the image file to the output directory
+                    if os.path.exists(media_file_path):
+                        shutil.copy(media_file_path, output_image_path)
+                        print(f"Saved {media_file_name} to {output_image_path}")
+                    else:
+                        print(f"Image file not found: {media_file_path}")
 
 # Example usage
-if __name__ == "__main__":
-    file_path = "input.xml"
-    output_path = "output.xml"
-
-    # Load XML
-    tree, root = load_xml(file_path)
-    
-    if root is not None:
-        # Access specific elements
-        get_element_data(root, "element_tag")  # Replace 'element_tag' with actual XML tag
-
-        # Modify elements
-        modify_element(root, "element_tag", "New Text")  # Replace 'element_tag' with actual XML tag
-
-        # Save modified XML
-        save_xml(tree, output_path)
+xml_folder_path = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/slides/'
+media_folder_path = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/media/image1.png'
+output_dir = '/Users/burhankhan/Desktop/CSCI-4961-01'
+extract_images_from_xml(xml_folder_path, media_folder_path, output_dir)
