@@ -5,43 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bone Information Viewer</title>
     <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
         .container {
-            width: 80%;
-            margin: auto;
+            width: 90%;
+            max-width: 600px;
+            background-color: #ffffff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 16px;
+            color: #333333;
+            margin-top: 10px;
+            margin-bottom: 5px;
             text-align: left;
         }
-        .annotations {
+
+        select {
+            width: 100%;
+            font-size: 16px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            font-size: 16px;
+            color: #555;
+            margin-top: 20px;
             text-align: left;
+        }
+
+        .bone-image {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .edit-button {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
             margin-top: 20px;
         }
-        ul {
-            list-style-type: disc;
-        }
     </style>
-</head>
-<body>
+        </head>
+        <body><div class="container">
+            <h1>Bone Information Viewer</h1>
 
-    <h1>Bone Information Viewer</h1>
+            <label for="boneset-select">Bone set:</label>
+            <select id="boneset-select">
+                <option value="">Dropdown for bonesets</option>
+            </select>
 
-    <!-- Dropdown for Boneset Selection -->
-    <label for="bonesets">Choose a Boneset:</label>
-    <select id="boneset-select">
-        <option value="">--Please choose an option--</option>
-    </select>
+            <label for="bone-select">Find bone:</label>
+            <select id="bone-select" disabled>
+                <option value="">Dropdown for bones in that boneset</option>
+            </select>
 
-    <!-- Button to Load the Bone Sets -->
-    <button id="load-sets-button">Load Sets</button>
+            <div class="description">
+                <h2>this coudl provide the description of the bone. Or insructions to use</h2>
+            
+            </div>
 
-    <!-- Container for the Boneset Names and IDs -->
-    <div id="bone-sets-container">
-        <h2>Bonesets</h2>
-        <ul id="bone-set-list"></ul>
-    </div>
-    
-    <div class="navigation-buttons">
-        <button id="prev-button" disabled>Previous</button>
-        <button id="next-button" disabled>Next</button>
-    </div>
+            <img src="path_to_image" alt="Bone Image" class="bone-image">
+
+            <button class="edit-button">Edit</button>
+        </div>
+
+            <!-- Button to Load the Bone Sets -->
+            <button id="load-sets-button">Load Sets</button>
+
+
+            <!-- Container for the Boneset Names and IDs -->
+            <div id="bone-sets-container">
+                <h2>Bonesets</h2>
+                <ul id="bone-set-list"></ul>
+            </div>
+            
+            <div class="navigation-buttons">
+                <button id="prev-button" disabled>Previous</button>
+                <button id="next-button" disabled>Next</button>
+            </div>
 
     <script>
         const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
@@ -122,7 +196,6 @@
             const data = await response.json();
             return data.boneset;
         }
-    
         // Function to load and display the selected boneset when dropdown changes
         async function loadBoneSetsDropdown() {
             const dropdown = document.getElementById('boneset-select');
