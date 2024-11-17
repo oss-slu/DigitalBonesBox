@@ -29,9 +29,12 @@
 
         /* Style for dropdowns and bone information */
         select, input[type="text"] {
-            width: 100%;
+            
+            width: 100%; /* Ensures both dropdowns occupy the same width */
+            max-width: 300px; /* Optional: Set a maximum width if desired */
             padding: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            box-sizing: border-box; 
         }
 
         .bone-info img {
@@ -48,44 +51,41 @@
 .sidebar {
             width: 250px; /* Sidebar width */
             background-color: #f1f1f1;
-            padding: 10px;
+            height: 100vh; /* Full height of the viewport */
             transition: transform 0.3s ease;
             transform: translateX(0); /* Sidebar is visible by default */
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
             z-index: 999;
-            position: relative; /* Position sidebar */
+            position: fixed; /* Position sidebar */
         }
 
 /* When sidebar is hidden, translate it fully off-screen */
 .sidebar.hidden {
-    transform: translateX(-100%); /* Sidebar hidden */
+    transform: translateX(-200%); /* Sidebar hidden */
 }
 
 /* Sidebar toggle button styling */
 #toggle-sidebar {
-    position: absolute; /* Position the button above the sidebar */
+    position: absolute; /* Position     the button above the sidebar */
     top: -40px; /* Move the button above the sidebar */
     left: 0;
     border: none;
     cursor: pointer;
     width: 100%;
-    padding: 15px;
+    /* padding: px; */
     font-size: 18px;
     z-index: 1000; /* Ensure the button stays on top */
 }
 
 /* Adjust content when sidebar is expanded or collapsed */
 .content {
-            flex-grow: 1; /* Allow content area to grow and fill available space */
-            padding: 10px;
-            transition: margin-left 0.3s ease; /* Smooth transition when sidebar toggles */
-            margin-left: 0px; /* Content starts next to sidebar by default */
-        }
+    margin-left: 300px; /* Default position when sidebar is visible */
+    transition: margin-left 0.3s ease; /* Smooth transition effect */
+}
 
-        /* When sidebar is hidden, adjust content margin to use full width */
-        .content.expanded {
-            margin-left: 0; /* Content takes full width when sidebar is hidden */   
-        }
+.content.expanded {
+    margin-left: 0; /* Fill the space when the sidebar is hidden */
+}
             
 
     </style>
@@ -98,8 +98,8 @@
     <!-- Sidebar with Navigation -->
     <div class="sidebar">
              <!-- Toggle Button -->
-        `
-        <button id="toggle-sidebar" class="toggle-btn" style="width: 100%; padding: 15px 10px; font-size: 18px; background-color: grey; color: white; border: darkslategray; cursor: pointer;">                Navigation ☰
+        
+        <button id="toggle-sidebar" class="toggle-btn" style="width: 100%; padding: 15px 10px; font-size: 18px; background-color: grey; color: white; border: darkslategray; cursor: pointer;">                Navigation
             </button>        
         
         <div>
@@ -114,19 +114,28 @@
 
     <!-- Main Content Area -->
     <div class="content">
-        <h2>Bone Information Viewer</h2>
+        
+        <h2>
+            <button id="toggle-sidebar-main" class="toggle-btn" style=" background-color: grey; color: white; border: darkslategray; cursor: pointer;"> ☰ </button>
+
+        Bone Information Viewer
+        </h2>
         
         <!-- Dropdown for Boneset Selection -->
-        <label for="boneset-select">Bone set</label>
+        <div>
+        <label for="boneset-select"> Bone set </label>
         <select id="boneset-select">
             <option value="">--Select a Boneset--</option>
         </select>
-        
+        </div>
+
         <!-- Dropdown for Bone Selection within Boneset -->
+        <div>
         <label for="bone-select">Find bone</label>
         <select id="bone-select">
             <option value="">--Select a Bone--</option>
         </select>
+        </div>
         
         <!-- Display Selected Bone Set and Bone Information -->
         <div class="bone-info">
@@ -210,16 +219,18 @@
             const selectedBoneId = event.target.value;
             console.log(`Selected Bone ID: ${selectedBoneId}`);
         });
-    });
+        });
 
-        // Sidebar Toggle
-        document.getElementById('toggle-sidebar').addEventListener('click', function() {
+
+
+        // Sidebar Toggle for Main Body Button
+        document.getElementById('toggle-sidebar-main').addEventListener('click', function() {
             const sidebar = document.querySelector('.sidebar');
             const content = document.querySelector('.content');
 
             // Toggle the "hidden" class on the sidebar
             sidebar.classList.toggle('hidden');
-            
+    
             // Toggle the "expanded" class on the content
             content.classList.toggle('expanded');
         });
