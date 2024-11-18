@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bone Information Viewer</title>
+    <title>Bone Set Viewer</title>
     <style>
         .container {
             display: flex;
@@ -93,6 +93,7 @@
 <body>
 
 <div class="container">
+
 
     
     <!-- Sidebar with Navigation -->
@@ -219,6 +220,7 @@
                 const selectedBoneId = event.target.value;
                 console.log(`Selected Bone ID: ${selectedBoneId}`);
             });
+
             });
 
 
@@ -233,8 +235,102 @@
     
             // Toggle the "expanded" class on the content
             content.classList.toggle('expanded');
+        // Populate dropdown menu with boneset names
+        async function populateDropdown() {
+            const dropdown = document.getElementById('boneset-select');
+            dropdown.innerHTML = '<option value="">--Please choose an option--</option>';
+
+            boneSets.forEach(bone => {
+                const option = document.createElement('option');
+                option.value = bone.id;
+                option.textContent = bone.name;
+                dropdown.appendChild(option);
+            });
+        }
+
+        // Debounce search for the search bar input
+        function debouncedSearch() {
+            clearTimeout(timeoutId);
+            const searchTerm = document.getElementById('search-bar').value.trim().toLowerCase();
+            
+            timeoutId = setTimeout(() => {
+                displaySearchResults(searchTerm);
+            }, 300);
+        }
+
+        // Display search results based on the search term
+        async function displaySearchResults(searchTerm) {
+            if (boneSets.length === 0) {
+                const data = await fetchJSON(BONESET_JSON_PATH);
+                boneSets = data.boneset;
+            }
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = '';
+
+            const filteredBonesets = boneSets.filter(set => 
+                set.name.toLowerCase().includes(searchTerm)
+            );
+
+            filteredBonesets.forEach(set => {
+                const listItem = document.createElement('li');
+                listItem.textContent = set.name;
+                listItem.onclick = () => {
+                    document.getElementById('search-bar').value = set.name;
+                    resultsContainer.innerHTML = '';
+                    renderBoneSet(set);  // Display selected bone set in main area
+                };
+                resultsContainer.appendChild(listItem);
+            });
+        }
+
+        // Event listeners for search bar and dropdown
+        document.getElementById('search-bar').addEventListener('input', debouncedSearch);
+        document.getElementById('boneset-select').addEventListener('change', () => {
+            const selectedId = document.getElementById('boneset-select').value;
+            const selectedSet = boneSets.find(set => set.id === selectedId);
+            if (selectedSet) renderBoneSet(selectedSet);
+        });
+
+        // Load the boneset data as soon as the page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            const data = await fetchJSON(BONESET_JSON_PATH);
+            boneSets = data.boneset;
+            currentSetIndex = 0; // Reset index to 0 on load
+
+            // Populate the dropdown menu with bonesets
+            populateDropdown();
+
+            // Display the first boneset in the list
+            renderBoneSet(boneSets[currentSetIndex]);
+
+            // Enable the navigation buttons
+            document.getElementById('prev-button').disabled = false;
+            document.getElementById('next-button').disabled = boneSets.length <= 1;
         });
 </script>
 
+        // Event listeners for "Previous" and "Next" buttons
+        document.getElementById('prev-button').addEventListener('click', () => {
+            if (currentSetIndex > 0) {
+                currentSetIndex--;
+                renderBoneSet(boneSets[currentSetIndex]);
+                document.getElementById('next-button').disabled = false;
+                if (currentSetIndex === 0) {
+                    document.getElementById('prev-button').disabled = true;
+                }
+            }
+        });
+
+        document.getElementById('next-button').addEventListener('click', () => {
+            if (currentSetIndex < boneSets.length - 1) {
+                currentSetIndex++;
+                renderBoneSet(boneSets[currentSetIndex]);
+                document.getElementById('prev-button').disabled = false;
+                if (currentSetIndex === boneSets.length - 1) {
+                    document.getElementById('next-button').disabled = true;
+                }
+            }
+        });
+    </script>
 </body>
 </html>
