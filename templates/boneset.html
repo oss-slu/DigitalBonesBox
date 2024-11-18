@@ -222,7 +222,6 @@
         });
 
 
-
         // Sidebar Toggle for Main Body Button
         document.getElementById('toggle-sidebar-main').addEventListener('click', function() {
             const sidebar = document.querySelector('.sidebar');
@@ -234,6 +233,38 @@
             // Toggle the "expanded" class on the content
             content.classList.toggle('expanded');
         });
+
+        // Search Functionality
+        document.getElementById('search-bar').addEventListener('input', debouncedSearch);
+        document.getElementById('boneset-select').addEventListener('change', () => {
+            const selectedId = document.getElementById('boneset-select').value;
+            const selectedSet = boneSets.find(set => set.id === selectedId);
+            if (selectedSet) renderBoneSet(selectedSet);
+        });
+
+        // Event listeners for "Previous" and "Next" buttons
+        document.getElementById('prev-button').addEventListener('click', () => {
+            if (currentSetIndex > 0) {
+                currentSetIndex--;
+                renderBoneSet(boneSets[currentSetIndex]);
+                document.getElementById('next-button').disabled = false;
+                if (currentSetIndex === 0) {
+                    document.getElementById('prev-button').disabled = true;
+                }
+            }
+        });
+
+        document.getElementById('next-button').addEventListener('click', () => {
+            if (currentSetIndex < boneSets.length - 1) {
+                currentSetIndex++;
+                renderBoneSet(boneSets[currentSetIndex]);
+                document.getElementById('prev-button').disabled = false;
+                if (currentSetIndex === boneSets.length - 1) {
+                    document.getElementById('next-button').disabled = true;
+                }
+            }
+        });
+
 </script>
 
 </body>
