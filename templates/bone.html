@@ -62,6 +62,14 @@
                 const image = document.createElement('img');
                 image.src = GITHUB_RAW_URL + IMAGES_PATH + bone.name.toLowerCase() + '.jpg';
                 image.alt = 'Image of the ' + bone.name;
+
+                image.onerror = () => {
+                    image.style.display = 'none';
+                    const errorMessage = document.createElement('p');
+                    errorMessage.textContent = 'Image of ' + bone.name + ' not found.';
+                    boneElement.appendChild(errorMessage);
+                };
+
                 boneElement.appendChild(image);
 
                 const annotationsList = document.createElement('ul');
