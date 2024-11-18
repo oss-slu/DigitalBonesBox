@@ -201,25 +201,25 @@
         document.getElementById('edit-button').style.display = 'block';
     }
 
-    // Event listeners for dropdowns
-    document.addEventListener('DOMContentLoaded', () => {
-        populateBoneSetDropdown();
+        // Event listeners for dropdowns
+        document.addEventListener('DOMContentLoaded', () => {
+            populateBoneSetDropdown();
 
-        document.getElementById('boneset-select').addEventListener('change', (event) => {
-            const selectedBoneSetId = event.target.value;
-            populateBonesDropdown(selectedBoneSetId);
-            
-            const selectedBoneSet = boneSets.find(boneSet => boneSet.id === selectedBoneSetId);
-            if (selectedBoneSet) {
-                displayBoneSetInfo(selectedBoneSet);
-            }
-        });
+            document.getElementById('boneset-select').addEventListener('change', (event) => {
+                const selectedBoneSetId = event.target.value;
+                populateBonesDropdown(selectedBoneSetId);
+                
+                const selectedBoneSet = boneSets.find(boneSet => boneSet.id === selectedBoneSetId);
+                if (selectedBoneSet) {
+                    displayBoneSetInfo(selectedBoneSet);
+                }
+            });
 
-        document.getElementById('bone-select').addEventListener('change', (event) => {
-            const selectedBoneId = event.target.value;
-            console.log(`Selected Bone ID: ${selectedBoneId}`);
-        });
-        });
+            document.getElementById('bone-select').addEventListener('change', (event) => {
+                const selectedBoneId = event.target.value;
+                console.log(`Selected Bone ID: ${selectedBoneId}`);
+            });
+            });
 
 
 
@@ -234,15 +234,6 @@
             // Toggle the "expanded" class on the content
             content.classList.toggle('expanded');
         });
-
-        // Search Functionality
-        document.getElementById('search-bar').addEventListener('input', debouncedSearch);
-        document.getElementById('boneset-select').addEventListener('change', () => {
-            const selectedId = document.getElementById('boneset-select').value;
-            const selectedSet = boneSets.find(set => set.id === selectedId);
-            if (selectedSet) renderBoneSet(selectedSet);
-        });
-
 </script>
 
 </body>
