@@ -1,0 +1,47 @@
+<div id="sidebar" style="display: none;">
+    <button id="close-sidebar">Close</button>
+    <ul>
+        <li><a href="#">Option 1</a></li>
+        <li><a href="#">Option 2</a></li>
+        <li><a href="#">Option 3</a></li>
+        <li><a href="#">Option 4</a></li>
+    </ul>
+</div>
+
+<style>
+    #sidebar {
+        position: fixed;
+        top: 0;
+        left: -250px; 
+        width: 250px;
+        height: 100%;
+        background-color: #333;
+        color: #fff;
+        overflow: hidden;
+        transition: left 0.3s ease;
+        padding-top: 20px;
+    }
+
+    #sidebar ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    #sidebar ul li {
+        margin: 15px 0;
+        padding: 10px;
+    }
+
+    #sidebar ul li a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    #close-sidebar {
+        background: #444;
+        border: none;
+        color: white;
+        padding: 8px;
+        cursor: pointer;
+    }
+</style>

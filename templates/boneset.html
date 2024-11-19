@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bone Set Viewer</title>
+    <title>Bone Information Viewer</title>
     <style>
         .container {
             width: 80%;
@@ -25,7 +25,7 @@
 </head>
 <body>
 
-    <h1>Bone Set Viewer</h1>
+    <h1>Bone Information Viewer</h1>
 
     <!-- Search Bar -->
     <input type="text" id="search-bar" placeholder="Search bone sets" style="margin-bottom: 10px;">
@@ -50,6 +50,12 @@
         <button id="next-button" disabled>Next</button>
     </div>
     
+    <button id="toggle-sidebar">Open Sidebar</button>
+
+    <div id="sidebar-container"></div>
+
+    <script src="sidebar.js"></script>
+
     <script>
         const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
         const BONESET_JSON_PATH = 'boneset.json';
@@ -175,6 +181,17 @@
                 }
             }
         });
+        // Load sidebar.html into the sidebar-container div
+        async function loadSidebar() {
+            try {
+                const response = await fetch('sidebar.html'); // Make sure sidebar.html is in the same directory
+                const sidebarHTML = await response.text();
+                document.getElementById('sidebar-container').innerHTML = sidebarHTML;
+            } catch (error) {
+                console.error('Failed to load sidebar:', error);
+            }
+        }
+        loadSidebar();
     </script>
 </body>
 </html>
