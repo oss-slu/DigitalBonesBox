@@ -4,50 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bone Set Viewer</title>
-    <style>
-        .container {
-            width: 80%;
-            margin: auto;
-            text-align: left;
-        }
-        .annotations {
-            text-align: left;
-            margin-top: 20px;
-        }
-        ul {
-            list-style-type: disc;
-        }
-        #search-results li {
-            cursor: pointer;
-            margin-top: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Bone Set Viewer</h1>
+    <div class="container">
+        <h1>Bone Set Viewer</h1>
 
-    <!-- Search Bar -->
-    <input type="text" id="search-bar" placeholder="Search bone sets" style="margin-bottom: 10px;">
-    <ul id="search-results"></ul> <!-- Container for search results -->
+        <!-- Search Bar -->
+        <input type="text" id="search-bar" placeholder="Search bone sets">
+        <ul id="search-results"></ul> <!-- Container for search results -->
 
-    <!-- Dropdown for Boneset Selection -->
-    <div>
-        <label for="bonesets">Choose a Boneset:</label>
-        <select id="boneset-select" style="margin-bottom: 10px;">
-            <option value="">--Please choose an option--</option>
-        </select>
-    </div>
+        <!-- Dropdown for Boneset Selection -->
+        <div>
+            <label for="bonesets">Choose a Boneset:</label>
+            <select id="boneset-select">
+                <option value="">--Please choose an option--</option>
+            </select>
+        </div>
 
-    <!-- Container for the Boneset Names and IDs -->
-    <div id="bone-sets-container">
-        <h2>Bonesets</h2>
-        <ul id="bone-set-list"></ul>
-    </div>
-    
-    <div class="navigation-buttons">
-        <button id="prev-button" disabled>Previous</button>
-        <button id="next-button" disabled>Next</button>
+        <!-- Container for the Boneset Names and IDs -->
+        <div id="bone-sets-container">
+            <h2>Bonesets</h2>
+            <ul id="bone-set-list"></ul>
+        </div>
+
+        <div class="navigation-buttons">
+            <button id="prev-button" disabled>Previous</button>
+            <button id="next-button" disabled>Next</button>
+        </div>
     </div>
     
     <script>
