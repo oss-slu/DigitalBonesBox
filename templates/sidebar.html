@@ -1,47 +1,52 @@
-<div id="sidebar" style="display: none;">
-    <button id="close-sidebar">Close</button>
+<div id="sidebar">
     <ul>
-        <li><a href="#">Option 1</a></li>
-        <li><a href="#">Option 2</a></li>
-        <li><a href="#">Option 3</a></li>
-        <li><a href="#">Option 4</a></li>
+        <li><i class="fa fa-search"></i> Search</li>
+        <li><i class="fa fa-address-book"></i> Contact</li>
+        <li><i class="fa fa-clock-o"></i> Recent</li>
+        <li><i class="fa fa-question-circle"></i> Help</li>
     </ul>
 </div>
 
+<!-- Include Font Awesome for the icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 <style>
     #sidebar {
         position: fixed;
-        top: 0;
-        left: -250px; 
+        top: 50px;
+        left: -250px; /* Hidden by default */
         width: 250px;
-        height: 100%;
+        height: calc(100% - 50px);
         background-color: #333;
         color: #fff;
         overflow: hidden;
         transition: left 0.3s ease;
-        padding-top: 20px;
+        z-index: 999;
     }
-
+    /* Sidebar list styles */
     #sidebar ul {
-        list-style-type: none;
+        list-style: none;
         padding: 0;
+        margin: 0;
     }
 
     #sidebar ul li {
-        margin: 15px 0;
-        padding: 10px;
-    }
-
-    #sidebar ul li a {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
         color: #fff;
-        text-decoration: none;
+        font-size: 18px;
+        border-bottom: 1px solid #444; /* Optional: Divider between items */
     }
 
-    #close-sidebar {
-        background: #444;
-        border: none;
-        color: white;
-        padding: 8px;
+    #sidebar ul li i {
+        margin-right: 10px; /* Space between icon and text */
+        font-size: 20px; /* Adjust icon size */
+    }
+
+    #sidebar ul li:hover {
+        background-color: #444; /* Highlight effect on hover */
         cursor: pointer;
     }
+
+
 </style>

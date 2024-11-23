@@ -3,59 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bone Information Viewer</title>
-    <style>
-        .container {
-            width: 80%;
-            margin: auto;
-            text-align: left;
-        }
-        .annotations {
-            text-align: left;
-            margin-top: 20px;
-        }
-        ul {
-            list-style-type: disc;
-        }
-        #search-results li {
-            cursor: pointer;
-            margin-top: 5px;
-        }
-    </style>
+    <title>Bone Set Viewer</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Bone Information Viewer</h1>
 
-    <!-- Search Bar -->
-    <input type="text" id="search-bar" placeholder="Search bone sets" style="margin-bottom: 10px;">
-    <ul id="search-results"></ul> <!-- Container for search results -->
-
-    <!-- Dropdown for Boneset Selection -->
-    <div>
-        <label for="bonesets">Choose a Boneset:</label>
-        <select id="boneset-select" style="margin-bottom: 10px;">
-            <option value="">--Please choose an option--</option>
-        </select>
+    <!-- Badge with Sidebar Toggle Button -->
+    <div id="badge">
+        <button id="toggle-sidebar">☰</button>
     </div>
 
-    <!-- Container for the Boneset Names and IDs -->
-    <div id="bone-sets-container">
-        <h2>Bonesets</h2>
-        <ul id="bone-set-list"></ul>
-    </div>
-    
-    <div class="navigation-buttons">
-        <button id="prev-button" disabled>Previous</button>
-        <button id="next-button" disabled>Next</button>
-    </div>
-    
-    <button id="toggle-sidebar">Open Sidebar</button>
-
+    <!-- Sidebar Container -->
     <div id="sidebar-container"></div>
 
     <script src="sidebar.js"></script>
 
+    <div id="editor-view">
+
+    <div class="container">
+        <h1>Bone Set Viewer</h1>
+
+        <!-- Search Bar -->
+        <input type="text" id="search-bar" placeholder="Search bone sets">
+        <ul id="search-results"></ul> <!-- Container for search results -->
+
+        <!-- Dropdown for Boneset Selection -->
+        <div>
+            <label for="bonesets">Choose a Boneset:</label>
+            <select id="boneset-select">
+                <option value="">--Please choose an option--</option>
+            </select>
+        </div>
+
+        <!-- Container for the Boneset Names and IDs -->
+        <div id="bone-sets-container">
+            <h2>Bonesets</h2>
+            <ul id="bone-set-list"></ul>
+        </div>
+
+        <div class="navigation-buttons">
+            <button id="prev-button" disabled>Previous</button>
+            <button id="next-button" disabled>Next</button>
+        </div>
+    </div>
+    </div>
+    
     <script>
         const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
         const BONESET_JSON_PATH = 'boneset.json';
@@ -181,17 +174,6 @@
                 }
             }
         });
-        // Load sidebar.html into the sidebar-container div
-        async function loadSidebar() {
-            try {
-                const response = await fetch('sidebar.html'); // Make sure sidebar.html is in the same directory
-                const sidebarHTML = await response.text();
-                document.getElementById('sidebar-container').innerHTML = sidebarHTML;
-            } catch (error) {
-                console.error('Failed to load sidebar:', error);
-            }
-        }
-        loadSidebar();
     </script>
 </body>
 </html>
