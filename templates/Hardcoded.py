@@ -1,83 +1,91 @@
-import xml.etree.ElementTree as ET
 import os
-import shutil
-import argparse
+import xml.etree.ElementTree as ET
 
-def extract_images_from_slide(slide_xml_path, rels_file_path, media_folder, output_dir):
-    print(f"Starting extraction for slide: {slide_xml_path}")
-    print(f"Using relationships file: {rels_file_path}")
-    print(f"Media folder: {media_folder}")
-    print(f"Output directory: {output_dir}")
-
-    # Parse the slide XML file
+def extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, output_folder):
+    # Step 1: Parse the slide XML to find image relationships
     try:
-        slide_tree = ET.parse(slide_xml_path)
-        slide_root = slide_tree.getroot()
-        print("Slide XML parsed successfully.")
-    except Exception as e:
-        print(f"Error parsing slide XML: {e}")
+        print(f"Parsing slide XML: {slide_xml_path}")
+        tree = ET.parse(slide_xml_path)
+        root = tree.getroot()
+    except ET.ParseError:
+        print(f"Error parsing {slide_xml_path}")
         return
 
-    # Parse the .rels file
-    rels_ns = {'rel': 'http://schemas.openxmlformats.org/package/2006/relationships'}
+    # Namespace handling for slide XML
+    ns = {'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
+          'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'}
+
+    # Step 2: Find all <a:blip> tags which reference images
+    print("Finding <a:blip> tags in the slide XML...")
+    blip_found = False
+    embed_ids = []  # List to store all found embed IDs
+    for blip in root.findall(".//a:blip", ns):
+        blip_found = True
+        embed = blip.attrib.get(f"{{{ns['r']}}}embed")  # Get r:embed value (e.g., rId3)
+        if embed:
+            embed = embed.strip()  # Strip any whitespace, just in case
+            embed_ids.append(embed)
+            print(f"Found <a:blip> with embed ID: '{embed}'")
+
+    if not blip_found:
+        print("No <a:blip> tags found in the slide XML.")
+        return
+
+    # Step 3: Parse the relationship file to find the image reference
     try:
-        rels_tree = ET.parse(rels_file_path)
+        print(f"Parsing relationships XML: {rels_xml_path}")
+        rels_tree = ET.parse(rels_xml_path)
         rels_root = rels_tree.getroot()
-
-        # Extract relationships
-        rels_map = {
-            rel.attrib["Id"]: rel.attrib["Target"]
-            for rel in rels_root.findall("rel:Relationship", rels_ns)
-        }
-        print(f"Relationships mapped: {rels_map}")
-    except Exception as e:
-        print(f"Error parsing .rels file: {e}")
+    except ET.ParseError:
+        print(f"Error parsing {rels_xml_path}")
         return
 
-    # Ensure the output directory exists
-    os.makedirs(output_dir, exist_ok=True)
-    print(f"Output directory checked/created: {output_dir}")
+    # Step 4: Handle namespaces in relationships XML
+    # Extract the namespace if it exists
+    rels_ns = ""
+    if '}' in rels_root.tag:
+        rels_ns = rels_root.tag.split('}')[0] + '}'
+    
+    # Step 5: Print all relationships for debugging
+    print("Listing all relationships from the relationships XML:")
+    relationships = {}
+    for rel in rels_root.findall(f".//{rels_ns}Relationship"):
+        rel_id = rel.attrib.get('Id', '').strip()
+        target = rel.attrib.get('Target', '').strip()
+        relationships[rel_id] = target
+        print(f"Relationship ID: '{rel_id}', Target: '{target}'")
 
-    # Debugging the structure of <p:pic> elements
-    pic_namespace = {'p': 'http://schemas.openxmlformats.org/presentationml/2006/main',
-                     'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
-                     'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'}
+    # Step 6: Cross-check embed IDs against relationships and extract images
+    for embed_id in embed_ids:
+        if embed_id in relationships:
+            target = relationships[embed_id]
+            print(f"Found relationship for embed ID '{embed_id}': Target -> {target}")
 
-    # Find all picture elements
-    image_found = False
-    for pic in slide_root.findall(".//p:pic", pic_namespace):
-        try:
-            print(f"Processing <p:pic>: {ET.tostring(pic, encoding='unicode')}")
-            blip = pic.find(".//a:blip", pic_namespace)
-            if blip is not None and "embed" in blip.attrib:
-                r_id = blip.attrib["{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed"]
-                print(f"Found r:embed ID: {r_id}")
+            # The target should point to an image in the media folder
+            image_path = os.path.join(media_folder, os.path.basename(target))
+            print(f"Resolved image path: {image_path}")
 
-                if r_id in rels_map:
-                    # Locate the image file
-                    image_path = os.path.join(media_folder, os.path.basename(rels_map[r_id]))
-                    if os.path.exists(image_path):
-                        # Save the image to the output directory
-                        output_path = os.path.join(output_dir, os.path.basename(image_path))
-                        shutil.copy(image_path, output_path)
-                        print(f"Image saved: {output_path}")
-                        image_found = True
-                    else:
-                        print(f"Image file not found in media folder: {image_path}")
-                else:
-                    print(f"r:embed ID {r_id} not found in .rels map.")
+            # Step 7: Copy the image to the output folder
+            if os.path.exists(image_path):
+                image_output_path = os.path.join(output_folder, os.path.basename(target))
+                with open(image_path, 'rb') as img_in, open(image_output_path, 'wb') as img_out:
+                    img_out.write(img_in.read())
+                    print(f"Extracted: {image_output_path}")
             else:
-                print(f"No <a:blip> or missing 'embed' attribute in <p:pic>: {ET.tostring(pic, encoding='unicode')}")
-        except Exception as e:
-            print(f"Error processing <p:pic> element: {e}")
+                print(f"Image not found: {image_path}")
+        else:
+            print(f"No relationship found for embed ID: '{embed_id}'")
 
-    if not image_found:
-        print("No images were extracted. Check your slide XML, .rels file, and media folder paths.")
+if __name__ == "__main__":
+    # Define your file paths
+    slide_xml_path = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/slides/slide2.xml'           # Replace with the path to your slide XML file
+    rels_xml_path = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/slides/_rels/slide2.xml.rels'  # Replace with the path to the corresponding relationships file
+    media_folder = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/media'                         # Replace with the path to the media folder
+    output_folder = '/Users/burhankhan/Desktop/images'                                        # Replace with your desired output directory
 
-# Example usage
-slide_xml_path = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/slides/slide2.xml'
-rels_file_path = "/Users/burhankhan/Desktop/CSCI-4961-01/ppt/slides/_rels/slide2.xml.rels"
-media_folder = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/media'
-output_dir = '/Users/burhankhan/Desktop/images'
+    # Ensure output folder exists
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
 
-extract_images_from_slide(slide_xml_path, rels_file_path, media_folder, output_dir)
+    # Run the extraction
+    extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, output_folder)

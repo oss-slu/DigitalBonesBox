@@ -36,13 +36,19 @@ def extract_images_from_slide(slide_xml_path, rels_file_path, media_folder, outp
 
     # Ensure the output directory exists
     os.makedirs(output_dir, exist_ok=True)
-    print(f"Output directory created: {output_dir}")
+    print(f"Output directory checked/created: {output_dir}")
 
-    # Find all picture elements and extract image references
+    # Debugging the structure of <p:pic> elements
+    pic_namespace = {'p': 'http://schemas.openxmlformats.org/presentationml/2006/main',
+                     'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
+                     'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'}
+
+    # Find all picture elements
     image_found = False
-    for pic in slide_root.findall(".//{http://schemas.openxmlformats.org/presentationml/2006/main}pic"):
+    for pic in slide_root.findall(".//p:pic", pic_namespace):
         try:
-            blip = pic.find(".//{http://schemas.openxmlformats.org/drawingml/2006/main}blip")
+            print(f"Processing <p:pic>: {ET.tostring(pic, encoding='unicode')}")
+            blip = pic.find(".//a:blip", pic_namespace)
             if blip is not None and "embed" in blip.attrib:
                 r_id = blip.attrib["{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed"]
                 print(f"Found r:embed ID: {r_id}")
@@ -61,22 +67,17 @@ def extract_images_from_slide(slide_xml_path, rels_file_path, media_folder, outp
                 else:
                     print(f"r:embed ID {r_id} not found in .rels map.")
             else:
-                print("No valid <a:blip> found in <p:pic> element.")
+                print(f"No <a:blip> or missing 'embed' attribute in <p:pic>: {ET.tostring(pic, encoding='unicode')}")
         except Exception as e:
             print(f"Error processing <p:pic> element: {e}")
 
     if not image_found:
         print("No images were extracted. Check your slide XML, .rels file, and media folder paths.")
 
-if __name__ == "__main__":
-    # Set up argument parsing
-    parser = argparse.ArgumentParser(description="Extract images from a PowerPoint slide XML and relationships files.")
-    parser.add_argument("--slide", type=str, help="Path to the slide XML file.", required=True)
-    parser.add_argument("--rels", type=str, help="Path to the relationships (.rels) file.", required=True)
-    parser.add_argument("--media", type=str, help="Path to the media folder.", required=True)
-    parser.add_argument("--output", type=str, help="Path to the output directory to save images.", required=True)
+# Example usage
+slide_xml_path = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/slides/slide2.xml'
+rels_file_path = "/Users/burhankhan/Desktop/CSCI-4961-01/ppt/slides/_rels/slide2.xml.rels"
+media_folder = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/media'
+output_dir = '/Users/burhankhan/Desktop/images'
 
-    args = parser.parse_args()
-
-    # Extract images based on provided arguments
-    extract_images_from_slide(args.slide, args.rels, args.media, args.output)
+extract_images_from_slide(slide_xml_path, rels_file_path, media_folder, output_dir)
