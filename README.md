@@ -19,16 +19,17 @@ HTMX: A lightweight JavaScript library for enhancing interactivity by allowing p
 CSS: For styling and layout of the web pages to ensure a clean and responsive design for users across devices.
 
 ## Auto-Update Feature
-Purpose
+### Purpose
 The auto-update feature allows the web application to periodically refresh the displayed data without requiring manual intervention. This ensures that users always have access to the latest information, such as newly added bones or updates to annotations.
 
-How to Configure or Use
+### How to Configure Or Use
 The auto-update functionality is enabled by default and is integrated with the application's main display page.
 To modify the auto-update interval or disable it:
 Open the bones.js file.
 Locate the auto-update configuration settings.
 Adjust the interval (in milliseconds) or disable the feature as needed.
-Dependencies or Requirements
+
+### Dependencies or Requirements
 HTMX: Ensures partial page updates are seamless.
 Browser Support: Modern browsers are recommended for optimal performance.
 
