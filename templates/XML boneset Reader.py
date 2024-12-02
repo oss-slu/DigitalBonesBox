@@ -19,22 +19,34 @@ def extract_bones_from_xml_to_json(xml_path, output_json_path):
         'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
     }
 
-    # Step 2: Extract bones and use a set to prevent duplicates
+    # Step 2: Extract boneset name dynamically
+    boneset_name = None
+    boneset_element = root.find(".//p:sp/p:txBody//a:t", ns)
+    if boneset_element is not None:
+        boneset_name = boneset_element.text.strip()
+        print(f"Found boneset name: {boneset_name}")
+    else:
+        print("No boneset name found.")
+        boneset_name = "Unknown Boneset"
+
+    # Step 3: Extract bones and use a set to prevent duplicates
     unique_bones = set()
 
     for boneset in root.findall(".//p:sp", ns):  # Adjust this path as necessary for your XML structure
         for bone in boneset.findall(".//p:txBody//a:r/a:t", ns):
             bone_name = bone.text.strip() if bone.text else None
-            if bone_name and is_valid_bone_name(bone_name):
-                unique_bones.add(bone_name)
+            if bone_name and is_valid_bone_name(bone_name, boneset_name):
+                # Normalize the bone name to lowercase to handle case insensitivity
+                unique_bones.add(bone_name.lower())
 
-    # Step 3: Create a single boneset with all unique bones
+    # Step 4: Create a single boneset with all unique bones
+    # Capitalize the first letter of each bone for consistency in JSON output
     output_data = {
-        'boneset': 'Upper Limb',  # Replace with the appropriate boneset name if needed
-        'bones': sorted(unique_bones)  # Convert the set to a sorted list for consistent output
+        'boneset': boneset_name,
+        'bones': sorted(bone.capitalize() for bone in unique_bones)  # Convert the set to a sorted list
     }
 
-    # Step 4: Write the JSON data to a file
+    # Step 5: Write the JSON data to a file
     try:
         with open(output_json_path, 'w') as json_file:
             json.dump(output_data, json_file, indent=4)
@@ -42,9 +54,9 @@ def extract_bones_from_xml_to_json(xml_path, output_json_path):
     except IOError as e:
         print(f"Error writing to {output_json_path}: {e}")
 
-def is_valid_bone_name(name):
+def is_valid_bone_name(name, boneset_name):
     """
-    Determines if a given name is a valid bone name.
+    Determines if a given name is a valid bone name, excluding those that contain the boneset name.
     """
     if not name:  # Ignore empty strings
         return False
@@ -61,12 +73,25 @@ def is_valid_bone_name(name):
     if name.islower():  # Ignore entirely lowercase words
         return False
 
+    # Exclude names that contain the boneset name (case-insensitive)
+    if boneset_name and boneset_name.lower() in name.lower():
+        return False
+
+    if "Home" in name:
+        return False
+
+    if "The" in name:
+        return False
+
     return True
 
 if __name__ == "__main__":
-    # Define your XML file path and output JSON file path
-    xml_file_path = "/Users/tluke/OneDrive/Documents/GitHub/DigitalBoneBox/templates/slide2.xml"
-    json_file_path = "/Users/tluke/OneDrive/Documents/GitHub/DigitalBoneBox/templates/output.json"
+    # Get the directory of the current script
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Define the XML and JSON file paths relative to the script's directory
+    xml_file_path = os.path.join(current_dir, "slide2UpperLimb.xml")
+    json_file_path = os.path.join(current_dir, "output.json")
 
     # Run the extraction and save as JSON
     extract_bones_from_xml_to_json(xml_file_path, json_file_path)
