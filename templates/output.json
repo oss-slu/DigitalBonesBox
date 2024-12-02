@@ -1,0 +1,9 @@
+{
+    "boneset": "Upper Limb",
+    "bones": [
+        "Hand",
+        "Humerus",
+        "Radius",
+        "Ulna"
+    ]
+}
