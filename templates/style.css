@@ -97,3 +97,24 @@ ul {
 ul li {
     margin: 5px 0;
 }
+
+/* Badge at the top of the webpage */
+#badge {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensures it stays on top of all elements */
+}
+
+#editor-view {
+    margin-top: 40px; /* Add margin to move the content below the badge */
+    padding: 20px; /* Keep consistent padding for readability */
+}
