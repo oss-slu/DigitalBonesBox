@@ -27,6 +27,12 @@ CSS: For styling and layout of the web pages to ensure a clean and responsive de
 Interactive and accessible web application for students to study human anatomy.
 Quick revision tool with annotated images of bones.
 Designed for use on iPads, laptops, or other devices commonly used by students.
+- **Toggle Sidebar**:
+  - A collapsible sidebar that enhances navigation within the app.
+  - Includes **placeholder options** such as **Search**, **Contact**, **Recent**, and **Help**, which are non-functional and reserved for future implementation.
+  - Users can open and close the sidebar using the ☰ button on the top-left corner of the page.
+
+
 
 ## Setup
 Clone the repository:
