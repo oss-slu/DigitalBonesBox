@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bone Editor</title>
+    <title>Bones Viewer</title>
     <script src="https://unpkg.com/htmx.org"></script>
 </head>
 <body>
     <div id="editor-view">
-        <h1>Bone Editor</h1>
+        <h1>Bones Viewer</h1>
         <button id="load-bones">Load Bones</button>
         <div id="bones-container"></div>
     </div>
 
     <script>
-        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
-        const BONES_JSON_PATH = 'bones.json';
-        const ANNOTATIONS_JSON_PATH = 'annotations.json';
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/';
+        const BONES_JSON_PATH = 'json/bones.json';
+        const ANNOTATIONS_JSON_PATH = 'json/annotations.json';
+        const IMAGES_PATH = 'images/';
 
         async function fetchJSON(path) {
             const url = GITHUB_RAW_URL + path;
@@ -57,6 +58,19 @@
 
                 const description = document.createElement('p');
                 description.textContent = bone.description;
+
+                const image = document.createElement('img');
+                image.src = GITHUB_RAW_URL + IMAGES_PATH + bone.name.toLowerCase() + '.jpg';
+                image.alt = 'Image of the ' + bone.name;
+
+                image.onerror = () => {
+                    image.style.display = 'none';
+                    const errorMessage = document.createElement('p');
+                    errorMessage.textContent = 'Image of ' + bone.name + ' not found.';
+                    boneElement.appendChild(errorMessage);
+                };
+
+                boneElement.appendChild(image);
 
                 const annotationsList = document.createElement('ul');
                 bone.annotations.forEach(annotationId => {
