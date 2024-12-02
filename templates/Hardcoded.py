@@ -1,4 +1,5 @@
 import os
+import argparse
 import xml.etree.ElementTree as ET
 
 def extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, output_folder):
@@ -77,15 +78,19 @@ def extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, o
             print(f"No relationship found for embed ID: '{embed_id}'")
 
 if __name__ == "__main__":
-    # Define your file paths
-    slide_xml_path = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/slides/slide2.xml'           # Replace with the path to your slide XML file
-    rels_xml_path = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/slides/_rels/slide2.xml.rels'  # Replace with the path to the corresponding relationships file
-    media_folder = '/Users/burhankhan/Desktop/CSCI-4961-01/ppt/media'                         # Replace with the path to the media folder
-    output_folder = '/Users/burhankhan/Desktop/images'                                        # Replace with your desired output directory
+    # Create argument parser
+    parser = argparse.ArgumentParser(description="Extract images from a PowerPoint slide XML.")
+    parser.add_argument("--slide_xml_path", required=True, help="Path to the slide XML file.")
+    parser.add_argument("--rels_xml_path", required=True, help="Path to the relationships XML file.")
+    parser.add_argument("--media_folder", required=True, help="Path to the media folder containing images.")
+    parser.add_argument("--output_folder", required=True, help="Path to the output folder for extracted images.")
+
+    # Parse arguments
+    args = parser.parse_args()
 
     # Ensure output folder exists
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
+    if not os.path.exists(args.output_folder):
+        os.makedirs(args.output_folder)
 
     # Run the extraction
-    extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, output_folder)
+    extract_images_from_slide_xml(args.slide_xml_path, args.rels_xml_path, args.media_folder, args.output_folder)
