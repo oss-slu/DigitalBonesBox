@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import json
-# this is the code for one slide at a time
+# this is the code for one slide at a time. 
+
 def parse_slide_xml(xml_file, output_json_path):
     # Load the XML file
     tree = ET.parse(xml_file)
@@ -10,6 +11,7 @@ def parse_slide_xml(xml_file, output_json_path):
     ns = {
         'p': 'http://schemas.openxmlformats.org/presentationml/2006/main',
         'a': 'http://schemas.openxmlformats.org/drawingml/2006/main'
+        
     }
     
     annotations = []
@@ -76,6 +78,6 @@ def parse_slide_xml(xml_file, output_json_path):
     print(f"Annotations saved to {output_json_path}")
 
 # Example usage
-xml_file = "slide1.xml"  # Replace with your slide XML file path
-output_json = "slide1_annotations.json"  # Output JSON file
+xml_file = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides/slide3.xml" # path to XML file
+output_json = "slide3_annotations.json"  # Output JSON file
 parse_slide_xml(xml_file, output_json)
