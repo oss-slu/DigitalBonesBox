@@ -5,89 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bones Viewer</title>
     <script src="https://unpkg.com/htmx.org"></script>
+    <script src="bones.js" defer></script>
 </head>
 <body>
     <div id="editor-view">
         <h1>Bones Viewer</h1>
+        <button id="create-bone">Create Bone</button>
         <button id="load-bones">Load Bones</button>
         <div id="bones-container"></div>
     </div>
 
+    <div id="edit-mode" style="display: none;">
+        <h2 id="edit-title">Edit/Create Bone</h2>
+        <form id="bone-form">
+            <label for="bone-id">Bone ID (auto-generated):</label>
+            <input type="text" id="bone-id" disabled><br>
+
+            <label for="bone-name">Bone Name:</label>
+            <input type="text" id="bone-name"><br>
+
+            <label for="bone-description">Description:</label>
+            <textarea id="bone-description"></textarea><br>
+
+            <label for="bone-image-path">Image Path:</label>
+            <input type="text" id="bone-image-path"><br>
+
+            <label for="bone-annotations">Annotations (comma-separated IDs):</label>
+            <input type="text" id="bone-annotations"><br>
+
+            <button type="button" id="save-bone">Save</button>
+            <button type="button" id="cancel-edit">Cancel</button>
+        </form>
+    </div>
+
     <script>
+        let bonesData = { bones: [] }; 
         const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/';
         const BONES_JSON_PATH = 'json/bones.json';
-        const ANNOTATIONS_JSON_PATH = 'json/annotations.json';
-        const IMAGES_PATH = 'images/';
 
         async function fetchJSON(path) {
-            const url = GITHUB_RAW_URL + path;
-            console.log('Fetching data from:', url);
-
-            const response = await fetch(url);
-            console.log('Response status:', response.status);
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok: ' + response.statusText);
-            }
+            const response = await fetch(GITHUB_RAW_URL + path);
+            if (!response.ok) throw new Error('Network error: ' + response.statusText);
             return response.json();
         }
 
-        document.getElementById('load-bones').addEventListener('click', async () => {
+        async function loadBones() {
             try {
-                const [bonesData, annotationsData] = await Promise.all([
-                    fetchJSON(BONES_JSON_PATH),
-                    fetchJSON(ANNOTATIONS_JSON_PATH)
-                ]);
-                displayBones(bonesData, annotationsData);
+                bonesData = await fetchJSON(BONES_JSON_PATH);
+                displayBones(bonesData.bones);
             } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('bones-container').innerText = 'Failed to load bones data.';
+                console.error('Error loading bones:', error);
             }
-        });
+        }
 
-        function displayBones(bonesData, annotationsData) {
+        function displayBones(bones) {
             const container = document.getElementById('bones-container');
-            container.innerHTML = ''; // Clear previous content
-
-            bonesData.bones.forEach(bone => {
+            container.innerHTML = '';
+            bones.forEach(bone => {
                 const boneElement = document.createElement('div');
-                boneElement.classList.add('bone'); // Optional class for styling
-
-                const title = document.createElement('h2');
-                title.textContent = bone.name;
-
-                const description = document.createElement('p');
-                description.textContent = bone.description;
-
-                const image = document.createElement('img');
-                image.src = GITHUB_RAW_URL + IMAGES_PATH + bone.name.toLowerCase() + '.jpg';
-                image.alt = 'Image of the ' + bone.name;
-
-                image.onerror = () => {
-                    image.style.display = 'none';
-                    const errorMessage = document.createElement('p');
-                    errorMessage.textContent = 'Image of ' + bone.name + ' not found.';
-                    boneElement.appendChild(errorMessage);
-                };
-
-                boneElement.appendChild(image);
-
-                const annotationsList = document.createElement('ul');
-                bone.annotations.forEach(annotationId => {
-                    const annotation = annotationsData.annotations.find(a => a.annotation_id === annotationId.toString());
-                    if (annotation) {
-                        const annotationItem = document.createElement('li');
-                        annotationItem.textContent = annotation.text;
-                        annotationsList.appendChild(annotationItem);
-                    }
-                });
-
-                boneElement.appendChild(title);
-                boneElement.appendChild(description);
-                boneElement.appendChild(annotationsList);
+                boneElement.innerHTML = `
+                    <h2>${bone.name}</h2>
+                    <p>${bone.description}</p>
+                    <button class="edit-bone" data-id="${bone.id}">Edit</button>
+                    <button class="create-new-bone">Create New</button>
+                `;
                 container.appendChild(boneElement);
             });
+
+            document.querySelectorAll('.edit-bone').forEach(button => {
+                button.addEventListener('click', () => openEditMode(button.dataset.id));
+            });
+
+            document.querySelectorAll('.create-new-bone').forEach(button => {
+                button.addEventListener('click', () => openEditMode());
+            });
         }
+
+        function openEditMode(boneId = null) {
+            const form = document.getElementById('bone-form');
+            const editMode = document.getElementById('edit-mode');
+            const isEdit = boneId !== null;
+
+            document.getElementById('edit-title').textContent = isEdit ? 'Edit Bone' : 'Create Bone';
+            editMode.style.display = 'block';
+
+            if (isEdit) {
+                const bone = bonesData.bones.find(b => b.id === boneId);
+                form['bone-id'].value = bone.id;
+                form['bone-name'].value = bone.name;
+                form['bone-description'].value = bone.description;
+                form['bone-image-path'].value = bone.imagePath;
+                form['bone-annotations'].value = bone.annotations.join(',');
+            } else {
+                form.reset();
+                form['bone-id'].value = `bone_${Date.now()}`; 
+            }
+        }
+
+        function saveBone() {
+            const form = document.getElementById('bone-form');
+            const bone = {
+                id: form['bone-id'].value,
+                name: form['bone-name'].value,
+                description: form['bone-description'].value,
+                imagePath: form['bone-image-path'].value,
+                annotations: form['bone-annotations'].value.split(',').map(id => id.trim()),
+            };
+
+            const existingIndex = bonesData.bones.findIndex(b => b.id === bone.id);
+            if (existingIndex > -1) {
+                bonesData.bones[existingIndex] = bone; 
+            } else {
+                bonesData.bones.push(bone); 
+            }
+
+            displayBones(bonesData.bones);
+            document.getElementById('edit-mode').style.display = 'none';
+        }
+
+        document.getElementById('create-bone').addEventListener('click', () => openEditMode());
+        document.getElementById('load-bones').addEventListener('click', loadBones);
+        document.getElementById('save-bone').addEventListener('click', saveBone);
+        document.getElementById('cancel-edit').addEventListener('click', () => {
+            document.getElementById('edit-mode').style.display = 'none';
+        });
+
+        loadBones();
     </script>
 </body>
 </html>
