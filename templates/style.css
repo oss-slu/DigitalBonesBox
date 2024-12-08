@@ -118,3 +118,55 @@ ul li {
     margin-top: 40px; /* Add margin to move the content below the badge */
     padding: 20px; /* Keep consistent padding for readability */
 }
+
+
+#text-button-Home {
+    padding: 20px;
+    cursor: pointer;
+}
+
+
+#text-button-Tutor {
+    padding: 20px;
+    cursor: pointer;
+}
+
+
+#text-button-Study {
+    padding: 20px;
+    cursor: pointer;
+}
+#text-button-Help {
+    padding: 20px;
+    cursor: pointer;
+}
+
+
+#text-button-Login {
+    padding: 20px;
+    cursor: pointer;
+    align-items: right;
+
+}
+
+#text-button-SignUp {
+    padding: 20px;
+    cursor: pointer;
+    align-items: right;
+
+
+}
+
+
+#innerbadge {
+    display: flex; /* Enable Flexbox for the container */
+    justify-content: flex-end; /* Align items to the far right */
+    align-items: center; /* Optional: Vertically center the items */
+    width: 100%; /* Ensure the container spans the full width of the screen */
+    padding-right: 20px; /* Adds space between the buttons and the right edge */
+    box-sizing: border-box;
+    width: 75%
+
+
+}
+
