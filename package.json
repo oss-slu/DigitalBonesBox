@@ -4,8 +4,11 @@
   "description": "This project is a Web App project aims to convert an existing PowerPoint-based educational tool into an interactive, mobile-friendly web application.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node server.js"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +17,12 @@
     "body-parser": "^1.20.3",
     "express": "^4.21.1",
     "simple-git": "^3.27.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "directories": {
+    "test": "tests"
   }
 }

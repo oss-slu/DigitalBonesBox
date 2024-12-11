@@ -5,8 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bones Viewer</title>
     <script src="https://unpkg.com/htmx.org"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- Badge with Sidebar Toggle Button -->
+    <div id="badge">
+        <button id="toggle-sidebar">☰</button>
+    </div>
+
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+
+    <script src="sidebar.js"></script>
+
     <div id="editor-view">
         <h1>Bones Viewer</h1>
         <button id="load-bones">Load Bones</button>
