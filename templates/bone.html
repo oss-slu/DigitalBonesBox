@@ -4,131 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bones Viewer</title>
-    <script src="https://unpkg.com/htmx.org"></script>
-    <link rel="stylesheet" href="style.css"> <!-- Link to the provided style.css -->
-    <style>
-        /* Additional styles specific to bone.html */
-        #editor-view {
-            width: 100%;
-            max-width: 800px;
-            margin: 80px auto 0; /* Center the content and add space for the badge */
-            padding: 20px;
-            text-align: center;
-        }
-
-        #load-bones {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 1rem;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        #load-bones:hover {
-            background-color: #0056b3;
-        }
-
-        #bones-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .bone {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-            text-align: left;
-        }
-
-        .bone h2 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .bone p {
-            font-size: 1rem;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .bone img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .bone ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .bone ul li {
-            font-size: 0.9rem;
-            color: #444;
-            margin-bottom: 5px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            #editor-view {
-                margin-top: 60px;
-                padding: 10px;
-            }
-
-            .bone {
-                padding: 15px;
-            }
-
-            .bone h2 {
-                font-size: 1.3rem;
-            }
-
-            .bone p {
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            #editor-view h1 {
-                font-size: 1.8rem;
-            }
-
-            .bone {
-                padding: 10px;
-            }
-
-            .bone h2 {
-                font-size: 1.2rem;
-            }
-
-            .bone p {
-                font-size: 0.8rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 
     <!-- Badge with Sidebar Toggle Button -->
     <div id="badge">
         <button id="toggle-sidebar">☰</button>
+        <span id="text-button-Home" role="button">Home</span> 
+        <span id="text-button-Tutor" role="button">Tutor</span> 
+        <span id="text-button-Study" role="button">Study</span> 
+        <span id="text-button-Help" role="button">Help</span> 
+
         <div id="innerbadge">
-            <div id="text-button-Home">Home</div>
-            <div id="text-button-Tutor">Tutor</div>
-            <div id="text-button-Study">Study</div>
-            <div id="text-button-Help">Help</div>
-            <div id="text-button-Login">Login</div>
-            <div id="text-button-SignUp">Sign Up</div>
+        <span id="text-button-Login" role="button">Login</span>          
+        <span id="text-button-SignUp" role="button">Sign Up</span> 
         </div>
     </div>
 
@@ -138,95 +29,97 @@
     <script src="sidebar.js"></script>
 
     <div id="editor-view">
-        <h1>Bones Viewer</h1>
-        <button id="load-bones">Load Bones</button>
-        <div id="bones-container"></div>
-    </div>
 
-    <script>
-        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/';
-        const BONES_JSON_PATH = 'json/bones.json';
-        const ANNOTATIONS_JSON_PATH = 'json/annotations.json';
-        const IMAGES_PATH = 'images/';
-
-        async function fetchJSON(path) {
-            const url = GITHUB_RAW_URL + path;
-            console.log('Fetching data from:', url);
-
-            const response = await fetch(url);
-            console.log('Response status:', response.status);
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok: ' + response.statusText);
+        <div id="editor-view">
+            <h1>Bones Viewer</h1>
+            <button id="load-bones">Load Bones</button>
+            <div id="bones-container"></div>
+        </div>
+    
+        <script>
+            const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/';
+            const BONES_JSON_PATH = 'json/bones.json';
+            const ANNOTATIONS_JSON_PATH = 'json/annotations.json';
+            const IMAGES_PATH = 'images/';
+    
+            async function fetchJSON(path) {
+                const url = GITHUB_RAW_URL + path;
+                console.log('Fetching data from:', url);
+    
+                const response = await fetch(url);
+                console.log('Response status:', response.status);
+    
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
             }
-            return response.json();
-        }
-
-        document.getElementById('load-bones').addEventListener('click', async () => {
-            try {
-                const [bonesData, annotationsData] = await Promise.all([
-                    fetchJSON(BONES_JSON_PATH),
-                    fetchJSON(ANNOTATIONS_JSON_PATH)
-                ]);
-                displayBones(bonesData, annotationsData);
-
-                // Hide the "Load Bones" button after it's clicked
-                document.getElementById('load-bones').style.display = 'none';
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('bones-container').innerText = 'Failed to load bones data.';
-            }
-        });
-
-        function displayBones(bonesData, annotationsData) {
-            const container = document.getElementById('bones-container');
-            container.innerHTML = ''; // Clear previous content
-
-            bonesData.bones.forEach(bone => {
-                const boneElement = document.createElement('div');
-                boneElement.classList.add('bone'); // Optional class for styling
-
-                const title = document.createElement('h2');
-                title.textContent = bone.name;
-
-                const description = document.createElement('p');
-                description.textContent = bone.description;
-
-                const image = document.createElement('img');
-                image.src = GITHUB_RAW_URL + IMAGES_PATH + bone.name.toLowerCase() + '.jpg';
-                image.alt = 'Image of the ' + bone.name;
-
-                image.onerror = () => {
-                    image.style.display = 'none';
-                    const errorMessage = document.createElement('p');
-                    errorMessage.textContent = 'Image of ' + bone.name + ' not found.';
-                    boneElement.appendChild(errorMessage);
-                };
-
-                boneElement.appendChild(image);
-
-                const annotationsList = document.createElement('ul');
-                bone.annotations.forEach(annotationId => {
-                    const annotation = annotationsData.annotations.find(a => a.annotation_id === annotationId.toString());
-                    if (annotation) {
-                        const annotationItem = document.createElement('li');
-                        annotationItem.textContent = annotation.text;
-                        annotationsList.appendChild(annotationItem);
-                    }
-                });
-
-                boneElement.appendChild(title);
-                boneElement.appendChild(description);
-                boneElement.appendChild(annotationsList);
-                container.appendChild(boneElement);
+    
+            document.getElementById('load-bones').addEventListener('click', async () => {
+                try {
+                    const [bonesData, annotationsData] = await Promise.all([
+                        fetchJSON(BONES_JSON_PATH),
+                        fetchJSON(ANNOTATIONS_JSON_PATH)
+                    ]);
+                    displayBones(bonesData, annotationsData);
+    
+                    // Hide the "Load Bones" button after it's clicked
+                    document.getElementById('load-bones').style.display = 'none';
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('bones-container').innerText = 'Failed to load bones data.';
+                }
             });
-        }
-
-        // Toggle Sidebar
-        document.getElementById('toggle-sidebar').addEventListener('click', () => {
-            const sidebar = document.getElementById('sidebar-container');
-            sidebar.classList.toggle('active');
-        });
-    </script>
+    
+            function displayBones(bonesData, annotationsData) {
+                const container = document.getElementById('bones-container');
+                container.innerHTML = ''; // Clear previous content
+    
+                bonesData.bones.forEach(bone => {
+                    const boneElement = document.createElement('div');
+                    boneElement.classList.add('bone'); // Optional class for styling
+    
+                    const title = document.createElement('h2');
+                    title.textContent = bone.name;
+    
+                    const description = document.createElement('p');
+                    description.textContent = bone.description;
+    
+                    const image = document.createElement('img');
+                    image.src = GITHUB_RAW_URL + IMAGES_PATH + bone.name.toLowerCase() + '.jpg';
+                    image.alt = 'Image of the ' + bone.name;
+    
+                    image.onerror = () => {
+                        image.style.display = 'none';
+                        const errorMessage = document.createElement('p');
+                        errorMessage.textContent = 'Image of ' + bone.name + ' not found.';
+                        boneElement.appendChild(errorMessage);
+                    };
+    
+                    boneElement.appendChild(image);
+    
+                    const annotationsList = document.createElement('ul');
+                    bone.annotations.forEach(annotationId => {
+                        const annotation = annotationsData.annotations.find(a => a.annotation_id === annotationId.toString());
+                        if (annotation) {
+                            const annotationItem = document.createElement('li');
+                            annotationItem.textContent = annotation.text;
+                            annotationsList.appendChild(annotationItem);
+                        }
+                    });
+    
+                    boneElement.appendChild(title);
+                    boneElement.appendChild(description);
+                    boneElement.appendChild(annotationsList);
+                    container.appendChild(boneElement);
+                });
+            }
+    
+            // Toggle Sidebar
+            document.getElementById('toggle-sidebar').addEventListener('click', () => {
+                const sidebar = document.getElementById('sidebar-container');
+                sidebar.classList.toggle('active');
+            });
+        </script>
 </body>
 </html>
