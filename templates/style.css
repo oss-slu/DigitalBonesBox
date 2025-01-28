@@ -170,3 +170,118 @@ ul li {
 
 }
 
+
+
+/* Additional styles specific to bone.html */
+#editor-view {
+    width: 100%;
+    max-width: 800px;
+    margin: 80px auto 0;
+    /* Center the content and add space for the badge */
+    padding: 20px;
+    text-align: center;
+}
+
+#load-bones {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+#load-bones:hover {
+    background-color: #0056b3;
+}
+
+#bones-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.bone {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    text-align: left;
+}
+
+.bone h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.bone p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.bone img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: auto;
+    margin: auto;
+    text-align: centre;
+}
+
+.bone ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.bone ul li {
+    font-size: 0.9rem;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #editor-view {
+        margin-top: 60px;
+        padding: 10px;
+    }
+
+    .bone {
+        padding: 15px;
+    }
+
+    .bone h2 {
+        font-size: 1.3rem;
+    }
+
+    .bone p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #editor-view h1 {
+        font-size: 1.8rem;
+    }
+
+    .bone {
+        padding: 10px;
+    }
+
+    .bone h2 {
+        font-size: 1.2rem;
+    }
+
+    .bone p {
+        font-size: 0.8rem;
+    }
+}
+
