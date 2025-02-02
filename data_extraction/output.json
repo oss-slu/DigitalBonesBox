@@ -1,9 +1,41 @@
-{
-    "boneset": "Upper Limb",
-    "bones": [
-        "Hand",
-        "Humerus",
-        "Radius",
-        "Ulna"
-    ]
-}
+[
+    {
+        "boneset": "Bony Pelvis",
+        "bones": [
+            "Ilium",
+            "Ischium",
+            "Pubis"
+        ],
+        "has_sub_bonesets": true
+    },
+    {
+        "boneset": "Right Pelvis",
+        "bones": [],
+        "has_sub_bonesets": false
+    },
+    {
+        "boneset": "Ilium",
+        "bones": [],
+        "has_sub_bonesets": false
+    },
+    {
+        "boneset": "Pubis",
+        "bones": [],
+        "has_sub_bonesets": false
+    },
+    {
+        "boneset": "Ischium",
+        "bones": [],
+        "has_sub_bonesets": false
+    },
+    {
+        "boneset": "Acetabulum",
+        "bones": [],
+        "has_sub_bonesets": false
+    },
+    {
+        "boneset": "Obturator foramen",
+        "bones": [],
+        "has_sub_bonesets": false
+    }
+]
