@@ -5,37 +5,30 @@
             "Ilium",
             "Ischium",
             "Pubis"
-        ],
-        "has_sub_bonesets": true
+        ]
     },
     {
         "boneset": "Right Pelvis",
-        "bones": [],
-        "has_sub_bonesets": false
+        "bones": []
     },
     {
         "boneset": "Ilium",
-        "bones": [],
-        "has_sub_bonesets": false
+        "bones": []
     },
     {
         "boneset": "Pubis",
-        "bones": [],
-        "has_sub_bonesets": false
+        "bones": []
     },
     {
         "boneset": "Ischium",
-        "bones": [],
-        "has_sub_bonesets": false
+        "bones": []
     },
     {
         "boneset": "Acetabulum",
-        "bones": [],
-        "has_sub_bonesets": false
+        "bones": []
     },
     {
         "boneset": "Obturator foramen",
-        "bones": [],
-        "has_sub_bonesets": false
+        "bones": []
     }
 ]
