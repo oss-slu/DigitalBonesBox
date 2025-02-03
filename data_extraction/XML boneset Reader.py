@@ -62,7 +62,6 @@ def generate_json_output(bonesets, output_json_path):
         structured_data.append({
             "boneset": boneset_name,
             "bones": sorted(bones),
-            "has_sub_bonesets": any(bone in bonesets for bone in bones)  # Check if any bone is also a boneset
         })
 
     # Save to JSON file
