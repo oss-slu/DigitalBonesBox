@@ -1,18 +1,18 @@
 import xml.etree.ElementTree as ET
 import json
-# this is the code for one slide at a time. 
+import os
 
 def parse_slide_xml(xml_file, output_json_path):
     # Load the XML file
     tree = ET.parse(xml_file)
     root = tree.getroot()
     
-    # Define namespaces used in the XML Not sure if this is correct
+    # Define namespaces used in the XML
     ns = {
         'p': 'http://schemas.openxmlformats.org/presentationml/2006/main',
         'a': 'http://schemas.openxmlformats.org/drawingml/2006/main'
-        
     }
+    
     annotations = []
     middle_x_min, middle_x_max = 2000000, 6000000  # Define X range for middle
     middle_y_min, middle_y_max = 1000000, 5000000  # Define Y range for middle
@@ -25,8 +25,8 @@ def parse_slide_xml(xml_file, output_json_path):
         
         xfrm = sp.find(".//a:xfrm", ns)
         if xfrm is not None:
-            pos = xfrm.find(".//a:off", ns)
-            size = xfrm.find(".//a:ext", ns)
+            pos = xfrm.find("./a:off", ns)
+            size = xfrm.find("./a:ext", ns)
             if pos is not None and size is not None:
                 x, y = int(pos.attrib.get("x", 0)), int(pos.attrib.get("y", 0))
                 width, height = int(size.attrib.get("cx", 0)), int(size.attrib.get("cy", 0))
@@ -35,12 +35,18 @@ def parse_slide_xml(xml_file, output_json_path):
                     annotation["text"] = text
                     annotation["position"] = {"x": x, "y": y, "width": width, "height": height}
                     annotations.append(annotation)
-    
+
+    # Ensure output directory exists
+    os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
+
     with open(output_json_path, 'w') as f:
         json.dump(annotations, f, indent=4)
     
     print(f"Annotations saved to {output_json_path}")
 
-xml_file = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides/slide3.xml"
-output_json = "slide3_annotations.json"
+# File paths
+xml_file = "data_extraction/slide2UpperLimb.xml"
+output_json = "data_extraction/slide3_annotations.json"
+
+# Run function with dynamic input
 parse_slide_xml(xml_file, output_json)
