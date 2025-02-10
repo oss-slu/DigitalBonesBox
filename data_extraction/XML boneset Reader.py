@@ -43,7 +43,7 @@ def extract_bones_from_xml(xml_path):
             if not all(word.isalpha() for word in boneset_name.split()):  
                 continue
 
-            if boneset_name and boneset_name not in bonesets:
+            if boneset_name not in bonesets:
                 bonesets[boneset_name] = set()
 
             # Extract bones within this boneset
