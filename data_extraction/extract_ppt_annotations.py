@@ -20,13 +20,15 @@ def parse_slide_xml(xml_file, output_json_path):
     for sp in root.findall(".//p:sp", ns):
         annotation = {}
         
+        # Extract text, if present
         text_elements = sp.findall(".//a:t", ns)
         text = ''.join([t.text for t in text_elements if t.text])
         
+        # Extract position and size
         xfrm = sp.find(".//a:xfrm", ns)
         if xfrm is not None:
-            pos = xfrm.find("./a:off", ns)
-            size = xfrm.find("./a:ext", ns)
+            pos = xfrm.find("a:off", ns)
+            size = xfrm.find("a:ext", ns)
             if pos is not None and size is not None:
                 x, y = int(pos.attrib.get("x", 0)), int(pos.attrib.get("y", 0))
                 width, height = int(size.attrib.get("cx", 0)), int(size.attrib.get("cy", 0))
@@ -34,14 +36,42 @@ def parse_slide_xml(xml_file, output_json_path):
                 if middle_x_min <= x <= middle_x_max and middle_y_min <= y <= middle_y_max:
                     annotation["text"] = text
                     annotation["position"] = {"x": x, "y": y, "width": width, "height": height}
+                    
+                    # Extract fill color, if present
+                    fill_color = sp.find(".//a:solidFill/a:srgbClr", ns)
+                    if fill_color is not None:
+                        annotation["color"] = fill_color.attrib.get("val")
+                    
                     annotations.append(annotation)
-
+    
+    # Collect lines
+    for ln in root.findall(".//p:cxnSp", ns):
+        annotation = {"shape": "line"}
+        
+        # Extract line color
+        line_color = ln.find(".//a:ln/a:solidFill/a:srgbClr", ns)
+        if line_color is not None:
+            annotation["color"] = line_color.attrib.get("val")
+            annotations.append(annotation["color"])
+        
+        # Extract position and size
+        xfrm = ln.find(".//a:xfrm", ns)
+        if xfrm is not None:
+            pos = xfrm.find("a:off", ns)
+            size = xfrm.find("a:ext", ns)
+            if pos is not None and size is not None:
+                x, y = int(pos.attrib.get("x", 0)), int(pos.attrib.get("y", 0))
+                width, height = int(size.attrib.get("cx", 0)), int(size.attrib.get("cy", 0))
+                
+                if middle_x_min <= x <= middle_x_max and middle_y_min <= y <= middle_y_max:
+                    annotation["position"] = {"x": x, "y": y, "width": width, "height": height}
+                    annotations.append(annotation)
+    
     # Ensure output directory exists
     output_dir = os.path.dirname(output_json_path)
-    if output_dir:  # Only create directory if it's not empty
+    if output_dir:
         os.makedirs(output_dir, exist_ok=True)
-
-
+    
     with open(output_json_path, 'w') as f:
         json.dump(annotations, f, indent=4)
     
