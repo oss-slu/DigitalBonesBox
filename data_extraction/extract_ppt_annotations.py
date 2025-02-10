@@ -15,7 +15,7 @@ def parse_slide_xml(xml_file, output_json_path):
     
     annotations = []
     middle_x_min, middle_x_max = 2000000, 6000000  # Define X range for middle
-    middle_y_min, middle_y_max = 1000000, 5000000  # Define Y range for middle
+    middle_y_min, middle_y_max = 1000000, 7000000  # Define Y range for middle
 
     for sp in root.findall(".//p:sp", ns):
         annotation = {}
@@ -37,7 +37,10 @@ def parse_slide_xml(xml_file, output_json_path):
                     annotations.append(annotation)
 
     # Ensure output directory exists
-    os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
+    output_dir = os.path.dirname(output_json_path)
+    if output_dir:  # Only create directory if it's not empty
+        os.makedirs(output_dir, exist_ok=True)
+
 
     with open(output_json_path, 'w') as f:
         json.dump(annotations, f, indent=4)
@@ -45,8 +48,8 @@ def parse_slide_xml(xml_file, output_json_path):
     print(f"Annotations saved to {output_json_path}")
 
 # File paths
-xml_file = "data_extraction/slide2UpperLimb.xml"
-output_json = "data_extraction/slide3_annotations.json"
+xml_file = "slide2Pelvis.xml"
+output_json = "slide2_pelvis_annotations.json"
 
 # Run function with dynamic input
 parse_slide_xml(xml_file, output_json)
