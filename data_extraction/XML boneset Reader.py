@@ -24,7 +24,7 @@ def extract_bones_from_xml(xml_path):
 
     bonesets = {}  # Dictionary to store bonesets
 
-    INVALID_BONESETS = {"Home", "The", "Title", "Slide", "Overview"}  
+    INVALID_BONESETS = {"Home", "The", "Title", "Slide", "Overview", "Labels"}  
 
 
     # Extract bonesets dynamically
@@ -39,6 +39,8 @@ def extract_bones_from_xml(xml_path):
             if not len(boneset_name_words) < 4:
                 continue
             if not boneset_name or boneset_name in INVALID_BONESETS:
+                continue
+            if not all(word.isalpha() for word in boneset_name.split()):  
                 continue
 
             if boneset_name and boneset_name not in bonesets:
@@ -108,7 +110,7 @@ if __name__ == "__main__":
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     # Define the XML and JSON file paths relative to the script's directory
-    xml_file_path = os.path.join(current_dir, "slide2Pelvis.xml")
+    xml_file_path = os.path.join(current_dir, "BoneyPelvisSlide4.xml")
     json_file_path = os.path.join(current_dir, "output.json")
 
     # Extract bonesets and their bones
