@@ -24,7 +24,7 @@ def extract_bones_from_xml(xml_path):
 
     bonesets = {}  # Dictionary to store bonesets
 
-    INVALID_BONESETS = {"Home", "The", "Title", "Slide", "Overview", "Labels"}  
+    INVALID_BONESETS = {"Home", "The", "Title", "Slide", "Overview", "Labels", "Right Pelvis" }  
 
 
     # Extract bonesets dynamically

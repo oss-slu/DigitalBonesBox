@@ -8,27 +8,11 @@
         ]
     },
     {
-        "boneset": "Right Pelvis",
-        "bones": []
-    },
-    {
-        "boneset": "Ilium",
-        "bones": []
-    },
-    {
-        "boneset": "Pubis",
-        "bones": []
-    },
-    {
-        "boneset": "Ischium",
-        "bones": []
-    },
-    {
-        "boneset": "Acetabulum",
-        "bones": []
-    },
-    {
-        "boneset": "Obturator foramen",
-        "bones": []
+        "boneset": "Iliac Crest",
+        "bones": [
+            "Anterior iliac spines",
+            "Auricular surface",
+            "Posterior iliac spines"
+        ]
     }
 ]
