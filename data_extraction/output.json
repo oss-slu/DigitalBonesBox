@@ -1,9 +1,18 @@
-{
-    "boneset": "Upper Limb",
-    "bones": [
-        "Hand",
-        "Humerus",
-        "Radius",
-        "Ulna"
-    ]
-}
+[
+    {
+        "boneset": "Bony Pelvis",
+        "bones": [
+            "Ilium",
+            "Ischium",
+            "Pubis"
+        ]
+    },
+    {
+        "boneset": "Iliac Crest",
+        "bones": [
+            "Anterior iliac spines",
+            "Auricular surface",
+            "Posterior iliac spines"
+        ]
+    }
+]
