@@ -89,7 +89,7 @@ if __name__ == "__main__":
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     # Define the XML and JSON file paths relative to the script's directory
-    xml_file_path = os.path.join(current_dir, "BoneyPelvisSlide4.xml")
+    xml_file_path = os.path.join(current_dir, "slide9Pelvis.xml")
     json_file_path = os.path.join(current_dir, "output.json")
 
     # Extract bonesets and their bones
