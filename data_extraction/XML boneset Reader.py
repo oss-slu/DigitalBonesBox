@@ -27,6 +27,7 @@ def extract_bones_from_xml(xml_path):
     current_boneset = None
     total_boneset = None
     bolded_set = None
+    boldedList= []
 
     # Extract bonesets based on hyperlinks and size attributes
     for sp_element in root.findall(".//p:sp", ns):
@@ -41,21 +42,24 @@ def extract_bones_from_xml(xml_path):
                 has_hyperlink = rPr_element.find("a:hlinkClick", ns) is not None
 
                 if has_hyperlink:
-                        if size == "1200":
-                            if total_boneset is None:
-                                total_boneset = text
-                                bonesets[total_boneset] = set()
-                                continue
-                            # These are their own bonesets
-                            current_boneset = text
-                            bonesets[current_boneset] = set()
-                            bonesets[total_boneset].add(text.capitalize())
-                        if is_bold and size == "1200":
-                            # If bold text appears, set it as the new active boneset for size 900 bones
+                    if size == "1200":
+                        if is_bold:
                             bolded_set = text
-                        elif size == "900" and bolded_set:
-                            # These are bones assigned to the most recent bolded boneset
+                        if total_boneset is None:
+                            total_boneset = text
+                            bonesets[total_boneset] = set()
+                            continue
+                        # These are their own bonesets
+                        current_boneset = text
+                        bonesets[current_boneset] = set()
+                        bonesets[total_boneset].add(text.capitalize())
+                    elif size == "900":
+                        if not bolded_set:
+                            boldedList.append(text.capitalize())
+                        else:
                             bonesets[bolded_set].add(text.capitalize())
+    for i in range(len(boldedList)):
+        bonesets[bolded_set].add(boldedList[i])
                         
 
     return bonesets
