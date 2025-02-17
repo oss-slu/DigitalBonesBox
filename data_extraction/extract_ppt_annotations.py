@@ -1,53 +1,50 @@
 import xml.etree.ElementTree as ET
 import json
-# this is the code for one slide at a time. 
+import os
 
 def parse_slide_xml(xml_file, output_json_path):
     # Load the XML file
     tree = ET.parse(xml_file)
     root = tree.getroot()
     
-    # Define namespaces used in the XML Not sure if this is correct
+    # Define namespaces used in the XML
     ns = {
         'p': 'http://schemas.openxmlformats.org/presentationml/2006/main',
         'a': 'http://schemas.openxmlformats.org/drawingml/2006/main'
-        
     }
     
     annotations = []
+    middle_x_min, middle_x_max = 2000000, 6000000  # Define X range for middle
+    middle_y_min, middle_y_max = 1000000, 7000000  # Define Y range for middle
 
-    # Parse shapes (`p:sp` elements for text and shapes)
     for sp in root.findall(".//p:sp", ns):
         annotation = {}
-
+        
         # Extract text, if present
         text_elements = sp.findall(".//a:t", ns)
         text = ''.join([t.text for t in text_elements if t.text])
-        if text:
-            annotation["text"] = text
-        
-        # Extract fill color, if present
-        fill_color = sp.find(".//a:solidFill/a:srgbClr", ns)
-        if fill_color is not None:
-            annotation["color"] = fill_color.attrib.get("val")
         
         # Extract position and size
         xfrm = sp.find(".//a:xfrm", ns)
         if xfrm is not None:
-            pos = xfrm.find(".//a:off", ns)
-            size = xfrm.find(".//a:ext", ns)
+            pos = xfrm.find("a:off", ns)
+            size = xfrm.find("a:ext", ns)
             if pos is not None and size is not None:
-                annotation["position"] = {
-                    "x": pos.attrib.get("x"),
-                    "y": pos.attrib.get("y"),
-                    "width": size.attrib.get("cx"),
-                    "height": size.attrib.get("cy")
-                }
-        
-        if annotation:
-            annotations.append(annotation)
-
-    # Parse lines (`p:cxnSp` elements for line annotations)
+                x, y = int(pos.attrib.get("x", 0)), int(pos.attrib.get("y", 0))
+                width, height = int(size.attrib.get("cx", 0)), int(size.attrib.get("cy", 0))
+                
+                if middle_x_min <= x <= middle_x_max and middle_y_min <= y <= middle_y_max:
+                    annotation["text"] = text
+                    annotation["position"] = {"x": x, "y": y, "width": width, "height": height}
+                    
+                    # Extract fill color, if present
+                    fill_color = sp.find(".//a:solidFill/a:srgbClr", ns)
+                    if fill_color is not None:
+                        annotation["color"] = fill_color.attrib.get("val")
+                    
+                    annotations.append(annotation)
+    
+    # Collect lines
     for ln in root.findall(".//p:cxnSp", ns):
         annotation = {"shape": "line"}
         
@@ -55,29 +52,34 @@ def parse_slide_xml(xml_file, output_json_path):
         line_color = ln.find(".//a:ln/a:solidFill/a:srgbClr", ns)
         if line_color is not None:
             annotation["color"] = line_color.attrib.get("val")
+            annotations.append(annotation["color"])
         
         # Extract position and size
         xfrm = ln.find(".//a:xfrm", ns)
         if xfrm is not None:
-            pos = xfrm.find(".//a:off", ns)
-            size = xfrm.find(".//a:ext", ns)
+            pos = xfrm.find("a:off", ns)
+            size = xfrm.find("a:ext", ns)
             if pos is not None and size is not None:
-                annotation["position"] = {
-                    "x": pos.attrib.get("x"),
-                    "y": pos.attrib.get("y"),
-                    "width": size.attrib.get("cx"),
-                    "height": size.attrib.get("cy")
-                }
-        
-        annotations.append(annotation)
+                x, y = int(pos.attrib.get("x", 0)), int(pos.attrib.get("y", 0))
+                width, height = int(size.attrib.get("cx", 0)), int(size.attrib.get("cy", 0))
+                
+                if middle_x_min <= x <= middle_x_max and middle_y_min <= y <= middle_y_max:
+                    annotation["position"] = {"x": x, "y": y, "width": width, "height": height}
+                    annotations.append(annotation)
     
-    # Save annotations to a JSON file
+    # Ensure output directory exists
+    output_dir = os.path.dirname(output_json_path)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+    
     with open(output_json_path, 'w') as f:
         json.dump(annotations, f, indent=4)
     
     print(f"Annotations saved to {output_json_path}")
 
-# Example usage
-xml_file = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides/slide3.xml" # path to XML file
-output_json = "slide3_annotations.json"  # Output JSON file
+# File paths
+xml_file = "slide2Pelvis.xml"
+output_json = "slide2_pelvis_annotations.json"
+
+# Run function with dynamic input
 parse_slide_xml(xml_file, output_json)

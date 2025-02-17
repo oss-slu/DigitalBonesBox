@@ -2,15 +2,18 @@ import os
 import xml.etree.ElementTree as ET
 import json
 
-def extract_bones_from_xml_to_json(xml_path, output_json_path):
-    # Step 1: Parse the XML file
+def extract_bones_from_xml(xml_path):
+    """
+    Parses the XML file and extracts bonesets and their associated bones.
+    Returns a dictionary with boneset names as keys and lists of bones as values.
+    """
     try:
         print(f"Parsing XML: {xml_path}")
         tree = ET.parse(xml_path)
         root = tree.getroot()
     except ET.ParseError as e:
         print(f"Error parsing {xml_path}: {e}")
-        return
+        return {}
 
     # Namespace handling for XML
     ns = {
@@ -19,37 +22,54 @@ def extract_bones_from_xml_to_json(xml_path, output_json_path):
         'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
     }
 
-    # Step 2: Extract boneset name dynamically
-    boneset_name = None
-    boneset_element = root.find(".//p:sp/p:txBody//a:t", ns)
-    if boneset_element is not None:
-        boneset_name = boneset_element.text.strip()
-        print(f"Found boneset name: {boneset_name}")
-    else:
-        print("No boneset name found.")
-        boneset_name = "Unknown Boneset"
+    bonesets = {}  # Dictionary to store bonesets
 
-    # Step 3: Extract bones and use a set to prevent duplicates
-    unique_bones = set()
+    INVALID_BONESETS = {"Home", "The", "Title", "Slide", "Overview", "Labels", "Right Pelvis" }  
 
-    for boneset in root.findall(".//p:sp", ns):  # Adjust this path as necessary for your XML structure
-        for bone in boneset.findall(".//p:txBody//a:r/a:t", ns):
-            bone_name = bone.text.strip() if bone.text else None
-            if bone_name and is_valid_bone_name(bone_name, boneset_name):
-                # Normalize the bone name to lowercase to handle case insensitivity
-                unique_bones.add(bone_name.lower())
 
-    # Step 4: Create a single boneset with all unique bones
-    # Capitalize the first letter of each bone for consistency in JSON output
-    output_data = {
-        'boneset': boneset_name,
-        'bones': sorted(bone.capitalize() for bone in unique_bones)  # Convert the set to a sorted list
-    }
+    # Extract bonesets dynamically
+    for boneset_element in root.findall(".//p:sp", ns):
+        boneset_name_element = boneset_element.find(".//p:txBody//a:t", ns)
+        
+        if boneset_name_element is not None:
 
-    # Step 5: Write the JSON data to a file
+            boneset_name = boneset_name_element.text.strip()
+
+            boneset_name_words = boneset_name.split()
+            if not len(boneset_name_words) < 4:
+                continue
+            if not boneset_name or boneset_name in INVALID_BONESETS:
+                continue
+            if not all(word.isalpha() for word in boneset_name.split()):  
+                continue
+
+            if boneset_name not in bonesets:
+                bonesets[boneset_name] = set()
+
+            # Extract bones within this boneset
+            for bone_element in boneset_element.findall(".//p:txBody//a:r/a:t", ns):
+                bone_name = bone_element.text.strip() if bone_element.text else None
+                if bone_name and is_valid_bone_name(bone_name, boneset_name):
+                    bonesets[boneset_name].add(bone_name.capitalize())
+
+    return bonesets
+
+def generate_json_output(bonesets, output_json_path):
+    """
+    Converts bonesets dictionary into a structured JSON format and writes it to a file.
+    """
+    structured_data = []
+
+    for boneset_name, bones in bonesets.items():
+        structured_data.append({
+            "boneset": boneset_name,
+            "bones": sorted(bones),
+        })
+
+    # Save to JSON file
     try:
         with open(output_json_path, 'w') as json_file:
-            json.dump(output_data, json_file, indent=4)
+            json.dump(structured_data, json_file, indent=4)
             print(f"JSON file saved: {output_json_path}")
     except IOError as e:
         print(f"Error writing to {output_json_path}: {e}")
@@ -73,14 +93,14 @@ def is_valid_bone_name(name, boneset_name):
     if name.islower():  # Ignore entirely lowercase words
         return False
 
+    if len(name.split()) > 3:
+        return False
+
     # Exclude names that contain the boneset name (case-insensitive)
     if boneset_name and boneset_name.lower() in name.lower():
         return False
 
-    if "Home" in name:
-        return False
-
-    if "The" in name:
+    if "Home" in name or "The" in name:
         return False
 
     return True
@@ -90,8 +110,11 @@ if __name__ == "__main__":
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
     # Define the XML and JSON file paths relative to the script's directory
-    xml_file_path = os.path.join(current_dir, "slide2UpperLimb.xml")
+    xml_file_path = os.path.join(current_dir, "BoneyPelvisSlide4.xml")
     json_file_path = os.path.join(current_dir, "output.json")
 
-    # Run the extraction and save as JSON
-    extract_bones_from_xml_to_json(xml_file_path, json_file_path)
+    # Extract bonesets and their bones
+    bonesets = extract_bones_from_xml(xml_file_path)
+
+    # Generate and save JSON output
+    generate_json_output(bonesets, json_file_path)
