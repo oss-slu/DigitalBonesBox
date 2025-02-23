@@ -24,10 +24,9 @@ def extract_bones_from_xml(xml_path):
     }
 
     bonesets = {}  # Dictionary to store bonesets
-    current_boneset = None
     total_boneset = None
     bolded_set = None
-    boldedList= []
+    boldedList=[]
 
     # Extract bonesets based on hyperlinks and size attributes
     for sp_element in root.findall(".//p:sp", ns):
@@ -45,22 +44,21 @@ def extract_bones_from_xml(xml_path):
                     if size == "1200":
                         if is_bold:
                             bolded_set = text
-                            bonesets[bolded_set] = set()
-                            bonesets[total_boneset].add(text.capitalize())
+                            bonesets[bolded_set] = list()
 
                         if total_boneset is None:
                             total_boneset = text
-                            bonesets[total_boneset] = set()
+                            bonesets[total_boneset] = list()
                             continue
                         # These are their own bonesets                        
-                        bonesets[total_boneset].add(text.capitalize())
+                        bonesets[total_boneset].append(text.capitalize())
                     elif size == "900":
                         if not bolded_set:
                             boldedList.append(text.capitalize())
                         else:
-                            bonesets[bolded_set].add(text.capitalize())
-    for i in range(len(boldedList)):
-        bonesets[bolded_set].add(boldedList[i])
+                            bonesets[bolded_set].append(text.capitalize())
+    for i in boldedList:
+        bonesets[bolded_set].append(i)
                         
 
     return bonesets
@@ -74,7 +72,7 @@ def generate_json_output(bonesets, output_json_path):
     for boneset_name, bones in bonesets.items():
         structured_data.append({
             "boneset": boneset_name,
-            "bones": sorted(bones),
+            "bones": bones,
         })
 
     # Save to JSON file

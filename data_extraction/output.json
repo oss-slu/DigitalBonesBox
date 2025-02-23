@@ -10,9 +10,9 @@
     {
         "boneset": "Ischium",
         "bones": [
-            "Ischial spine",
-            "Ischial tuberosity",
             "Ramus",
+            "Ischial tuberosity",
+            "Ischial spine",
             "Sciatic notches"
         ]
     }
