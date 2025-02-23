@@ -8,10 +8,6 @@
         ]
     },
     {
-        "boneset": "Ilium",
-        "bones": []
-    },
-    {
         "boneset": "Ischium",
         "bones": [
             "Ischial spine",
@@ -19,9 +15,5 @@
             "Ramus",
             "Sciatic notches"
         ]
-    },
-    {
-        "boneset": "Pubis",
-        "bones": []
     }
 ]

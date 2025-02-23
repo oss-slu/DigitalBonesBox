@@ -45,13 +45,14 @@ def extract_bones_from_xml(xml_path):
                     if size == "1200":
                         if is_bold:
                             bolded_set = text
+                            bonesets[bolded_set] = set()
+                            bonesets[total_boneset].add(text.capitalize())
+
                         if total_boneset is None:
                             total_boneset = text
                             bonesets[total_boneset] = set()
                             continue
-                        # These are their own bonesets
-                        current_boneset = text
-                        bonesets[current_boneset] = set()
+                        # These are their own bonesets                        
                         bonesets[total_boneset].add(text.capitalize())
                     elif size == "900":
                         if not bolded_set:
