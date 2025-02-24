@@ -22,8 +22,8 @@ def parse_slide_xml(xml_file, output_json_path):
                 x, y = int(pos.attrib.get("x", 0)), int(pos.attrib.get("y", 0))
                 width, height = int(size.attrib.get("cx", 0)), int(size.attrib.get("cy", 0))
                 
-                # Define approximate position range for the bottom-right box
-                if x > 8011000 and y > 3000000:  # Adjust based on actual XML values
+                # Range in which the descriptions are held
+                if x > 8011000 and y > 3000000:  
                     text_elements = sp.findall(".//a:t", ns)
                     bullet_points = [t.text for t in text_elements if t.text]
                     
