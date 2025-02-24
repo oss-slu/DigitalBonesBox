@@ -17,7 +17,7 @@ def parse_slide_xml(xml_file, output_json_path):
         if xfrm is not None:
             pos = xfrm.find("a:off", ns)
             size = xfrm.find("a:ext", ns)
-            
+            #second time
             if pos is not None and size is not None:
                 x, y = int(pos.attrib.get("x", 0)), int(pos.attrib.get("y", 0))
                 width, height = int(size.attrib.get("cx", 0)), int(size.attrib.get("cy", 0))
