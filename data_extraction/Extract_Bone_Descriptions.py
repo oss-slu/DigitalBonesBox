@@ -21,7 +21,7 @@ def parse_slide_xml(xml_file, output_json_path):
             if pos is not None and size is not None:
                 x, y = int(pos.attrib.get("x", 0)), int(pos.attrib.get("y", 0))
                 width, height = int(size.attrib.get("cx", 0)), int(size.attrib.get("cy", 0))
-                
+                #HElLO
                 # Range in which the descriptions are held
                 if x > 8011000 and y > 3000000:  
                     text_elements = sp.findall(".//a:t", ns)
