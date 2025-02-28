@@ -1,0 +1,6 @@
+{
+    "name": "Bony Pelvis",
+    "id": "bony_pelvis",
+    "description": "The bony pelvis is composed of the hip bones, sacrum, and coccyx.",
+    "bones": ["ilium", "ischium", "pubis"]
+}
