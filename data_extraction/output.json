@@ -1,6 +1,7 @@
 [
     {
-        "boneset": "Bony Pelvis",
+        "name": "Bony Pelvis",
+        "id": "bony_pelvis",
         "bones": [
             "Ilium",
             "Ischium",
@@ -8,7 +9,8 @@
         ]
     },
     {
-        "boneset": "Ischium",
+        "name": "Ischium",
+        "id": "ischium",
         "bones": [
             "Ramus",
             "Ischial tuberosity",
