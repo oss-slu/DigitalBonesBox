@@ -24,6 +24,7 @@ def extract_bones_from_xml(xml_path):
     }
 
     bonesets = {}  # Dictionary to store bonesets
+    bonesetContent =[]
     total_boneset = None
     bolded_set = None
     boldedList=[]
@@ -54,14 +55,14 @@ def extract_bones_from_xml(xml_path):
                         bonesets[total_boneset].append(text.capitalize())
                     elif size == "900":
                         if not bolded_set:
-                            boldedList.append(text.capitalize())
+                            bonesetContent.append(text.capitalize())
                         else:
                             bonesets[bolded_set].append(text.capitalize())
     for i in boldedList:
         bonesets[bolded_set].append(i)
                         
 
-    return bonesets
+    return bonesets, bonesetContent
 
 def generate_json_output(bonesets, output_json_path):
     """
@@ -69,10 +70,11 @@ def generate_json_output(bonesets, output_json_path):
     """
     structured_data = []
 
-    for boneset_name, bones in bonesets.items():
+    for boneset_name, bonesetContent in bonesets.items():
         structured_data.append({
-            "boneset": boneset_name,
-            "bones": bones,
+            "name": boneset_name,
+            "id": boneset_name.lower().replace(" ", "_"),
+            "bones": bonesetContent
         })
 
     # Save to JSON file
@@ -92,7 +94,7 @@ if __name__ == "__main__":
     json_file_path = os.path.join(current_dir, "output.json")
 
     # Extract bonesets and their bones
-    bonesets = extract_bones_from_xml(xml_file_path)
+    bonesets, bonesetContent = extract_bones_from_xml(xml_file_path)
 
     # Generate and save JSON output
     generate_json_output(bonesets, json_file_path)
