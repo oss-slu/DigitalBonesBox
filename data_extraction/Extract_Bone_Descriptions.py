@@ -27,7 +27,7 @@ def parse_slide_xml(xml_file, output_json_path):
                 # Range in which the descriptions are held
                 if x > 8011000 and y > 3000000:  
                     text_elements = sp.findall(".//a:t", ns)
-                    bullet_points = [t.text for t in text_elements if t.text]
+                    bullet_points = [t.text for t in text_elements if t.text and t.text != 'No Labels']
                     
                     if bullet_points:
                         if bone_name == "Unknown":
