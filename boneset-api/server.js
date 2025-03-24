@@ -5,49 +5,56 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// Enable CORS to allow requests from frontend applications
 app.use(cors());
 
-// GitHub raw URLs for JSON files
+// Home route (fixes "Cannot GET /" issue)
+app.get("/", (req, res) => {
+    res.json({ message: "Welcome to the Boneset API (GitHub-Integrated)" });
+});
+
+// GitHub raw URLs
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
-const BONES_DIR_URL = `${GITHUB_REPO}bones/`; // Directory for individual bone JSON files
+const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 
-// Helper function to fetch JSON from GitHub
+// Fetch JSON helper function
 async function fetchJSON(url) {
     try {
         const response = await axios.get(url);
         return response.data;
     } catch (error) {
-        throw new Error(`Failed to fetch data from ${url}`);
+        console.error(`Failed to fetch ${url}:`, error.message);
+        return null;
     }
 }
 
-// Home route
-app.get("/", (req, res) => {
-    res.json({ message: "Welcome to the Boneset API (GitHub-Integrated)" });
-});
-
-// Fetch bony pelvis (boneset) details
-app.get("/boneset", async (req, res) => {
+// Combined data endpoint
+app.get("/combined-data", async (req, res) => {
     try {
         const bonesetData = await fetchJSON(BONESET_JSON_URL);
-        res.json(bonesetData);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
+        if (!bonesetData) return res.status(500).json({ error: "Failed to load boneset data" });
 
-// Fetch a specific bone's details
-app.get("/bones/:bone_id", async (req, res) => {
-    const boneId = req.params.bone_id;
-    const boneJsonUrl = `${BONES_DIR_URL}${boneId}.json`;
+        const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
+        const bones = [];
+        const subbones = [];
 
-    try {
-        const boneData = await fetchJSON(boneJsonUrl);
-        res.json(boneData);
+        for (const boneId of bonesetData.bones) {
+            const boneJsonUrl = `${BONES_DIR_URL}${boneId}.json`;
+            const boneData = await fetchJSON(boneJsonUrl);
+
+            if (boneData) {
+                bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
+                boneData.subBones.forEach(subBoneId => {
+                    subbones.push({ id: subBoneId, name: subBoneId.replace(/_/g, " "), bone: boneData.id });
+                });
+            }
+        }
+
+        res.json({ bonesets, bones, subbones });
+
     } catch (error) {
-        res.status(404).json({ error: `Bone '${boneId}' not found` });
+        console.error("Error fetching combined data:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
