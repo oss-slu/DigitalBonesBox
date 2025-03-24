@@ -8,7 +8,6 @@
 </head>
 <body>
 
-
     <!-- Badge with Sidebar Toggle Button -->
     <div id="badge">
         <button id="toggle-sidebar">☰</button>
@@ -21,12 +20,6 @@
         <span id="text-button-Login" role="button">Login</span>          
         <span id="text-button-SignUp" role="button">Sign Up</span> 
         </div>
-
-
-
-        
-
-
     </div>
 
     <!-- Sidebar Container -->
@@ -35,33 +28,41 @@
     <script src="sidebar.js"></script>
 
     <div id="editor-view">
+        <div class="container">
+            <h1>Bone Set Viewer</h1>
 
-    <div class="container">
-        <h1>Bone Set Viewer</h1>
+            <!-- Search Bar -->
+            <input type="text" id="search-bar" placeholder="Search bone sets">
+            <ul id="search-results"></ul> <!-- Container for search results -->
 
-        <!-- Search Bar -->
-        <input type="text" id="search-bar" placeholder="Search bone sets">
-        <ul id="search-results"></ul> <!-- Container for search results -->
+            <!-- Dropdown for Boneset Selection -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
 
-        <!-- Dropdown for Boneset Selection -->
-        <div>
-            <label for="bonesets">Choose a Boneset:</label>
-            <select id="boneset-select">
-                <option value="">--Please choose an option--</option>
-            </select>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <select id="boneset-select">
+                        <option value="">--Please select a Boneset--</option>
+                    </select>
+                    <select id="bone-select" disabled>
+                        <option value="">--Please select a Bone--</option>
+                    </select>
+                    <select id="subbone-select" disabled>
+                        <option value="">--Please choose a Sub-Bone--</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Container for the Boneset Names and IDs -->
+            <div id="bone-sets-container">
+                <h2>Bonesets</h2>
+                <ul id="bone-set-list"></ul>
+            </div>
+
+            <div class="navigation-buttons">
+                <button id="prev-button" disabled>Previous</button>
+                <button id="next-button" disabled>Next</button>
+            </div>
         </div>
-
-        <!-- Container for the Boneset Names and IDs -->
-        <div id="bone-sets-container">
-            <h2>Bonesets</h2>
-            <ul id="bone-set-list"></ul>
-        </div>
-
-        <div class="navigation-buttons">
-            <button id="prev-button" disabled>Previous</button>
-            <button id="next-button" disabled>Next</button>
-        </div>
-    </div>
     </div>
     
     <script>
@@ -97,7 +98,7 @@
         // Populate dropdown menu with boneset names
         async function populateDropdown() {
             const dropdown = document.getElementById('boneset-select');
-            dropdown.innerHTML = '<option value="">--Please choose an option--</option>';
+            dropdown.innerHTML = '<option value="">--Please choose a Boneset--</option>';
 
             boneSets.forEach(bone => {
                 const option = document.createElement('option');
@@ -106,6 +107,46 @@
                 dropdown.appendChild(option);
             });
         }
+
+        // Enable Bone dropdown based on Boneset selection
+        document.getElementById('boneset-select').addEventListener('change', () => {
+            const bonesetSelect = document.getElementById('boneset-select');
+            const boneSelect = document.getElementById('bone-select');
+            const subBoneSelect = document.getElementById('subbone-select');
+            
+            const selectedBoneset = boneSets.find(set => set.id === bonesetSelect.value);
+
+            // If a boneset is selected, enable the Bone dropdown and reset Sub-bone
+            if (selectedBoneset) {
+                boneSelect.disabled = false;
+                boneSelect.innerHTML = '<option value="">--Please select a Bone--</option>';
+
+                selectedBoneset.bones.forEach(bone => {
+                    const option = document.createElement('option');
+                    option.value = bone;
+                    option.textContent = bone;
+                    boneSelect.appendChild(option);
+                });
+
+                subBoneSelect.disabled = true; // Disable Sub-bone dropdown initially
+                subBoneSelect.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
+            } else {
+                boneSelect.disabled = true;
+                subBoneSelect.disabled = true;
+            }
+        });
+
+        // Enable Sub-bone dropdown based on Bone selection
+        document.getElementById('bone-select').addEventListener('change', () => {
+            const boneSelect = document.getElementById('bone-select');
+            const subBoneSelect = document.getElementById('subbone-select');
+            
+            if (boneSelect.value) {
+                subBoneSelect.disabled = false;
+            } else {
+                subBoneSelect.disabled = true;
+            }
+        });
 
         // Debounce search for the search bar input
         function debouncedSearch() {
@@ -144,11 +185,6 @@
 
         // Event listeners for search bar and dropdown
         document.getElementById('search-bar').addEventListener('input', debouncedSearch);
-        document.getElementById('boneset-select').addEventListener('change', () => {
-            const selectedId = document.getElementById('boneset-select').value;
-            const selectedSet = boneSets.find(set => set.id === selectedId);
-            if (selectedSet) renderBoneSet(selectedSet);
-        });
 
         // Load the boneset data as soon as the page loads
         document.addEventListener('DOMContentLoaded', async () => {
