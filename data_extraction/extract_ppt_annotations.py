@@ -2,7 +2,46 @@ import os
 import xml.etree.ElementTree as ET
 import json
 
-def extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, output_folder, json_output):
+
+def load_bone_data(json_directory):
+    """
+    Loads known bonesets, bones, and sub-bones from JSON files into dictionaries.
+    """
+    categories = ["bonesets", "bones", "subbones"]
+    bone_data = {category: set() for category in categories}  # Store names for fast lookup
+
+    for category in categories:
+        json_path = os.path.join(json_directory, f"{category}.json")
+        if os.path.exists(json_path):
+            with open(json_path, 'r') as file:
+                try:
+                    data = json.load(file)
+                    if isinstance(data, list):
+                        bone_data[category].update({entry.lower().replace(" ", "_") for entry in data})
+                except json.JSONDecodeError as e:
+                    print(f"[ERROR] Could not load {category}.json: {e}")
+
+    return bone_data
+
+
+def generate_annotation_link(text, bone_data):
+    """
+    Generate a hyperlink for an annotation based on its category (boneset, bone, or subbone).
+    """
+    text_key = text.lower().replace(" ", "_")  # Normalize text
+
+    # Check for boneset, bone, or subbone match
+    if text_key in bone_data['bonesets']:
+        return f"/data/json/bonesets/{text_key}.json"
+    elif text_key in bone_data['bones']:
+        return f"/data/json/bones/{text_key}.json"
+    elif text_key in bone_data['subbones']:
+        return f"/data/json/subbones/{text_key}.json"
+    
+    return None  # No link if not found
+
+
+def extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, output_folder, json_output, bone_data):
     """
     Extract images from a slide XML, rename them, and write image details to a JSON file.
     """
@@ -100,10 +139,9 @@ def extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, o
                     annotation["text"] = text
                     annotation["position"] = {"x": x, "y": y, "width": width, "height": height}
 
-                    # Extract fill color if present
-                    fill_color = sp.find(".//a:solidFill/a:srgbClr", ns_p)
-                    if fill_color is not None:
-                        annotation["color"] = fill_color.attrib.get("val")
+                    # Use the updated function to generate the correct link
+                    if text:
+                        annotation["link"] = generate_annotation_link(text, bone_data)
 
                     slide_data["annotations"].append(annotation)
 
@@ -117,12 +155,15 @@ def extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, o
     print(f"[SUCCESS] JSON saved: {json_output_path}")
 
 
-def process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder, json_output):
+def process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder, json_output, json_directory):
     """
     Processes all slides, extracts images, annotations, and writes JSON files.
     """
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(json_output, exist_ok=True)
+
+    # Load bone data dynamically
+    bone_data = load_bone_data(json_directory)
 
     for slide_file in sorted(os.listdir(slides_folder)):
         if slide_file.startswith("slide") and slide_file.endswith(".xml"):
@@ -130,18 +171,19 @@ def process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder
             rels_path = os.path.join(rels_folder, slide_file + ".rels")
 
             if os.path.exists(rels_path):
-                extract_images_from_slide_xml(slide_path, rels_path, media_folder, output_folder, json_output)
+                extract_images_from_slide_xml(slide_path, rels_path, media_folder, output_folder, json_output, bone_data)
             else:
                 print(f"[WARNING] Missing relationship file: {rels_path}. Skipping {slide_file}.")
 
 
 if __name__ == "__main__":
     # Folder paths (replace with your paths)
-    slides_folder = "/Users/burhankhan/Desktop/ppt/slides"
-    rels_folder = "/Users/burhankhan/Desktop/ppt/slides/_rels"
-    media_folder = "/Users/burhankhan/Desktop/ppt/media"
-    output_folder = "/Users/burhankhan/Desktop/AutomatedScript"
-    json_output = "/Users/burhankhan/Desktop/AutomatedScript/json_output"
+    slides_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides"
+    rels_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides/_rels"
+    media_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/media"
+    output_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/AutomatedScript"
+    json_output = "/Users/joshbudzynski/Downloads/example_folder/ppt/json_output"
+    json_directory = "/Users/joshbudzynski/Downloads/example_folder/ppt/data/json"
 
     # Run the process for all slides
-    process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder, json_output)
+    process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder, json_output, json_directory)
