@@ -25,12 +25,18 @@ def load_bone_data(json_directory):
 
 
 def generate_annotation_link(text, bone_data):
-    """Generate a hyperlink for an annotation based on its category."""
+    """
+    Generate a hyperlink for an annotation based on its category (boneset, bone, or subbone).
+    """
     text_key = text.lower().replace(" ", "_")  # Normalize text
 
-    for category, names in bone_data.items():
-        if text_key in names:
-            return f"/data/json/{category}/{text_key}.json"
+    # Check for boneset, bone, or subbone match
+    if text_key in bone_data['bonesets']:
+        return f"/data/json/bonesets/{text_key}.json"
+    elif text_key in bone_data['bones']:
+        return f"/data/json/bones/{text_key}.json"
+    elif text_key in bone_data['subbones']:
+        return f"/data/json/subbones/{text_key}.json"
     
     return None  # No link if not found
 
@@ -133,13 +139,11 @@ def extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, o
                     annotation["text"] = text
                     annotation["position"] = {"x": x, "y": y, "width": width, "height": height}
 
-                    # Add the 'link' field dynamically based on text
+                    # Use the updated function to generate the correct link
                     if text:
-                        json_filename = text.lower().replace(" ", "_") + ".json"
-                        annotation["link"] = f"/data/json/bonesets/{json_filename}"
+                        annotation["link"] = generate_annotation_link(text, bone_data)
 
                     slide_data["annotations"].append(annotation)
-
 
     # Write JSON file for the slide
     json_output_path = os.path.join(json_output, f"{slide_name}_annotations.json")
