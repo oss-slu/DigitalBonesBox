@@ -1,3 +1,5 @@
+// import { loadDescription } from './description.js';
+
 const API_URL = 'http://localhost:8000/combined-data';
 
 let allData = { bonesets: [], bones: [], subbones: [] };
@@ -27,7 +29,10 @@ function populateBonesetDropdown(bonesets) {
         const selectedId = bonesetSelect.value;
         populateBoneDropdown(selectedId);
         document.getElementById("subbone-select").disabled = true;
+    
+        if (selectedId) loadDescription(selectedId);
     });
+    
 }
 
 function populateBoneDropdown(bonesetId) {
@@ -47,7 +52,9 @@ function populateBoneDropdown(bonesetId) {
     boneSelect.addEventListener("change", () => {
         const selectedBone = boneSelect.value;
         populateSubboneDropdown(selectedBone);
+        if (selectedBone) loadDescription(selectedBone);
     });
+    
 }
 
 function populateSubboneDropdown(boneId) {
@@ -62,5 +69,38 @@ function populateSubboneDropdown(boneId) {
         subBoneSelect.appendChild(option);
     });
 
+    subBoneSelect.addEventListener("change", () => {
+        const selectedSubbone = subBoneSelect.value;
+        if (selectedSubbone) loadDescription(selectedSubbone);
+    });    
+
     subBoneSelect.disabled = false;
+}
+
+const DESCRIPTION_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/";
+
+export async function loadDescription(id) {
+    const panel = document.getElementById("description-panel");
+    panel.innerHTML = "Loading...";
+
+    const url = `${DESCRIPTION_BASE_URL}${id}_description.json`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Description not found");
+
+        const data = await response.json();
+
+        const html = `
+            <h3>${data.name}</h3>
+            <ul>
+                ${data.description.map(line => `<li>${line}</li>`).join("")}
+            </ul>
+        `;
+
+        panel.innerHTML = html;
+    } catch (err) {
+        panel.innerHTML = `<p><em>Description not available for "${id}"</em></p>`;
+        console.warn("Failed to load description:", err);
+    }
 }
