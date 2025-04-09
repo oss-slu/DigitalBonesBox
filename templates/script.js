@@ -1,6 +1,10 @@
 // import { loadDescription } from './description.js';
 
 const API_URL = 'http://localhost:8000/combined-data';
+//image and annotation
+const IMAGE_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/images/";
+const ANNOTATION_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/annotations/";
+
 
 let allData = { bonesets: [], bones: [], subbones: [] };
 
@@ -30,7 +34,12 @@ function populateBonesetDropdown(bonesets) {
         populateBoneDropdown(selectedId);
         document.getElementById("subbone-select").disabled = true;
     
-        if (selectedId) loadDescription(selectedId);
+        if (selectedId) {
+            loadDescription(selectedId);
+            loadImage(selectedId);
+            loadAnnotations(selectedId);
+        }
+        
     });
     
 }
@@ -52,7 +61,13 @@ function populateBoneDropdown(bonesetId) {
     boneSelect.addEventListener("change", () => {
         const selectedBone = boneSelect.value;
         populateSubboneDropdown(selectedBone);
-        if (selectedBone) loadDescription(selectedBone);
+        // if (selectedBone) loadDescription(selectedBone);
+        if (selectedBone) {
+            loadDescription(selectedId);
+            loadImage(selectedId);
+            loadAnnotations(selectedId);
+        }
+        
     });
     
 }
@@ -71,7 +86,13 @@ function populateSubboneDropdown(boneId) {
 
     subBoneSelect.addEventListener("change", () => {
         const selectedSubbone = subBoneSelect.value;
-        if (selectedSubbone) loadDescription(selectedSubbone);
+        // if (selectedSubbone) loadDescription(selectedSubbone);
+        if (selectedSubbone) {
+            loadDescription(selectedId);
+            loadImage(selectedId);
+            loadAnnotations(selectedId);
+        }
+        
     });    
 
     subBoneSelect.disabled = false;
@@ -102,5 +123,53 @@ export async function loadDescription(id) {
     } catch (err) {
         panel.innerHTML = `<p><em>Description not available for "${id}"</em></p>`;
         console.warn("Failed to load description:", err);
+    }
+}
+
+//load image
+function loadImage(id) {
+    const img = document.getElementById("main-image");
+    img.src = `${IMAGE_BASE_URL}${id}.png`;
+}
+
+// load annotation
+async function loadAnnotations(id) {
+    const container = document.getElementById("annotations-layer");
+    container.innerHTML = "";
+
+    const url = `${ANNOTATION_BASE_URL}${id}.json`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        data.forEach(annotation => {
+            const { x, y, width, height } = annotation.position;
+
+            const box = document.createElement("div");
+            box.className = "annotation-box";
+            box.style.position = "absolute";
+            box.style.left = `${x / 10000}px`;
+            box.style.top = `${y / 10000}px`;
+            box.style.width = `${width / 10000}px`;
+            box.style.height = `${height / 10000}px`;
+            box.style.border = "2px solid red";
+            box.style.cursor = "pointer";
+            box.title = annotation.text || "";
+
+            if (annotation.link) {
+                box.addEventListener("click", () => {
+                    const id = annotation.link.split("/").pop().replace(".json", "");
+                    loadDescription(id);
+                    loadImage(id);
+                    loadAnnotations(id);
+                    // Optionally update dropdowns too
+                });
+            }
+
+            container.appendChild(box);
+        });
+    } catch (err) {
+        console.error("Annotation load failed:", err);
     }
 }

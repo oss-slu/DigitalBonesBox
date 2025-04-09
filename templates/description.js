@@ -1,4 +1,4 @@
-// const GITHUB_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/";
+{% comment %} // const GITHUB_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/";
 
 // export async function loadDescription(id) {
 //     const url = `${GITHUB_BASE_URL}${id}.json`;
@@ -21,4 +21,4 @@
 //         titleEl.textContent = "No description found.";
 //         listEl.innerHTML = "";
 //     }
-// }
+// } {% endcomment %}
