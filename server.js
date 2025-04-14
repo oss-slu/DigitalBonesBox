@@ -1,11 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const simpleGit = require('simple-git');
+//const simpleGit = require('simple-git');
 const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const git = simpleGit('C:/DigitalBonesBox'); // Local repo path
+//const git = simpleGit('C:/DigitalBonesBox'); // Local repo path
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

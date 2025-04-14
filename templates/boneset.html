@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bone Set Viewer</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
@@ -17,7 +17,6 @@
         <span id="text-button-Tutor" role="button">Tutor</span>
         <span id="text-button-Study" role="button">Study</span>
         <span id="text-button-Help" role="button">Help</span>
-
         <div id="innerbadge">
             <span id="text-button-Login" role="button">Login</span>
             <span id="text-button-SignUp" role="button">Sign Up</span>
@@ -26,129 +25,143 @@
 
     <!-- Sidebar Container -->
     <div id="sidebar-container"></div>
-
     <script src="sidebar.js"></script>
 
     <div id="editor-view">
         <div class="container">
             <h1>Bone Set Viewer</h1>
 
-            <!-- Dropdown for Boneset Selection -->
+            <!-- Search Bar -->
+            <input type="text" id="search-bar" placeholder="Search bone sets" />
+            <ul id="search-results"></ul>
+
+            <!-- Dropdown Section (Side-by-Side Flex Layout) -->
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <label for="boneset-select">Choose a Boneset:</label>
-                <select id="boneset-select">
-                    <option value="">--Please select a Boneset--</option>
-                </select>
-
-                <label for="bone-select">Choose a Bone:</label>
-                <select id="bone-select" disabled>
-                    <option value="">--Please select a Bone--</option>
-                </select>
-
-                <label for="subbone-select">Choose a Sub-Bone:</label>
-                <select id="subbone-select" disabled>
-                    <option value="">--Please choose a Sub-Bone--</option>
-                </select>
+                <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <select id="boneset-select">
+                        <option value="">--Please select a Boneset--</option>
+                    </select>
+                    <select id="bone-select" disabled>
+                        <option value="">--Please select a Bone--</option>
+                    </select>
+                    <select id="subbone-select" disabled>
+                        <option value="">--Please choose a Sub-Bone--</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- Display Selected Data -->
-            <div id="selected-data" style="margin-top: 20px;">
-                <h2>Selected Information</h2>
-                <p id="selected-info">No selection made yet.</p>
+            <!-- Container for the Boneset Names and IDs -->
+            <div id="bone-sets-container">
+                <h2>Bonesets</h2>
+                <ul id="bone-set-list"></ul>
+            </div>
+
+            <div class="navigation-buttons">
+                <button id="prev-button" disabled>Previous</button>
+                <button id="next-button" disabled>Next</button>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = 'http://127.0.0.1:8000/combined-data';
+        const API_URL = 'http://localhost:3001/combined-data';
+        let combinedData = { bonesets: [], bones: [], subbones: [] };
+        let currentSetIndex = 0;
 
         async function fetchCombinedData() {
             try {
                 const response = await fetch(API_URL);
-                if (!response.ok) throw new Error("Failed to fetch combined data");
                 return await response.json();
             } catch (error) {
                 console.error("Error fetching data:", error);
-                alert("Error fetching data from the server.");
+                alert("Failed to load data.");
             }
         }
 
-        // Populate Boneset Dropdown
-        function populateBonesetDropdown(bonesets) {
-            const bonesetSelect = document.getElementById("boneset-select");
-            bonesets.forEach(boneset => {
-                const option = document.createElement("option");
-                option.value = boneset.id;
-                option.textContent = boneset.name;
+        function populateDropdowns() {
+            const bonesetSelect = document.getElementById('boneset-select');
+            bonesetSelect.innerHTML = '<option value="">--Please select a Boneset--</option>';
+            combinedData.bonesets.forEach(set => {
+                const option = document.createElement('option');
+                option.value = set.id;
+                option.textContent = set.name;
                 bonesetSelect.appendChild(option);
             });
         }
 
-        // Populate Bone Dropdown
-        function populateBoneDropdown(bones, selectedBoneset) {
-            const boneSelect = document.getElementById("bone-select");
+        function renderBoneSet(boneSet) {
+            const list = document.getElementById('bone-set-list');
+            list.innerHTML = '';
+
+            const li = document.createElement('li');
+            li.textContent = boneSet.name;
+            list.appendChild(li);
+
+            const subList = document.createElement('ul');
+            boneSet.bones.forEach(boneId => {
+                const subLi = document.createElement('li');
+                subLi.textContent = `ID: ${boneId}`;
+                subList.appendChild(subLi);
+            });
+            list.appendChild(subList);
+        }
+
+        document.getElementById('boneset-select').addEventListener('change', (e) => {
+            const selectedBonesetId = e.target.value;
+            const boneSelect = document.getElementById('bone-select');
+            const subboneSelect = document.getElementById('subbone-select');
+
+            const relatedBones = combinedData.bones.filter(b => b.boneset === selectedBonesetId);
+
             boneSelect.innerHTML = '<option value="">--Please select a Bone--</option>';
-            bones
-                .filter(bone => bone.boneset === selectedBoneset)
-                .forEach(bone => {
-                    const option = document.createElement("option");
-                    option.value = bone.id;
-                    option.textContent = bone.name;
-                    boneSelect.appendChild(option);
-                });
-            boneSelect.disabled = false;
-        }
-
-        // Populate Sub-Bone Dropdown
-        function populateSubboneDropdown(subbones, selectedBone) {
-            const subboneSelect = document.getElementById("subbone-select");
             subboneSelect.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
-            subbones
-                .filter(subbone => subbone.bone === selectedBone)
-                .forEach(subbone => {
-                    const option = document.createElement("option");
-                    option.value = subbone.id;
-                    option.textContent = subbone.name;
-                    subboneSelect.appendChild(option);
-                });
-            subboneSelect.disabled = false;
-        }
+            subboneSelect.disabled = true;
 
-        // Display Selected Information
-        function displaySelectedInfo(text) {
-            document.getElementById("selected-info").textContent = text;
-        }
+            relatedBones.forEach(bone => {
+                const option = document.createElement('option');
+                option.value = bone.id;
+                option.textContent = bone.name;
+                boneSelect.appendChild(option);
+            });
 
-        // Initialize Dropdowns
-        async function initDropdowns() {
-            const data = await fetchCombinedData();
-            if (data) {
-                populateBonesetDropdown(data.bonesets);
+            boneSelect.disabled = false;
+        });
 
-                // Boneset Selection
-                document.getElementById("boneset-select").addEventListener("change", (e) => {
-                    const selectedBoneset = e.target.value;
-                    populateBoneDropdown(data.bones, selectedBoneset);
-                    displaySelectedInfo(`Selected Boneset: ${e.target.options[e.target.selectedIndex].text}`);
-                    document.getElementById("subbone-select").disabled = true;
-                });
+        document.getElementById('bone-select').addEventListener('change', (e) => {
+            const selectedBoneId = e.target.value;
+            const subboneSelect = document.getElementById('subbone-select');
 
-                // Bone Selection
-                document.getElementById("bone-select").addEventListener("change", (e) => {
-                    const selectedBone = e.target.value;
-                    populateSubboneDropdown(data.subbones, selectedBone);
-                    displaySelectedInfo(`Selected Bone: ${e.target.options[e.target.selectedIndex].text}`);
-                });
+            const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
 
-                // Sub-Bone Selection
-                document.getElementById("subbone-select").addEventListener("change", (e) => {
-                    displaySelectedInfo(`Selected Sub-Bone: ${e.target.options[e.target.selectedIndex].text}`);
+            subboneSelect.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
+
+            relatedSubbones.forEach(sb => {
+                const option = document.createElement('option');
+                option.value = sb.id;
+                option.textContent = sb.name;
+                subboneSelect.appendChild(option);
+            });
+
+            subboneSelect.disabled = relatedSubbones.length === 0;
+        });
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', async () => {
+            combinedData = await fetchCombinedData();
+            populateDropdowns();
+
+            const boneset = combinedData.bonesets[0];
+            if (boneset) {
+                renderBoneSet({
+                    name: boneset.name,
+                    bones: combinedData.bones.filter(b => b.boneset === boneset.id).map(b => b.id)
                 });
             }
-        }
 
-        // Initialize on Load
-        window.onload = initDropdowns;
+            document.getElementById('prev-button').disabled = true;
+            document.getElementById('next-button').disabled = combinedData.bonesets.length <= 1;
+        });
     </script>
 </body>
 
