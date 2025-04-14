@@ -9,8 +9,6 @@
 </head>
 
 <body>
-
-    <!-- Badge with Sidebar Toggle Button -->
     <div id="badge">
         <button id="toggle-sidebar">☰</button>
         <span id="text-button-Home" role="button">Home</span>
@@ -23,19 +21,14 @@
         </div>
     </div>
 
-    <!-- Sidebar Container -->
     <div id="sidebar-container"></div>
     <script src="sidebar.js"></script>
 
     <div id="editor-view">
         <div class="container">
             <h1>Bone Set Viewer</h1>
-
-            <!-- Search Bar -->
             <input type="text" id="search-bar" placeholder="Search bone sets" />
             <ul id="search-results"></ul>
-
-            <!-- Dropdown Section (Side-by-Side Flex Layout) -->
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
                 <div style="display: flex; gap: 10px; align-items: center;">
@@ -51,10 +44,9 @@
                 </div>
             </div>
 
-            <!-- Container for the Boneset Names and IDs -->
-            <div id="bone-sets-container">
-                <h2>Bonesets</h2>
-                <ul id="bone-set-list"></ul>
+            <div id="bone-Description-Container">
+                <h3>Description</h3>
+                <ul id="description-Container"></ul>
             </div>
 
             <div class="navigation-buttons">
@@ -66,25 +58,19 @@
 
     <script>
         const API_URL = 'http://127.0.0.1:8000/combined-data';
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/';
+
         let combinedData = { bonesets: [], bones: [], subbones: [] };
-        let currentSetIndex = 0;
 
         async function fetchCombinedData() {
             try {
-                console.log("Fetching data from:", API_URL); // Add this line
                 const response = await fetch(API_URL);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log("Received data:", data); // Add this line
-                return data;
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
             } catch (error) {
-                console.error("Error fetching data:", error); // Enhanced error logging
-                alert("Failed to load data. Check console for details.");
-                throw error; // Re-throw the error so calling code knows it failed
+                console.error("Error fetching data:", error);
+                alert("Failed to load data.");
+                return { bonesets: [], bones: [], subbones: [] };
             }
         }
 
@@ -99,34 +85,16 @@
             });
         }
 
-        function renderBoneSet(boneSet) {
-            const list = document.getElementById('bone-set-list');
-            list.innerHTML = '';
-
-            const li = document.createElement('li');
-            li.textContent = boneSet.name;
-            list.appendChild(li);
-
-            const subList = document.createElement('ul');
-            boneSet.bones.forEach(boneId => {
-                const subLi = document.createElement('li');
-                subLi.textContent = `ID: ${boneId}`;
-                subList.appendChild(subLi);
-            });
-            list.appendChild(subList);
-        }
-
         document.getElementById('boneset-select').addEventListener('change', (e) => {
             const selectedBonesetId = e.target.value;
             const boneSelect = document.getElementById('bone-select');
             const subboneSelect = document.getElementById('subbone-select');
 
-            const relatedBones = combinedData.bones.filter(b => b.boneset === selectedBonesetId);
-
             boneSelect.innerHTML = '<option value="">--Please select a Bone--</option>';
             subboneSelect.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
             subboneSelect.disabled = true;
 
+            const relatedBones = combinedData.bones.filter(b => b.boneset === selectedBonesetId);
             relatedBones.forEach(bone => {
                 const option = document.createElement('option');
                 option.value = bone.id;
@@ -135,16 +103,15 @@
             });
 
             boneSelect.disabled = false;
+            loadDescription(selectedBonesetId);
         });
 
         document.getElementById('bone-select').addEventListener('change', (e) => {
             const selectedBoneId = e.target.value;
             const subboneSelect = document.getElementById('subbone-select');
 
-            const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
-
             subboneSelect.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
-
+            const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
             relatedSubbones.forEach(sb => {
                 const option = document.createElement('option');
                 option.value = sb.id;
@@ -153,23 +120,48 @@
             });
 
             subboneSelect.disabled = relatedSubbones.length === 0;
+            loadDescription(selectedBoneId);
         });
 
-        // Initialization
+        document.getElementById('subbone-select').addEventListener('change', (e) => {
+            const selectedSubboneId = e.target.value;
+            if (selectedSubboneId) loadDescription(selectedSubboneId);
+        });
+
+        async function loadDescription(id) {
+            const container = document.getElementById('description-Container');
+            container.innerHTML = "";
+            const descUrl = `${GITHUB_RAW_URL}${id}_description.json`;
+
+            try {
+                const response = await fetch(descUrl);
+                const data = await response.json();
+
+                const nameItem = document.createElement('li');
+                nameItem.innerHTML = `<strong>${data.name}</strong>`;
+                container.appendChild(nameItem);
+
+                data.description.forEach(point => {
+                    const li = document.createElement('li');
+                    li.textContent = point;
+                    container.appendChild(li);
+                });
+            } catch (error) {
+                container.innerHTML = "<li>Error loading description.</li>";
+                console.error("Failed to fetch description:", error);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             combinedData = await fetchCombinedData();
             populateDropdowns();
 
             const boneset = combinedData.bonesets[0];
             if (boneset) {
-                renderBoneSet({
-                    name: boneset.name,
-                    bones: combinedData.bones.filter(b => b.boneset === boneset.id).map(b => b.id)
-                });
+                document.getElementById('boneset-select').value = boneset.id;
+                const event = new Event('change');
+                document.getElementById('boneset-select').dispatchEvent(event);
             }
-
-            document.getElementById('prev-button').disabled = true;
-            document.getElementById('next-button').disabled = combinedData.bonesets.length <= 1;
         });
     </script>
 </body>
