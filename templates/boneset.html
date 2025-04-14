@@ -3,259 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bone Set Viewer</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Boneset Viewer</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <!-- Badge with Sidebar Toggle Button -->
-    <div id="badge">
-        <button id="toggle-sidebar">☰</button>
-        <span id="text-button-Home" role="button">Home</span> 
-        <span id="text-button-Tutor" role="button">Tutor</span> 
-        <span id="text-button-Study" role="button">Study</span> 
-        <span id="text-button-Help" role="button">Help</span> 
-
-        <div id="innerbadge">
-        <span id="text-button-Login" role="button">Login</span>          
-        <span id="text-button-SignUp" role="button">Sign Up</span> 
-        </div>
+    <!-- Boneset Image and Annotations -->
+    <div class="imagescontainer">
+        <img id="bone-image" alt="Bone Image">
+        <div id="annotations-overlay"></div>
     </div>
 
-    <!-- Sidebar Container -->
-    <div id="sidebar-container"></div>
+    <!-- Boneset Select -->
+    <select id="boneset-select">
+        <option value="">--Please choose a Boneset--</option>
+    </select>
 
-    <script src="sidebar.js"></script>
+    <!-- Bone Select -->
+    <select id="bone-select" disabled>
+        <option value="">--Please choose a Bone--</option>
+    </select>
 
-    <div id="editor-view">
-        <div class="container">
-            <h1>Bone Set Viewer</h1>
+    <!-- Sub-bone Select -->
+    <select id="subbone-select" disabled>
+        <option value="">--Please choose a Sub-bone--</option>
+    </select>
 
-            <!-- Search Bar -->
-            <input type="text" id="search-bar" placeholder="Search bone sets">
-            <ul id="search-results"></ul> <!-- Container for search results -->
+    <!-- Search Bar -->
+    <input type="text" id="search-bar" placeholder="Search bonesets...">
 
-            <!-- Dropdown for Boneset Selection -->
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
+    <!-- Search Results -->
+    <ul id="search-results"></ul>
 
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="boneset-select">
-                        <option value="">--Please select a Boneset--</option>
-                    </select>
-                    <select id="bone-select" disabled>
-                        <option value="">--Please select a Bone--</option>
-                    </select>
-                    <select id="subbone-select" disabled>
-                        <option value="">--Please choose a Sub-Bone--</option>
-                    </select>
-                </div>
-            </div>
+    <!-- Navigation Buttons -->
+    <button id="prev-button" disabled>Previous</button>
+    <button id="next-button" disabled>Next</button>
 
-            <!-- Container for the Boneset Names and IDs -->
-            <div id="bone-sets-container">
-                <h2>Bonesets</h2>
-                <ul id="bone-set-list"></ul>
-            </div>
+    <!-- Scripts -->
+    <script src="fetch.js"></script>
+    <script src="imageHandling.js"></script>  <!-- Import image handling script -->
+    <script src="boneset.js"></script>  <!-- Import boneset handling script -->
 
-            <div class="navigation-buttons">
-                <button id="prev-button" disabled>Previous</button>
-                <button id="next-button" disabled>Next</button>
-                <!-- Image and Annotations -->
-            <div id="image-container">
-                <img id="bone-image" src="" alt="Bone Image">
-                <div id="annotations-overlay"></div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
-        const BONESET_JSON_PATH = 'boneset.json';
-        let boneSets = []; // This will hold the fetched boneset data
-        let currentSetIndex = 0;
-        let timeoutId;
-
-        async function fetchJSON(path) {
-            const response = await fetch(GITHUB_RAW_URL + path);
-            return response.json();
-        }
-
-       // Reusable function to render a boneset
-       function renderBoneSet(boneSet) {
-            const boneSetList = document.getElementById('bone-set-list');
-            boneSetList.innerHTML = '';
-
-            const li = document.createElement('li');
-            li.textContent = boneSet.name;
-            boneSetList.appendChild(li);
-
-            const subList = document.createElement('ul');
-            boneSet.bones.forEach(bone => {
-                const subLi = document.createElement('li');
-                subLi.textContent = `ID: ${bone}`;
-                subList.appendChild(subLi);
-            });
-            boneSetList.appendChild(subList);
-
-            // Display boneset image
-            const imageContainer = document.getElementById('boneset-image-container');
-            const imageElement = document.getElementById('boneset-image');
-        }
-
-        // Populate dropdown menu with boneset names
-        async function populateDropdown() {
-            const dropdown = document.getElementById('boneset-select');
-            dropdown.innerHTML = '<option value="">--Please choose a Boneset--</option>';
-
-            boneSets.forEach(bone => {
-                const option = document.createElement('option');
-                option.value = bone.id;
-                option.textContent = bone.name;
-                dropdown.appendChild(option);
-            });
-        }
-
-         // Load the image and annotations for the selected bone
-         async function loadImageAndAnnotations(boneId) {
-            const imageElement = document.getElementById('bone-image');
-            const annotationsOverlay = document.getElementById('annotations-overlay');
-
-            // Load the image
-            imageElement.src = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/images/${boneId}.png`;
-
-            // Fetch annotations and render them
-            const annotationsData = await fetchJSON(`annotations/${boneId}.json`);
-            annotationsOverlay.innerHTML = ''; // Clear previous annotations
-
-            annotationsData.forEach(annotation => {
-                const annotationElement = document.createElement('div');
-                annotationElement.classList.add('annotation');
-                annotationElement.textContent = annotation.text;
-                annotationElement.style.top = `${annotation.y}%`;
-                annotationElement.style.left = `${annotation.x}%`;
-
-                annotationsOverlay.appendChild(annotationElement);
-            });
-        }
-
-        // Enable Bone dropdown based on Boneset selection
-        document.getElementById('boneset-select').addEventListener('change', () => {
-            const bonesetSelect = document.getElementById('boneset-select');
-            const boneSelect = document.getElementById('bone-select');
-            const subBoneSelect = document.getElementById('subbone-select');
-            
-            const selectedBoneset = boneSets.find(set => set.id === bonesetSelect.value);
-
-            // If a boneset is selected, enable the Bone dropdown and reset Sub-bone
-            if (selectedBoneset) {
-                boneSelect.disabled = false;
-                boneSelect.innerHTML = '<option value="">--Please select a Bone--</option>';
-
-                selectedBoneset.bones.forEach(bone => {
-                    const option = document.createElement('option');
-                    option.value = bone;
-                    option.textContent = bone;
-                    boneSelect.appendChild(option);
-                });
-
-                subBoneSelect.disabled = true; // Disable Sub-bone dropdown initially
-                subBoneSelect.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
-            } else {
-                boneSelect.disabled = true;
-                subBoneSelect.disabled = true;
-            }
-        });
-
-        // Enable Sub-bone dropdown based on Bone selection
-        document.getElementById('bone-select').addEventListener('change', () => {
-            const boneSelect = document.getElementById('bone-select');
-            const subBoneSelect = document.getElementById('subbone-select');
-            
-            if (boneSelect.value) {
-                subBoneSelect.disabled = false;
-            } else {
-                subBoneSelect.disabled = true;
-            }
-        });
-
-        // Debounce search for the search bar input
-        function debouncedSearch() {
-            clearTimeout(timeoutId);
-            const searchTerm = document.getElementById('search-bar').value.trim().toLowerCase();
-            
-            timeoutId = setTimeout(() => {
-                displaySearchResults(searchTerm);
-            }, 300);
-        }
-
-        // Display search results based on the search term
-        async function displaySearchResults(searchTerm) {
-            if (boneSets.length === 0) {
-                const data = await fetchJSON(BONESET_JSON_PATH);
-                boneSets = data.boneset;
-            }
-            const resultsContainer = document.getElementById('search-results');
-            resultsContainer.innerHTML = '';
-
-            const filteredBonesets = boneSets.filter(set => 
-                set.name.toLowerCase().includes(searchTerm)
-            );
-
-            filteredBonesets.forEach(set => {
-                const listItem = document.createElement('li');
-                listItem.textContent = set.name;
-                listItem.onclick = () => {
-                    document.getElementById('search-bar').value = set.name;
-                    resultsContainer.innerHTML = '';
-                    renderBoneSet(set);  // Display selected bone set in main area
-                };
-                resultsContainer.appendChild(listItem);
-            });
-        }
-
-        // Event listeners for search bar and dropdown
-        document.getElementById('search-bar').addEventListener('input', debouncedSearch);
-
-        // Load the boneset data as soon as the page loads
-        document.addEventListener('DOMContentLoaded', async () => {
-            const data = await fetchJSON(BONESET_JSON_PATH);
-            boneSets = data.boneset;
-            currentSetIndex = 0; // Reset index to 0 on load
-
-            // Populate the dropdown menu with bonesets
-            populateDropdown();
-
-            // Display the first boneset in the list
-            renderBoneSet(boneSets[currentSetIndex]);
-
-            // Enable the navigation buttons
-            document.getElementById('prev-button').disabled = false;
-            document.getElementById('next-button').disabled = boneSets.length <= 1;
-        });
-
-        // Event listeners for "Previous" and "Next" buttons
-        document.getElementById('prev-button').addEventListener('click', () => {
-            if (currentSetIndex > 0) {
-                currentSetIndex--;
-                renderBoneSet(boneSets[currentSetIndex]);
-                document.getElementById('next-button').disabled = false;
-                if (currentSetIndex === 0) {
-                    document.getElementById('prev-button').disabled = true;
-                }
-            }
-        });
-
-        document.getElementById('next-button').addEventListener('click', () => {
-            if (currentSetIndex < boneSets.length - 1) {
-                currentSetIndex++;
-                renderBoneSet(boneSets[currentSetIndex]);
-                document.getElementById('prev-button').disabled = false;
-                if (currentSetIndex === boneSets.length - 1) {
-                    document.getElementById('next-button').disabled = true;
-                }
-            }
-        });
-    </script>
 </body>
 </html>
