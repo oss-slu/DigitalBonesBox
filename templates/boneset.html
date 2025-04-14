@@ -1,44 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bone Set Viewer</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
 
-    <!-- Badge with Sidebar Toggle Button -->
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bone Set Viewer</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
     <div id="badge">
         <button id="toggle-sidebar">☰</button>
-        <span id="text-button-Home" role="button">Home</span> 
-        <span id="text-button-Tutor" role="button">Tutor</span> 
-        <span id="text-button-Study" role="button">Study</span> 
-        <span id="text-button-Help" role="button">Help</span> 
-
+        <span id="text-button-Home" role="button">Home</span>
+        <span id="text-button-Tutor" role="button">Tutor</span>
+        <span id="text-button-Study" role="button">Study</span>
+        <span id="text-button-Help" role="button">Help</span>
         <div id="innerbadge">
-        <span id="text-button-Login" role="button">Login</span>          
-        <span id="text-button-SignUp" role="button">Sign Up</span> 
+            <span id="text-button-Login" role="button">Login</span>
+            <span id="text-button-SignUp" role="button">Sign Up</span>
         </div>
     </div>
 
-    <!-- Sidebar Container -->
     <div id="sidebar-container"></div>
-
     <script src="sidebar.js"></script>
 
     <div id="editor-view">
         <div class="container">
             <h1>Bone Set Viewer</h1>
-
-            <!-- Search Bar -->
-            <input type="text" id="search-bar" placeholder="Search bone sets">
-            <ul id="search-results"></ul> <!-- Container for search results -->
-
-            <!-- Dropdown for Boneset Selection -->
+            <input type="text" id="search-bar" placeholder="Search bone sets" />
+            <ul id="search-results"></ul>
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
-
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <select id="boneset-select">
                         <option value="">--Please select a Boneset--</option>
@@ -52,7 +44,6 @@
                 </div>
             </div>
 
-            <!-- Container for the Boneset Names and IDs -->
             <div id="bone-Description-Container">
                 <h3>Description</h3>
                 <ul id="description-Container"></ul>
@@ -64,168 +55,115 @@
             </div>
         </div>
     </div>
-    
+
     <script>
-        // URL of your server API
-        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
-        const BONESET_JSON_PATH = 'boneset.json';
+        const API_URL = 'http://127.0.0.1:8000/combined-data';
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/';
 
+        let combinedData = { bonesets: [], bones: [], subbones: [] };
 
-        // Store the fetched data
-        let bonesets = [];
-        let bones = [];
-        let subbones = [];
-    
-        // Fetch combined data from the server
-        async function fetchBonesData(path) {
-            const response = await fetch(GITHUB_RAW_URL + path);
-            return response.json();
+        async function fetchCombinedData() {
             try {
-                const response = await fetch(GITHUB_RAW_URL);
-                const data = await response.json();
-    
-                if (data.bonesets) {
-                    bonesets = data.bonesets;
-                    bones = data.bones;
-                    subbones = data.subbones;
-    
-                    // Populate the boneset dropdown
-                    populateBonesetDropdown();
-                } else {
-                    console.error("Failed to fetch boneset data");
-                }
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
             } catch (error) {
-                console.error("Error fetching data from server:", error);
+                console.error("Error fetching data:", error);
+                alert("Failed to load data.");
+                return { bonesets: [], bones: [], subbones: [] };
             }
         }
-    
-        // Populate the boneset dropdown
-        function populateBonesetDropdown() {
+
+        function populateDropdowns() {
             const bonesetSelect = document.getElementById('boneset-select');
-            bonesetSelect.innerHTML = '<option value="">--Please select a Boneset--</option>';  // Clear previous options
-            if (!bonesets || bonesets.length === 0) {
-                console.error("No bonesets available.");
-                return;
-            }
-
-            bonesets.forEach(boneset => {
-            if (!boneset.id || !boneset.name) {
-                console.error("Invalid boneset entry:", boneset);
-            return;
-            }
-
+            bonesetSelect.innerHTML = '<option value="">--Please select a Boneset--</option>';
+            combinedData.bonesets.forEach(set => {
                 const option = document.createElement('option');
-                option.value = boneset.id;
-                option.textContent = boneset.name;
+                option.value = set.id;
+                option.textContent = set.name;
                 bonesetSelect.appendChild(option);
             });
         }
-    
-        // Populate the bone dropdown based on boneset selection
-        function populateBoneDropdown(bonesetId) {
-            const boneSelect = document.getElementById('bone-select');
-            boneSelect.innerHTML = '<option value="">--Please select a Bone--</option>';  // Clear previous options
 
-            const selectedBones = bones.filter(bone => bone.boneset === bonesetId);
-            if (!selectedBones || selectedBones.length === 0) {
-                console.error(`No bones found for boneset ID: ${bonesetId}`);
-                return;
-            }
-    
-            selectedBones.forEach(bone => {
-                if (!bone.id || !bone.name) {
-                    console.error("Invalid bone entry:", bone);
-                    return;
-                }
+        document.getElementById('boneset-select').addEventListener('change', (e) => {
+            const selectedBonesetId = e.target.value;
+            const boneSelect = document.getElementById('bone-select');
+            const subboneSelect = document.getElementById('subbone-select');
+
+            boneSelect.innerHTML = '<option value="">--Please select a Bone--</option>';
+            subboneSelect.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
+            subboneSelect.disabled = true;
+
+            const relatedBones = combinedData.bones.filter(b => b.boneset === selectedBonesetId);
+            relatedBones.forEach(bone => {
                 const option = document.createElement('option');
                 option.value = bone.id;
                 option.textContent = bone.name;
                 boneSelect.appendChild(option);
             });
-        }
-    
-        // Populate the sub-bone dropdown based on bone selection
-        function populateSubBoneDropdown(boneId) {
-            const subBoneSelect = document.getElementById('subbone-select');
-            subBoneSelect.innerHTML = '<option value="">--Please select a Sub-Bone--</option>';  // Clear previous options
 
-            const selectedSubBones = subbones.filter(subbone => subbone.bone === boneId);
-            if (!selectedSubBones || selectedSubBones.length === 0) {
-                console.error(`No sub-bones found for bone ID: ${boneId}`);
-                return;
-            }
-    
-            selectedSubBones.forEach(subbone => {
-                if (!subbone.id || !subbone.name) {
-                    console.error("Invalid sub-bone entry:", subbone);
-                    return;
-                }
+            boneSelect.disabled = false;
+            loadDescription(selectedBonesetId);
+        });
 
+        document.getElementById('bone-select').addEventListener('change', (e) => {
+            const selectedBoneId = e.target.value;
+            const subboneSelect = document.getElementById('subbone-select');
+
+            subboneSelect.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
+            const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
+            relatedSubbones.forEach(sb => {
                 const option = document.createElement('option');
-                option.value = subbone.id;
-                option.textContent = subbone.name;
-                subBoneSelect.appendChild(option);
+                option.value = sb.id;
+                option.textContent = sb.name;
+                subboneSelect.appendChild(option);
             });
-        }
-    
-        // Event listener for boneset selection
-        document.getElementById('boneset-select').addEventListener('change', (event) => {
-            const selectedBonesetId = event.target.value;
-            if (selectedBonesetId) {
-                populateBoneDropdown(selectedBonesetId);  // Populate bone dropdown based on boneset
-                document.getElementById('bone-select').disabled = false;  // Enable bone select
-                document.getElementById('subbone-select').disabled = true;  // Disable sub-bone select
-                loadDescription(selectedBonesetId);  // Load boneset description
 
-            } else {
-                document.getElementById('bone-select').disabled = true;  // Disable bone select
-                document.getElementById('subbone-select').disabled = true;  // Disable sub-bone select
-            }
+            subboneSelect.disabled = relatedSubbones.length === 0;
+            loadDescription(selectedBoneId);
         });
-    
-        // Event listener for bone selection
-        document.getElementById('bone-select').addEventListener('change', (event) => {
-            const selectedBoneId = event.target.value;
-            if (selectedBoneId) {
-                populateSubBoneDropdown(selectedBoneId);  // Populate sub-bone dropdown based on bone
-                document.getElementById('subbone-select').disabled = false;  // Enable sub-bone select
-                loadDescription(selectedBoneId);  // Load bone description
 
-            } else {
-                document.getElementById('subbone-select').disabled = true;  // Disable sub-bone select
-            }
-        });
-    
-        // Initialize the page and fetch the data
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchBonesData();  // Fetch boneset, bone, and sub-bone data on page load
-            loadDescription(selectedSubBoneId);  // Load sub-bone description
-
+        document.getElementById('subbone-select').addEventListener('change', (e) => {
+            const selectedSubboneId = e.target.value;
+            if (selectedSubboneId) loadDescription(selectedSubboneId);
         });
 
         async function loadDescription(id) {
-
             const container = document.getElementById('description-Container');
-            container.innerHTML = "";  // Clear previous description
+            container.innerHTML = "";
+            const descUrl = `${GITHUB_RAW_URL}${id}_description.json`;
 
             try {
-                const response = await fetch(GITHUB_RAW_URL);
-                const data = await response.json(); 
+                const response = await fetch(descUrl);
+                const data = await response.json();
 
-                if (data.description) {
+                const nameItem = document.createElement('li');
+                nameItem.innerHTML = `<strong>${data.name}</strong>`;
+                container.appendChild(nameItem);
+
+                data.description.forEach(point => {
                     const li = document.createElement('li');
-                    li.textContent = data.description;
+                    li.textContent = point;
                     container.appendChild(li);
-                } else {
-                    container.textContent = "No description found.";
-                }
+                });
             } catch (error) {
-            container.textContent = "Error loading description.";
-            console.error("Error fetching description:", error);
+                container.innerHTML = "<li>Error loading description.</li>";
+                console.error("Failed to fetch description:", error);
             }
-        }       
+        }
 
+        document.addEventListener('DOMContentLoaded', async () => {
+            combinedData = await fetchCombinedData();
+            populateDropdowns();
+
+            const boneset = combinedData.bonesets[0];
+            if (boneset) {
+                document.getElementById('boneset-select').value = boneset.id;
+                const event = new Event('change');
+                document.getElementById('boneset-select').dispatchEvent(event);
+            }
+        });
     </script>
-    
 </body>
+
 </html>
