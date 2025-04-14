@@ -61,6 +61,10 @@
             <div class="navigation-buttons">
                 <button id="prev-button" disabled>Previous</button>
                 <button id="next-button" disabled>Next</button>
+                <!-- Image and Annotations -->
+            <div id="image-container">
+                <img id="bone-image" src="" alt="Bone Image">
+                <div id="annotations-overlay"></div>
             </div>
         </div>
     </div>
@@ -77,8 +81,8 @@
             return response.json();
         }
 
-        // Reusable function to render a boneset
-        function renderBoneSet(boneSet) {
+       // Reusable function to render a boneset
+       function renderBoneSet(boneSet) {
             const boneSetList = document.getElementById('bone-set-list');
             boneSetList.innerHTML = '';
 
@@ -93,6 +97,10 @@
                 subList.appendChild(subLi);
             });
             boneSetList.appendChild(subList);
+
+            // Display boneset image
+            const imageContainer = document.getElementById('boneset-image-container');
+            const imageElement = document.getElementById('boneset-image');
         }
 
         // Populate dropdown menu with boneset names
@@ -105,6 +113,29 @@
                 option.value = bone.id;
                 option.textContent = bone.name;
                 dropdown.appendChild(option);
+            });
+        }
+
+         // Load the image and annotations for the selected bone
+         async function loadImageAndAnnotations(boneId) {
+            const imageElement = document.getElementById('bone-image');
+            const annotationsOverlay = document.getElementById('annotations-overlay');
+
+            // Load the image
+            imageElement.src = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/images/${boneId}.png`;
+
+            // Fetch annotations and render them
+            const annotationsData = await fetchJSON(`annotations/${boneId}.json`);
+            annotationsOverlay.innerHTML = ''; // Clear previous annotations
+
+            annotationsData.forEach(annotation => {
+                const annotationElement = document.createElement('div');
+                annotationElement.classList.add('annotation');
+                annotationElement.textContent = annotation.text;
+                annotationElement.style.top = `${annotation.y}%`;
+                annotationElement.style.left = `${annotation.x}%`;
+
+                annotationsOverlay.appendChild(annotationElement);
             });
         }
 
