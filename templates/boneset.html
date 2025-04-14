@@ -143,6 +143,8 @@
                 populateBoneDropdown(selectedBonesetId);  // Populate bone dropdown based on boneset
                 document.getElementById('bone-select').disabled = false;  // Enable bone select
                 document.getElementById('subbone-select').disabled = true;  // Disable sub-bone select
+                loadDescription(selectedBonesetId);  // Load boneset description
+
             } else {
                 document.getElementById('bone-select').disabled = true;  // Disable bone select
                 document.getElementById('subbone-select').disabled = true;  // Disable sub-bone select
@@ -155,6 +157,8 @@
             if (selectedBoneId) {
                 populateSubBoneDropdown(selectedBoneId);  // Populate sub-bone dropdown based on bone
                 document.getElementById('subbone-select').disabled = false;  // Enable sub-bone select
+                loadDescription(selectedBoneId);  // Load bone description
+
             } else {
                 document.getElementById('subbone-select').disabled = true;  // Disable sub-bone select
             }
@@ -163,7 +167,33 @@
         // Initialize the page and fetch the data
         document.addEventListener('DOMContentLoaded', () => {
             fetchBonesData();  // Fetch boneset, bone, and sub-bone data on page load
+            loadDescription(selectedSubBoneId);  // Load sub-bone description
+
         });
+
+        async function loadDescription(id) {
+            const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
+
+    const container = document.getElementById('description-Container');
+    container.innerHTML = "";  // Clear previous description
+
+    try {
+        const response = await fetch(GITHUB_RAW_URL);
+        const data = await response.json(); 
+
+        if (data.description) {
+            const li = document.createElement('li');
+            li.textContent = data.description;
+            container.appendChild(li);
+        } else {
+            container.textContent = "No description found.";
+        }
+    } catch (error) {
+        container.textContent = "Error loading description.";
+        console.error("Error fetching description:", error);
+    }
+}
+
     </script>
     
 </body>
