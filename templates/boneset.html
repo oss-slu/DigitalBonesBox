@@ -67,17 +67,21 @@
     
     <script>
         // URL of your server API
-        const API_URL = 'http://127.0.0.1:8000/combined-data';
-    
+        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
+        const BONESET_JSON_PATH = 'boneset.json';
+
+
         // Store the fetched data
         let bonesets = [];
         let bones = [];
         let subbones = [];
     
         // Fetch combined data from the server
-        async function fetchBonesData() {
+        async function fetchBonesData(path) {
+            const response = await fetch(GITHUB_RAW_URL + path);
+            return response.json();
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(GITHUB_RAW_URL);
                 const data = await response.json();
     
                 if (data.bonesets) {
@@ -99,8 +103,17 @@
         function populateBonesetDropdown() {
             const bonesetSelect = document.getElementById('boneset-select');
             bonesetSelect.innerHTML = '<option value="">--Please select a Boneset--</option>';  // Clear previous options
-    
+            if (!bonesets || bonesets.length === 0) {
+                console.error("No bonesets available.");
+                return;
+            }
+
             bonesets.forEach(boneset => {
+            if (!boneset.id || !boneset.name) {
+                console.error("Invalid boneset entry:", boneset);
+            return;
+            }
+
                 const option = document.createElement('option');
                 option.value = boneset.id;
                 option.textContent = boneset.name;
@@ -112,9 +125,18 @@
         function populateBoneDropdown(bonesetId) {
             const boneSelect = document.getElementById('bone-select');
             boneSelect.innerHTML = '<option value="">--Please select a Bone--</option>';  // Clear previous options
+
             const selectedBones = bones.filter(bone => bone.boneset === bonesetId);
+            if (!selectedBones || selectedBones.length === 0) {
+                console.error(`No bones found for boneset ID: ${bonesetId}`);
+                return;
+            }
     
             selectedBones.forEach(bone => {
+                if (!bone.id || !bone.name) {
+                    console.error("Invalid bone entry:", bone);
+                    return;
+                }
                 const option = document.createElement('option');
                 option.value = bone.id;
                 option.textContent = bone.name;
@@ -126,9 +148,19 @@
         function populateSubBoneDropdown(boneId) {
             const subBoneSelect = document.getElementById('subbone-select');
             subBoneSelect.innerHTML = '<option value="">--Please select a Sub-Bone--</option>';  // Clear previous options
+
             const selectedSubBones = subbones.filter(subbone => subbone.bone === boneId);
+            if (!selectedSubBones || selectedSubBones.length === 0) {
+                console.error(`No sub-bones found for bone ID: ${boneId}`);
+                return;
+            }
     
             selectedSubBones.forEach(subbone => {
+                if (!subbone.id || !subbone.name) {
+                    console.error("Invalid sub-bone entry:", subbone);
+                    return;
+                }
+
                 const option = document.createElement('option');
                 option.value = subbone.id;
                 option.textContent = subbone.name;
@@ -172,27 +204,26 @@
         });
 
         async function loadDescription(id) {
-            const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/json/';
 
-    const container = document.getElementById('description-Container');
-    container.innerHTML = "";  // Clear previous description
+            const container = document.getElementById('description-Container');
+            container.innerHTML = "";  // Clear previous description
 
-    try {
-        const response = await fetch(GITHUB_RAW_URL);
-        const data = await response.json(); 
+            try {
+                const response = await fetch(GITHUB_RAW_URL);
+                const data = await response.json(); 
 
-        if (data.description) {
-            const li = document.createElement('li');
-            li.textContent = data.description;
-            container.appendChild(li);
-        } else {
-            container.textContent = "No description found.";
-        }
-    } catch (error) {
-        container.textContent = "Error loading description.";
-        console.error("Error fetching description:", error);
-    }
-}
+                if (data.description) {
+                    const li = document.createElement('li');
+                    li.textContent = data.description;
+                    container.appendChild(li);
+                } else {
+                    container.textContent = "No description found.";
+                }
+            } catch (error) {
+            container.textContent = "Error loading description.";
+            console.error("Error fetching description:", error);
+            }
+        }       
 
     </script>
     
