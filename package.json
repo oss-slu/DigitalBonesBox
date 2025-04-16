@@ -1,11 +1,14 @@
 {
   "name": "digitalbonesbox",
   "version": "1.0.0",
+  "type": "module",
   "description": "This project is a Web App project aims to convert an existing PowerPoint-based educational tool into an interactive, mobile-friendly web application.",
   "main": "server.js",
   "scripts": {
     "test": "jest",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix"
   },
   "jest": {
     "testEnvironment": "jsdom"
@@ -22,7 +25,8 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0"
+    "jest-environment-jsdom": "^29.7.0",
+    "eslint": "^9.24.0"
   },
   "directories": {
     "test": "tests"
