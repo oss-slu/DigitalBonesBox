@@ -1,48 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boneset Viewer</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bone Set Viewer</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <!-- Boneset Image and Annotations -->
-    <div class="imagescontainer">
-        <img id="bone-image" alt="Bone Image">
-        <div id="annotations-overlay"></div>
+  <!-- Fixed Badge / Top Nav -->
+  <div id="badge">
+    <button id="toggle-sidebar">☰</button>
+    <span id="text-button-Home"   role="button">Home</span>
+    <span id="text-button-Tutor"  role="button">Tutor</span>
+    <span id="text-button-Study"  role="button">Study</span>
+    <span id="text-button-Help"   role="button">Help</span>
+    <div id="innerbadge">
+      <span id="text-button-Login"  role="button">Login</span>
+      <span id="text-button-SignUp" role="button">Sign Up</span>
     </div>
+  </div>
 
-    <!-- Boneset Select -->
-    <select id="boneset-select">
-        <option value="">--Please choose a Boneset--</option>
-    </select>
+  <!-- Sidebar -->
+  <div id="sidebar-container"></div>
+  <script src="sidebar.js"></script>
 
-    <!-- Bone Select -->
-    <select id="bone-select" disabled>
-        <option value="">--Please choose a Bone--</option>
-    </select>
+  <!-- Main Editor View -->
+  <div id="editor-view">
+    <div class="container">
 
-    <!-- Sub-bone Select -->
-    <select id="subbone-select" disabled>
-        <option value="">--Please choose a Sub-bone--</option>
-    </select>
+      <h1>Bone Set Viewer</h1>
 
-    <!-- Search Bar -->
-    <input type="text" id="search-bar" placeholder="Search bonesets...">
+      <!-- Image + Annotations -->
+      <div class="imagescontainer">
+        <img id="bone-image" alt="Bone Image" />
+        <div id="annotations-overlay"></div>
+      </div>
 
-    <!-- Search Results -->
-    <ul id="search-results"></ul>
+      <!-- Search Bar -->
+      <input type="text" id="search-bar" placeholder="Search bone sets" />
+      <ul id="search-results"></ul>
 
-    <!-- Navigation Buttons -->
-    <button id="prev-button" disabled>Previous</button>
-    <button id="next-button" disabled>Next</button>
+      <!-- Dropdowns -->
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+        <label for="boneset-select">Choose a Boneset, Bone, or Sub-bone:</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <select id="boneset-select">
+            <option value="">--Please select a Boneset--</option>
+          </select>
+          <select id="bone-select" disabled>
+            <option value="">--Please select a Bone--</option>
+          </select>
+          <select id="subbone-select" disabled>
+            <option value="">--Please choose a Sub-Bone--</option>
+          </select>
+        </div>
+      </div>
 
-    <!-- Scripts -->
-    <script src="fetch.js"></script>
-    <script src="imageHandling.js"></script>  <!-- Import image handling script -->
-    <script src="boneset.js"></script>  <!-- Import boneset handling script -->
+      <!-- Description -->
+      <div id="bone-Description-Container" style="margin-top: 20px;">
+        <h3>Description</h3>
+        <ul id="description-Container"></ul>
+      </div>
 
+      <!-- Navigation Buttons -->
+      <div class="navigation-buttons" style="margin-top: 20px;">
+        <button id="prev-button" disabled>Previous</button>
+        <button id="next-button" disabled>Next</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Module Scripts -->
+  <script src="fetch.js"></script>
+  <script src="image_handeling.js"></script>
+  <script src="boneset.js"></script>
 </body>
 </html>

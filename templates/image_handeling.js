@@ -1,44 +1,33 @@
-/**
- * Load the image for a selected bone.
- * @param {string} boneId - The ID or name of the bone (used for the image file).
- */
- export function loadBoneImage(boneId) {
-    const imageElement = document.getElementById('bone-image');
-    imageElement.src = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/images/${boneId}.png`;
+// image_handling.js
+
+function loadBoneImage(boneId) {
+    document.getElementById('bone-image').src =
+      `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/images/bony_pelvis.png`;
 }
 
-/**
- * Load the annotations for the selected bone and display them.
- * @param {string} boneId - The ID or name of the bone (used for fetching annotation file).
- */
-export async function loadAnnotations(boneId) {
-    const annotationsOverlay = document.getElementById('annotations-overlay');
-    annotationsOverlay.innerHTML = ''; // Clear previous annotations
+async function loadAnnotations(boneId) {
+    const overlay = document.getElementById('annotations-overlay');
+    overlay.innerHTML = '';
 
     try {
-        const annotationsData = await fetch(`https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/databones/annotations/${boneId}.json`);
-        const annotations = await annotationsData.json();
-
-        annotations.forEach(annotation => {
-            const annotationElement = document.createElement('div');
-            annotationElement.classList.add('annotation');
-            annotationElement.textContent = annotation.text;
-            annotationElement.style.top = `${annotation.y}%`;
-            annotationElement.style.left = `${annotation.x}%`;
-
-            annotationsOverlay.appendChild(annotationElement);
+        const data = await fetch(
+          `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/annotations/${boneId}.json`
+        );
+        const annotations = await data.json();
+        annotations.forEach(a => {
+            const div = document.createElement('div');
+            div.className = 'annotation';
+            div.textContent = a.text;
+            div.style.top = `${a.y}%`;
+            div.style.left = `${a.x}%`;
+            overlay.appendChild(div);
         });
     } catch (error) {
-        console.error("Error loading annotations:", error);
-        alert(`Error loading annotations for ${boneId}: ${error.message}`);
+        console.error('Failed to load annotations:', error);
     }
 }
 
-/**
- * Load both the image and annotations for a selected bone.
- * @param {string} boneId - The ID or name of the bone.
- */
-export async function loadImageAndAnnotations(boneId) {
+async function loadImageAndAnnotations(boneId) {
     loadBoneImage(boneId);
     await loadAnnotations(boneId);
 }
