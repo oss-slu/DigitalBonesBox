@@ -1,8 +1,8 @@
-document.addEventListener('DOMContentLoaded', () => {
+// js/sidebar.js
+export function initializeSidebar() {
     const toggleButton = document.getElementById('toggle-sidebar');
     const sidebarContainer = document.getElementById('sidebar-container');
 
-    // Load the sidebar dynamically if not already loaded
     async function loadSidebar() {
         if (!sidebarContainer.innerHTML) {
             try {
@@ -15,15 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Toggle sidebar visibility
-    toggleButton.addEventListener('click', async () => {
-        await loadSidebar(); // Ensure the sidebar is loaded
-        const sidebarElement = document.getElementById('sidebar');
+    if (toggleButton) {
+        toggleButton.addEventListener('click', async () => {
+            await loadSidebar(); // Ensure the sidebar is loaded
+            const sidebarElement = document.getElementById('sidebar');
 
-        if (sidebarElement.style.left === '0px') {
-            sidebarElement.style.left = '-250px'; // Close sidebar
-        } else {
-            sidebarElement.style.left = '0px'; // Open sidebar
-        }
-    });
-});
+            if (sidebarElement) {
+                if (sidebarElement.style.left === '0px') {
+                    sidebarElement.style.left = '-250px'; // Close sidebar
+                } else {
+                    sidebarElement.style.left = '0px'; // Open sidebar
+                }
+            }
+        });
+    }
+}
