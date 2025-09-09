@@ -42,6 +42,13 @@ Clone the repository:
 
 - git clone [https://github.com/oss-slu/DigitalBonesBox.git](https://github.com/oss-slu/DigitalBonesBox.git)
 - Open the project in your preferred code editor.
+- Install the dependencies:
+  ```bash
+  npm install
+- Navigate to "boneset-api" folder and paste this in your code to run the server:
+  ```bash
+  npm start
+- When the server starts running, run the frontend by clicking "Go Live" using live server on the status bar:
 
 ## Contributing
 
