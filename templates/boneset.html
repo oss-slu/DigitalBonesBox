@@ -7,7 +7,7 @@
     <title>Bone Set Viewer</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -33,13 +33,27 @@
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="boneset-select">
+                    <select id="boneset-select" 
+                            name="boneId"
+                            hx-get="http://127.0.0.1:8000/api/description/" 
+                            hx-target="#description-Container"
+                            hx-trigger="change">
                         <option value="">--Please select a Boneset--</option>
                     </select>
-                    <select id="bone-select" disabled>
+                    <select id="bone-select" 
+                            name="boneId"
+                            hx-get="http://127.0.0.1:8000/api/description/" 
+                            hx-target="#description-Container"
+                            hx-trigger="change"
+                            disabled>
                         <option value="">--Please select a Bone--</option>
                     </select>
-                    <select id="subbone-select" disabled>
+                    <select id="subbone-select"
+                            name="boneId"
+                            hx-get="http://127.0.0.1:8000/api/description/" 
+                            hx-target="#description-Container"
+                            hx-trigger="change"
+                            disabled>
                         <option value="">--Please choose a Sub-Bone--</option>
                     </select>
                 </div>
@@ -47,7 +61,8 @@
 
             <div id="bone-Description-Container">
                 <h3>Description</h3>
-                <ul id="description-Container"></ul>
+                <ul id="description-Container">
+                    </ul>
             </div>
 
             <div class="navigation-buttons">
@@ -58,46 +73,9 @@
             <div class="viewer-wrapper">
                 <img id="bone-image" alt="Bone Image" />
                 <div id="annotations-overlay"></div>
-              </div>
+            </div>
               
-              <script>
-                //const BASE_IMAGE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/images/bony_pelvis.png";
-                //const BASE_ANNOTATION_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/images/bony_pelvis.png";
-              
-                const imageId = " ";  // replace with dynamic logic later if needed
-              
-                async function fetchImageAndAnnotations(id) {
-                  const imageUrl = `${BASE_IMAGE_URL}${id}`;
-                  const annotationUrl = `${BASE_ANNOTATION_URL}${id}_annotation.json`;
-              
-                  try {
-                    // Try loading the image
-                    const img = new Image();
-                    img.src = imageUrl;
-                    img.onload = () => {
-                      console.log("Image found:", imageUrl);
-                      document.getElementById("bone-image").src = imageUrl;
-                    };
-                    img.onerror = () => {
-                      console.error("Image not found:", imageUrl);
-                    };
-              
-                    // Try fetching the annotation JSON
-                    const response = await fetch(annotationUrl);
-                    if (!response.ok) throw new Error("Annotation fetch failed");
-                    const annotations = await response.json();
-                    console.log("Annotation found:", annotations);
-                  } catch (err) {
-                    console.error("Annotation not found or error parsing:", err);
-                  }
-                }
-              
-                document.addEventListener("DOMContentLoaded", () => {
-                  fetchImageAndAnnotations(imageId);
-                });
-              </script>
-              
-        </div>
+            </div>
     </div>
     <script type="module" src="js/main.js"></script>
 
