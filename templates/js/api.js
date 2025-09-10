@@ -1,5 +1,6 @@
-// js/api.js
+
 export async function fetchCombinedData() {
+    // --- CORRECTED: Use the full URL of the backend server ---
     const API_URL = 'http://127.0.0.1:8000/combined-data';
 
     try {

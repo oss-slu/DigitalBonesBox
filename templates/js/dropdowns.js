@@ -34,7 +34,7 @@ export function setupDropdownListeners(combinedData) {
         });
 
         boneSelect.disabled = relatedBones.length === 0;
-        if (selectedBonesetId) loadDescription(selectedBonesetId);
+       // if (selectedBonesetId) loadDescription(selectedBonesetId);
     });
 
     boneSelect.addEventListener('change', (e) => {
