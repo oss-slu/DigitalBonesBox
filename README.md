@@ -36,19 +36,26 @@ Designed for use on iPads, laptops, or other devices commonly used by students.
   - Includes **placeholder options** such as **Search**, **Contact**, **Recent**, and **Help**, which are non-functional and reserved for future implementation.
   - Users can open and close the sidebar using the ☰ button on the top-left corner of the page.
 
-## Setup
+## Setup:
 
-Clone the repository:
+To run this project locally, you will need to have Node.js installed. The application consists of a backend API and a frontend client, which can be run together with a single command.
+
+1. Clone the repository:
 
 - git clone [https://github.com/oss-slu/DigitalBonesBox.git](https://github.com/oss-slu/DigitalBonesBox.git)
-- Open the project in your preferred code editor.
-- Install the dependencies:
-  ```bash
-  npm install
-- Navigate to "boneset-api" folder and paste this in your code to run the server:
-  ```bash
-  npm start
-- When the server starts running, run the frontend by clicking "Go Live" using live server on the status bar:
+- cd DigitalBonesBox
+
+2. Install dependencies:
+This command will install the necessary packages for both the root project and the boneset-api server.
+
+- npm install && npm install --prefix boneset-api
+
+3. Run the application:
+This command will start both the backend API server and the frontend live server concurrently.
+
+- npm start
+
+Your browser should automatically open to the application.
 
 ## Contributing
 
