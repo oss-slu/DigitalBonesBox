@@ -1,0 +1,20 @@
+{
+  "id": "bony_pelvis",
+  "name": "Bony Pelvis",
+  "bones": [
+    {
+      "id": "ilium",
+      "name": "Ilium",
+      "description": [
+        "The Ilium forms the superior part of the bony pelvis.",
+        "It articulates with the sacrum to form the sacroiliac joint."
+      ],
+      "subbones": [
+        { "id": "iliac_crest", "name": "Iliac Crest" },
+        { "id": "anterior_superior_iliac_spine", "name": "Anterior Superior Iliac Spine" }
+      ]
+    },
+    { "id": "ischium", "name": "Ischium", "subbones": [] },
+    { "id": "pubis", "name": "Pubis", "subbones": [] }
+  ]
+}

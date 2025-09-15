@@ -92,11 +92,11 @@
 
 
 
-
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const path = require('path');
+const fs = require('fs/promises'); // <-- ADDED
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -106,6 +106,8 @@ app.use(cors());
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
+
+const DATA_DIR = path.join(__dirname, "data"); // <-- ADDED
 
 async function fetchJSON(url) {
     try {
@@ -170,6 +172,22 @@ app.get("/api/description/", async (req, res) => { // Path changed here (no :bon
 
     } catch (error) {
         res.send('<li>Description not available.</li>');
+    }
+});
+
+// --- ADDED: Serve merged boneset JSON from /data ---
+app.get("/api/boneset/:bonesetId", async (req, res) => {
+    const { bonesetId } = req.params;
+    const filePath = path.join(DATA_DIR, `final_${bonesetId}.json`);
+    try {
+        const raw = await fs.readFile(filePath, "utf8");
+        res.type("application/json").send(raw);
+    } catch (err) {
+        if (err.code === "ENOENT") {
+            return res.status(404).json({ error: `Boneset '${bonesetId}' not found` });
+        }
+        console.error("Error reading boneset file:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
