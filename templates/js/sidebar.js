@@ -30,3 +30,17 @@ export function initializeSidebar() {
         });
     }
 }
+document.addEventListener('DOMContentLoaded', () => {
+    const helpButton = document.getElementById('text-button-Help');
+    const helpModal = document.getElementById('help-modal');
+    const closeHelpModal = document.getElementById('close-help-modal');
+    if (helpButton && helpModal && closeHelpModal) {
+        helpButton.addEventListener('click', () => {
+            helpModal.style.display = 'flex';
+        });
+        closeHelpModal.addEventListener('click', () => {
+            helpModal.style.display = 'none';
+        });
+    }
+})
+

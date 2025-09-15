@@ -201,3 +201,40 @@ ul li {
     pointer-events: none; /* So clicks pass through to the image */
 }
 
+#help-modal {
+    display: none; 
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+#help-modal-context {
+    background: #fff;
+    padding: 2em 1.5em;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: auto;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+}
+
+#close-help-modal {
+    margin-top: 1em;
+    padding: 8px 20px; 
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#close-help-modal:hover {
+    background-color: #0056b3;
+}
