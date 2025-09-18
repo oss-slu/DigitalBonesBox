@@ -1,8 +1,8 @@
 // js/description.js
-const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/';
+const GITHUB_RAW_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/";
 
 export async function loadDescription(id) {
-    const container = document.getElementById('description-Container');
+    const container = document.getElementById("description-Container");
     container.innerHTML = "";
     const descUrl = `${GITHUB_RAW_URL}${id}_description.json`;
 
@@ -10,12 +10,12 @@ export async function loadDescription(id) {
         const response = await fetch(descUrl);
         const data = await response.json();
 
-        const nameItem = document.createElement('li');
+        const nameItem = document.createElement("li");
         nameItem.innerHTML = `<strong>${data.name}</strong>`;
         container.appendChild(nameItem);
 
         data.description.forEach(point => {
-            const li = document.createElement('li');
+            const li = document.createElement("li");
             li.textContent = point;
             container.appendChild(li);
         });
