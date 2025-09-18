@@ -90,107 +90,114 @@
 //    console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
 //});
 
-
-
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs/promises"); // <-- ADDED
+const fs = require("fs/promises");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(cors());
 
+// Remote data (kept for existing dropdowns)
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 
-const DATA_DIR = path.join(__dirname, "data"); // <-- ADDED
+// Local merged JSON directory
+const DATA_DIR = path.join(__dirname, "data");
 
+// Helper to fetch JSON
 async function fetchJSON(url) {
-    try {
-        const response = await axios.get(url);
-        return response.data;
-    } catch (error) {
-        console.error(`Failed to fetch ${url}:`, error.message);
-        return null;
-    }
+  try {
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error(`Failed to fetch ${url}:`, error.message);
+    return null;
+  }
 }
 
+// Simple home
 app.get("/", (req, res) => {
-    res.json({ message: "Welcome to the Boneset API (GitHub-Integrated)" });
+  res.json({ message: "Welcome to the Boneset API (GitHub-Integrated)" });
 });
 
+// Existing combined-data endpoint (unchanged)
 app.get("/combined-data", async (req, res) => {
-    try {
-        const bonesetData = await fetchJSON(BONESET_JSON_URL);
-        if (!bonesetData) return res.status(500).json({ error: "Failed to load boneset data" });
+  try {
+    const bonesetData = await fetchJSON(BONESET_JSON_URL);
+    if (!bonesetData) return res.status(500).json({ error: "Failed to load boneset data" });
 
-        const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
-        const bones = [];
-        const subbones = [];
+    const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
+    const bones = [];
+    const subbones = [];
 
-        for (const boneId of bonesetData.bones) {
-            const boneJsonUrl = `${BONES_DIR_URL}${boneId}.json`;
-            const boneData = await fetchJSON(boneJsonUrl);
+    for (const boneId of bonesetData.bones) {
+      const boneJsonUrl = `${BONES_DIR_URL}${boneId}.json`;
+      const boneData = await fetchJSON(boneJsonUrl);
 
-            if (boneData) {
-                bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
-                boneData.subBones.forEach(subBoneId => {
-                    subbones.push({ id: subBoneId, name: subBoneId.replace(/_/g, " "), bone: boneData.id });
-                });
-            }
-        }
-
-        res.json({ bonesets, bones, subbones });
-
-    } catch (error) {
-        console.error("Error fetching combined data:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-// --- CORRECTED HTMX ENDPOINT ---
-app.get("/api/description/", async (req, res) => { // Path changed here (no :boneId)
-    const { boneId } = req.query; // Changed from req.params to req.query
-    if (!boneId) {
-        return res.send(""); // Send empty response if no boneId is provided
-    }
-    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
-
-    try {
-        const response = await axios.get(GITHUB_DESC_URL);
-        const descriptionData = response.data;
-
-        let html = `<li><strong>${descriptionData.name}</strong></li>`;
-        descriptionData.description.forEach(point => {
-            html += `<li>${point}</li>`;
+      if (boneData) {
+        bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
+        boneData.subBones.forEach((subBoneId) => {
+          subbones.push({ id: subBoneId, name: subBoneId.replace(/_/g, " "), bone: boneData.id });
         });
-        res.send(html);
-
-    } catch (error) {
-        res.send("<li>Description not available.</li>");
+      }
     }
+
+    res.json({ bonesets, bones, subbones });
+  } catch (error) {
+    console.error("Error fetching combined data:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
-// --- ADDED: Serve merged boneset JSON from /data ---
+// HTMX description fragment (unchanged behavior)
+app.get("/api/description/", async (req, res) => {
+  const { boneId } = req.query;
+  if (!boneId) {
+    return res.send("");
+  }
+  const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
+
+  try {
+    const response = await axios.get(GITHUB_DESC_URL);
+    const descriptionData = response.data;
+
+    let html = `<li><strong>${descriptionData.name}</strong></li>`;
+    descriptionData.description.forEach((point) => {
+      html += `<li>${point}</li>`;
+    });
+    res.send(html);
+  } catch (error) {
+    res.send("<li>Description not available.</li>");
+  }
+});
+
+// New: serve the merged boneset file with safe JSON parse + clear errors
 app.get("/api/boneset/:bonesetId", async (req, res) => {
-    const { bonesetId } = req.params;
-    const filePath = path.join(DATA_DIR, `final_${bonesetId}.json`);
+  const { bonesetId } = req.params;
+  const filePath = path.join(DATA_DIR, `final_${bonesetId}.json`);
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
     try {
-        const raw = await fs.readFile(filePath, "utf8");
-        res.type("application/json").send(raw);
-    } catch (err) {
-        if (err.code === "ENOENT") {
-            return res.status(404).json({ error: `Boneset '${bonesetId}' not found` });
-        }
-        console.error("Error reading boneset file:", err);
-        res.status(500).json({ error: "Internal Server Error" });
+      const data = JSON.parse(raw); // guard against corrupt JSON
+      return res.json(data);
+    } catch (parseErr) {
+      console.error("Invalid JSON in file:", filePath, parseErr);
+      return res.status(500).json({ error: "Invalid boneset JSON" });
     }
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      return res.status(404).json({ error: `Boneset '${bonesetId}' not found` });
+    }
+    console.error("Error reading boneset file:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
+  console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
 });
