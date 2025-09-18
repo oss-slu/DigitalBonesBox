@@ -96,7 +96,7 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const path = require('path');
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -154,7 +154,7 @@ app.get("/combined-data", async (req, res) => {
 app.get("/api/description/", async (req, res) => { // Path changed here (no :boneId)
     const { boneId } = req.query; // Changed from req.params to req.query
     if (!boneId) {
-        return res.send(''); // Send empty response if no boneId is provided
+        return res.send(""); // Send empty response if no boneId is provided
     }
     const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
 
@@ -169,7 +169,7 @@ app.get("/api/description/", async (req, res) => { // Path changed here (no :bon
         res.send(html);
 
     } catch (error) {
-        res.send('<li>Description not available.</li>');
+        res.send("<li>Description not available.</li>");
     }
 });
 

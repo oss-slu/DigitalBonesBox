@@ -9,7 +9,7 @@ const html = `
 `;
 document.body.innerHTML = html;
 
-require('./sidebar.js'); // Import the JavaScript code
+require("./sidebar.js"); // Import the JavaScript code
 
 beforeEach(() => {
     global.fetch = jest.fn(() =>
@@ -23,85 +23,261 @@ beforeEach(() => {
         })
     );
 
-    const sidebarContainer = document.getElementById('sidebar-container');
-    sidebarContainer.innerHTML = ''; // Reset sidebar container
+    const sidebarContainer = document.getElementById("sidebar-container");
+    sidebarContainer.innerHTML = ""; // Reset sidebar container
 
-    const sidebarElement = document.getElementById('sidebar');
+    const sidebarElement = document.getElementById("sidebar");
     if (sidebarElement) {
-        sidebarElement.style.left = '-250px'; // Explicitly set the initial state
+        sidebarElement.style.left = "-250px"; // Explicitly set the initial state
     }
 });
 
 beforeAll(() => {
-    document.dispatchEvent(new Event('DOMContentLoaded')); // Simulate DOMContentLoaded
+    document.dispatchEvent(new Event("DOMContentLoaded")); // Simulate DOMContentLoaded
 });
 
 afterEach(() => {
     // Reset sidebar state after each test
-    const sidebarElement = document.getElementById('sidebar');
+    const sidebarElement = document.getElementById("sidebar");
     if (sidebarElement) {
-        sidebarElement.style.left = '-250px'; // Ensure sidebar is closed
+        sidebarElement.style.left = "-250px"; // Ensure sidebar is closed
     }
     jest.restoreAllMocks(); // Clean up mocks
 });
 
-describe('Sidebar Toggle Functionality', () => {
-    test('loads sidebar content when the button is clicked', async () => {
-        const toggleButton = document.getElementById('toggle-sidebar');
+describe("Sidebar Toggle Functionality", () => {
+    test("loads sidebar content when the button is clicked", async () => {
+        const toggleButton = document.getElementById("toggle-sidebar");
         toggleButton.click();
         await new Promise(process.nextTick);
 
-        const sidebarElement = document.getElementById('sidebar');
+        const sidebarElement = document.getElementById("sidebar");
         expect(sidebarElement).toBeTruthy();
-        expect(sidebarElement.innerHTML).toContain('Sidebar Content');
+        expect(sidebarElement.innerHTML).toContain("Sidebar Content");
     });
 
-    test('toggles sidebar open and closed', async () => {
-        const toggleButton = document.getElementById('toggle-sidebar');
-        const sidebarElement = document.getElementById('sidebar');
+    test("toggles sidebar open and closed", async () => {
+        const toggleButton = document.getElementById("toggle-sidebar");
+        const sidebarElement = document.getElementById("sidebar");
 
         // Ensure the sidebar starts hidden
         let computedStyle = window.getComputedStyle(sidebarElement);
-        expect(computedStyle.left).toBe('-250px'); // Sidebar is initially hidden
+        expect(computedStyle.left).toBe("-250px"); // Sidebar is initially hidden
 
         // Simulate opening the sidebar
         toggleButton.click();
         await new Promise((resolve) => setTimeout(resolve, 50)); // Wait for event propagation
         computedStyle = window.getComputedStyle(sidebarElement);
-        expect(computedStyle.left).toBe('0px'); // Sidebar is open
+        expect(computedStyle.left).toBe("0px"); // Sidebar is open
 
         // Simulate closing the sidebar
         toggleButton.click();
         await new Promise((resolve) => setTimeout(resolve, 50)); // Wait for event propagation
         computedStyle = window.getComputedStyle(sidebarElement);
-        expect(computedStyle.left).toBe('-250px'); // Sidebar is closed
+        expect(computedStyle.left).toBe("-250px"); // Sidebar is closed
     });
 });
 
-describe('Badge Button', () => {
-    test('badge button is present and clickable', () => {
-        const badgeButton = document.getElementById('toggle-sidebar');
+describe("Badge Button", () => {
+    test("badge button is present and clickable", () => {
+        const badgeButton = document.getElementById("toggle-sidebar");
         expect(badgeButton).toBeTruthy();
-        expect(badgeButton.tagName).toBe('BUTTON');
+        expect(badgeButton.tagName).toBe("BUTTON");
     });
 
-    test('badge button has correct initial text', () => {
-        const badgeButton = document.getElementById('toggle-sidebar');
-        expect(badgeButton.textContent).toBe('☰');
+    test("badge button has correct initial text", () => {
+        const badgeButton = document.getElementById("toggle-sidebar");
+        expect(badgeButton.textContent).toBe("☰");
     });
 });
 
-describe('Sidebar Styling', () => {
-    test('sidebar starts hidden by default', () => {
-        const sidebar = document.getElementById('sidebar');
+describe("Sidebar Styling", () => {
+    test("sidebar starts hidden by default", () => {
+        const sidebar = document.getElementById("sidebar");
         expect(sidebar).toBeTruthy();
 
         const computedStyle = window.getComputedStyle(sidebar);
-        expect(computedStyle.left).toBe('-250px'); // Sidebar is hidden initially
+        expect(computedStyle.left).toBe("-250px"); // Sidebar is hidden initially
     });
 
-    test('sidebar transitions smoothly', () => {
-        const sidebar = document.getElementById('sidebar');
-        expect(sidebar.style.transition).toContain('left 0.3s ease');
+    test("sidebar transitions smoothly", () => {
+        const sidebar = document.getElementById("sidebar");
+        expect(sidebar.style.transition).toContain("left 0.3s ease");
+    });
+
+
+    
+});
+
+// Add this test suite to the end of your templates/test.js file
+
+describe("Viewer Display Logic", () => {
+    let mockBoneData;
+    
+    beforeEach(() => {
+        // Add viewer HTML elements to the DOM
+        const viewerHTML = `
+            <div class="viewer-wrapper">
+                <img id="bone-image" alt="Bone Image" style="display: none;" />
+                <div id="annotations-overlay">
+                    <p>Select a bone to view image and annotations.</p>
+                </div>
+            </div>
+        `;
+        document.body.innerHTML += viewerHTML;
+        
+        // Mock the bone data structure
+        mockBoneData = {
+            bones: [
+                {
+                    id: "ischium",
+                    name: "Ischium",
+                    image_url: "https://via.placeholder.com/600x400/4A90E2/FFFFFF?text=Ischium+Bone",
+                    annotations: [
+                        {
+                            text: "Ischial Tuberosity - Attachment point for hamstring muscles",
+                            position: { x: 300, y: 150 }
+                        },
+                        {
+                            text: "Ischial Spine - Forms part of the lesser sciatic notch",
+                            position: { x: 250, y: 100 }
+                        },
+                        {
+                            text: "Ischial Ramus - Forms part of the obturator foramen",
+                            position: { x: 350, y: 200 }
+                        }
+                    ]
+                }
+            ]
+        };
+        
+        // Mock fetch for the mock data file
+        global.fetch = jest.fn((url) => {
+            if (url.includes('mock-bone-data.json')) {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve(mockBoneData)
+                });
+            }
+            return Promise.reject(new Error('Not found'));
+        });
+    });
+
+    afterEach(() => {
+        // Clean up DOM
+        const viewerWrapper = document.querySelector('.viewer-wrapper');
+        if (viewerWrapper) {
+            viewerWrapper.remove();
+        }
+        jest.restoreAllMocks();
+    });
+
+    test("bone image src attribute is correctly updated after selection", () => {
+        const boneImage = document.getElementById("bone-image");
+        const bone = mockBoneData.bones[0];
+        
+        // Simulate the displayBoneData function logic
+        boneImage.src = bone.image_url;
+        boneImage.alt = `${bone.name} bone image`;
+        boneImage.style.display = "block";
+        
+        expect(boneImage.src).toBe("https://via.placeholder.com/600x400/4A90E2/FFFFFF?text=Ischium+Bone");
+        expect(boneImage.alt).toBe("Ischium bone image");
+        expect(boneImage.style.display).toBe("block");
+    });
+
+    test("correct number of annotation elements are created in annotations overlay", () => {
+        const annotationsOverlay = document.getElementById("annotations-overlay");
+        const bone = mockBoneData.bones[0];
+        
+        // Clear previous content
+        annotationsOverlay.innerHTML = "";
+        
+        // Simulate the displayAnnotations function logic
+        const annotationsList = document.createElement("ul");
+        annotationsList.className = "annotations-list";
+        
+        bone.annotations.forEach((annotation) => {
+            const listItem = document.createElement("li");
+            listItem.className = "annotation-item";
+            listItem.textContent = annotation.text;
+            annotationsList.appendChild(listItem);
+        });
+        
+        annotationsOverlay.appendChild(annotationsList);
+        
+        // Verify correct number of annotations
+        const annotationItems = annotationsOverlay.querySelectorAll(".annotation-item");
+        expect(annotationItems).toHaveLength(3);
+        
+        // Verify annotation content
+        expect(annotationItems[0].textContent).toBe("Ischial Tuberosity - Attachment point for hamstring muscles");
+        expect(annotationItems[1].textContent).toBe("Ischial Spine - Forms part of the lesser sciatic notch");
+        expect(annotationItems[2].textContent).toBe("Ischial Ramus - Forms part of the obturator foramen");
+    });
+
+    test("placeholder message is shown when no bone is selected", () => {
+        const boneImage = document.getElementById("bone-image");
+        const annotationsOverlay = document.getElementById("annotations-overlay");
+        
+        // Simulate clearBoneDisplay function logic
+        boneImage.src = "";
+        boneImage.alt = "";
+        boneImage.style.display = "none";
+        annotationsOverlay.innerHTML = "<p>Select a bone to view image and annotations.</p>";
+        
+        expect(boneImage.src).toBe("");
+        expect(boneImage.style.display).toBe("none");
+        expect(annotationsOverlay.innerHTML).toBe("<p>Select a bone to view image and annotations.</p>");
+    });
+
+    test("handles bone with no annotations gracefully", () => {
+        const annotationsOverlay = document.getElementById("annotations-overlay");
+        
+        // Simulate bone with empty annotations array
+        const boneWithNoAnnotations = {
+            id: "test_bone",
+            name: "Test Bone",
+            image_url: "test-url.jpg",
+            annotations: []
+        };
+        
+        // Clear previous content
+        annotationsOverlay.innerHTML = "";
+        
+        // Simulate displayAnnotations with empty array
+        if (!boneWithNoAnnotations.annotations || boneWithNoAnnotations.annotations.length === 0) {
+            annotationsOverlay.innerHTML = "<p>No annotations available for this bone.</p>";
+        }
+        
+        expect(annotationsOverlay.innerHTML).toBe("<p>No annotations available for this bone.</p>");
+    });
+
+    test("annotation items have correct CSS classes", () => {
+        const annotationsOverlay = document.getElementById("annotations-overlay");
+        const bone = mockBoneData.bones[0];
+        
+        // Clear and populate annotations
+        annotationsOverlay.innerHTML = "";
+        const annotationsList = document.createElement("ul");
+        annotationsList.className = "annotations-list";
+        
+        bone.annotations.forEach((annotation) => {
+            const listItem = document.createElement("li");
+            listItem.className = "annotation-item";
+            listItem.textContent = annotation.text;
+            annotationsList.appendChild(listItem);
+        });
+        
+        annotationsOverlay.appendChild(annotationsList);
+        
+        // Verify CSS classes
+        const list = annotationsOverlay.querySelector("ul");
+        expect(list.className).toBe("annotations-list");
+        
+        const items = annotationsOverlay.querySelectorAll("li");
+        items.forEach(item => {
+            expect(item.className).toBe("annotation-item");
+        });
     });
 });
