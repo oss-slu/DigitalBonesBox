@@ -153,19 +153,19 @@ describe("Viewer Display Logic", () => {
         
         // Mock fetch for the mock data file
         global.fetch = jest.fn((url) => {
-            if (url.includes('mock-bone-data.json')) {
+            if (url.includes("mock-bone-data.json")) {
                 return Promise.resolve({
                     ok: true,
                     json: () => Promise.resolve(mockBoneData)
                 });
             }
-            return Promise.reject(new Error('Not found'));
+            return Promise.reject(new Error("Not found"));
         });
     });
 
     afterEach(() => {
         // Clean up DOM
-        const viewerWrapper = document.querySelector('.viewer-wrapper');
+        const viewerWrapper = document.querySelector(".viewer-wrapper");
         if (viewerWrapper) {
             viewerWrapper.remove();
         }

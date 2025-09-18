@@ -2,10 +2,10 @@
 
 // Centralized API configuration
 const API_CONFIG = {
-    BASE_URL: 'http://127.0.0.1:8000',
+    BASE_URL: "http://127.0.0.1:8000",
     ENDPOINTS: {
-        COMBINED_DATA: '/combined-data',
-        MOCK_BONE_DATA: './js/mock-bone-data.json'
+        COMBINED_DATA: "/combined-data",
+        MOCK_BONE_DATA: "./js/mock-bone-data.json"
     }
 };
 
@@ -19,7 +19,7 @@ export async function fetchCombinedData() {
         }
         return await response.json();
     } catch (error) {
-        console.error('Error fetching combined data:', error);
+        console.error("Error fetching combined data:", error);
         throw error;
     }
 }
@@ -33,7 +33,7 @@ export async function fetchMockBoneData() {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error fetching mock bone data:', error);
+        console.error("Error fetching mock bone data:", error);
         return null;
     }
 }
