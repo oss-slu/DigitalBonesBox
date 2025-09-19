@@ -9,7 +9,7 @@ const html = `
 `;
 document.body.innerHTML = html;
 
-require('./sidebar.js'); // Import the JavaScript code
+require("./sidebar.js"); // Import the JavaScript code
 
 beforeEach(() => {
     global.fetch = jest.fn(() =>
@@ -23,90 +23,90 @@ beforeEach(() => {
         })
     );
 
-    const sidebarContainer = document.getElementById('sidebar-container');
-    sidebarContainer.innerHTML = ''; // Reset sidebar container
+    const sidebarContainer = document.getElementById("sidebar-container");
+    sidebarContainer.innerHTML = ""; // Reset sidebar container
 
-    const sidebarElement = document.getElementById('sidebar');
+    const sidebarElement = document.getElementById("sidebar");
     if (sidebarElement) {
-        sidebarElement.style.left = '-250px'; // Explicitly set the initial state
+        sidebarElement.style.left = "-250px"; // Explicitly set the initial state
     }
 });
 
 beforeAll(() => {
-    document.dispatchEvent(new Event('DOMContentLoaded')); // Simulate DOMContentLoaded
+    document.dispatchEvent(new Event("DOMContentLoaded")); // Simulate DOMContentLoaded
 });
 
 afterEach(() => {
     // Reset sidebar state after each test
-    const sidebarElement = document.getElementById('sidebar');
+    const sidebarElement = document.getElementById("sidebar");
     if (sidebarElement) {
-        sidebarElement.style.left = '-250px'; // Ensure sidebar is closed
+        sidebarElement.style.left = "-250px"; // Ensure sidebar is closed
     }
     jest.restoreAllMocks(); // Clean up mocks
 });
 
-describe('Sidebar Toggle Functionality', () => {
-    test('loads sidebar content when the button is clicked', async () => {
-        const toggleButton = document.getElementById('toggle-sidebar');
+describe("Sidebar Toggle Functionality", () => {
+    test("loads sidebar content when the button is clicked", async () => {
+        const toggleButton = document.getElementById("toggle-sidebar");
         toggleButton.click();
         await new Promise(process.nextTick);
 
-        const sidebarElement = document.getElementById('sidebar');
+        const sidebarElement = document.getElementById("sidebar");
         expect(sidebarElement).toBeTruthy();
-        expect(sidebarElement.innerHTML).toContain('Sidebar Content');
+        expect(sidebarElement.innerHTML).toContain("Sidebar Content");
     });
 
-    test('toggles sidebar open and closed', async () => {
-        const toggleButton = document.getElementById('toggle-sidebar');
-        const sidebarElement = document.getElementById('sidebar');
+    test("toggles sidebar open and closed", async () => {
+        const toggleButton = document.getElementById("toggle-sidebar");
+        const sidebarElement = document.getElementById("sidebar");
 
         // Ensure the sidebar starts hidden
         let computedStyle = window.getComputedStyle(sidebarElement);
-        expect(computedStyle.left).toBe('-250px'); // Sidebar is initially hidden
+        expect(computedStyle.left).toBe("-250px"); // Sidebar is initially hidden
 
         // Simulate opening the sidebar
         toggleButton.click();
         await new Promise((resolve) => setTimeout(resolve, 50)); // Wait for event propagation
         computedStyle = window.getComputedStyle(sidebarElement);
-        expect(computedStyle.left).toBe('0px'); // Sidebar is open
+        expect(computedStyle.left).toBe("0px"); // Sidebar is open
 
         // Simulate closing the sidebar
         toggleButton.click();
         await new Promise((resolve) => setTimeout(resolve, 50)); // Wait for event propagation
         computedStyle = window.getComputedStyle(sidebarElement);
-        expect(computedStyle.left).toBe('-250px'); // Sidebar is closed
+        expect(computedStyle.left).toBe("-250px"); // Sidebar is closed
     });
 });
 
-describe('Badge Button', () => {
-    test('badge button is present and clickable', () => {
-        const badgeButton = document.getElementById('toggle-sidebar');
+describe("Badge Button", () => {
+    test("badge button is present and clickable", () => {
+        const badgeButton = document.getElementById("toggle-sidebar");
         expect(badgeButton).toBeTruthy();
-        expect(badgeButton.tagName).toBe('BUTTON');
+        expect(badgeButton.tagName).toBe("BUTTON");
     });
 
-    test('badge button has correct initial text', () => {
-        const badgeButton = document.getElementById('toggle-sidebar');
-        expect(badgeButton.textContent).toBe('☰');
+    test("badge button has correct initial text", () => {
+        const badgeButton = document.getElementById("toggle-sidebar");
+        expect(badgeButton.textContent).toBe("☰");
     });
 });
 
-describe('Sidebar Styling', () => {
-    test('sidebar starts hidden by default', () => {
-        const sidebar = document.getElementById('sidebar');
+describe("Sidebar Styling", () => {
+    test("sidebar starts hidden by default", () => {
+        const sidebar = document.getElementById("sidebar");
         expect(sidebar).toBeTruthy();
 
         const computedStyle = window.getComputedStyle(sidebar);
-        expect(computedStyle.left).toBe('-250px'); // Sidebar is hidden initially
+        expect(computedStyle.left).toBe("-250px"); // Sidebar is hidden initially
     });
 
-    test('sidebar transitions smoothly', () => {
-        const sidebar = document.getElementById('sidebar');
-        expect(sidebar.style.transition).toContain('left 0.3s ease');
+    test("sidebar transitions smoothly", () => {
+        const sidebar = document.getElementById("sidebar");
+        expect(sidebar.style.transition).toContain("left 0.3s ease");
     });
 });
 
-describe('Help Modal Functionality', () => {
+describe("Help Modal Functionality", () => {
     beforeEach(() => {
         // Add help button and modal HTML to the test environment
         document.body.innerHTML += `
@@ -119,45 +119,45 @@ describe('Help Modal Functionality', () => {
         `;
     });
 
-    test('modal is hidden by default', () => {
-        const helpModal = document.getElementById('help-modal');
-        expect(helpModal.classList.contains('is-visible')).toBeFalsy();
+    test("modal is hidden by default", () => {
+        const helpModal = document.getElementById("help-modal");
+        expect(helpModal.classList.contains("is-visible")).toBeFalsy();
         const computedStyle = window.getComputedStyle(helpModal);
-        expect(computedStyle.display).not.toBe('flex');
+        expect(computedStyle.display).not.toBe("flex");
     });
 
-    test('modal becomes visible when Help button is clicked', () => {
-        const helpButton = document.getElementById('text-button-Help');
-        const helpModal = document.getElementById('help-modal');
+    test("modal becomes visible when Help button is clicked", () => {
+        const helpButton = document.getElementById("text-button-Help");
+        const helpModal = document.getElementById("help-modal");
         
         helpButton.click();
         
-        expect(helpModal.classList.contains('is-visible')).toBeTruthy();
+        expect(helpModal.classList.contains("is-visible")).toBeTruthy();
     });
 
-    test('modal becomes hidden when Close button is clicked', () => {
-        const helpModal = document.getElementById('help-modal');
-        const closeButton = document.getElementById('close-help-modal');
+    test("modal becomes hidden when Close button is clicked", () => {
+        const helpModal = document.getElementById("help-modal");
+        const closeButton = document.getElementById("close-help-modal");
         
         // First make modal visible
-        helpModal.classList.add('is-visible');
+        helpModal.classList.add("is-visible");
         
         // Then click close button
         closeButton.click();
         
-        expect(helpModal.classList.contains('is-visible')).toBeFalsy();
+        expect(helpModal.classList.contains("is-visible")).toBeFalsy();
     });
 
-    test('modal closes when Escape key is pressed', () => {
-        const helpModal = document.getElementById('help-modal');
+    test("modal closes when Escape key is pressed", () => {
+        const helpModal = document.getElementById("help-modal");
         
         // First make modal visible
-        helpModal.classList.add('is-visible');
+        helpModal.classList.add("is-visible");
         
         // Simulate pressing Escape key
-        const escapeKeyEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+        const escapeKeyEvent = new KeyboardEvent("keydown", { key: "Escape" });
         document.dispatchEvent(escapeKeyEvent);
         
-        expect(helpModal.classList.contains('is-visible')).toBeFalsy();
+        expect(helpModal.classList.contains("is-visible")).toBeFalsy();
     });
 });

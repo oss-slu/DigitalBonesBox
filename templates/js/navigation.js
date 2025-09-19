@@ -3,12 +3,12 @@ let currentSubboneIndex = -1;
 let subbones = [];
 
 export function setupNavigation(prevButton, nextButton, subboneDropdown, updateDescription) {
-  prevButton.addEventListener('click', () => {
+  prevButton.addEventListener("click", () => {
     prevSubbone();
     updateUI(subboneDropdown, updateDescription);
   });
 
-  nextButton.addEventListener('click', () => {
+  nextButton.addEventListener("click", () => {
     nextSubbone();
     updateUI(subboneDropdown, updateDescription);
   });
