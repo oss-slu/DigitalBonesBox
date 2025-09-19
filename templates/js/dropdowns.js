@@ -1,8 +1,8 @@
 // js/dropdowns.js
-import { loadDescription } from './description.js';
+import { loadDescription } from "./description.js";
 
 export function populateBonesetDropdown(bonesets) {
-    const bonesetSelect = document.getElementById('boneset-select');
+    const bonesetSelect = document.getElementById("boneset-select");
     bonesetSelect.innerHTML = '<option value="">--Please select a Boneset--</option>';
 
     bonesets.forEach(set => {

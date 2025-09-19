@@ -105,3 +105,59 @@ describe('Sidebar Styling', () => {
         expect(sidebar.style.transition).toContain('left 0.3s ease');
     });
 });
+
+describe('Help Modal Functionality', () => {
+    beforeEach(() => {
+        // Add help button and modal HTML to the test environment
+        document.body.innerHTML += `
+            <span id="text-button-Help" role="button">Help</span>
+            <div id="help-modal" class="help-modal">
+                <div id="help-modal-content">
+                    <button id="close-help-modal">Close Guide</button>
+                </div>
+            </div>
+        `;
+    });
+
+    test('modal is hidden by default', () => {
+        const helpModal = document.getElementById('help-modal');
+        expect(helpModal.classList.contains('is-visible')).toBeFalsy();
+        const computedStyle = window.getComputedStyle(helpModal);
+        expect(computedStyle.display).not.toBe('flex');
+    });
+
+    test('modal becomes visible when Help button is clicked', () => {
+        const helpButton = document.getElementById('text-button-Help');
+        const helpModal = document.getElementById('help-modal');
+        
+        helpButton.click();
+        
+        expect(helpModal.classList.contains('is-visible')).toBeTruthy();
+    });
+
+    test('modal becomes hidden when Close button is clicked', () => {
+        const helpModal = document.getElementById('help-modal');
+        const closeButton = document.getElementById('close-help-modal');
+        
+        // First make modal visible
+        helpModal.classList.add('is-visible');
+        
+        // Then click close button
+        closeButton.click();
+        
+        expect(helpModal.classList.contains('is-visible')).toBeFalsy();
+    });
+
+    test('modal closes when Escape key is pressed', () => {
+        const helpModal = document.getElementById('help-modal');
+        
+        // First make modal visible
+        helpModal.classList.add('is-visible');
+        
+        // Simulate pressing Escape key
+        const escapeKeyEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+        document.dispatchEvent(escapeKeyEvent);
+        
+        expect(helpModal.classList.contains('is-visible')).toBeFalsy();
+    });
+});
