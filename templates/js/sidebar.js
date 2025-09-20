@@ -30,3 +30,52 @@ export function initializeSidebar() {
         });
     }
 }
+
+export async function loadHelpButton() {
+    const helpButtonContainer = document.getElementById("help-button-container");
+    if (helpButtonContainer) {
+        try {
+            const response = await fetch("helpButton.html");
+            const helpButtonHTML = await response.text();
+            helpButtonContainer.innerHTML = helpButtonHTML;
+            
+            const helpButton = document.getElementById("text-button-Help");
+            const helpModal = document.getElementById("help-modal");
+            const closeHelpModal = document.getElementById("close-help-modal");
+            
+            if (helpButton && helpModal && closeHelpModal) {
+                // Handle click events
+                helpButton.addEventListener("click", () => {
+                    helpModal.classList.add("is-visible");
+                });
+                
+                closeHelpModal.addEventListener("click", () => {
+                    helpModal.classList.remove("is-visible");
+                });
+                
+                // Handle keyboard events
+                helpButton.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        helpModal.classList.add("is-visible");
+                    }
+                });
+                
+                // Close on escape key
+                document.addEventListener("keydown", (event) => {
+                    if (event.key === "Escape" && helpModal.classList.contains("is-visible")) {
+                        helpModal.classList.remove("is-visible");
+                    }
+                });
+            }
+        } catch (error) {
+            console.error("Error loading help button:", error);
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    initializeSidebar();
+    loadHelpButton();
+});
+
