@@ -147,13 +147,15 @@ function safeDataPath(fileName) {
 
 // Tiny HTML escape
 function escapeHtml(str = "") {
-  return String(str).replace(/[&<>"]/g, (c) => ({
+  return String(str).replace(/[&<>"']/g, (c) => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
-    '"': "&quot;",
+    "\"": "&quot;",  // double quote
+    "'": "&#39;",     // apostrophe
   })[c]);
 }
+
 
 // Cache the merged boneset for fast description lookups
 let cachedBoneset = null;
