@@ -3,14 +3,16 @@ import { loadDescription } from "./description.js";
 
 export function populateBonesetDropdown(bonesets) {
     const bonesetSelect = document.getElementById("boneset-select");
-    bonesetSelect.innerHTML = "<option value=\"\">--Please select a Boneset--</option>"; 
-        bonesets.forEach(set => {
+    bonesetSelect.innerHTML = "<option value=\"\">--Please select a Boneset--</option>";
+
+    bonesets.forEach(set => {
         const option = document.createElement("option");
         option.value = set.id;
         option.textContent = set.name;
         bonesetSelect.appendChild(option);
     });
 }
+
 
 export function setupDropdownListeners(combinedData) {
     const bonesetSelect = document.getElementById("boneset-select");
