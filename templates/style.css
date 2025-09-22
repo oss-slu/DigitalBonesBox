@@ -119,44 +119,37 @@ ul li {
     padding: 20px; /* Keep consistent padding for readability */
 }
 
-
 #text-button-Home {
     padding: 20px;
     cursor: pointer;
 }
-
 
 #text-button-Tutor {
     padding: 20px;
     cursor: pointer;
 }
 
-
 #text-button-Study {
     padding: 20px;
     cursor: pointer;
 }
+
 #text-button-Help {
     padding: 20px;
     cursor: pointer;
 }
 
-
 #text-button-Login {
     padding: 20px;
     cursor: pointer;
     align-items: right;
-
 }
 
 #text-button-SignUp {
     padding: 20px;
     cursor: pointer;
     align-items: right;
-
-
 }
-
 
 #innerbadge {
     display: flex; /* Enable Flexbox for the container */
@@ -166,9 +159,8 @@ ul li {
     padding-right: 20px; /* Adds space between the buttons and the right edge */
     box-sizing: border-box;
     width: 75%
-
-
 }
+
 .annotation-box {
     position: absolute;
     border: 2px solid red;
@@ -176,6 +168,7 @@ ul li {
     cursor: pointer;
     pointer-events: auto;
 }
+
 .imagescontainer {
     position: relative;
     width: 80%;
@@ -186,21 +179,68 @@ ul li {
     overflow: hidden;
 }
 
+/* Image and annotations display styles */
+.viewer-wrapper {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    align-items: flex-start;
+}
+
 #bone-image {
-    width: 100%;
+    max-width: 600px;
     height: auto;
-    display: block;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    display: none;
 }
 
 #annotations-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* So clicks pass through to the image */
+    flex: 1;
+    max-width: 400px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    min-height: 200px;
 }
 
+.annotations-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.annotation-item {
+    background-color: white;
+    margin-bottom: 10px;
+    padding: 12px;
+    border-left: 4px solid #007bff;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.annotation-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .viewer-wrapper {
+        flex-direction: column;
+    }
+    
+    #annotations-overlay {
+        max-width: 100%;
+    }
+    
+    #bone-image {
+        max-width: 100%;
+    }
+}
+=======
 .help-modal {
     position: fixed;
     top: 0;
@@ -305,3 +345,4 @@ ul li {
         border: 2px solid CanvasText;
     }
 }
+

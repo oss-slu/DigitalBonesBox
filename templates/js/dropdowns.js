@@ -5,7 +5,7 @@ export function populateBonesetDropdown(bonesets) {
   const bonesetSelect = document.getElementById("boneset-select");
   bonesetSelect.innerHTML = "<option value=\"\">--Please select a Boneset--</option>";
 
-  bonesets.forEach(set => {
+  bonesets.forEach((set) => {
     const option = document.createElement("option");
     option.value = set.id;
     option.textContent = set.name;
@@ -25,8 +25,10 @@ export function setupDropdownListeners(combinedData) {
     subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
     subboneSelect.disabled = true;
 
-    const relatedBones = combinedData.bones.filter(b => b.boneset === selectedBonesetId);
-    relatedBones.forEach(bone => {
+    const relatedBones = combinedData.bones.filter(
+      (b) => b.boneset === selectedBonesetId
+    );
+    relatedBones.forEach((bone) => {
       const option = document.createElement("option");
       option.value = bone.id;
       option.textContent = bone.name;
@@ -34,15 +36,17 @@ export function setupDropdownListeners(combinedData) {
     });
 
     boneSelect.disabled = relatedBones.length === 0;
-    // if (selectedBonesetId) loadDescription(selectedBonesetId);
   });
 
   boneSelect.addEventListener("change", (e) => {
     const selectedBoneId = e.target.value;
 
     subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
-    const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
-    relatedSubbones.forEach(sb => {
+
+    const relatedSubbones = combinedData.subbones.filter(
+      (sb) => sb.bone === selectedBoneId
+    );
+    relatedSubbones.forEach((sb) => {
       const option = document.createElement("option");
       option.value = sb.id;
       option.textContent = sb.name;
@@ -50,10 +54,12 @@ export function setupDropdownListeners(combinedData) {
     });
 
     subboneSelect.disabled = relatedSubbones.length === 0;
-    // if (selectedBoneId) loadDescription(selectedBoneId);
+
+    if (selectedBoneId) loadDescription(selectedBoneId);
   });
 
-  subboneSelect.addEventListener("change", () => {
-    // if (selectedBoneId) loadDescription(selectedBoneId);
+  subboneSelect.addEventListener("change", (e) => {
+    const selectedSubboneId = e.target.value;
+    if (selectedSubboneId) loadDescription(selectedSubboneId);
   });
 }

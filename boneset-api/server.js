@@ -90,13 +90,13 @@
 //    console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
 //});
 
-/* boneset-api/server.js */
+// boneset-api/server.js
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs/promises");               // needed for local JSON reads
-const rateLimit = require("express-rate-limit"); // rate limiting
+const fs = require("fs/promises");
+const rateLimit = require("express-rate-limit");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -145,17 +145,16 @@ function safeDataPath(fileName) {
   return candidate;
 }
 
-// Tiny HTML escape
+// Tiny HTML escape (double-quotes everywhere for ESLint)
 function escapeHtml(str = "") {
   return String(str).replace(/[&<>"']/g, (c) => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
-    "\"": "&quot;",  // double quote
-    "'": "&#39;",     // apostrophe
+    "\"": "&quot;",
+    "'": "&#39;",
   })[c]);
 }
-
 
 // Cache the merged boneset for fast description lookups
 let cachedBoneset = null;
@@ -178,12 +177,13 @@ function findNodeById(boneset, id) {
   return null;
 }
 
-// Home route
+// ---- Routes ----
+
 app.get("/", (_req, res) => {
   res.json({ message: "Welcome to the Boneset API (GitHub-Integrated)" });
 });
 
-// --- Used by the dropdowns in the current UI (unchanged) ---
+// Unchanged: used by the dropdowns in the current UI
 app.get("/combined-data", async (_req, res) => {
   try {
     const bonesetData = await fetchJSON(BONESET_JSON_URL);
@@ -196,7 +196,6 @@ app.get("/combined-data", async (_req, res) => {
     for (const boneId of bonesetData.bones) {
       const boneJsonUrl = `${BONES_DIR_URL}${boneId}.json`;
       const boneData = await fetchJSON(boneJsonUrl);
-
       if (boneData) {
         bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
         (boneData.subBones || []).forEach((subBoneId) => {
@@ -212,16 +211,12 @@ app.get("/combined-data", async (_req, res) => {
   }
 });
 
-/**
- * UPDATED: serve description from the local merged JSON (no SSRF)
- * htmx consumer expects an <li> fragment.
- * ?boneId=ischial_ramus
- */
+// Serve description from the local merged JSON (no SSRF)
 app.get("/api/description", bonesetLimiter, async (req, res) => {
   const boneId = String(req.query.boneId || "");
 
-  // Basic allowlist-style validation (same behavior as before for missing/invalid)
-  if (!/^[a-z0-9_]+$/i.test(boneId)) {
+  // Basic allowlist-style validation
+  if (!/^[a-z0-9_]+$/.test(boneId)) {
     return res.type("text/html").send("");
   }
 
@@ -233,6 +228,7 @@ app.get("/api/description", bonesetLimiter, async (req, res) => {
     const name = node.name || boneId.replace(/_/g, " ");
     const lines = Array.isArray(node.description) ? node.description : [];
 
+    // HTMX expects an <li> list fragment
     let html = `<li><strong>${escapeHtml(name)}</strong></li>`;
     for (const line of lines) {
       html += `<li>${escapeHtml(line)}</li>`;
@@ -244,14 +240,10 @@ app.get("/api/description", bonesetLimiter, async (req, res) => {
   }
 });
 
-/**
- * Hardened: safe path + allowlist + rate limit
- * GET /api/boneset/:bonesetId   (ex: bony_pelvis)
- */
+// Safe path + allowlist + rate limit
 app.get("/api/boneset/:bonesetId", bonesetLimiter, async (req, res) => {
   const { bonesetId } = req.params;
 
-  // Allow only known IDs we host locally
   if (!ALLOWED_BONESETS.has(bonesetId)) {
     return res.status(404).json({ error: `Boneset '${bonesetId}' not found` });
   }
@@ -272,4 +264,3 @@ app.get("/api/boneset/:bonesetId", bonesetLimiter, async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
 });
-
