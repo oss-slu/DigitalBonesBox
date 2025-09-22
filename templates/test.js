@@ -105,14 +105,14 @@ describe("Sidebar Styling", () => {
         expect(sidebar.style.transition).toContain("left 0.3s ease");
     });
 
-    
+
 });
 
 // testing for viewer display
 
 describe("Viewer Display Logic", () => {
     let mockBoneData;
-    
+
     beforeEach(() => {
         // Add viewer HTML elements to the DOM
         const viewerHTML = `
@@ -124,7 +124,7 @@ describe("Viewer Display Logic", () => {
             </div>
         `;
         document.body.innerHTML += viewerHTML;
-        
+
         // Mock the bone data structure
         mockBoneData = {
             bones: [
@@ -149,7 +149,7 @@ describe("Viewer Display Logic", () => {
                 }
             ]
         };
-        
+
         // Mock fetch for the mock data file
         global.fetch = jest.fn((url) => {
             if (url.includes("mock-bone-data.json")) {
@@ -174,12 +174,12 @@ describe("Viewer Display Logic", () => {
     test("bone image src attribute is correctly updated after selection", () => {
         const boneImage = document.getElementById("bone-image");
         const bone = mockBoneData.bones[0];
-        
+
         // Simulate the displayBoneData function logic
         boneImage.src = bone.image_url;
         boneImage.alt = `${bone.name} bone image`;
         boneImage.style.display = "block";
-        
+
         expect(boneImage.src).toBe("https://via.placeholder.com/600x400/4A90E2/FFFFFF?text=Ischium+Bone");
         expect(boneImage.alt).toBe("Ischium bone image");
         expect(boneImage.style.display).toBe("block");
@@ -188,27 +188,27 @@ describe("Viewer Display Logic", () => {
     test("correct number of annotation elements are created in annotations overlay", () => {
         const annotationsOverlay = document.getElementById("annotations-overlay");
         const bone = mockBoneData.bones[0];
-        
+
         // Clear previous content
         annotationsOverlay.innerHTML = "";
-        
+
         // Simulate the displayAnnotations function logic
         const annotationsList = document.createElement("ul");
         annotationsList.className = "annotations-list";
-        
+
         bone.annotations.forEach((annotation) => {
             const listItem = document.createElement("li");
             listItem.className = "annotation-item";
             listItem.textContent = annotation.text;
             annotationsList.appendChild(listItem);
         });
-        
+
         annotationsOverlay.appendChild(annotationsList);
-        
+
         // Verify correct number of annotations
         const annotationItems = annotationsOverlay.querySelectorAll(".annotation-item");
         expect(annotationItems).toHaveLength(3);
-        
+
         // Verify annotation content
         expect(annotationItems[0].textContent).toBe("Ischial Tuberosity - Attachment point for hamstring muscles");
         expect(annotationItems[1].textContent).toBe("Ischial Spine - Forms part of the lesser sciatic notch");
@@ -218,13 +218,13 @@ describe("Viewer Display Logic", () => {
     test("placeholder message is shown when no bone is selected", () => {
         const boneImage = document.getElementById("bone-image");
         const annotationsOverlay = document.getElementById("annotations-overlay");
-        
+
         // Simulate clearBoneDisplay function logic
         boneImage.src = "";
         boneImage.alt = "";
         boneImage.style.display = "none";
         annotationsOverlay.innerHTML = "<p>Select a bone to view image and annotations.</p>";
-        
+
         expect(boneImage.src).toBe("");
         expect(boneImage.style.display).toBe("none");
         expect(annotationsOverlay.innerHTML).toBe("<p>Select a bone to view image and annotations.</p>");
@@ -232,7 +232,7 @@ describe("Viewer Display Logic", () => {
 
     test("handles bone with no annotations gracefully", () => {
         const annotationsOverlay = document.getElementById("annotations-overlay");
-        
+
         // Simulate bone with empty annotations array
         const boneWithNoAnnotations = {
             id: "test_bone",
@@ -240,45 +240,47 @@ describe("Viewer Display Logic", () => {
             image_url: "test-url.jpg",
             annotations: []
         };
-        
+
         // Clear previous content
         annotationsOverlay.innerHTML = "";
-        
+
         // Simulate displayAnnotations with empty array
         if (!boneWithNoAnnotations.annotations || boneWithNoAnnotations.annotations.length === 0) {
             annotationsOverlay.innerHTML = "<p>No annotations available for this bone.</p>";
         }
-        
+
         expect(annotationsOverlay.innerHTML).toBe("<p>No annotations available for this bone.</p>");
     });
 
     test("annotation items have correct CSS classes", () => {
         const annotationsOverlay = document.getElementById("annotations-overlay");
         const bone = mockBoneData.bones[0];
-        
+
         // Clear and populate annotations
         annotationsOverlay.innerHTML = "";
         const annotationsList = document.createElement("ul");
         annotationsList.className = "annotations-list";
-        
+
         bone.annotations.forEach((annotation) => {
             const listItem = document.createElement("li");
             listItem.className = "annotation-item";
             listItem.textContent = annotation.text;
             annotationsList.appendChild(listItem);
         });
-        
+
         annotationsOverlay.appendChild(annotationsList);
-        
+
         // Verify CSS classes
         const list = annotationsOverlay.querySelector("ul");
         expect(list.className).toBe("annotations-list");
-        
+
         const items = annotationsOverlay.querySelectorAll("li");
         items.forEach(item => {
             expect(item.className).toBe("annotation-item");
         });
-=======
+
+    });
+
 });
 
 describe("Help Modal Functionality", () => {
@@ -304,35 +306,35 @@ describe("Help Modal Functionality", () => {
     test("modal becomes visible when Help button is clicked", () => {
         const helpButton = document.getElementById("text-button-Help");
         const helpModal = document.getElementById("help-modal");
-        
+
         helpButton.click();
-        
+
         expect(helpModal.classList.contains("is-visible")).toBeTruthy();
     });
 
     test("modal becomes hidden when Close button is clicked", () => {
         const helpModal = document.getElementById("help-modal");
         const closeButton = document.getElementById("close-help-modal");
-        
+
         // First make modal visible
         helpModal.classList.add("is-visible");
-        
+
         // Then click close button
         closeButton.click();
-        
+
         expect(helpModal.classList.contains("is-visible")).toBeFalsy();
     });
 
     test("modal closes when Escape key is pressed", () => {
         const helpModal = document.getElementById("help-modal");
-        
+
         // First make modal visible
         helpModal.classList.add("is-visible");
-        
+
         // Simulate pressing Escape key
         const escapeKeyEvent = new KeyboardEvent("keydown", { key: "Escape" });
         document.dispatchEvent(escapeKeyEvent);
-        
+
         expect(helpModal.classList.contains("is-visible")).toBeFalsy();
 
     });
