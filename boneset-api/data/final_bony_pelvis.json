@@ -10,7 +10,17 @@
         "Articulates with the sacrum to form the sacroiliac joint."
       ],
       "image_url": "/images/bony_pelvis/ilium.jpg",
-      "annotations": [],
+      "annotations": [
+        {
+          "text": "Ilium",
+          "position": {
+            "x": 5586937,
+            "y": 2083816,
+            "width": 393457,
+            "height": 215444
+          }
+        }
+      ],
       "subbones": [
         {
           "id": "iliac_crest",
@@ -22,8 +32,35 @@
             "Surface landmark for L4 level; used for lumbar puncture."
           ],
           "image_url": "/images/bony_pelvis/iliac_crest.jpg",
-          "annotations": []
+          "annotations": [
+            {
+              "text": "Iliac Crest",
+              "position": {
+                "x": 5431116,
+                "y": 1912315,
+                "width": 595035,
+                "height": 215444
+              }
+            }
+          ]
         },
+
+        {
+          "id": "acetabulum",
+          "name": "Acetabulum",
+          "description": [
+            "Deep hemispherical socket of the hip bone.",
+            "Formed by the ilium (superior), ischium (posteroinferior), and pubis (anteroinferior); receives the head of the femur."
+          ],
+          "image_url": "/images/bony_pelvis/acetabulum.jpg",
+          "annotations": [
+            {
+              "text": "Acetabulum",
+              "position": { "x": 5450756, "y": 3572102, "width": 692939, "height": 215444 }
+            }
+          ]
+        },
+
         {
           "id": "anterior_superior_iliac_spine",
           "name": "Anterior Superior Iliac Spine",
@@ -32,7 +69,17 @@
             "Attachment for inguinal ligament and sartorius origin."
           ],
           "image_url": "/images/bony_pelvis/anterior_superior_iliac_spine.jpg",
-          "annotations": []
+          "annotations": [
+            {
+              "text": "Anterior Superior Iliac Spine",
+              "position": {
+                "x": 5407752,
+                "y": 2590801,
+                "width": 766897,
+                "height": 461665
+              }
+            }
+          ]
         },
         {
           "id": "anterior_inferior_iliac_spine",
@@ -42,7 +89,17 @@
             "Attachment for straight head of rectus femoris and iliofemoral ligament."
           ],
           "image_url": "/images/bony_pelvis/anterior_inferior_iliac_spine.jpg",
-          "annotations": []
+          "annotations": [
+            {
+              "text": "Anterior Inferior Iliac Spine",
+              "position": {
+                "x": 5271485,
+                "y": 3229154,
+                "width": 766897,
+                "height": 461665
+              }
+            }
+          ]
         },
         {
           "id": "posterior_superior_iliac_spine",
@@ -52,7 +109,17 @@
             "Attachment for posterior sacroiliac ligaments."
           ],
           "image_url": "/images/bony_pelvis/posterior_superior_iliac_spine.jpg",
-          "annotations": []
+          "annotations": [
+            {
+              "text": "Posterior Superior Iliac Spine",
+              "position": {
+                "x": 7881241,
+                "y": 1445569,
+                "width": 766897,
+                "height": 461665
+              }
+            }
+          ]
         },
         {
           "id": "posterior_inferior_iliac_spine",
@@ -61,7 +128,17 @@
             "Small prominence along the border of the greater sciatic notch."
           ],
           "image_url": "/images/bony_pelvis/posterior_inferior_iliac_spine.jpg",
-          "annotations": []
+          "annotations": [
+            {
+              "text": "Posterior Inferior Iliac Spine",
+              "position": {
+                "x": 7887969,
+                "y": 3816698,
+                "width": 766897,
+                "height": 461665
+              }
+            }
+          ]
         },
         {
           "id": "auricular_surface",
@@ -71,7 +148,17 @@
             "Articulates with the lateral surface of the sacrum at the sacroiliac joint."
           ],
           "image_url": "/images/bony_pelvis/auricular_surface.jpg",
-          "annotations": []
+          "annotations": [
+            {
+              "text": "Auricular surface",
+              "position": {
+                "x": 7169365,
+                "y": 1417638,
+                "width": 624749,
+                "height": 338554
+              }
+            }
+          ]
         }
       ]
     },
@@ -83,7 +170,17 @@
         "Situated posterior to the pubis and inferior to the ilium."
       ],
       "image_url": "/images/bony_pelvis/ischium.jpg",
-      "annotations": [],
+      "annotations": [
+        {
+          "text": "Ischium",
+          "position": {
+            "x": 5446767,
+            "y": 5263629,
+            "width": 507320,
+            "height": 215444
+          }
+        }
+      ],
       "subbones": [
         {
           "id": "ischial_ramus",
@@ -150,7 +247,17 @@
         "Connects the two pelvic bones from each side."
       ],
       "image_url": "/images/bony_pelvis/pubis.jpg",
-      "annotations": [],
+      "annotations": [
+        {
+          "text": "Pubis",
+          "position": {
+            "x": 5682077,
+            "y": 4259252,
+            "width": 419318,
+            "height": 215444
+          }
+        }
+      ],
       "subbones": [
         {
           "id": "superior_pubic_ramus",
