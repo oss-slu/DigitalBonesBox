@@ -1,0 +1,316 @@
+{
+  "id": "bony_pelvis",
+  "name": "Bony Pelvis",
+  "bones": [
+    {
+      "id": "ilium",
+      "name": "Ilium",
+      "description": [
+        "Forms the superior part of the bony pelvis.",
+        "Articulates with the sacrum to form the sacroiliac joint."
+      ],
+      "image_url": "/images/bony_pelvis/ilium.jpg",
+      "annotations": [
+        {
+          "text": "Ilium",
+          "position": {
+            "x": 5586937,
+            "y": 2083816,
+            "width": 393457,
+            "height": 215444
+          }
+        }
+      ],
+      "subbones": [
+        {
+          "id": "iliac_crest",
+          "name": "Iliac Crest",
+          "description": [
+            "Superior border of the ilium from ASIS to PSIS.",
+            "External lip: attachments for tensor fascia lata, external oblique, latissimus dorsi.",
+            "Inner lip: attachments for iliac fascia, internal oblique, transversus abdominis, quadratus lumborum, sacrospinalis, iliacus.",
+            "Surface landmark for L4 level; used for lumbar puncture."
+          ],
+          "image_url": "/images/bony_pelvis/iliac_crest.jpg",
+          "annotations": [
+            {
+              "text": "Iliac Crest",
+              "position": {
+                "x": 5431116,
+                "y": 1912315,
+                "width": 595035,
+                "height": 215444
+              }
+            }
+          ]
+        },
+
+        {
+          "id": "acetabulum",
+          "name": "Acetabulum",
+          "description": [
+            "Deep hemispherical socket of the hip bone.",
+            "Formed by the ilium (superior), ischium (posteroinferior), and pubis (anteroinferior); receives the head of the femur."
+          ],
+          "image_url": "/images/bony_pelvis/acetabulum.jpg",
+          "annotations": [
+            {
+              "text": "Acetabulum",
+              "position": { "x": 5450756, "y": 3572102, "width": 692939, "height": 215444 }
+            }
+          ]
+        },
+
+        {
+          "id": "anterior_superior_iliac_spine",
+          "name": "Anterior Superior Iliac Spine",
+          "description": [
+            "Bony projection at the anterior end of the iliac crest.",
+            "Attachment for inguinal ligament and sartorius origin."
+          ],
+          "image_url": "/images/bony_pelvis/anterior_superior_iliac_spine.jpg",
+          "annotations": [
+            {
+              "text": "Anterior Superior Iliac Spine",
+              "position": {
+                "x": 5407752,
+                "y": 2590801,
+                "width": 766897,
+                "height": 461665
+              }
+            }
+          ]
+        },
+        {
+          "id": "anterior_inferior_iliac_spine",
+          "name": "Anterior Inferior Iliac Spine",
+          "description": [
+            "Inferior to ASIS on anterior border of ilium.",
+            "Attachment for straight head of rectus femoris and iliofemoral ligament."
+          ],
+          "image_url": "/images/bony_pelvis/anterior_inferior_iliac_spine.jpg",
+          "annotations": [
+            {
+              "text": "Anterior Inferior Iliac Spine",
+              "position": {
+                "x": 5271485,
+                "y": 3229154,
+                "width": 766897,
+                "height": 461665
+              }
+            }
+          ]
+        },
+        {
+          "id": "posterior_superior_iliac_spine",
+          "name": "Posterior Superior Iliac Spine",
+          "description": [
+            "Posterior end of the iliac crest; surface landmark.",
+            "Attachment for posterior sacroiliac ligaments."
+          ],
+          "image_url": "/images/bony_pelvis/posterior_superior_iliac_spine.jpg",
+          "annotations": [
+            {
+              "text": "Posterior Superior Iliac Spine",
+              "position": {
+                "x": 7881241,
+                "y": 1445569,
+                "width": 766897,
+                "height": 461665
+              }
+            }
+          ]
+        },
+        {
+          "id": "posterior_inferior_iliac_spine",
+          "name": "Posterior Inferior Iliac Spine",
+          "description": [
+            "Small prominence along the border of the greater sciatic notch."
+          ],
+          "image_url": "/images/bony_pelvis/posterior_inferior_iliac_spine.jpg",
+          "annotations": [
+            {
+              "text": "Posterior Inferior Iliac Spine",
+              "position": {
+                "x": 7887969,
+                "y": 3816698,
+                "width": 766897,
+                "height": 461665
+              }
+            }
+          ]
+        },
+        {
+          "id": "auricular_surface",
+          "name": "Auricular Surface",
+          "description": [
+            "Roughened posterior ilium surface, normally covered with cartilage.",
+            "Articulates with the lateral surface of the sacrum at the sacroiliac joint."
+          ],
+          "image_url": "/images/bony_pelvis/auricular_surface.jpg",
+          "annotations": [
+            {
+              "text": "Auricular surface",
+              "position": {
+                "x": 7169365,
+                "y": 1417638,
+                "width": 624749,
+                "height": 338554
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ischium",
+      "name": "Ischium",
+      "description": [
+        "Forms the inferoposterior part of the pelvic bone.",
+        "Situated posterior to the pubis and inferior to the ilium."
+      ],
+      "image_url": "/images/bony_pelvis/ischium.jpg",
+      "annotations": [
+        {
+          "text": "Ischium",
+          "position": {
+            "x": 5446767,
+            "y": 5263629,
+            "width": 507320,
+            "height": 215444
+          }
+        }
+      ],
+      "subbones": [
+        {
+          "id": "ischial_ramus",
+          "name": "Ramus",
+          "description": [
+            "Inferior portion of the ischium; continuous with the inferior pubic ramus.",
+            "Forms part of the border of the obturator foramen.",
+            "Attachment for ischiocavernosus and the crus of the penis or clitoris."
+          ],
+          "image_url": "/images/bony_pelvis/ischial_ramus.jpg",
+          "annotations": []
+        },
+        {
+          "id": "ischial_tuberosity",
+          "name": "Ischial Tuberosity",
+          "description": [
+            "Large posterior swelling (the 'sits bone').",
+            "Attachments: adductor magnus, semimembranosus, semitendinosus, long head of biceps femoris.",
+            "Attachment for the sacrotuberous ligament."
+          ],
+          "image_url": "/images/bony_pelvis/ischial_tuberosity.jpg",
+          "annotations": []
+        },
+        {
+          "id": "ischial_spine",
+          "name": "Ischial Spine",
+          "description": [
+            "Bony projection on posterior surface of the body of the ischium.",
+            "Separates the greater and lesser sciatic notches.",
+            "Attachment for the sacrospinous ligament and superior gemellus."
+          ],
+          "image_url": "/images/bony_pelvis/ischial_spine.jpg",
+          "annotations": []
+        },
+        {
+          "id": "greater_sciatic_notch",
+          "name": "Greater Sciatic Notch",
+          "description": [
+            "Large notch superior to the ischial spine.",
+            "Converted to the greater sciatic foramen by the sacrospinous and sacrotuberous ligaments.",
+            "Transmits: superior gluteal vessels/nerve, piriformis, sciatic nerve, inferior gluteal vessels/nerve, internal pudendal vessels and pudendal nerve, posterior femoral cutaneous nerve, nerves to quadratus femoris and obturator internus."
+          ],
+          "image_url": "/images/bony_pelvis/greater_sciatic_notch.jpg",
+          "annotations": []
+        },
+        {
+          "id": "lesser_sciatic_notch",
+          "name": "Lesser Sciatic Notch",
+          "description": [
+            "Smaller notch inferior to the ischial spine.",
+            "Converted to the lesser sciatic foramen by the sacrotuberous ligament.",
+            "Transmits: tendon of obturator internus, internal pudendal vessels and pudendal nerve, nerve to obturator internus."
+          ],
+          "image_url": "/images/bony_pelvis/lesser_sciatic_notch.jpg",
+          "annotations": []
+        }
+      ]
+    },
+    {
+      "id": "pubis",
+      "name": "Pubis",
+      "description": [
+        "Forms the anteroinferior part of the pelvis.",
+        "Connects the two pelvic bones from each side."
+      ],
+      "image_url": "/images/bony_pelvis/pubis.jpg",
+      "annotations": [
+        {
+          "text": "Pubis",
+          "position": {
+            "x": 5682077,
+            "y": 4259252,
+            "width": 419318,
+            "height": 215444
+          }
+        }
+      ],
+      "subbones": [
+        {
+          "id": "superior_pubic_ramus",
+          "name": "Superior Pubic Ramus",
+          "description": [
+            "Projects posterolaterally from the body; contains the pectineal line.",
+            "Obturator groove on inferior surface contributes to the obturator canal."
+          ],
+          "image_url": "/images/bony_pelvis/superior_pubic_ramus.jpg",
+          "annotations": []
+        },
+        {
+          "id": "inferior_pubic_ramus",
+          "name": "Inferior Pubic Ramus",
+          "description": [
+            "Projects inferiorly and laterally from the body.",
+            "Joins with the ischial ramus to form part of the obturator foramen."
+          ],
+          "image_url": "/images/bony_pelvis/inferior_pubic_ramus.jpg",
+          "annotations": []
+        },
+        {
+          "id": "pectineal_line",
+          "name": "Pectineal Line",
+          "description": [
+            "Prominent ridge on the superior ramus.",
+            "Attachment for pectineus muscle, conjoint tendon, and lacunar and pectineal ligaments."
+          ],
+          "image_url": "/images/bony_pelvis/pectineal_line.jpg",
+          "annotations": []
+        },
+        {
+          "id": "symphyseal_surface",
+          "name": "Symphyseal Surface",
+          "description": [
+            "Joint surface on each pubis forming a secondary cartilaginous joint (symphysis).",
+            "Covered with hyaline cartilage and linked by the fibrocartilaginous pubic symphysis.",
+            "Remodels during pregnancy, increasing flexibility for delivery."
+          ],
+          "image_url": "/images/bony_pelvis/symphyseal_surface.jpg",
+          "annotations": []
+        },
+        {
+          "id": "pubic_tubercle",
+          "name": "Pubic Tubercle",
+          "description": [
+            "Bony projection at the lateral end of the pubic crest.",
+            "Attachment for the inguinal ligament."
+          ],
+          "image_url": "/images/bony_pelvis/pubic_tubercle.jpg",
+          "annotations": []
+        }
+      ]
+    }
+  ]
+}

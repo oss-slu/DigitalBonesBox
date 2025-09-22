@@ -283,9 +283,10 @@ describe("Viewer Display Logic", () => {
 
 });
 
+// ------ New tests from main: Help Modal ------
 describe("Help Modal Functionality", () => {
     beforeEach(() => {
-        // Add help button and modal HTML to the test environment
+        // Add help button and modal HTML to the test environment (append so earlier DOM stays)
         document.body.innerHTML += `
             <span id="text-button-Help" role="button">Help</span>
             <div id="help-modal" class="help-modal">
