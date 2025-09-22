@@ -13,6 +13,7 @@ export function populateBonesetDropdown(bonesets) {
     });
 }
 
+
 export function setupDropdownListeners(combinedData) {
     const bonesetSelect = document.getElementById("boneset-select");
     const boneSelect = document.getElementById("bone-select");

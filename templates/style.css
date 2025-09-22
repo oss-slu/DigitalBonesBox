@@ -240,3 +240,109 @@ ul li {
         max-width: 100%;
     }
 }
+=======
+.help-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    backdrop-filter: blur(4px);
+    transition: opacity 0.3s ease;
+}
+
+.help-modal.is-visible {
+    display: flex;
+    animation: modalFadeIn 0.3s ease;
+}
+
+.help-modal-content {
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    padding: 1rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+#help-modal-title {
+    color: #1a4b8c;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+.help-content {
+    padding: 0;
+}
+
+.help-content p {
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+    color: #1a4b8c;
+}
+
+.help-content ul {
+    margin: 0;
+    padding-left: 1rem;
+}
+
+.help-content li {
+    color: #1a4b8c;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+}
+
+#close-help-modal {
+    margin-top: 1rem;
+    padding: 0.5rem 1.25rem;
+    width: auto;
+    min-width: 120px;
+}
+
+#close-help-modal:hover {
+    background-color: #0d2d5e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 75, 140, 0.2);
+}
+
+#close-help-modal:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(26, 75, 140, 0.4);
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+    from { 
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+    .help-modal-content {
+        border: 2px solid CanvasText;
+    }
+    #close-help-modal {
+        border: 2px solid CanvasText;
+    }
+}
+
