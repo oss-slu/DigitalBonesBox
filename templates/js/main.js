@@ -1,4 +1,4 @@
-import { fetchCombinedData, fetchMockBoneData } from "./api.js";
+import { fetchCombinedData, fetchBonesetData, findBoneById } from "./api.js";
 import { populateBonesetDropdown, setupDropdownListeners } from "./dropdowns.js";
 import { initializeSidebar } from "./sidebar.js";
 import { setupNavigation, setBoneAndSubbones, disableButtons } from "./navigation.js";
@@ -6,40 +6,51 @@ import { loadDescription } from "./description.js";
 import { displayBoneData, clearViewer } from "./viewer.js";
 
 let combinedData = { bonesets: [], bones: [], subbones: [] };
-let mockBoneData = null;
+let liveBonesData = null; // NEW: Live data from API
 
 /**
- * Handles bone selection from dropdown
+ * Handles bone selection from dropdown - NOW USES LIVE API DATA
  * @param {string} boneId - The ID of the selected bone
  */
 function handleBoneSelection(boneId) {
-    if (!mockBoneData) {
-        console.log("Mock data not available");
-        return;
-    }
-
-    const bone = mockBoneData.bones.find(b => b.id === boneId);
-    if (!bone) {
-        console.log(`No mock data found for bone: ${boneId}`);
+    if (!liveBonesData) {
+        console.log("Live boneset data not available");
         clearViewer();
         return;
     }
 
-    // Use the dedicated viewer module to display the bone
-    displayBoneData(bone);
+    // Find the bone or subbone in live data
+    const boneData = findBoneById(liveBonesData, boneId);
+    if (!boneData) {
+        console.log(`No data found for bone: ${boneId}`);
+        clearViewer();
+        return;
+    }
+
+    // Use the dedicated viewer module to display the bone with live data
+    displayBoneData(boneData);
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
     // 1. Sidebar behavior
     initializeSidebar();
 
-    // 2. Load mock bone data using centralized API
-    mockBoneData = await fetchMockBoneData();
-    
-    // 3. Fetch data and populate dropdowns
-    combinedData = await fetchCombinedData();
-    populateBonesetDropdown(combinedData.bonesets);
-    setupDropdownListeners(combinedData);
+    try {
+        // 2. Load LIVE boneset data from API (replaces mock data)
+        console.log("Loading live boneset data...");
+        liveBonesData = await fetchBonesetData('bony_pelvis');
+        console.log("Live boneset data loaded:", liveBonesData);
+        
+        // 3. Fetch dropdown data and populate dropdowns
+        combinedData = await fetchCombinedData();
+        populateBonesetDropdown(combinedData.bonesets);
+        setupDropdownListeners(combinedData);
+
+    } catch (error) {
+        console.error("Failed to load data:", error);
+        // Could add fallback to mock data here if needed
+        clearViewer();
+    }
 
     // 4. Hook up navigation buttons
     const prevButton = document.getElementById("prev-button");
@@ -61,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         populateSubboneDropdown(subboneDropdown, relatedSubbones);
         disableButtons(prevButton, nextButton);
         
-        // Handle bone selection using dedicated function
+        // Handle bone selection using live API data
         if (selectedBone) {
             handleBoneSelection(selectedBone);
         } else {
