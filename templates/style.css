@@ -240,7 +240,7 @@ ul li {
         max-width: 100%;
     }
 }
-=======
+
 .help-modal {
     position: fixed;
     top: 0;
@@ -346,3 +346,125 @@ ul li {
     }
 }
 
+/* Annotation marker styling */
+.annotation-marker {
+    background-color: rgba(74, 144, 226, 0.7); /* Semi-transparent blue */
+    border: 2px solid #4A90E2;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    min-width: 20px;
+    min-height: 20px;
+    box-sizing: border-box;
+}
+
+/* Hover effect for markers */
+.annotation-marker:hover {
+    background-color: rgba(74, 144, 226, 0.9);
+    border-color: #357ABD;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Active/clicked state */
+.annotation-marker:active {
+    transform: scale(0.95);
+    background-color: rgba(74, 144, 226, 1);
+}
+
+/* Tooltip styling */
+.annotation-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    max-width: 300px;
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+/* Tooltip arrow (optional enhancement) */
+.annotation-tooltip::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px 6px 6px 0;
+    border-color: transparent rgba(0, 0, 0, 0.9) transparent transparent;
+}
+
+/* Ensure the annotations overlay is positioned properly */
+#annotations-overlay {
+    position: relative;
+    pointer-events: none; /* Allow clicks to pass through to image */
+}
+
+/* Make markers clickable */
+#annotations-overlay .annotation-marker {
+    pointer-events: auto;
+}
+
+/* Make tooltips non-clickable but visible */
+#annotations-overlay .annotation-tooltip {
+    pointer-events: none;
+}
+
+/* Responsive behavior for smaller screens */
+@media (max-width: 768px) {
+    .annotation-marker {
+        min-width: 15px;
+        min-height: 15px;
+        border-width: 1px;
+    }
+    
+    .annotation-tooltip {
+        font-size: 12px;
+        padding: 6px 10px;
+        max-width: 200px;
+    }
+}
+
+/* Alternative marker styles for different annotation types (optional) */
+.annotation-marker.primary {
+    background-color: rgba(74, 144, 226, 0.7);
+    border-color: #4A90E2;
+}
+
+.annotation-marker.secondary {
+    background-color: rgba(80, 200, 120, 0.7);
+    border-color: #50C878;
+}
+
+.annotation-marker.tertiary {
+    background-color: rgba(255, 159, 64, 0.7);
+    border-color: #FF9F40;
+}
+
+/* Animation for when markers are created */
+@keyframes markerAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.annotation-marker {
+    animation: markerAppear 0.3s ease-out;
+}
