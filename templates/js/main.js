@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
         // 2. Load LIVE boneset data from API (replaces mock data)
         console.log("Loading live boneset data...");
-        liveBonesData = await fetchBonesetData('bony_pelvis');
+        liveBonesData = await fetchBonesetData("bony_pelvis");
         console.log("Live boneset data loaded:", liveBonesData);
         
         // 3. Fetch dropdown data and populate dropdowns

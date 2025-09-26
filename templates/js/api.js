@@ -26,7 +26,7 @@ export async function fetchCombinedData() {
 }
 
 // NEW: Fetch live boneset data from the API
-export async function fetchBonesetData(bonesetId = 'bony_pelvis') {
+export async function fetchBonesetData(bonesetId = "bony_pelvis") {
     const API_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.BONESET_DATA}/${bonesetId}`;
 
     try {

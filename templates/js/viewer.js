@@ -13,7 +13,7 @@ export function displayBoneImage(boneData) {
 
     if (boneData.image_url) {
         // Handle relative URLs by prefixing with API base
-        const imageUrl = boneData.image_url.startsWith('/') 
+        const imageUrl = boneData.image_url.startsWith("/") 
             ? `http://127.0.0.1:8000${boneData.image_url}` 
             : boneData.image_url;
             
@@ -25,15 +25,15 @@ export function displayBoneImage(boneData) {
         boneImage.onerror = () => {
             console.warn(`Failed to load image for ${boneData.name}: ${imageUrl}`);
             // Create a simple colored rectangle using data URL to avoid network issues
-            const canvas = document.createElement('canvas');
+            const canvas = document.createElement("canvas");
             canvas.width = 800;
             canvas.height = 600;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#CCCCCC';
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#CCCCCC";
             ctx.fillRect(0, 0, 800, 600);
-            ctx.fillStyle = '#666666';
-            ctx.font = '24px Arial';
-            ctx.textAlign = 'center';
+            ctx.fillStyle = "#666666";
+            ctx.font = "24px Arial";
+            ctx.textAlign = "center";
             ctx.fillText(`${boneData.name} - Placeholder Image`, 400, 300);
             boneImage.src = canvas.toDataURL();
             boneImage.alt = `${boneData.name} - Image failed to load`;
