@@ -1,0 +1,270 @@
+{
+    "slide": "slide27",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide27_rId8.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Superior view(cranial cavity) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "Ethmoid bone",
+            "position": {
+                "x": 2819400,
+                "y": 1752600,
+                "width": 640080,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Frontal bone",
+            "position": {
+                "x": 2819400,
+                "y": 1330154,
+                "width": 583791,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Sphenoid bone",
+            "position": {
+                "x": 2819400,
+                "y": 2469922,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Temporal bone",
+            "position": {
+                "x": 2819400,
+                "y": 3823156,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Parietal bone",
+            "position": {
+                "x": 2819400,
+                "y": 4979312,
+                "width": 618131,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Occipital bone",
+            "position": {
+                "x": 2819400,
+                "y": 5194756,
+                "width": 657350,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Cribiform plate",
+            "position": {
+                "x": 2971798,
+                "y": 2008247,
+                "width": 716381,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Crista galli",
+            "position": {
+                "x": 2971799,
+                "y": 2150163,
+                "width": 533401,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Orbital plate",
+            "position": {
+                "x": 2971799,
+                "y": 1451212,
+                "width": 602079,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Lesser wing",
+            "position": {
+                "x": 2971797,
+                "y": 2599279,
+                "width": 583792,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Optic canal",
+            "position": {
+                "x": 2971796,
+                "y": 2743200,
+                "width": 560837,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen cecum",
+            "position": {
+                "x": 2971799,
+                "y": 1882100,
+                "width": 762003,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen rotundum",
+            "position": {
+                "x": 2971795,
+                "y": 2895600,
+                "width": 902213,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Greater wing",
+            "position": {
+                "x": 2971796,
+                "y": 3048000,
+                "width": 646181,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen ovale",
+            "position": {
+                "x": 2971796,
+                "y": 3200400,
+                "width": 716383,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen spinosum ",
+            "position": {
+                "x": 2971794,
+                "y": 3352800,
+                "width": 896118,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen lacerum",
+            "position": {
+                "x": 2971795,
+                "y": 3505200,
+                "width": 838205,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Arcuate eminence",
+            "position": {
+                "x": 2971799,
+                "y": 4127956,
+                "width": 819912,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Petrous part",
+            "position": {
+                "x": 2971795,
+                "y": 4309646,
+                "width": 574651,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Internal acoustic meatus",
+            "position": {
+                "x": 2971801,
+                "y": 4462046,
+                "width": 725425,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "Jugular foramen",
+            "position": {
+                "x": 2971800,
+                "y": 5347156,
+                "width": 762001,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Hypoglossal canal ",
+            "position": {
+                "x": 2971801,
+                "y": 5499556,
+                "width": 819911,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen magnum",
+            "position": {
+                "x": 2971802,
+                "y": 5651956,
+                "width": 838199,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Squamous part",
+            "position": {
+                "x": 2971800,
+                "y": 3975556,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

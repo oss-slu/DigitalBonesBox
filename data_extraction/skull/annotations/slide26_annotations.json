@@ -1,0 +1,78 @@
+{
+    "slide": "slide26",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide26_rId8.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Inferior view(cranial base) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3553003,
+                "y": 2209801,
+                "width": 4406123,
+                "height": 3784081
+            }
+        },
+        {
+            "text": "Occipital condyle",
+            "position": {
+                "x": 2743200,
+                "y": 5704063,
+                "width": 790002,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Hypoglossal canal ",
+            "position": {
+                "x": 2744633,
+                "y": 5470924,
+                "width": 835723,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Jugular foramen",
+            "position": {
+                "x": 2744634,
+                "y": 5255480,
+                "width": 788569,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 5149850,
+                "y": 2857500,
+                "width": 1289050,
+                "height": 1162050
+            }
+        }
+    ]
+}

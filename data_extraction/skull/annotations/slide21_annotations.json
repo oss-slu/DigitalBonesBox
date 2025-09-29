@@ -1,0 +1,59 @@
+{
+    "slide": "slide21",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide21_rId8.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Inferior view(cranial base) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3867151,
+                "y": 1990725,
+                "width": 3895725,
+                "height": 2000250
+            }
+        },
+        {
+            "text": "Zygomatic process",
+            "position": {
+                "x": 2743200,
+                "y": 2789662,
+                "width": 895350,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Transverse palatine suture",
+            "position": {
+                "x": 2768788,
+                "y": 2194818,
+                "width": 1193612,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

@@ -1,0 +1,89 @@
+{
+    "slide": "slide17",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide17_rId8.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Lateral view (right aspect) ",
+            "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3600451,
+                "y": 2797175,
+                "width": 3216275,
+                "height": 2508250
+            }
+        },
+        {
+            "text": "External acoustic meatus",
+            "position": {
+                "x": 2743200,
+                "y": 4586645,
+                "width": 779495,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "Mastoid process",
+            "position": {
+                "x": 2754415,
+                "y": 5029200,
+                "width": 768281,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Zygomatic process",
+            "position": {
+                "x": 2754414,
+                "y": 3945523,
+                "width": 522186,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "Mandibular fossa",
+            "position": {
+                "x": 3044860,
+                "y": 5486400,
+                "width": 768281,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Squamous part",
+            "position": {
+                "x": 2783766,
+                "y": 3238369,
+                "width": 522186,
+                "height": 338554
+            },
+            "link": null
+        }
+    ]
+}

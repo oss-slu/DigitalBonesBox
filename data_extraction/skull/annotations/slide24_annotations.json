@@ -1,0 +1,145 @@
+{
+    "slide": "slide24",
+    "images": [
+        {
+            "rId": "rId14",
+            "extracted_name": "slide24_rId14.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Inferior view(cranial base) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4587608,
+                "y": 2575708,
+                "width": 1879992,
+                "height": 2900346
+            }
+        },
+        {
+            "text": "Zygomatic process",
+            "position": {
+                "x": 2765492,
+                "y": 2434768,
+                "width": 843455,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Carotid canal ",
+            "position": {
+                "x": 2768239,
+                "y": 3056672,
+                "width": 614855,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Styloid process",
+            "position": {
+                "x": 2762473,
+                "y": 3299924,
+                "width": 694772,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Stylomastoid foramen",
+            "position": {
+                "x": 2762473,
+                "y": 3657600,
+                "width": 981628,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Mastoid process",
+            "position": {
+                "x": 2768239,
+                "y": 4005148,
+                "width": 744055,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Mastoid air cells (exposed)",
+            "position": {
+                "x": 2821867,
+                "y": 4343400,
+                "width": 744055,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4495801,
+                "y": 3451226,
+                "width": 150919,
+                "height": 247650
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4483100,
+                "y": 3746500,
+                "width": 53640,
+                "height": 59490
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4886139,
+                "y": 3432175,
+                "width": 190686,
+                "height": 107950
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4718050,
+                "y": 3321051,
+                "width": 82550,
+                "height": 104889
+            }
+        },
+        {
+            "text": "Petrotympanic fissure",
+            "position": {
+                "x": 2762474,
+                "y": 2769249,
+                "width": 1003357,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

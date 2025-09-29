@@ -1,0 +1,59 @@
+{
+    "slide": "slide32",
+    "images": [
+        {
+            "rId": "rId9",
+            "extracted_name": "slide32_rId9.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Superior view(cranial cavity) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3303918,
+                "y": 2712180,
+                "width": 2000783,
+                "height": 2468572
+            }
+        },
+        {
+            "text": "Squamous part",
+            "position": {
+                "x": 2743200,
+                "y": 1871265,
+                "width": 762000,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Petrous part",
+            "position": {
+                "x": 2819400,
+                "y": 1653411,
+                "width": 609600,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

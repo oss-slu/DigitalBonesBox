@@ -1,0 +1,67 @@
+{
+    "slide": "slide23",
+    "images": [
+        {
+            "rId": "rId14",
+            "extracted_name": "slide23_rId14.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Inferior view(cranial base) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3126670,
+                "y": 2339975,
+                "width": 2394656,
+                "height": 758825
+            }
+        },
+        {
+            "text": "Horizontal plate",
+            "position": {
+                "x": 2936419,
+                "y": 1752600,
+                "width": 721182,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4854454,
+                "y": 3478138,
+                "width": 15997,
+                "height": 21207
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4751488,
+                "y": 3251200,
+                "width": 84659,
+                "height": 57352
+            }
+        }
+    ]
+}

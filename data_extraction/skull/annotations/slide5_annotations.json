@@ -1,0 +1,68 @@
+{
+    "slide": "slide5",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide5_rId8.jpg"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Anterior view ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Supraorbital foramen",
+            "position": {
+                "x": 2750422,
+                "y": 2327600,
+                "width": 952500,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3883532,
+                "y": 1982167,
+                "width": 3603287,
+                "height": 2290649
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4736768,
+                "y": 3452382,
+                "width": 147676,
+                "height": 105016
+            }
+        },
+        {
+            "text": "Nasion",
+            "position": {
+                "x": 2895600,
+                "y": 3334768,
+                "width": 381000,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

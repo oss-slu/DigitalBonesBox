@@ -1,0 +1,49 @@
+{
+    "slide": "slide10",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide10_rId8.jpg"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Anterior view ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3444876,
+                "y": 2397125,
+                "width": 4333875,
+                "height": 3282950
+            }
+        },
+        {
+            "text": "Mental tubercle",
+            "position": {
+                "x": 3581400,
+                "y": 5739596,
+                "width": 838200,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

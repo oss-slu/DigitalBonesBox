@@ -1,0 +1,218 @@
+{
+    "slide": "slide11",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide11_rId8.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Lateral view (right aspect) ",
+            "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Parietal bone",
+            "position": {
+                "x": 2788964,
+                "y": 1994356,
+                "width": 640036,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Coronal suture",
+            "position": {
+                "x": 5791200,
+                "y": 1348755,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Mandible ",
+            "position": {
+                "x": 3558518,
+                "y": 4997678,
+                "width": 510518,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Head of condylar process",
+            "position": {
+                "x": 3701980,
+                "y": 5125315,
+                "width": 870020,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "Temporal bone",
+            "position": {
+                "x": 2788964,
+                "y": 4114800,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "External acoustic meatus",
+            "position": {
+                "x": 2971800,
+                "y": 4442926,
+                "width": 1097236,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Mastoid process",
+            "position": {
+                "x": 2971801,
+                "y": 4594080,
+                "width": 768281,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Zygomatic process",
+            "position": {
+                "x": 2971800,
+                "y": 4291515,
+                "width": 838200,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Coronoid process",
+            "position": {
+                "x": 3733801,
+                "y": 5594275,
+                "width": 831919,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Ramus ",
+            "position": {
+                "x": 3733800,
+                "y": 5751575,
+                "width": 381000,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Body ",
+            "position": {
+                "x": 3733801,
+                "y": 5889248,
+                "width": 304799,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Mental foramen",
+            "position": {
+                "x": 3740082,
+                "y": 6032955,
+                "width": 755719,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Mandibular notch",
+            "position": {
+                "x": 3740082,
+                "y": 5416241,
+                "width": 831919,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Occipital bone",
+            "position": {
+                "x": 2743200,
+                "y": 3854678,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Sphenoid bone",
+            "position": {
+                "x": 2743200,
+                "y": 3471978,
+                "width": 723900,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Greater wing",
+            "position": {
+                "x": 2809778,
+                "y": 3641035,
+                "width": 664987,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4080543,
+                "y": 2706680,
+                "width": 2550453,
+                "height": 1646245
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 5645859,
+                "y": 3126522,
+                "width": 424502,
+                "height": 573885
+            }
+        },
+        {
+            "text": "Pterion ",
+            "position": {
+                "x": 2885096,
+                "y": 3256534,
+                "width": 380999,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

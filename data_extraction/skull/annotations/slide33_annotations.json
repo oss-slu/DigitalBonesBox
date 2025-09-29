@@ -1,0 +1,87 @@
+{
+    "slide": "slide33",
+    "images": [
+        {
+            "rId": "rId14",
+            "extracted_name": "slide33_rId14.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Superior view(cranial cavity) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 2465036,
+                "y": 2190422,
+                "width": 3303363,
+                "height": 3581732
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3749281,
+                "y": 2782620,
+                "width": 859730,
+                "height": 1006025
+            }
+        },
+        {
+            "text": "Foramen magnum",
+            "position": {
+                "x": 2816104,
+                "y": 5050529,
+                "width": 838200,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Jugular foramen",
+            "position": {
+                "x": 2813494,
+                "y": 4738739,
+                "width": 765296,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 5634085,
+                "y": 2824642,
+                "width": 89233,
+                "height": 70786
+            }
+        },
+        {
+            "text": "Hypoglossal canal",
+            "position": {
+                "x": 2813494,
+                "y": 5372077,
+                "width": 838200,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "slide": "slide4",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide4_rId8.jpg"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Anterior view ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

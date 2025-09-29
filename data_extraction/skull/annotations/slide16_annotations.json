@@ -1,0 +1,30 @@
+{
+    "slide": "slide16",
+    "images": [
+        {
+            "rId": "rId14",
+            "extracted_name": "slide16_rId14.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Lateral view (right aspect) ",
+            "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

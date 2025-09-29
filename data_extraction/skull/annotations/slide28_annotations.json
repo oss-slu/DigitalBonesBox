@@ -1,0 +1,30 @@
+{
+    "slide": "slide28",
+    "images": [
+        {
+            "rId": "rId9",
+            "extracted_name": "slide28_rId9.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Superior view(cranial cavity) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        }
+    ]
+}

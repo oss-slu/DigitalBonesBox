@@ -1,0 +1,52 @@
+{
+    "slide": "slide2",
+    "images": [
+        {
+            "rId": "rId9",
+            "extracted_name": "slide2_rId9.jpg"
+        },
+        {
+            "rId": "rId11",
+            "extracted_name": "slide2_rId11.jpg"
+        },
+        {
+            "rId": "rId13",
+            "extracted_name": "slide2_rId13.png"
+        },
+        {
+            "rId": "rId15",
+            "extracted_name": "slide2_rId15.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Anterior view ",
+            "position": {
+                "x": 3779892,
+                "y": 3429000,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Inferior view (cranial base) ",
+            "position": {
+                "x": 3795482,
+                "y": 5938580,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        }
+    ]
+}
