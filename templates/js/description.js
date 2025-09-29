@@ -1,26 +1,24 @@
-// js/description.js
-const GITHUB_RAW_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/";
+// templates/js/description.js
+const API_BASE = "http://127.0.0.1:8000";
 
-export async function loadDescription(id) {
-    const container = document.getElementById("description-Container");
-    container.innerHTML = "";
-    const descUrl = `${GITHUB_RAW_URL}${id}_description.json`;
+export async function loadDescription(bonesetId, id) {
+  const container = document.getElementById("description-Container");
+  if (!container) return;
 
-    try {
-        const response = await fetch(descUrl);
-        const data = await response.json();
+  container.innerHTML = "";
+  if (!id) return;
 
-        const nameItem = document.createElement("li");
-        nameItem.innerHTML = `<strong>${data.name}</strong>`;
-        container.appendChild(nameItem);
+  const bs = (bonesetId || "bony_pelvis").trim();
 
-        data.description.forEach(point => {
-            const li = document.createElement("li");
-            li.textContent = point;
-            container.appendChild(li);
-        });
-    } catch (error) {
-        container.innerHTML = "<li>Error loading description.</li>";
-        console.error("Failed to fetch description:", error);
-    }
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/description?bonesetId=${encodeURIComponent(bs)}&boneId=${encodeURIComponent(id)}`,
+      { headers: { Accept: "text/html" } }
+    );
+    const html = await res.text();
+    container.innerHTML = html || "<li>No description.</li>";
+  } catch (err) {
+    container.innerHTML = "<li>Error loading description.</li>";
+    console.error("Failed to fetch description:", err);
+  }
 }
