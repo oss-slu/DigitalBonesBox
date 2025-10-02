@@ -128,13 +128,6 @@ const createMarkers = () => {
             marker.style.width = `${Math.max(scaledWidth, 20)}px`;
             marker.style.height = `${Math.max(scaledHeight, 20)}px`;
             
-            // DEBUG: Add visible styling to make sure markers are visible
-            marker.style.backgroundColor = "red";
-            marker.style.border = "2px solid black";
-            marker.style.zIndex = "1000";
-            
-            console.log(`Marker positioned at: left=${marker.style.left}, top=${marker.style.top}`); // DEBUG
-
             // Create tooltip
             const tooltip = document.createElement("div");
             tooltip.className = "annotation-tooltip";
