@@ -1,0 +1,59 @@
+{
+    "slide": "slide30",
+    "images": [
+        {
+            "rId": "rId9",
+            "extracted_name": "slide30_rId9.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Superior view(cranial cavity) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 5451475,
+                "y": 3070225,
+                "width": 514350,
+                "height": 977900
+            }
+        },
+        {
+            "text": "Cribiform plate",
+            "position": {
+                "x": 2895601,
+                "y": 2438400,
+                "width": 694331,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen cecum",
+            "position": {
+                "x": 3395166,
+                "y": 2025878,
+                "width": 719635,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

@@ -1,0 +1,90 @@
+{
+    "slide": "slide18",
+    "images": [
+        {
+            "rId": "rId14",
+            "extracted_name": "slide18_rId14.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Lateral view (right aspect) ",
+            "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Head of condylar     process",
+            "position": {
+                "x": 2743200,
+                "y": 3087654,
+                "width": 825638,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "Coronoid process",
+            "position": {
+                "x": 3359082,
+                "y": 3810000,
+                "width": 831919,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Body ",
+            "position": {
+                "x": 3782473,
+                "y": 4979312,
+                "width": 304799,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Mandibular notch",
+            "position": {
+                "x": 2996202,
+                "y": 3594556,
+                "width": 831919,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Ramus ",
+            "position": {
+                "x": 3144205,
+                "y": 4406444,
+                "width": 381000,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Angle ",
+            "position": {
+                "x": 3630074,
+                "y": 5302478,
+                "width": 304799,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

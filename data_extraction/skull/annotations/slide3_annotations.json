@@ -1,0 +1,100 @@
+{
+    "slide": "slide3",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide3_rId8.jpg"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Anterior view ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Nasal bone",
+            "position": {
+                "x": 3048001,
+                "y": 3000869,
+                "width": 524221,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Parietal bone",
+            "position": {
+                "x": 3048000,
+                "y": 2339575,
+                "width": 609600,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Maxilla ",
+            "position": {
+                "x": 3048001,
+                "y": 3601093,
+                "width": 358927,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Zygomatic process",
+            "position": {
+                "x": 3206737,
+                "y": 3917693,
+                "width": 800100,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Frontal process",
+            "position": {
+                "x": 3200402,
+                "y": 3763037,
+                "width": 685799,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Infraorbital foramen",
+            "position": {
+                "x": 3206738,
+                "y": 4079563,
+                "width": 883833,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Alveolar process",
+            "position": {
+                "x": 3200400,
+                "y": 4222522,
+                "width": 762000,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

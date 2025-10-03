@@ -1,0 +1,59 @@
+{
+    "slide": "slide6",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide6_rId8.jpg"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Anterior view ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Superior orbital fissure",
+            "position": {
+                "x": 2715798,
+                "y": 1534000,
+                "width": 713202,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "Optic canal",
+            "position": {
+                "x": 3810000,
+                "y": 1536462,
+                "width": 544826,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3908426,
+                "y": 3222625,
+                "width": 1311275,
+                "height": 1079500
+            }
+        }
+    ]
+}

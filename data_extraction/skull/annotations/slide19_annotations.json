@@ -1,0 +1,150 @@
+{
+    "slide": "slide19",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide19_rId8.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Inferior view(cranial base) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "Sphenoid bone",
+            "position": {
+                "x": 2828372,
+                "y": 2240954,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Temporal bone",
+            "position": {
+                "x": 2819400,
+                "y": 3299924,
+                "width": 723900,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Parietal bone",
+            "position": {
+                "x": 2819400,
+                "y": 5193552,
+                "width": 679904,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Pterygoid process",
+            "position": {
+                "x": 2980773,
+                "y": 2393354,
+                "width": 834483,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Greater wing",
+            "position": {
+                "x": 2980773,
+                "y": 2552937,
+                "width": 633315,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen ovale",
+            "position": {
+                "x": 2980772,
+                "y": 2712520,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen spinosum",
+            "position": {
+                "x": 2980772,
+                "y": 2864920,
+                "width": 868853,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Zygomatic process",
+            "position": {
+                "x": 2971801,
+                "y": 3452324,
+                "width": 843455,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Carotid canal ",
+            "position": {
+                "x": 2971801,
+                "y": 3608697,
+                "width": 614855,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Styloid process",
+            "position": {
+                "x": 2971800,
+                "y": 3765070,
+                "width": 694772,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Stylomastoid foramen",
+            "position": {
+                "x": 2980772,
+                "y": 3932013,
+                "width": 981628,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Mastoid process",
+            "position": {
+                "x": 2989746,
+                "y": 4098956,
+                "width": 744055,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

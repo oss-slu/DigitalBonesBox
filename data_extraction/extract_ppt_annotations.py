@@ -175,15 +175,18 @@ def process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder
             else:
                 print(f"[WARNING] Missing relationship file: {rels_path}. Skipping {slide_file}.")
 
-
 if __name__ == "__main__":
-    # Folder paths (replace with your paths)
-    slides_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides"
-    rels_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides/_rels"
-    media_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/media"
-    output_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/AutomatedScript"
-    json_output = "/Users/joshbudzynski/Downloads/example_folder/ppt/json_output"
-    json_directory = "/Users/joshbudzynski/Downloads/example_folder/ppt/data/json"
+    # Skull paths (relative to repo root)
+    slides_folder = "data_extraction/skull/ppt/unzipped/ppt/slides"
+    rels_folder   = "data_extraction/skull/ppt/unzipped/ppt/slides/_rels"
+    media_folder  = "data_extraction/skull/ppt/unzipped/ppt/media"
+    output_folder = "data_extraction/skull/images"
+    json_output   = "data_extraction/skull/annotations"
 
-    # Run the process for all slides
-    process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder, json_output, json_directory)
+    # Optional: directory with bonesets/bones/subbones name lists (ok if missing)
+    json_directory = "data_extraction/skull/json"
+
+    process_pptx_folders(
+        slides_folder, rels_folder, media_folder,
+        output_folder, json_output, json_directory
+    )

@@ -1,0 +1,156 @@
+{
+    "slide": "slide22",
+    "images": [
+        {
+            "rId": "rId14",
+            "extracted_name": "slide22_rId14.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Inferior view(cranial base) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 2282825,
+                "y": 2927350,
+                "width": 1838325,
+                "height": 1412875
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4362450,
+                "y": 2984501,
+                "width": 1606550,
+                "height": 1374775
+            }
+        },
+        {
+            "text": "Pterygoid process",
+            "position": {
+                "x": 4797530,
+                "y": 1356472,
+                "width": 895141,
+                "height": 230832
+            },
+            "link": null
+        },
+        {
+            "text": "Greater wing",
+            "position": {
+                "x": 2764788,
+                "y": 2841228,
+                "width": 633315,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen ovale",
+            "position": {
+                "x": 2764787,
+                "y": 3137918,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen spinosum",
+            "position": {
+                "x": 2759394,
+                "y": 3465515,
+                "width": 868853,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 5029200,
+                "y": 4530725,
+                "width": 215900,
+                "height": 120650
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4854576,
+                "y": 4699001,
+                "width": 47625,
+                "height": 45719
+            }
+        },
+        {
+            "text": "Hamulus",
+            "position": {
+                "x": 5062884,
+                "y": 1700192,
+                "width": 451992,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Medial plate",
+            "position": {
+                "x": 5027226,
+                "y": 2171631,
+                "width": 600456,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Pterygoid fossa",
+            "position": {
+                "x": 5029200,
+                "y": 1852111,
+                "width": 712658,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Lateral plate",
+            "position": {
+                "x": 5029200,
+                "y": 1538366,
+                "width": 609600,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Scaphoid fossa",
+            "position": {
+                "x": 5029200,
+                "y": 2013360,
+                "width": 712658,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

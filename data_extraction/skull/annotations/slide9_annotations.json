@@ -1,0 +1,68 @@
+{
+    "slide": "slide9",
+    "images": [
+        {
+            "rId": "rId14",
+            "extracted_name": "slide9_rId14.jpg"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Anterior view ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 2867025,
+                "y": 2981325,
+                "width": 2568575,
+                "height": 1828800
+            }
+        },
+        {
+            "text": "Frontal process",
+            "position": {
+                "x": 2895601,
+                "y": 2452463,
+                "width": 685799,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Zygomatic process",
+            "position": {
+                "x": 2734934,
+                "y": 3936639,
+                "width": 800100,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4645025,
+                "y": 3670300,
+                "width": 101600,
+                "height": 95250
+            }
+        }
+    ]
+}

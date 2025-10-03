@@ -1,0 +1,57 @@
+{
+    "slide": "slide13",
+    "images": [
+        {
+            "rId": "rId8",
+            "extracted_name": "slide13_rId8.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Lateral view (right aspect) ",
+            "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3492501,
+                "y": 1654175,
+                "width": 2365375,
+                "height": 2559050
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 5400675,
+                "y": 1654176,
+                "width": 450850,
+                "height": 1724025
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 3676651,
+                "y": 3736976,
+                "width": 733425,
+                "height": 523875
+            }
+        }
+    ]
+}

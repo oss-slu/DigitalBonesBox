@@ -179,68 +179,44 @@ ul li {
     overflow: hidden;
 }
 
-/* Image and annotations display styles */
+/* --- Bones viewer overrides (append at end) --- */
 .viewer-wrapper {
-    display: flex;
-    gap: 20px;
-    margin-top: 20px;
-    align-items: flex-start;
+  position: relative;         /* establish containing block for overlay */
+  display: inline-block;      /* keep it tight around the image */
+  width: 640px;               /* give the box a visible area before image loads */
+  min-height: 360px;
+  background: #f6f8fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
 }
 
 #bone-image {
-    max-width: 600px;
-    height: auto;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    display: none;
+  display: block;             /* override previous 'display: none' */
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 #annotations-overlay {
-    flex: 1;
-    max-width: 400px;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    min-height: 200px;
+  position: absolute;         /* make it an overlay, not a side panel */
+  inset: 0;
+  pointer-events: none;
+  padding: 0;                 /* override earlier padding */
+  max-width: none;            /* cancel 'max-width: 400px' */
+  background: transparent;    /* cancel side panel background */
+  border: 0;
+  z-index: 2;
 }
 
-.annotations-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.annotation-item {
-    background-color: white;
-    margin-bottom: 10px;
-    padding: 12px;
-    border-left: 4px solid #007bff;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.annotation-item:last-child {
-    margin-bottom: 0;
-}
-
-/* Responsive design for smaller screens */
+/* (Optional) on small screens, keep the overlay behavior */
 @media (max-width: 768px) {
-    .viewer-wrapper {
-        flex-direction: column;
-    }
-    
-    #annotations-overlay {
-        max-width: 100%;
-    }
-    
-    #bone-image {
-        max-width: 100%;
-    }
+  .viewer-wrapper { width: 100%; min-height: 240px; }
 }
-=======
+
 .help-modal {
     position: fixed;
     top: 0;

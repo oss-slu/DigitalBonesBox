@@ -1,95 +1,3 @@
-//const express = require("express");
-//const axios = require("axios");
-//const cors = require("cors");
-//const path = require('path'); // Added for consistency, though not strictly needed for this version
-//
-//const app = express();
-//const PORT = process.env.PORT || 8000;
-//
-//app.use(cors());
-//
-//// --- Original GitHub URLs ---
-//const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
-//const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
-//const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
-//
-//// Helper function to fetch JSON from GitHub
-//async function fetchJSON(url) {
-//    try {
-//        const response = await axios.get(url);
-//        return response.data;
-//    } catch (error) {
-//        console.error(`Failed to fetch ${url}:`, error.message);
-//        return null;
-//    }
-//}
-//
-//// Home route (fixes "Cannot GET /" issue)
-//app.get("/", (req, res) => {
-//    res.json({ message: "Welcome to the Boneset API (GitHub-Integrated)" });
-//});
-//
-//// --- Original Combined Data Endpoint ---
-//// This endpoint still provides the main data for the dropdowns
-//app.get("/combined-data", async (req, res) => {
-//    try {
-//        const bonesetData = await fetchJSON(BONESET_JSON_URL);
-//        if (!bonesetData) return res.status(500).json({ error: "Failed to load boneset data" });
-//
-//        const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
-//        const bones = [];
-//        const subbones = [];
-//
-//        for (const boneId of bonesetData.bones) {
-//            const boneJsonUrl = `${BONES_DIR_URL}${boneId}.json`;
-//            const boneData = await fetchJSON(boneJsonUrl);
-//
-//            if (boneData) {
-//                bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
-//                boneData.subBones.forEach(subBoneId => {
-//                    subbones.push({ id: subBoneId, name: subBoneId.replace(/_/g, " "), bone: boneData.id });
-//                });
-//            }
-//        }
-//
-//        res.json({ bonesets, bones, subbones });
-//
-//    } catch (error) {
-//        console.error("Error fetching combined data:", error.message);
-//        res.status(500).json({ error: "Internal Server Error" });
-//    }
-//});
-//
-//// --- NEW HTMX ENDPOINT ---
-//// This endpoint fetches a description and returns it as an HTML fragment
-//app.get("/api/description/", async (req, res) => { // Path changed here
-//    const { boneId } = req.query; // Changed from req.params to req.query
-//    if (!boneId) {
-//        return res.send(''); // Send empty response if no boneId is provided
-//    }
-//    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
-//
-//    try {
-//        const response = await axios.get(GITHUB_DESC_URL);
-//        const descriptionData = response.data;
-//
-//        let html = `<li><strong>${descriptionData.name}</strong></li>`;
-//        descriptionData.description.forEach(point => {
-//            html += `<li>${point}</li>`;
-//        });
-//        res.send(html);
-//
-//    } catch (error) {
-//        res.send('<li>Description not available.</li>');
-//    }
-//});
-
-
-// Start server
-//app.listen(PORT, () => {
-//    console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
-//});
-
 // boneset-api/server.js
 const express = require("express");
 const axios = require("axios");
@@ -102,25 +10,31 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(cors());
+app.use("/images", express.static(path.join(__dirname, "public/images"))); // local static images (useful in dev)
 
-// ---- Existing GitHub sources used only by /combined-data (unchanged) ----
+// ---- GitHub sources (Pelvis + Skull) ----
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 
-// ---- Local data directory for merged files ----
+// Skull is branch-aware so a single PR works now; flip SKULL_BRANCH to "data" later
+const SKULL_BRANCH = process.env.SKULL_BRANCH || "issue127-skull-boneset";
+const GITHUB_REPO_SKULL  = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/${SKULL_BRANCH}/DataSkull/`;
+const SKULL_JSON_URL     = `${GITHUB_REPO_SKULL}boneset/skull.json`;
+
+// ---- Local data dir (used for pelvis descriptions in dev) ----
 const DATA_DIR = path.join(__dirname, "data");
 
-// ---- Simple rate limiter for FS-backed endpoints ----
+// ---- Rate limiter for FS-backed endpoints ----
 const bonesetLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 60,             // 60 requests / min / IP
+  windowMs: 60 * 1000,
+  max: 60,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// ---- Only allow bonesets we ship locally right now ----
-const ALLOWED_BONESETS = new Set(["bony_pelvis"]);
+// ---- Allowlist for /api/boneset/:bonesetId ----
+const ALLOWED_BONESETS = new Set(["bony_pelvis", "skull"]);
 
 // ---- Helpers ----
 async function fetchJSON(url) {
@@ -133,7 +47,6 @@ async function fetchJSON(url) {
   }
 }
 
-// Ensure any resolved path stays inside DATA_DIR
 function safeDataPath(fileName) {
   const base = path.resolve(DATA_DIR);
   const candidate = path.resolve(DATA_DIR, fileName);
@@ -145,7 +58,6 @@ function safeDataPath(fileName) {
   return candidate;
 }
 
-// Tiny HTML escape (double-quotes everywhere for ESLint)
 function escapeHtml(str = "") {
   return String(str).replace(/[&<>"']/g, (c) => ({
     "&": "&amp;",
@@ -156,14 +68,10 @@ function escapeHtml(str = "") {
   })[c]);
 }
 
-// Cache the merged boneset for fast description lookups
-let cachedBoneset = null;
-async function loadBoneset() {
-  if (cachedBoneset) return cachedBoneset;
-  const file = safeDataPath("final_bony_pelvis.json");
+async function loadLocalBoneset(id) {
+  const file = safeDataPath(`final_${id}.json`);
   const raw = await fs.readFile(file, "utf8");
-  cachedBoneset = JSON.parse(raw);
-  return cachedBoneset;
+  return JSON.parse(raw);
 }
 
 function findNodeById(boneset, id) {
@@ -183,24 +91,39 @@ app.get("/", (_req, res) => {
   res.json({ message: "Welcome to the Boneset API (GitHub-Integrated)" });
 });
 
-// Unchanged: used by the dropdowns in the current UI
+// Merged list for dropdowns (Pelvis from DataPelvis raw; Skull from branch-aware DataSkull raw)
 app.get("/combined-data", async (_req, res) => {
   try {
-    const bonesetData = await fetchJSON(BONESET_JSON_URL);
-    if (!bonesetData) return res.status(500).json({ error: "Failed to load boneset data" });
+    const [pelvis, skull] = await Promise.all([
+      fetchJSON(BONESET_JSON_URL),  // DataPelvis/boneset/bony_pelvis.json
+      fetchJSON(SKULL_JSON_URL),    // DataSkull/boneset/skull.json (branch-aware)
+    ]);
+    if (!pelvis || !skull) return res.status(500).json({ error: "Failed to load data" });
 
-    const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
+    const bonesets = [
+      { id: pelvis.id, name: pelvis.name },
+      { id: skull.id,  name: skull.name  },
+    ];
     const bones = [];
     const subbones = [];
 
-    for (const boneId of bonesetData.bones) {
+    // Pelvis: expand each bone file from DataPelvis/bones/
+    for (const boneId of pelvis.bones) {
       const boneJsonUrl = `${BONES_DIR_URL}${boneId}.json`;
       const boneData = await fetchJSON(boneJsonUrl);
       if (boneData) {
-        bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
-        (boneData.subBones || []).forEach((subBoneId) => {
-          subbones.push({ id: subBoneId, name: subBoneId.replace(/_/g, " "), bone: boneData.id });
+        bones.push({ id: boneData.id, name: boneData.name, boneset: pelvis.id });
+        (boneData.subBones || []).forEach(subId => {
+          subbones.push({ id: subId, name: subId.replace(/_/g, " "), bone: boneData.id });
         });
+      }
+    }
+
+    // Skull: bones & subbones already included in master skull.json
+    for (const b of skull.bones || []) {
+      bones.push({ id: b.id, name: b.name, boneset: skull.id });
+      for (const sb of b.subbones || []) {
+        subbones.push({ id: sb.id, name: sb.name, bone: b.id });
       }
     }
 
@@ -211,28 +134,28 @@ app.get("/combined-data", async (_req, res) => {
   }
 });
 
-// Serve description from the local merged JSON (no SSRF)
+// Return description HTML (Skull from GitHub; Pelvis from local dev file)
 app.get("/api/description", bonesetLimiter, async (req, res) => {
   const boneId = String(req.query.boneId || "");
+  const bonesetId = String(req.query.bonesetId || "bony_pelvis");
 
-  // Basic allowlist-style validation
-  if (!/^[a-z0-9_]+$/.test(boneId)) {
+  if (!/^[a-z0-9_]+$/.test(boneId) || !ALLOWED_BONESETS.has(bonesetId)) {
     return res.type("text/html").send("");
   }
 
   try {
-    const set = await loadBoneset();
+    const set = bonesetId === "skull"
+      ? await fetchJSON(SKULL_JSON_URL)      // GitHub (no local dependency)
+      : await loadLocalBoneset(bonesetId);   // local file for pelvis in dev
+
     const node = findNodeById(set, boneId);
     if (!node) return res.type("text/html").send("");
 
     const name = node.name || boneId.replace(/_/g, " ");
     const lines = Array.isArray(node.description) ? node.description : [];
 
-    // HTMX expects an <li> list fragment
     let html = `<li><strong>${escapeHtml(name)}</strong></li>`;
-    for (const line of lines) {
-      html += `<li>${escapeHtml(line)}</li>`;
-    }
+    for (const line of lines) html += `<li>${escapeHtml(line)}</li>`;
     res.type("text/html").send(html);
   } catch (err) {
     console.error("description error:", err);
@@ -240,7 +163,7 @@ app.get("/api/description", bonesetLimiter, async (req, res) => {
   }
 });
 
-// Safe path + allowlist + rate limit
+// Dev helper: serve local merged JSONs (if present)
 app.get("/api/boneset/:bonesetId", bonesetLimiter, async (req, res) => {
   const { bonesetId } = req.params;
 

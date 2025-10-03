@@ -1,0 +1,106 @@
+{
+    "slide": "slide31",
+    "images": [
+        {
+            "rId": "rId14",
+            "extracted_name": "slide31_rId14.png"
+        }
+    ],
+    "annotations": [
+        {
+            "text": "",
+            "position": {
+                "x": 2743200,
+                "y": 1299410,
+                "width": 5943600,
+                "height": 4952999
+            }
+        },
+        {
+            "text": "Superior view(cranial cavity) ",
+            "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 2308225,
+                "y": 3508375,
+                "width": 3940175,
+                "height": 1727200
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4660900,
+                "y": 4778375,
+                "width": 273050,
+                "height": 190500
+            }
+        },
+        {
+            "text": "Lesser wing",
+            "position": {
+                "x": 2819401,
+                "y": 2019744,
+                "width": 589847,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Greater wing",
+            "position": {
+                "x": 2757780,
+                "y": 5302478,
+                "width": 609600,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "Foramen spinosum",
+            "position": {
+                "x": 2819400,
+                "y": 5659265,
+                "width": 914400,
+                "height": 215444
+            },
+            "link": null
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4516304,
+                "y": 4425472,
+                "width": 33581,
+                "height": 23317
+            }
+        },
+        {
+            "text": "",
+            "position": {
+                "x": 4657726,
+                "y": 4148730,
+                "width": 232023,
+                "height": 162920
+            }
+        },
+        {
+            "text": "Sella turcica",
+            "position": {
+                "x": 3272888,
+                "y": 1794557,
+                "width": 613313,
+                "height": 215444
+            },
+            "link": null
+        }
+    ]
+}

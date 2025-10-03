@@ -1,4 +1,4 @@
-// js/dropdowns.js
+// templates/js/dropdowns.js
 import { loadDescription } from "./description.js";
 
 export function populateBonesetDropdown(bonesets) {
@@ -25,6 +25,10 @@ export function setupDropdownListeners(combinedData) {
     subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
     subboneSelect.disabled = true;
 
+    // clear description on boneset change
+    const desc = document.getElementById("description-Container");
+    if (desc) desc.innerHTML = "";
+
     const relatedBones = combinedData.bones.filter(
       (b) => b.boneset === selectedBonesetId
     );
@@ -39,6 +43,7 @@ export function setupDropdownListeners(combinedData) {
   });
 
   boneSelect.addEventListener("change", (e) => {
+    const selectedBonesetId = bonesetSelect.value;
     const selectedBoneId = e.target.value;
 
     subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
@@ -55,11 +60,12 @@ export function setupDropdownListeners(combinedData) {
 
     subboneSelect.disabled = relatedSubbones.length === 0;
 
-    if (selectedBoneId) loadDescription(selectedBoneId);
+    if (selectedBoneId) loadDescription(selectedBonesetId, selectedBoneId);
   });
 
   subboneSelect.addEventListener("change", (e) => {
+    const selectedBonesetId = bonesetSelect.value;
     const selectedSubboneId = e.target.value;
-    if (selectedSubboneId) loadDescription(selectedSubboneId);
+    if (selectedSubboneId) loadDescription(selectedBonesetId, selectedSubboneId);
   });
 }
