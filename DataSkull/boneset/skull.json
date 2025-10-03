@@ -12,14 +12,14 @@
         "The anterior nasal opening is formed by the nasal and maxilla bones.",
         "The maxilla contributes to the upper jaw, while the lower jaw is formed by the mandible."
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide3/slide3_rId8.jpg",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide3/slide3_rId8.jpg",
       "annotations": [],
       "subbones": [
         {
           "id": "zygomatic_process",
           "name": "Zygomatic process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide3/slide3_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide3/slide3_rId8.jpg",
           "annotations": [
             {
               "text": "Zygomatic process",
@@ -36,7 +36,7 @@
           "id": "frontal_process",
           "name": "Frontal process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide3/slide3_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide3/slide3_rId8.jpg",
           "annotations": [
             {
               "text": "Frontal process",
@@ -53,7 +53,7 @@
           "id": "infraorbital_foramen",
           "name": "Infraorbital foramen",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide3/slide3_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide3/slide3_rId8.jpg",
           "annotations": [
             {
               "text": "Infraorbital foramen",
@@ -70,7 +70,7 @@
           "id": "alveolar_process",
           "name": "Alveolar process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide3/slide3_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide3/slide3_rId8.jpg",
           "annotations": [
             {
               "text": "Alveolar process",
@@ -91,14 +91,14 @@
       "description": [
         "The base of the skull extends from the upper teeth anteriorly to the superior nuchal line of the occipital bone posteriorly."
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
       "annotations": [],
       "subbones": [
         {
           "id": "inferior_viewcranial_base",
           "name": "Inferior view(cranial base)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Inferior view(cranial base)",
@@ -115,7 +115,7 @@
           "id": "temporal_bone",
           "name": "Temporal bone",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Temporal bone",
@@ -132,7 +132,7 @@
           "id": "pterygoid_process",
           "name": "Pterygoid process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Pterygoid process",
@@ -149,7 +149,7 @@
           "id": "greater_wing",
           "name": "Greater wing",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Greater wing",
@@ -166,7 +166,7 @@
           "id": "foramen_ovale",
           "name": "Foramen ovale",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Foramen ovale",
@@ -183,7 +183,7 @@
           "id": "foramen_spinosum",
           "name": "Foramen spinosum",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Foramen spinosum",
@@ -200,7 +200,7 @@
           "id": "zygomatic_process",
           "name": "Zygomatic process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Zygomatic process",
@@ -217,7 +217,7 @@
           "id": "carotid_canal",
           "name": "Carotid canal",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Carotid canal",
@@ -234,7 +234,7 @@
           "id": "styloid_process",
           "name": "Styloid process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Styloid process",
@@ -251,7 +251,7 @@
           "id": "stylomastoid_foramen",
           "name": "Stylomastoid foramen",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Stylomastoid foramen",
@@ -268,7 +268,7 @@
           "id": "mastoid_process",
           "name": "Mastoid process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide19/slide19_rId8.png",
           "annotations": [
             {
               "text": "Mastoid process",
@@ -290,7 +290,7 @@
         "The ethmoid bone forms part of the medial wall of the orbit.",
         "Labels"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide15/slide15_rId8.png",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide15/slide15_rId8.png",
       "annotations": [
         {
           "text": "Ethmoid bone",
@@ -307,7 +307,7 @@
           "id": "lateral_view_right_aspect",
           "name": "Lateral view (right aspect)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide15/slide15_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide15/slide15_rId8.png",
           "annotations": [
             {
               "text": "Lateral view (right aspect)",
@@ -340,7 +340,7 @@
         "Forms part of the lateral border of the orbit.",
         "Labels"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide5/slide5_rId8.jpg",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide5/slide5_rId8.jpg",
       "annotations": [
         {
           "text": "Frontal bone",
@@ -357,7 +357,7 @@
           "id": "supraorbital_foramen",
           "name": "Supraorbital foramen",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide5/slide5_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide5/slide5_rId8.jpg",
           "annotations": [
             {
               "text": "Supraorbital foramen",
@@ -374,7 +374,7 @@
           "id": "nasion",
           "name": "Nasion",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide5/slide5_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide5/slide5_rId8.jpg",
           "annotations": [
             {
               "text": "Nasion",
@@ -395,14 +395,14 @@
       "description": [
         "Basilar part"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
       "annotations": [],
       "subbones": [
         {
           "id": "mental_tubercle",
           "name": "Mental tubercle",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Mental tubercle",
@@ -419,7 +419,7 @@
           "id": "lateral_view_right_aspect",
           "name": "Lateral view (right aspect)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Lateral view (right aspect)",
@@ -436,7 +436,7 @@
           "id": "external_acoustic_meatus",
           "name": "External acoustic meatus",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "External acoustic meatus",
@@ -453,7 +453,7 @@
           "id": "mastoid_process",
           "name": "Mastoid process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Mastoid process",
@@ -479,7 +479,7 @@
           "id": "zygomatic_process",
           "name": "Zygomatic process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Zygomatic process",
@@ -505,7 +505,7 @@
           "id": "mandibular_fossa",
           "name": "Mandibular fossa",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Mandibular fossa",
@@ -522,7 +522,7 @@
           "id": "squamous_part",
           "name": "Squamous part",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Squamous part",
@@ -548,7 +548,7 @@
           "id": "head_of_condylar_process",
           "name": "Head of condylar     process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Head of condylar     process",
@@ -565,7 +565,7 @@
           "id": "coronoid_process",
           "name": "Coronoid process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Coronoid process",
@@ -582,7 +582,7 @@
           "id": "body",
           "name": "Body",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Body",
@@ -599,7 +599,7 @@
           "id": "mandibular_notch",
           "name": "Mandibular notch",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Mandibular notch",
@@ -616,7 +616,7 @@
           "id": "ramus",
           "name": "Ramus",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Ramus",
@@ -633,7 +633,7 @@
           "id": "angle",
           "name": "Angle",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Angle",
@@ -650,7 +650,7 @@
           "id": "inferior_viewcranial_base",
           "name": "Inferior view(cranial base)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Inferior view(cranial base)",
@@ -667,7 +667,7 @@
           "id": "pterygoid_process",
           "name": "Pterygoid process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Pterygoid process",
@@ -684,7 +684,7 @@
           "id": "greater_wing",
           "name": "Greater wing",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Greater wing",
@@ -710,7 +710,7 @@
           "id": "foramen_ovale",
           "name": "Foramen ovale",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Foramen ovale",
@@ -727,7 +727,7 @@
           "id": "foramen_spinosum",
           "name": "Foramen spinosum",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Foramen spinosum",
@@ -753,7 +753,7 @@
           "id": "hamulus",
           "name": "Hamulus",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Hamulus",
@@ -770,7 +770,7 @@
           "id": "medial_plate",
           "name": "Medial plate",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Medial plate",
@@ -787,7 +787,7 @@
           "id": "pterygoid_fossa",
           "name": "Pterygoid fossa",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Pterygoid fossa",
@@ -804,7 +804,7 @@
           "id": "lateral_plate",
           "name": "Lateral plate",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Lateral plate",
@@ -821,7 +821,7 @@
           "id": "scaphoid_fossa",
           "name": "Scaphoid fossa",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Scaphoid fossa",
@@ -838,7 +838,7 @@
           "id": "carotid_canal",
           "name": "Carotid canal",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Carotid canal",
@@ -855,7 +855,7 @@
           "id": "styloid_process",
           "name": "Styloid process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Styloid process",
@@ -872,7 +872,7 @@
           "id": "stylomastoid_foramen",
           "name": "Stylomastoid foramen",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Stylomastoid foramen",
@@ -889,7 +889,7 @@
           "id": "mastoid_air_cells_exposed",
           "name": "Mastoid air cells (exposed)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Mastoid air cells (exposed)",
@@ -906,7 +906,7 @@
           "id": "petrotympanic_fissure",
           "name": "Petrotympanic fissure",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Petrotympanic fissure",
@@ -923,7 +923,7 @@
           "id": "occipital_condyle",
           "name": "Occipital condyle",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Occipital condyle",
@@ -940,7 +940,7 @@
           "id": "hypoglossal_canal",
           "name": "Hypoglossal canal",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Hypoglossal canal",
@@ -966,7 +966,7 @@
           "id": "jugular_foramen",
           "name": "Jugular foramen",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Jugular foramen",
@@ -992,7 +992,7 @@
           "id": "superior_viewcranial_cavity",
           "name": "Superior view(cranial cavity)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Superior view(cranial cavity)",
@@ -1009,7 +1009,7 @@
           "id": "orbital_plate",
           "name": "Orbital plate",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Orbital plate",
@@ -1026,7 +1026,7 @@
           "id": "groove_for_anterior_meningeal_vessels",
           "name": "Groove for anterior meningeal vessels",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Groove for anterior meningeal vessels",
@@ -1043,7 +1043,7 @@
           "id": "cribiform_plate",
           "name": "Cribiform plate",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Cribiform plate",
@@ -1060,7 +1060,7 @@
           "id": "foramen_cecum",
           "name": "Foramen cecum",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Foramen cecum",
@@ -1077,7 +1077,7 @@
           "id": "lesser_wing",
           "name": "Lesser wing",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Lesser wing",
@@ -1094,7 +1094,7 @@
           "id": "sella_turcica",
           "name": "Sella turcica",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Sella turcica",
@@ -1111,7 +1111,7 @@
           "id": "petrous_part",
           "name": "Petrous part",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Petrous part",
@@ -1128,7 +1128,7 @@
           "id": "foramen_magnum",
           "name": "Foramen magnum",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide10/slide10_rId8.jpg",
           "annotations": [
             {
               "text": "Foramen magnum",
@@ -1153,14 +1153,14 @@
         "The lacrimal sac is the dilated portion of the nasolacrimal duct and is part of an apparatus to drain tears from the surface of the eye to the inferior nasal meatus.",
         "Labels"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide16/slide16_rId14.png",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide16/slide16_rId14.png",
       "annotations": [],
       "subbones": [
         {
           "id": "lateral_view_right_aspect",
           "name": "Lateral view (right aspect)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide16/slide16_rId14.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide16/slide16_rId14.png",
           "annotations": [
             {
               "text": "Lateral view (right aspect)",
@@ -1193,14 +1193,14 @@
         "The pterion is an important landmark because it overlies the anterior branch of the middle meningeal artery.",
         "Damage to this area of the skull can cause a rupture of this artery"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
       "annotations": [],
       "subbones": [
         {
           "id": "lateral_view_right_aspect",
           "name": "Lateral view (right aspect)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Lateral view (right aspect)",
@@ -1217,7 +1217,7 @@
           "id": "coronal_suture",
           "name": "Coronal suture",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Coronal suture",
@@ -1234,7 +1234,7 @@
           "id": "mandible",
           "name": "Mandible",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Mandible",
@@ -1251,7 +1251,7 @@
           "id": "head_of_condylar_process",
           "name": "Head of condylar process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Head of condylar process",
@@ -1268,7 +1268,7 @@
           "id": "temporal_bone",
           "name": "Temporal bone",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Temporal bone",
@@ -1285,7 +1285,7 @@
           "id": "external_acoustic_meatus",
           "name": "External acoustic meatus",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "External acoustic meatus",
@@ -1302,7 +1302,7 @@
           "id": "mastoid_process",
           "name": "Mastoid process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Mastoid process",
@@ -1319,7 +1319,7 @@
           "id": "zygomatic_process",
           "name": "Zygomatic process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Zygomatic process",
@@ -1336,7 +1336,7 @@
           "id": "coronoid_process",
           "name": "Coronoid process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Coronoid process",
@@ -1353,7 +1353,7 @@
           "id": "ramus",
           "name": "Ramus",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Ramus",
@@ -1370,7 +1370,7 @@
           "id": "body",
           "name": "Body",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Body",
@@ -1387,7 +1387,7 @@
           "id": "mental_foramen",
           "name": "Mental foramen",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Mental foramen",
@@ -1404,7 +1404,7 @@
           "id": "mandibular_notch",
           "name": "Mandibular notch",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Mandibular notch",
@@ -1421,7 +1421,7 @@
           "id": "occipital_bone",
           "name": "Occipital bone",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Occipital bone",
@@ -1438,7 +1438,7 @@
           "id": "greater_wing",
           "name": "Greater wing",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Greater wing",
@@ -1455,7 +1455,7 @@
           "id": "pterion",
           "name": "Pterion",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide11/slide11_rId8.png",
           "annotations": [
             {
               "text": "Pterion",
@@ -1496,7 +1496,7 @@
         "Part of bone that extends inferiorly and forms upper jaw.",
         "Contains the upper teeth."
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide21/slide21_rId8.png",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide21/slide21_rId8.png",
       "annotations": [
         {
           "text": "Maxilla",
@@ -1513,7 +1513,7 @@
           "id": "inferior_viewcranial_base",
           "name": "Inferior view(cranial base)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide21/slide21_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide21/slide21_rId8.png",
           "annotations": [
             {
               "text": "Inferior view(cranial base)",
@@ -1530,7 +1530,7 @@
           "id": "zygomatic_process",
           "name": "Zygomatic process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide21/slide21_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide21/slide21_rId8.png",
           "annotations": [
             {
               "text": "Zygomatic process",
@@ -1556,7 +1556,7 @@
           "id": "transverse_palatine_suture",
           "name": "Transverse palatine suture",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide21/slide21_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide21/slide21_rId8.png",
           "annotations": [
             {
               "text": "Transverse palatine suture",
@@ -1573,7 +1573,7 @@
           "id": "frontal_process",
           "name": "Frontal process",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide21/slide21_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide21/slide21_rId8.png",
           "annotations": [
             {
               "text": "Frontal process",
@@ -1594,14 +1594,14 @@
       "description": [
         "Posterior cranial fossa"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
       "annotations": [],
       "subbones": [
         {
           "id": "superior_viewcranial_cavity",
           "name": "Superior view(cranial cavity)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Superior view(cranial cavity)",
@@ -1618,7 +1618,7 @@
           "id": "temporal_bone",
           "name": "Temporal bone",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Temporal bone",
@@ -1635,7 +1635,7 @@
           "id": "occipital_bone",
           "name": "Occipital bone",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Occipital bone",
@@ -1652,7 +1652,7 @@
           "id": "cribiform_plate",
           "name": "Cribiform plate",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Cribiform plate",
@@ -1669,7 +1669,7 @@
           "id": "crista_galli",
           "name": "Crista galli",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Crista galli",
@@ -1686,7 +1686,7 @@
           "id": "orbital_plate",
           "name": "Orbital plate",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Orbital plate",
@@ -1703,7 +1703,7 @@
           "id": "lesser_wing",
           "name": "Lesser wing",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Lesser wing",
@@ -1720,7 +1720,7 @@
           "id": "optic_canal",
           "name": "Optic canal",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Optic canal",
@@ -1737,7 +1737,7 @@
           "id": "foramen_cecum",
           "name": "Foramen cecum",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Foramen cecum",
@@ -1754,7 +1754,7 @@
           "id": "foramen_rotundum",
           "name": "Foramen rotundum",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Foramen rotundum",
@@ -1771,7 +1771,7 @@
           "id": "greater_wing",
           "name": "Greater wing",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Greater wing",
@@ -1788,7 +1788,7 @@
           "id": "foramen_ovale",
           "name": "Foramen ovale",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Foramen ovale",
@@ -1805,7 +1805,7 @@
           "id": "foramen_spinosum",
           "name": "Foramen spinosum",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Foramen spinosum",
@@ -1822,7 +1822,7 @@
           "id": "foramen_lacerum",
           "name": "Foramen lacerum",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Foramen lacerum",
@@ -1839,7 +1839,7 @@
           "id": "arcuate_eminence",
           "name": "Arcuate eminence",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Arcuate eminence",
@@ -1856,7 +1856,7 @@
           "id": "petrous_part",
           "name": "Petrous part",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Petrous part",
@@ -1873,7 +1873,7 @@
           "id": "internal_acoustic_meatus",
           "name": "Internal acoustic meatus",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Internal acoustic meatus",
@@ -1890,7 +1890,7 @@
           "id": "jugular_foramen",
           "name": "Jugular foramen",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Jugular foramen",
@@ -1907,7 +1907,7 @@
           "id": "hypoglossal_canal",
           "name": "Hypoglossal canal",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Hypoglossal canal",
@@ -1924,7 +1924,7 @@
           "id": "foramen_magnum",
           "name": "Foramen magnum",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Foramen magnum",
@@ -1941,7 +1941,7 @@
           "id": "squamous_part",
           "name": "Squamous part",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide27/slide27_rId8.png",
           "annotations": [
             {
               "text": "Squamous part",
@@ -1963,7 +1963,7 @@
         "Two small, oblong shaped bones that form the \u201cbridge\u201d of the nose.",
         "Labels"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide7/slide7_rId8.jpg",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide7/slide7_rId8.jpg",
       "annotations": [
         {
           "text": "Nasal bone",
@@ -1992,14 +1992,14 @@
         "Transmits the lesser palatine nerve and vessels.",
         "Labels"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide23/slide23_rId14.png",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide23/slide23_rId14.png",
       "annotations": [],
       "subbones": [
         {
           "id": "inferior_viewcranial_base",
           "name": "Inferior view(cranial base)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide23/slide23_rId14.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide23/slide23_rId14.png",
           "annotations": [
             {
               "text": "Inferior view(cranial base)",
@@ -2016,7 +2016,7 @@
           "id": "horizontal_plate",
           "name": "Horizontal plate",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide23/slide23_rId14.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide23/slide23_rId14.png",
           "annotations": [
             {
               "text": "Horizontal plate",
@@ -2043,7 +2043,7 @@
         "lambdoid suture",
         "Labels"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide13/slide13_rId8.png",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide13/slide13_rId8.png",
       "annotations": [
         {
           "text": "Parietal bone",
@@ -2087,7 +2087,7 @@
           "id": "lateral_view_right_aspect",
           "name": "Lateral view (right aspect)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide13/slide13_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide13/slide13_rId8.png",
           "annotations": [
             {
               "text": "Lateral view (right aspect)",
@@ -2120,7 +2120,7 @@
         "Transmits the optic nerve and the ophthalmic artery.",
         "Greater wing"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide14/slide14_rId8.png",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide14/slide14_rId8.png",
       "annotations": [
         {
           "text": "Sphenoid bone",
@@ -2155,7 +2155,7 @@
           "id": "lateral_view_right_aspect",
           "name": "Lateral view (right aspect)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide14/slide14_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide14/slide14_rId8.png",
           "annotations": [
             {
               "text": "Lateral view (right aspect)",
@@ -2172,7 +2172,7 @@
           "id": "superior_orbital_fissure",
           "name": "Superior orbital fissure",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide14/slide14_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide14/slide14_rId8.png",
           "annotations": [
             {
               "text": "Superior orbital fissure",
@@ -2189,7 +2189,7 @@
           "id": "optic_canal",
           "name": "Optic canal",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide14/slide14_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide14/slide14_rId8.png",
           "annotations": [
             {
               "text": "Optic canal",
@@ -2208,14 +2208,14 @@
       "id": "unknown",
       "name": "Unknown",
       "description": [],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide2/slide2_rId9.jpg",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide2/slide2_rId9.jpg",
       "annotations": [],
       "subbones": [
         {
           "id": "inferior_view_cranial_base",
           "name": "Inferior view (cranial base)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide2/slide2_rId9.jpg",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide2/slide2_rId9.jpg",
           "annotations": [
             {
               "text": "Inferior view (cranial base)",
@@ -2240,14 +2240,14 @@
         "The posterior openings of the nasal passages.",
         "Labels"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide25/slide25_rId8.png",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide25/slide25_rId8.png",
       "annotations": [],
       "subbones": [
         {
           "id": "inferior_viewcranial_base",
           "name": "Inferior view(cranial base)",
           "description": [],
-          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide25/slide25_rId8.png",
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide25/slide25_rId8.png",
           "annotations": [
             {
               "text": "Inferior view(cranial base)",
@@ -2278,7 +2278,7 @@
         "Forms part of the zygomatic arch.",
         "Labels"
       ],
-      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide8/slide8_rId8.jpg",
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/issue127-skull-boneset/DataSkull/images/slide8/slide8_rId8.jpg",
       "annotations": [],
       "subbones": []
     }
