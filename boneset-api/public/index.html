@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Skull Viewer</title>
+  <style>
+    body { margin: 24px; background:#111; color:#eee; font-family: system-ui, sans-serif; }
+    .wrap { position: relative; display: inline-block; }
+    .ann  { position: absolute; border: 2px solid; box-sizing: border-box; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <h1>Skull (image + annotations)</h1>
+
+  <div class="wrap">
+    <img id="img" style="max-width:100%;height:auto" alt="Skull" />
+    <div id="layer" style="position:absolute; inset:0"></div>
+  </div>
+
+  <script>
+  // === NEW: talk to the Node server on :8000 when we're not already on it
+  const API = (location.port === '8000') ? '' : 'http://127.0.0.1:8000';
+
+  // PowerPoint EMU slide size (16:9). If your deck is 4:3 use 9144000 x 6858000.
+  const EMU_W = 12192000, EMU_H = 6858000;
+
+  function placeBoxes(img, anns){
+    const w = img.clientWidth, h = img.clientHeight;
+    const layer = document.getElementById('layer'); layer.innerHTML='';
+    (anns||[]).forEach(a=>{
+      const p=a.position||{}, big=Math.max(p.x||0,p.y||0,p.width||0,p.height||0)>50000;
+      const X = big ? (p.x/EMU_W)*w : p.x;
+      const Y = big ? (p.y/EMU_H)*h : p.y;
+      const W = p.width  != null ? (big ? (p.width /EMU_W)*w : p.width ) : 0;
+      const H = p.height != null ? (big ? (p.height/EMU_H)*h : p.height) : 0;
+      const d=document.createElement('div');
+      d.className='ann';
+      d.style.left = X+'px'; d.style.top = Y+'px';
+      if (W) d.style.width=W+'px';
+      if (H) d.style.height=H+'px';
+      layer.appendChild(d);
+    });
+  }
+
+  (async ()=>{
+    // CHANGED: fetch from :8000
+    const skull = await (await fetch(`${API}/api/boneset/skull`)).json();
+
+    // pick a bone that has an image/annotations
+    const node = skull.bones.find(b => b.image_url) || skull.bones[0];
+
+    const img  = document.getElementById('img');
+    img.onload = ()=>placeBoxes(img, node.annotations || []);
+    img.onerror = ()=> {
+      // fallback: try a subbone image if primary 404s
+      const alt = (node.subbones||[]).find(s => s.image_url)?.image_url;
+      // CHANGED: prefix with :8000
+      if (alt && img.src !== `${API}${alt}`) img.src = `${API}${alt}`;
+    };
+
+    // CHANGED: image from :8000
+    img.src = `${API}${node.image_url}`; // node.image_url starts with /images/...
+
+    addEventListener('resize', ()=>placeBoxes(img, node.annotations||[]));
+  })();
+  </script>
+</body>
+</html>

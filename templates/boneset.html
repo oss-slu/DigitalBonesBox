@@ -1,86 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bone Set Viewer</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bone Set Viewer</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+
 </head>
 
 <body>
-    <div id="badge">
-        <button id="toggle-sidebar">☰</button>
-        <span id="text-button-Home" role="button">Home</span>
-        <span id="text-button-Tutor" role="button">Tutor</span>
-        <span id="text-button-Study" role="button">Study</span>
-        <div id="help-button-container"></div>
-        <div id="innerbadge">
-            <span id="text-button-Login" role="button">Login</span>
-            <span id="text-button-SignUp" role="button">Sign Up</span>
+  <div id="badge">
+    <button id="toggle-sidebar">☰</button>
+    <span id="text-button-Home" role="button">Home</span>
+    <span id="text-button-Tutor" role="button">Tutor</span>
+    <span id="text-button-Study" role="button">Study</span>
+    <div id="help-button-container"></div>
+    <div id="innerbadge">
+      <span id="text-button-Login" role="button">Login</span>
+      <span id="text-button-SignUp" role="button">Sign Up</span>
+    </div>
+  </div>
+
+  <div id="sidebar-container"></div>
+
+  <div id="editor-view">
+    <div class="container">
+      <h1>Bone Set Viewer</h1>
+
+      <input type="text" id="search-bar" placeholder="Search bone sets" />
+      <ul id="search-results"></ul>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
+
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <!-- Active boneset (no HTMX fetch on change) -->
+            <select id="boneset-select" name="bonesetId">
+            <option value="">--Please select a Boneset--</option>
+            </select>
+
+
+          <!-- include boneset-select so the request has bonesetId + boneId -->
+          <select id="bone-select"
+                  name="boneId"
+                  hx-get="http://127.0.0.1:8000/api/description"
+                  hx-include="#boneset-select"
+                  hx-target="#description-Container"
+                  hx-trigger="change"
+                  disabled>
+            <option value="">--Please select a Bone--</option>
+          </select>
+
+          <!-- include boneset-select so the request has bonesetId + boneId -->
+          <select id="subbone-select"
+                  name="boneId"
+                  hx-get="http://127.0.0.1:8000/api/description"
+                  hx-include="#boneset-select"
+                  hx-target="#description-Container"
+                  hx-trigger="change"
+                  disabled>
+            <option value="">--Please choose a Sub-Bone--</option>
+          </select>
         </div>
+      </div>
+
+      <div id="bone-Description-Container">
+        <h3>Description</h3>
+        <ul id="description-Container"></ul>
+      </div>
+
+      <div class="navigation-buttons">
+        <button id="prev-button" disabled>Previous</button>
+        <button id="next-button" disabled>Next</button>
+      </div>
+
+      <div class="viewer-wrapper">
+        <img id="bone-image" alt="Bone Image" />
+        <div id="annotations-overlay"></div>
+      </div>
     </div>
+  </div>
 
-    <div id="sidebar-container"></div>
+  <!-- Optional: expose API base for scripts that need it (safe no-op if unused) -->
+  <script>
+    window.API = (location.port === '8000') ? '' : 'http://127.0.0.1:8000';
+  </script>
 
-    <div id="editor-view">
-        <div class="container">
-            <h1>Bone Set Viewer</h1>
-            <input type="text" id="search-bar" placeholder="Search bone sets" />
-            <ul id="search-results"></ul>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="boneset-select" 
-                            name="boneId"
-                            hx-get="http://127.0.0.1:8000/api/description/" 
-                            hx-target="#description-Container"
-                            hx-trigger="change">
-                        <option value="">--Please select a Boneset--</option>
-                    </select>
-                    <select id="bone-select" 
-                            name="boneId"
-                            hx-get="http://127.0.0.1:8000/api/description/" 
-                            hx-target="#description-Container"
-                            hx-trigger="change"
-                            disabled>
-                        <option value="">--Please select a Bone--</option>
-                    </select>
-                    <select id="subbone-select"
-                            name="boneId"
-                            hx-get="http://127.0.0.1:8000/api/description/" 
-                            hx-target="#description-Container"
-                            hx-trigger="change"
-                            disabled>
-                        <option value="">--Please choose a Sub-Bone--</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="bone-Description-Container">
-                <h3>Description</h3>
-                <ul id="description-Container">
-                    </ul>
-            </div>
-
-            <div class="navigation-buttons">
-                <button id="prev-button" disabled>Previous</button>
-                <button id="next-button" disabled>Next</button>
-            </div>
-           
-            <div class="viewer-wrapper">
-                <img id="bone-image" alt="Bone Image" />
-                <div id="annotations-overlay"></div>
-            </div>
-              
-            </div>
-    </div>
-    <script type="module" src="js/main.js"></script>
-    <script type="module" src="js/sidebar.js"></script>
-
-    
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/sidebar.js"></script>
 </body>
-
 </html>

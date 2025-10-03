@@ -1,0 +1,2286 @@
+{
+  "id": "skull",
+  "name": "Skull",
+  "bones": [
+    {
+      "id": "anterior_view",
+      "name": "Anterior view",
+      "description": [
+        "The anterior view is generally ovoid in shape.",
+        "The forehead is superior to the orbit and is formed by the frontal bone.",
+        "The bones that make up the borders of the orbit are the frontal bone superiorly, medially, and laterally, the zygomatic bone laterally and inferiorly, and the maxilla inferior and medially.",
+        "The anterior nasal opening is formed by the nasal and maxilla bones.",
+        "The maxilla contributes to the upper jaw, while the lower jaw is formed by the mandible."
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide3/slide3_rId8.jpg",
+      "annotations": [],
+      "subbones": [
+        {
+          "id": "zygomatic_process",
+          "name": "Zygomatic process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide3/slide3_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Zygomatic process",
+              "position": {
+                "x": 3206737,
+                "y": 3917693,
+                "width": 800100,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "frontal_process",
+          "name": "Frontal process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide3/slide3_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Frontal process",
+              "position": {
+                "x": 3200402,
+                "y": 3763037,
+                "width": 685799,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "infraorbital_foramen",
+          "name": "Infraorbital foramen",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide3/slide3_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Infraorbital foramen",
+              "position": {
+                "x": 3206738,
+                "y": 4079563,
+                "width": 883833,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "alveolar_process",
+          "name": "Alveolar process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide3/slide3_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Alveolar process",
+              "position": {
+                "x": 3200400,
+                "y": 4222522,
+                "width": 762000,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cranial_base",
+      "name": "Cranial base",
+      "description": [
+        "The base of the skull extends from the upper teeth anteriorly to the superior nuchal line of the occipital bone posteriorly."
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+      "annotations": [],
+      "subbones": [
+        {
+          "id": "inferior_viewcranial_base",
+          "name": "Inferior view(cranial base)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Inferior view(cranial base)",
+              "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "temporal_bone",
+          "name": "Temporal bone",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Temporal bone",
+              "position": {
+                "x": 2819400,
+                "y": 3299924,
+                "width": 723900,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "pterygoid_process",
+          "name": "Pterygoid process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Pterygoid process",
+              "position": {
+                "x": 2980773,
+                "y": 2393354,
+                "width": 834483,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "greater_wing",
+          "name": "Greater wing",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Greater wing",
+              "position": {
+                "x": 2980773,
+                "y": 2552937,
+                "width": 633315,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_ovale",
+          "name": "Foramen ovale",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Foramen ovale",
+              "position": {
+                "x": 2980772,
+                "y": 2712520,
+                "width": 685800,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_spinosum",
+          "name": "Foramen spinosum",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Foramen spinosum",
+              "position": {
+                "x": 2980772,
+                "y": 2864920,
+                "width": 868853,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "zygomatic_process",
+          "name": "Zygomatic process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Zygomatic process",
+              "position": {
+                "x": 2971801,
+                "y": 3452324,
+                "width": 843455,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "carotid_canal",
+          "name": "Carotid canal",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Carotid canal",
+              "position": {
+                "x": 2971801,
+                "y": 3608697,
+                "width": 614855,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "styloid_process",
+          "name": "Styloid process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Styloid process",
+              "position": {
+                "x": 2971800,
+                "y": 3765070,
+                "width": 694772,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "stylomastoid_foramen",
+          "name": "Stylomastoid foramen",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Stylomastoid foramen",
+              "position": {
+                "x": 2980772,
+                "y": 3932013,
+                "width": 981628,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "mastoid_process",
+          "name": "Mastoid process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide19/slide19_rId8.png",
+          "annotations": [
+            {
+              "text": "Mastoid process",
+              "position": {
+                "x": 2989746,
+                "y": 4098956,
+                "width": 744055,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ethmoid_bone",
+      "name": "Ethmoid bone",
+      "description": [
+        "The ethmoid bone forms part of the medial wall of the orbit.",
+        "Labels"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide15/slide15_rId8.png",
+      "annotations": [
+        {
+          "text": "Ethmoid bone",
+          "position": {
+            "x": 2819400,
+            "y": 1752600,
+            "width": 640080,
+            "height": 215444
+          }
+        }
+      ],
+      "subbones": [
+        {
+          "id": "lateral_view_right_aspect",
+          "name": "Lateral view (right aspect)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide15/slide15_rId8.png",
+          "annotations": [
+            {
+              "text": "Lateral view (right aspect)",
+              "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frontal_bone",
+      "name": "Frontal bone",
+      "description": [
+        "Glabella",
+        "A slight depression that lies between the two",
+        "superciliary arches",
+        "..",
+        "It can be more pronounced in males.",
+        "Supraorbital foramen (notch)",
+        "An opening at the superior rim of the orbit that transmits the supraorbital nerve and vessels.",
+        "Nasion",
+        "Lies at the junction where the frontal bone meets the nasal bones.",
+        "Zygomatic process",
+        "The lateral part of the bone that extends inferiorly to join with the zygomatic bone.",
+        "Forms part of the lateral border of the orbit.",
+        "Labels"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide5/slide5_rId8.jpg",
+      "annotations": [
+        {
+          "text": "Frontal bone",
+          "position": {
+            "x": 2819400,
+            "y": 1330154,
+            "width": 583791,
+            "height": 215444
+          }
+        }
+      ],
+      "subbones": [
+        {
+          "id": "supraorbital_foramen",
+          "name": "Supraorbital foramen",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide5/slide5_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Supraorbital foramen",
+              "position": {
+                "x": 2750422,
+                "y": 2327600,
+                "width": 952500,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "nasion",
+          "name": "Nasion",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide5/slide5_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Nasion",
+              "position": {
+                "x": 2895600,
+                "y": 3334768,
+                "width": 381000,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "labels",
+      "name": "Labels",
+      "description": [
+        "Basilar part"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+      "annotations": [],
+      "subbones": [
+        {
+          "id": "mental_tubercle",
+          "name": "Mental tubercle",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Mental tubercle",
+              "position": {
+                "x": 3581400,
+                "y": 5739596,
+                "width": 838200,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "lateral_view_right_aspect",
+          "name": "Lateral view (right aspect)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Lateral view (right aspect)",
+              "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "external_acoustic_meatus",
+          "name": "External acoustic meatus",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "External acoustic meatus",
+              "position": {
+                "x": 2743200,
+                "y": 4586645,
+                "width": 779495,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "mastoid_process",
+          "name": "Mastoid process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Mastoid process",
+              "position": {
+                "x": 2754415,
+                "y": 5029200,
+                "width": 768281,
+                "height": 215444
+              }
+            },
+            {
+              "text": "Mastoid process",
+              "position": {
+                "x": 2768239,
+                "y": 4005148,
+                "width": 744055,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "zygomatic_process",
+          "name": "Zygomatic process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Zygomatic process",
+              "position": {
+                "x": 2754414,
+                "y": 3945523,
+                "width": 522186,
+                "height": 338554
+              }
+            },
+            {
+              "text": "Zygomatic process",
+              "position": {
+                "x": 2765492,
+                "y": 2434768,
+                "width": 843455,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "mandibular_fossa",
+          "name": "Mandibular fossa",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Mandibular fossa",
+              "position": {
+                "x": 3044860,
+                "y": 5486400,
+                "width": 768281,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "squamous_part",
+          "name": "Squamous part",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Squamous part",
+              "position": {
+                "x": 2783766,
+                "y": 3238369,
+                "width": 522186,
+                "height": 338554
+              }
+            },
+            {
+              "text": "Squamous part",
+              "position": {
+                "x": 2743200,
+                "y": 1871265,
+                "width": 762000,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "head_of_condylar_process",
+          "name": "Head of condylar     process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Head of condylar     process",
+              "position": {
+                "x": 2743200,
+                "y": 3087654,
+                "width": 825638,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "coronoid_process",
+          "name": "Coronoid process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Coronoid process",
+              "position": {
+                "x": 3359082,
+                "y": 3810000,
+                "width": 831919,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "body",
+          "name": "Body",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Body",
+              "position": {
+                "x": 3782473,
+                "y": 4979312,
+                "width": 304799,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "mandibular_notch",
+          "name": "Mandibular notch",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Mandibular notch",
+              "position": {
+                "x": 2996202,
+                "y": 3594556,
+                "width": 831919,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "ramus",
+          "name": "Ramus",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Ramus",
+              "position": {
+                "x": 3144205,
+                "y": 4406444,
+                "width": 381000,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "angle",
+          "name": "Angle",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Angle",
+              "position": {
+                "x": 3630074,
+                "y": 5302478,
+                "width": 304799,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "inferior_viewcranial_base",
+          "name": "Inferior view(cranial base)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Inferior view(cranial base)",
+              "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "pterygoid_process",
+          "name": "Pterygoid process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Pterygoid process",
+              "position": {
+                "x": 4797530,
+                "y": 1356472,
+                "width": 895141,
+                "height": 230832
+              }
+            }
+          ]
+        },
+        {
+          "id": "greater_wing",
+          "name": "Greater wing",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Greater wing",
+              "position": {
+                "x": 2764788,
+                "y": 2841228,
+                "width": 633315,
+                "height": 215444
+              }
+            },
+            {
+              "text": "Greater wing",
+              "position": {
+                "x": 2757780,
+                "y": 5302478,
+                "width": 609600,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_ovale",
+          "name": "Foramen ovale",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Foramen ovale",
+              "position": {
+                "x": 2764787,
+                "y": 3137918,
+                "width": 685800,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_spinosum",
+          "name": "Foramen spinosum",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Foramen spinosum",
+              "position": {
+                "x": 2759394,
+                "y": 3465515,
+                "width": 868853,
+                "height": 215444
+              }
+            },
+            {
+              "text": "Foramen spinosum",
+              "position": {
+                "x": 2819400,
+                "y": 5659265,
+                "width": 914400,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "hamulus",
+          "name": "Hamulus",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Hamulus",
+              "position": {
+                "x": 5062884,
+                "y": 1700192,
+                "width": 451992,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "medial_plate",
+          "name": "Medial plate",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Medial plate",
+              "position": {
+                "x": 5027226,
+                "y": 2171631,
+                "width": 600456,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "pterygoid_fossa",
+          "name": "Pterygoid fossa",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Pterygoid fossa",
+              "position": {
+                "x": 5029200,
+                "y": 1852111,
+                "width": 712658,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "lateral_plate",
+          "name": "Lateral plate",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Lateral plate",
+              "position": {
+                "x": 5029200,
+                "y": 1538366,
+                "width": 609600,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "scaphoid_fossa",
+          "name": "Scaphoid fossa",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Scaphoid fossa",
+              "position": {
+                "x": 5029200,
+                "y": 2013360,
+                "width": 712658,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "carotid_canal",
+          "name": "Carotid canal",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Carotid canal",
+              "position": {
+                "x": 2768239,
+                "y": 3056672,
+                "width": 614855,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "styloid_process",
+          "name": "Styloid process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Styloid process",
+              "position": {
+                "x": 2762473,
+                "y": 3299924,
+                "width": 694772,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "stylomastoid_foramen",
+          "name": "Stylomastoid foramen",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Stylomastoid foramen",
+              "position": {
+                "x": 2762473,
+                "y": 3657600,
+                "width": 981628,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "mastoid_air_cells_exposed",
+          "name": "Mastoid air cells (exposed)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Mastoid air cells (exposed)",
+              "position": {
+                "x": 2821867,
+                "y": 4343400,
+                "width": 744055,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "petrotympanic_fissure",
+          "name": "Petrotympanic fissure",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Petrotympanic fissure",
+              "position": {
+                "x": 2762474,
+                "y": 2769249,
+                "width": 1003357,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "occipital_condyle",
+          "name": "Occipital condyle",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Occipital condyle",
+              "position": {
+                "x": 2743200,
+                "y": 5704063,
+                "width": 790002,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "hypoglossal_canal",
+          "name": "Hypoglossal canal",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Hypoglossal canal",
+              "position": {
+                "x": 2744633,
+                "y": 5470924,
+                "width": 835723,
+                "height": 215444
+              }
+            },
+            {
+              "text": "Hypoglossal canal",
+              "position": {
+                "x": 2813494,
+                "y": 5372077,
+                "width": 838200,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "jugular_foramen",
+          "name": "Jugular foramen",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Jugular foramen",
+              "position": {
+                "x": 2744634,
+                "y": 5255480,
+                "width": 788569,
+                "height": 215444
+              }
+            },
+            {
+              "text": "Jugular foramen",
+              "position": {
+                "x": 2813494,
+                "y": 4738739,
+                "width": 765296,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "superior_viewcranial_cavity",
+          "name": "Superior view(cranial cavity)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Superior view(cranial cavity)",
+              "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "orbital_plate",
+          "name": "Orbital plate",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Orbital plate",
+              "position": {
+                "x": 2971801,
+                "y": 2438400,
+                "width": 618131,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "groove_for_anterior_meningeal_vessels",
+          "name": "Groove for anterior meningeal vessels",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Groove for anterior meningeal vessels",
+              "position": {
+                "x": 2743200,
+                "y": 1857717,
+                "width": 1676400,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "cribiform_plate",
+          "name": "Cribiform plate",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Cribiform plate",
+              "position": {
+                "x": 2895601,
+                "y": 2438400,
+                "width": 694331,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_cecum",
+          "name": "Foramen cecum",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Foramen cecum",
+              "position": {
+                "x": 3395166,
+                "y": 2025878,
+                "width": 719635,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "lesser_wing",
+          "name": "Lesser wing",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Lesser wing",
+              "position": {
+                "x": 2819401,
+                "y": 2019744,
+                "width": 589847,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "sella_turcica",
+          "name": "Sella turcica",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Sella turcica",
+              "position": {
+                "x": 3272888,
+                "y": 1794557,
+                "width": 613313,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "petrous_part",
+          "name": "Petrous part",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Petrous part",
+              "position": {
+                "x": 2819400,
+                "y": 1653411,
+                "width": 609600,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_magnum",
+          "name": "Foramen magnum",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide10/slide10_rId8.jpg",
+          "annotations": [
+            {
+              "text": "Foramen magnum",
+              "position": {
+                "x": 2816104,
+                "y": 5050529,
+                "width": 838200,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lacrimal_bone",
+      "name": "Lacrimal bone",
+      "description": [
+        "The lacrimal bone forms part of the medial wall of the orbit.",
+        "Fossa for lacrimal sac",
+        "A shallow depression formed by the frontal process of the maxilla and the lacrimal bone.",
+        "The lacrimal sac is the dilated portion of the nasolacrimal duct and is part of an apparatus to drain tears from the surface of the eye to the inferior nasal meatus.",
+        "Labels"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide16/slide16_rId14.png",
+      "annotations": [],
+      "subbones": [
+        {
+          "id": "lateral_view_right_aspect",
+          "name": "Lateral view (right aspect)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide16/slide16_rId14.png",
+          "annotations": [
+            {
+              "text": "Lateral view (right aspect)",
+              "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lateral_view",
+      "name": "Lateral view",
+      "description": [
+        "The lateral view can be divided into 3 sections:",
+        "Facial \u2013 anterior",
+        "Temporal \u2013 middle",
+        "Occipital \u2013 posterior",
+        "The temporal section is separated by the zygomatic arch into into a",
+        "temporal fossa",
+        "superiorly and an infratemporal fossa inferiorly.",
+        "The origin of the temporalis muscle attaches to the temporal fossa",
+        "The",
+        "pterion",
+        "is located in the temporal fossa and marks the junction where the frontal, parietal, temporal, and sphenoid bones meet.",
+        "The pterion is an important landmark because it overlies the anterior branch of the middle meningeal artery.",
+        "Damage to this area of the skull can cause a rupture of this artery"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+      "annotations": [],
+      "subbones": [
+        {
+          "id": "lateral_view_right_aspect",
+          "name": "Lateral view (right aspect)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Lateral view (right aspect)",
+              "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "coronal_suture",
+          "name": "Coronal suture",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Coronal suture",
+              "position": {
+                "x": 5791200,
+                "y": 1348755,
+                "width": 685800,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "mandible",
+          "name": "Mandible",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Mandible",
+              "position": {
+                "x": 3558518,
+                "y": 4997678,
+                "width": 510518,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "head_of_condylar_process",
+          "name": "Head of condylar process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Head of condylar process",
+              "position": {
+                "x": 3701980,
+                "y": 5125315,
+                "width": 870020,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "temporal_bone",
+          "name": "Temporal bone",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Temporal bone",
+              "position": {
+                "x": 2788964,
+                "y": 4114800,
+                "width": 685800,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "external_acoustic_meatus",
+          "name": "External acoustic meatus",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "External acoustic meatus",
+              "position": {
+                "x": 2971800,
+                "y": 4442926,
+                "width": 1097236,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "mastoid_process",
+          "name": "Mastoid process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Mastoid process",
+              "position": {
+                "x": 2971801,
+                "y": 4594080,
+                "width": 768281,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "zygomatic_process",
+          "name": "Zygomatic process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Zygomatic process",
+              "position": {
+                "x": 2971800,
+                "y": 4291515,
+                "width": 838200,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "coronoid_process",
+          "name": "Coronoid process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Coronoid process",
+              "position": {
+                "x": 3733801,
+                "y": 5594275,
+                "width": 831919,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "ramus",
+          "name": "Ramus",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Ramus",
+              "position": {
+                "x": 3733800,
+                "y": 5751575,
+                "width": 381000,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "body",
+          "name": "Body",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Body",
+              "position": {
+                "x": 3733801,
+                "y": 5889248,
+                "width": 304799,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "mental_foramen",
+          "name": "Mental foramen",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Mental foramen",
+              "position": {
+                "x": 3740082,
+                "y": 6032955,
+                "width": 755719,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "mandibular_notch",
+          "name": "Mandibular notch",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Mandibular notch",
+              "position": {
+                "x": 3740082,
+                "y": 5416241,
+                "width": 831919,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "occipital_bone",
+          "name": "Occipital bone",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Occipital bone",
+              "position": {
+                "x": 2743200,
+                "y": 3854678,
+                "width": 685800,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "greater_wing",
+          "name": "Greater wing",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Greater wing",
+              "position": {
+                "x": 2809778,
+                "y": 3641035,
+                "width": 664987,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "pterion",
+          "name": "Pterion",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide11/slide11_rId8.png",
+          "annotations": [
+            {
+              "text": "Pterion",
+              "position": {
+                "x": 2885096,
+                "y": 3256534,
+                "width": 380999,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "maxilla",
+      "name": "Maxilla",
+      "description": [
+        "Palatine process",
+        "The inferior portion of each maxilla that makes up the anterior part of the hard palate.",
+        "Median palatine suture",
+        "The joint between the palatine processes on each side.",
+        "Transverse palatine suture",
+        "The joint between the palatine processes of the maxilla and the horizontal plates of the palatine bones.",
+        "Incisive foramen",
+        "An opening in the midline of the anterior part of the hard palate.",
+        "Transmits the nasopalatine nerve and the sphenopalatine vessels.",
+        "Labels",
+        "Two bones that make up the central part of the face and upper jaw.",
+        "Frontal process",
+        "Part of the bone that extends superiorly to join the frontal and nasal bones.",
+        "Infraorbital foramen",
+        "A small opening just inferior to the inferior orbit rim.",
+        "Transmits the infraorbital nerve and vessels.",
+        "Zygomatic process",
+        "Part of the bone that extends laterally to meet with the zygomatic bone.",
+        "Alveolar process",
+        "Part of bone that extends inferiorly and forms upper jaw.",
+        "Contains the upper teeth."
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide21/slide21_rId8.png",
+      "annotations": [
+        {
+          "text": "Maxilla",
+          "position": {
+            "x": 3048001,
+            "y": 3601093,
+            "width": 358927,
+            "height": 215444
+          }
+        }
+      ],
+      "subbones": [
+        {
+          "id": "inferior_viewcranial_base",
+          "name": "Inferior view(cranial base)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide21/slide21_rId8.png",
+          "annotations": [
+            {
+              "text": "Inferior view(cranial base)",
+              "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "zygomatic_process",
+          "name": "Zygomatic process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide21/slide21_rId8.png",
+          "annotations": [
+            {
+              "text": "Zygomatic process",
+              "position": {
+                "x": 2743200,
+                "y": 2789662,
+                "width": 895350,
+                "height": 215444
+              }
+            },
+            {
+              "text": "Zygomatic process",
+              "position": {
+                "x": 2734934,
+                "y": 3936639,
+                "width": 800100,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "transverse_palatine_suture",
+          "name": "Transverse palatine suture",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide21/slide21_rId8.png",
+          "annotations": [
+            {
+              "text": "Transverse palatine suture",
+              "position": {
+                "x": 2768788,
+                "y": 2194818,
+                "width": 1193612,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "frontal_process",
+          "name": "Frontal process",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide21/slide21_rId8.png",
+          "annotations": [
+            {
+              "text": "Frontal process",
+              "position": {
+                "x": 2895601,
+                "y": 2452463,
+                "width": 685799,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "middle_cranial_fossa",
+      "name": "Middle cranial fossa",
+      "description": [
+        "Posterior cranial fossa"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+      "annotations": [],
+      "subbones": [
+        {
+          "id": "superior_viewcranial_cavity",
+          "name": "Superior view(cranial cavity)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Superior view(cranial cavity)",
+              "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "temporal_bone",
+          "name": "Temporal bone",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Temporal bone",
+              "position": {
+                "x": 2819400,
+                "y": 3823156,
+                "width": 685800,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "occipital_bone",
+          "name": "Occipital bone",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Occipital bone",
+              "position": {
+                "x": 2819400,
+                "y": 5194756,
+                "width": 657350,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "cribiform_plate",
+          "name": "Cribiform plate",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Cribiform plate",
+              "position": {
+                "x": 2971798,
+                "y": 2008247,
+                "width": 716381,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "crista_galli",
+          "name": "Crista galli",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Crista galli",
+              "position": {
+                "x": 2971799,
+                "y": 2150163,
+                "width": 533401,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "orbital_plate",
+          "name": "Orbital plate",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Orbital plate",
+              "position": {
+                "x": 2971799,
+                "y": 1451212,
+                "width": 602079,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "lesser_wing",
+          "name": "Lesser wing",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Lesser wing",
+              "position": {
+                "x": 2971797,
+                "y": 2599279,
+                "width": 583792,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "optic_canal",
+          "name": "Optic canal",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Optic canal",
+              "position": {
+                "x": 2971796,
+                "y": 2743200,
+                "width": 560837,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_cecum",
+          "name": "Foramen cecum",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Foramen cecum",
+              "position": {
+                "x": 2971799,
+                "y": 1882100,
+                "width": 762003,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_rotundum",
+          "name": "Foramen rotundum",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Foramen rotundum",
+              "position": {
+                "x": 2971795,
+                "y": 2895600,
+                "width": 902213,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "greater_wing",
+          "name": "Greater wing",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Greater wing",
+              "position": {
+                "x": 2971796,
+                "y": 3048000,
+                "width": 646181,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_ovale",
+          "name": "Foramen ovale",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Foramen ovale",
+              "position": {
+                "x": 2971796,
+                "y": 3200400,
+                "width": 716383,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_spinosum",
+          "name": "Foramen spinosum",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Foramen spinosum",
+              "position": {
+                "x": 2971794,
+                "y": 3352800,
+                "width": 896118,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_lacerum",
+          "name": "Foramen lacerum",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Foramen lacerum",
+              "position": {
+                "x": 2971795,
+                "y": 3505200,
+                "width": 838205,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "arcuate_eminence",
+          "name": "Arcuate eminence",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Arcuate eminence",
+              "position": {
+                "x": 2971799,
+                "y": 4127956,
+                "width": 819912,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "petrous_part",
+          "name": "Petrous part",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Petrous part",
+              "position": {
+                "x": 2971795,
+                "y": 4309646,
+                "width": 574651,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "internal_acoustic_meatus",
+          "name": "Internal acoustic meatus",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Internal acoustic meatus",
+              "position": {
+                "x": 2971801,
+                "y": 4462046,
+                "width": 725425,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "jugular_foramen",
+          "name": "Jugular foramen",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Jugular foramen",
+              "position": {
+                "x": 2971800,
+                "y": 5347156,
+                "width": 762001,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "hypoglossal_canal",
+          "name": "Hypoglossal canal",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Hypoglossal canal",
+              "position": {
+                "x": 2971801,
+                "y": 5499556,
+                "width": 819911,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "foramen_magnum",
+          "name": "Foramen magnum",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Foramen magnum",
+              "position": {
+                "x": 2971802,
+                "y": 5651956,
+                "width": 838199,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "squamous_part",
+          "name": "Squamous part",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide27/slide27_rId8.png",
+          "annotations": [
+            {
+              "text": "Squamous part",
+              "position": {
+                "x": 2971800,
+                "y": 3975556,
+                "width": 685800,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nasal_bone",
+      "name": "Nasal bone",
+      "description": [
+        "Two small, oblong shaped bones that form the \u201cbridge\u201d of the nose.",
+        "Labels"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide7/slide7_rId8.jpg",
+      "annotations": [
+        {
+          "text": "Nasal bone",
+          "position": {
+            "x": 3048001,
+            "y": 3000869,
+            "width": 524221,
+            "height": 215444
+          }
+        }
+      ],
+      "subbones": []
+    },
+    {
+      "id": "palatine_bone",
+      "name": "Palatine bone",
+      "description": [
+        "Horizontal plate",
+        "Forms the posterior part of the hard palate.",
+        "Greater palatine foramen",
+        "An opening just lateral to the third molars of the upper jaw.",
+        "Transmits the greater palatine nerve and vessels.",
+        "Lesser palatine foramen",
+        "A smaller opening that lies posterior to the greater palatine foramen.",
+        "Usually found in the pyramid process of palatine bone.",
+        "Transmits the lesser palatine nerve and vessels.",
+        "Labels"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide23/slide23_rId14.png",
+      "annotations": [],
+      "subbones": [
+        {
+          "id": "inferior_viewcranial_base",
+          "name": "Inferior view(cranial base)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide23/slide23_rId14.png",
+          "annotations": [
+            {
+              "text": "Inferior view(cranial base)",
+              "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "horizontal_plate",
+          "name": "Horizontal plate",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide23/slide23_rId14.png",
+          "annotations": [
+            {
+              "text": "Horizontal plate",
+              "position": {
+                "x": 2936419,
+                "y": 1752600,
+                "width": 721182,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parietal_bone",
+      "name": "Parietal bone",
+      "description": [
+        "Makes up the large, curved portion superior, lateral and posterior skull.",
+        "Joins with the posterior part of the frontal bone at the",
+        "coronal suture",
+        ".",
+        "Joins with the superior part of the occipital bone at the",
+        "lambdoid suture",
+        "Labels"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide13/slide13_rId8.png",
+      "annotations": [
+        {
+          "text": "Parietal bone",
+          "position": {
+            "x": 2788964,
+            "y": 1994356,
+            "width": 640036,
+            "height": 215444
+          }
+        },
+        {
+          "text": "Parietal bone",
+          "position": {
+            "x": 2819400,
+            "y": 5193552,
+            "width": 679904,
+            "height": 215444
+          }
+        },
+        {
+          "text": "Parietal bone",
+          "position": {
+            "x": 2819400,
+            "y": 4979312,
+            "width": 618131,
+            "height": 215444
+          }
+        },
+        {
+          "text": "Parietal bone",
+          "position": {
+            "x": 3048000,
+            "y": 2339575,
+            "width": 609600,
+            "height": 215444
+          }
+        }
+      ],
+      "subbones": [
+        {
+          "id": "lateral_view_right_aspect",
+          "name": "Lateral view (right aspect)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide13/slide13_rId8.png",
+          "annotations": [
+            {
+              "text": "Lateral view (right aspect)",
+              "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sphenoid_bone",
+      "name": "Sphenoid bone",
+      "description": [
+        "The greater wing of the sphenoid bone can be seen from the lateral view.",
+        "The greater wing forms part of the medial wall of the temporal fossa and the roof of the infratemporal fossa.",
+        "Labels",
+        "Anteriorly, the sphenoid bone can be seen in the deep part of the orbit.",
+        "Superior orbital fissure",
+        "A gap formed by the lesser and greater wings of the sphenoid bone.",
+        "Transmits the oculomotor nerve (CN III), trochlear nerve (CN IV), branches of the ophthalmic nerve (CN V",
+        "1",
+        "), abducent nerve (CN VI), and the superior ophthalmic vein.",
+        "Optic canal",
+        "Located in the sphenoid bone.",
+        "Transmits the optic nerve and the ophthalmic artery.",
+        "Greater wing"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide14/slide14_rId8.png",
+      "annotations": [
+        {
+          "text": "Sphenoid bone",
+          "position": {
+            "x": 2743200,
+            "y": 3471978,
+            "width": 723900,
+            "height": 215444
+          }
+        },
+        {
+          "text": "Sphenoid bone",
+          "position": {
+            "x": 2828372,
+            "y": 2240954,
+            "width": 685800,
+            "height": 215444
+          }
+        },
+        {
+          "text": "Sphenoid bone",
+          "position": {
+            "x": 2819400,
+            "y": 2469922,
+            "width": 685800,
+            "height": 215444
+          }
+        }
+      ],
+      "subbones": [
+        {
+          "id": "lateral_view_right_aspect",
+          "name": "Lateral view (right aspect)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide14/slide14_rId8.png",
+          "annotations": [
+            {
+              "text": "Lateral view (right aspect)",
+              "position": {
+                "x": 5105400,
+                "y": 6252408,
+                "width": 1219200,
+                "height": 215444
+              }
+            }
+          ]
+        },
+        {
+          "id": "superior_orbital_fissure",
+          "name": "Superior orbital fissure",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide14/slide14_rId8.png",
+          "annotations": [
+            {
+              "text": "Superior orbital fissure",
+              "position": {
+                "x": 2715798,
+                "y": 1534000,
+                "width": 713202,
+                "height": 338554
+              }
+            }
+          ]
+        },
+        {
+          "id": "optic_canal",
+          "name": "Optic canal",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide14/slide14_rId8.png",
+          "annotations": [
+            {
+              "text": "Optic canal",
+              "position": {
+                "x": 3810000,
+                "y": 1536462,
+                "width": 544826,
+                "height": 215444
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unknown",
+      "name": "Unknown",
+      "description": [],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide2/slide2_rId9.jpg",
+      "annotations": [],
+      "subbones": [
+        {
+          "id": "inferior_view_cranial_base",
+          "name": "Inferior view (cranial base)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide2/slide2_rId9.jpg",
+          "annotations": [
+            {
+              "text": "Inferior view (cranial base)",
+              "position": {
+                "x": 3795482,
+                "y": 5938580,
+                "width": 685800,
+                "height": 338554
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vomer",
+      "name": "Vomer",
+      "description": [
+        "The posterior part of the vomer lies between the medial plates of the sphenoid bones on either side.",
+        "It contributes to the inferior and posterior part of the nasal septum.",
+        "Choanae",
+        "The posterior openings of the nasal passages.",
+        "Labels"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide25/slide25_rId8.png",
+      "annotations": [],
+      "subbones": [
+        {
+          "id": "inferior_viewcranial_base",
+          "name": "Inferior view(cranial base)",
+          "description": [],
+          "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide25/slide25_rId8.png",
+          "annotations": [
+            {
+              "text": "Inferior view(cranial base)",
+              "position": {
+                "x": 5372100,
+                "y": 6252408,
+                "width": 685800,
+                "height": 338554
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zygomatic_bone",
+      "name": "Zygomatic bone",
+      "description": [
+        "An irregular shaped bone that, together with the maxilla, forms the \u201ccheek\u201d bones.",
+        "Frontal process",
+        "The portion of bone that extends superiorly to join with the frontal bone.",
+        "Contributes to the lateral border of the orbit.",
+        "Zygomaticofacial foramen",
+        "A small opening just inferior and lateral to the orbit.",
+        "Transmits the zygomaticofacial nerve and vessels.",
+        "Temporal process",
+        "The portion of bone that extends laterally and posteriorly to join the temporal bone.",
+        "Forms part of the zygomatic arch.",
+        "Labels"
+      ],
+      "image_url": "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataSkull/images/slide8/slide8_rId8.jpg",
+      "annotations": [],
+      "subbones": []
+    }
+  ]
+}
