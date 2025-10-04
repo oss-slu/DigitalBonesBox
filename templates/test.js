@@ -9,7 +9,8 @@ const html = `
 `;
 document.body.innerHTML = html;
 
-require("./sidebar.js"); // Import the JavaScript code
+const { initializeSidebar } = require("./js/sidebar.js"); // Import the JavaScript code
+
 
 beforeEach(() => {
     global.fetch = jest.fn(() =>

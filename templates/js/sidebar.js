@@ -1,5 +1,5 @@
 // js/sidebar.js
-export function initializeSidebar() {
+async function initializeSidebar() {
     const toggleButton = document.getElementById("toggle-sidebar");
     const sidebarContainer = document.getElementById("sidebar-container");
 
@@ -31,7 +31,7 @@ export function initializeSidebar() {
     }
 }
 
-export async function loadHelpButton() {
+async function loadHelpButton() {
     const helpButtonContainer = document.getElementById("help-button-container");
     if (helpButtonContainer) {
         try {
@@ -78,4 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeSidebar();
     loadHelpButton();
 });
+
+// Export for CommonJS
+module.exports = { initializeSidebar, loadHelpButton };
 

@@ -264,3 +264,20 @@ app.get("/api/boneset/:bonesetId", bonesetLimiter, async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
 });
+
+//CODE CHANGE -> Make express app testable, lets the tests import app without starting
+// a real server
+if (require.main == module) {
+  app.listen(PORT, () => {
+    console.log('Server running on http://127.0.0.1:${PORT}');
+  });
+}
+
+module.exports = {
+  app,
+  // export helpers to unit-test
+  escapeHtml,
+  findNodeById,
+  safeDataPath,
+  loadBoneset
+};
