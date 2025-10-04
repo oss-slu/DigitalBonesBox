@@ -1,4 +1,4 @@
-name: Lint JavaScript
+name: Lint and Test JavaScript
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 
 jobs:
-  lint:
+  lint-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,3 +25,6 @@ jobs:
 
       - name: Run ESLint
         run: npm run lint
+
+      - name: Run Jest Tests
+        run: npm test
