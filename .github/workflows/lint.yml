@@ -2,7 +2,7 @@ name: Lint and Test JavaScript
 
 on:
   push:
-    branches: [main]
+    branches: [main, ci-cd-setup]
   pull_request:
     branches: [main]
 
