@@ -1,8 +1,10 @@
+# Added Jest testing step for foundational CI/CD improvement
+
 name: Lint and Test JavaScript
 
 on:
   push:
-    branches: [main, ci-cd-setup]
+    branches: [main]
   pull_request:
     branches: [main]
 
