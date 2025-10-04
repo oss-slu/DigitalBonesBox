@@ -269,7 +269,7 @@ app.listen(PORT, () => {
 // a real server
 if (require.main == module) {
   app.listen(PORT, () => {
-    console.log('Server running on http://127.0.0.1:${PORT}');
+    console.log(`Server running on http://127.0.0.1:${PORT}`);
   });
 }
 
