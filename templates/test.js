@@ -1139,7 +1139,7 @@ describe("Cross-Browser and Mobile Compatibility", () => {
         scaleY = imageRect.height / ORIGINAL_HEIGHT;
 
         let scaledX2 = annotation.position.x * scaleX;
-        let scaledY2 = annotation.position.y
+        let scaledY2 = annotation.position.y;
         scaledY2 = annotation.position.y * scaleY;
 
         // Both should be valid but proportionally different
