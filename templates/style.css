@@ -226,6 +226,105 @@ ul li {
     margin-bottom: 0;
 }
 
+/* Search functionality styles */
+.search-container {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+#search-bar {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+#search-bar:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-loading {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #666;
+    background: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.search-results {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.search-results:empty {
+    display: none;
+}
+
+.search-result {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-result:last-child {
+    border-bottom: none;
+}
+
+.search-result:hover,
+.search-result:focus {
+    background-color: #f0f8ff;
+    outline: none;
+}
+
+.search-result.selected {
+    background-color: #e6f3ff;
+}
+
+.search-result small {
+    color: #666;
+    font-size: 0.85em;
+    font-weight: normal;
+}
+
+.search-placeholder,
+.search-error,
+.search-no-results {
+    padding: 12px 16px;
+    color: #666;
+    font-style: italic;
+    cursor: default;
+    text-align: center;
+}
+
+.search-error {
+    color: #d32f2f;
+}
+
+.search-no-results {
+    color: #666;
+}
+
 /* Responsive design for smaller screens */
 @media (max-width: 768px) {
     .viewer-wrapper {
@@ -240,7 +339,7 @@ ul li {
         max-width: 100%;
     }
 }
-=======
+
 .help-modal {
     position: fixed;
     top: 0;
