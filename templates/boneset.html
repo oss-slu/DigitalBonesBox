@@ -7,7 +7,7 @@
     <title>Bone Set Viewer</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 
 <body>
@@ -28,8 +28,18 @@
     <div id="editor-view">
         <div class="container">
             <h1>Bone Set Viewer</h1>
-            <input type="text" id="search-bar" placeholder="Search bone sets" />
-            <ul id="search-results"></ul>
+            
+            <!-- Search functionality -->
+            <div class="search-container">
+                <input type="text" 
+                       id="search-bar" 
+                       placeholder="Search bones or sub-bones (min 2 characters)"
+                       autocomplete="off" />
+                <div id="search-loading" class="search-loading" style="display: none;">Searching...</div>
+            </div>
+            
+            <ul id="search-results" class="search-results"></ul>
+            
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
                 <div style="display: flex; gap: 10px; align-items: center;">
@@ -61,8 +71,7 @@
 
             <div id="bone-Description-Container">
                 <h3>Description</h3>
-                <ul id="description-Container">
-                    </ul>
+                <ul id="description-Container"></ul>
             </div>
 
             <div class="navigation-buttons">
@@ -74,13 +83,12 @@
                 <img id="bone-image" alt="Bone Image" />
                 <div id="annotations-overlay"></div>
             </div>
-              
-            </div>
+        </div>
     </div>
-    <script type="module" src="js/main.js"></script>
-    <script type="module" src="js/sidebar.js"></script>
-
     
+    <script type="module" src="js/search.js"></script>
+    <script type="module" src="js/sidebar.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 
 </html>

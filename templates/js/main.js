@@ -1,9 +1,10 @@
 import { fetchCombinedData, fetchMockBoneData } from "./api.js";
 import { populateBonesetDropdown, setupDropdownListeners } from "./dropdowns.js";
-import { initializeSidebar } from "./sidebar.js";
+import { initializeSidebar, loadHelpButton } from "./sidebar.js";
 import { setupNavigation, setBoneAndSubbones, disableButtons } from "./navigation.js";
 import { loadDescription } from "./description.js";
 import { displayBoneData, clearViewer } from "./viewer.js";
+import { initializeSearch } from "./search.js";
 
 let combinedData = { bonesets: [], bones: [], subbones: [] };
 let mockBoneData = null;
@@ -30,26 +31,27 @@ function handleBoneSelection(boneId) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Sidebar behavior
+    // 1. Initialize search functionality
+    initializeSearch();
+    
+    // 2. Sidebar behavior and help button
     initializeSidebar();
+    loadHelpButton();
 
-    // 2. Load mock bone data using centralized API
+    // 3. Load mock bone data using centralized API
     mockBoneData = await fetchMockBoneData();
     
-    // 3. Fetch data and populate dropdowns
+    // 4. Fetch data and populate dropdowns
     combinedData = await fetchCombinedData();
     populateBonesetDropdown(combinedData.bonesets);
     setupDropdownListeners(combinedData);
 
-    // 4. Hook up navigation buttons
-    const prevButton = document.getElementById("prev-button");
-    const nextButton = document.getElementById("next-button");
-    const subboneDropdown = document.getElementById("subbone-select");
+    // 5. Setup navigation after everything else
+    setupNavigation(combinedData);
+    disableButtons();
+
+    // 6. Update navigation when bone changes
     const boneDropdown = document.getElementById("bone-select");
-
-    setupNavigation(prevButton, nextButton, subboneDropdown, loadDescription);
-
-    // 5. Update navigation when bone changes
     boneDropdown.addEventListener("change", (event) => {
         const selectedBone = event.target.value;
 
@@ -58,9 +60,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             .map(sb => sb.id);
 
         setBoneAndSubbones(selectedBone, relatedSubbones);
-        populateSubboneDropdown(subboneDropdown, relatedSubbones);
-        disableButtons(prevButton, nextButton);
-        
+        populateSubboneDropdown(document.getElementById("subbone-select"), relatedSubbones);
+        disableButtons();
+
         // Handle bone selection using dedicated function
         if (selectedBone) {
             handleBoneSelection(selectedBone);
@@ -69,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    // 6. Auto-select the first boneset
+    // 7. Auto-select the first boneset
     const boneset = combinedData.bonesets[0];
     if (boneset) {
         document.getElementById("boneset-select").value = boneset.id;
@@ -77,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("boneset-select").dispatchEvent(event);
     }
 
-    // 7. Initialize display
+    // 8. Initialize display
     clearViewer();
 });
 
