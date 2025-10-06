@@ -1,149 +1,31 @@
-//const express = require("express");
-//const axios = require("axios");
-//const cors = require("cors");
-//const path = require('path'); // Added for consistency, though not strictly needed for this version
-//
-//const app = express();
-//const PORT = process.env.PORT || 8000;
-//
-//app.use(cors());
-//
-//// --- Original GitHub URLs ---
-//const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
-//const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
-//const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
-//
-//// Helper function to fetch JSON from GitHub
-//async function fetchJSON(url) {
-//    try {
-//        const response = await axios.get(url);
-//        return response.data;
-//    } catch (error) {
-//        console.error(`Failed to fetch ${url}:`, error.message);
-//        return null;
-//    }
-//}
-//
-//// Home route (fixes "Cannot GET /" issue)
-//app.get("/", (req, res) => {
-//    res.json({ message: "Welcome to the Boneset API (GitHub-Integrated)" });
-//});
-//
-//// --- Original Combined Data Endpoint ---
-//// This endpoint still provides the main data for the dropdowns
-//app.get("/combined-data", async (req, res) => {
-//    try {
-//        const bonesetData = await fetchJSON(BONESET_JSON_URL);
-//        if (!bonesetData) return res.status(500).json({ error: "Failed to load boneset data" });
-//
-//        const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
-//        const bones = [];
-//        const subbones = [];
-//
-//        for (const boneId of bonesetData.bones) {
-//            const boneJsonUrl = `${BONES_DIR_URL}${boneId}.json`;
-//            const boneData = await fetchJSON(boneJsonUrl);
-//
-//            if (boneData) {
-//                bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
-//                boneData.subBones.forEach(subBoneId => {
-//                    subbones.push({ id: subBoneId, name: subBoneId.replace(/_/g, " "), bone: boneData.id });
-//                });
-//            }
-//        }
-//
-//        res.json({ bonesets, bones, subbones });
-//
-//    } catch (error) {
-//        console.error("Error fetching combined data:", error.message);
-//        res.status(500).json({ error: "Internal Server Error" });
-//    }
-//});
-//
-//// --- NEW HTMX ENDPOINT ---
-//// This endpoint fetches a description and returns it as an HTML fragment
-//app.get("/api/description/", async (req, res) => { // Path changed here
-//    const { boneId } = req.query; // Changed from req.params to req.query
-//    if (!boneId) {
-//        return res.send(''); // Send empty response if no boneId is provided
-//    }
-//    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
-//
-//    try {
-//        const response = await axios.get(GITHUB_DESC_URL);
-//        const descriptionData = response.data;
-//
-//        let html = `<li><strong>${descriptionData.name}</strong></li>`;
-//        descriptionData.description.forEach(point => {
-//            html += `<li>${point}</li>`;
-//        });
-//        res.send(html);
-//
-//    } catch (error) {
-//        res.send('<li>Description not available.</li>');
-//    }
-//});
-
-
-// Start server
-//app.listen(PORT, () => {
-//    console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
-//});
-
 // boneset-api/server.js
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const path = require("path");
-const fs = require("fs/promises");
 const rateLimit = require("express-rate-limit");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(cors());
+app.use(express.json());
 
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 
-// ---- Local data directory for merged files ----
-const DATA_DIR = path.join(__dirname, "data");
-
-// ---- Simple rate limiter for FS-backed endpoints ----
-const bonesetLimiter = rateLimit({
-    windowMs: 60 * 1000, // 1 minute
-    max: 60,             // 60 requests / min / IP
+// Rate limiter for search endpoint
+const searchLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 100,
     standardHeaders: true,
     legacyHeaders: false,
 });
 
-// ---- Only allow bonesets we ship locally right now ----
-const ALLOWED_BONESETS = new Set(["bony_pelvis"]);
+// Cache for search data
+let searchCache = null;
 
-// ---- Helpers ----
-async function fetchJSON(url) {
-    try {
-        const response = await axios.get(url, { timeout: 10_000 });
-        return response.data;
-    } catch (error) {
-        console.error(`Failed to fetch ${url}:`, error.message);
-        return null;
-    }
-}
-
-// Ensure any resolved path stays inside DATA_DIR
-function safeDataPath(fileName) {
-    const base = path.resolve(DATA_DIR);
-    const candidate = path.resolve(DATA_DIR, fileName);
-    if (!candidate.startsWith(base + path.sep)) {
-        const err = new Error("Invalid path");
-        err.code = "EINVAL";
-        throw err;
-    }
-    return candidate;
-}
-
+// HTML escaping helper
 function escapeHtml(str = "") {
     return String(str).replace(/[&<>"']/g, (c) => ({
         "&": "&amp;",
@@ -154,44 +36,123 @@ function escapeHtml(str = "") {
     })[c]);
 }
 
-// Cache the merged boneset for fast description lookups
-let cachedBoneset = null;
-async function loadBoneset() {
-    if (cachedBoneset) return cachedBoneset;
-    const file = safeDataPath("final_bony_pelvis.json");
-    const raw = await fs.readFile(file, "utf8");
-    cachedBoneset = JSON.parse(raw);
-    return cachedBoneset;
+// GitHub JSON fetcher
+async function fetchJSON(url) {
+    try {
+        const response = await axios.get(url, { timeout: 10_000 });
+        return response.data;
+    } catch (error) {
+        console.error(`Failed to fetch ${url}:`, error.message);
+        return null;
+    }
 }
 
-function findNodeById(boneset, id) {
-    if (!boneset) return null;
-    for (const bone of boneset.bones || []) {
-        if (bone.id === id) return bone;
-        for (const sub of bone.subbones || []) {
-            if (sub.id === id) return sub;
+// Initialize search cache at startup
+async function initializeSearchCache() {
+    try {
+        console.log("Initializing search cache...");
+        const bonesetData = await fetchJSON(BONESET_JSON_URL);
+        if (!bonesetData) {
+            console.error("Failed to load boneset data for search cache");
+            return;
+        }
+
+        const searchData = [];
+
+        // Add boneset to search data
+        searchData.push({
+            id: bonesetData.id,
+            name: bonesetData.name,
+            type: "boneset",
+            boneset: bonesetData.id,
+            bone: null,
+            subbone: null
+        });
+
+        // Load all bones and sub-bones
+        for (const boneId of bonesetData.bones || []) {
+            const boneData = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            if (boneData) {
+                // Add bone to search data
+                searchData.push({
+                    id: boneData.id,
+                    name: boneData.name,
+                    type: "bone",
+                    boneset: bonesetData.id,
+                    bone: boneData.id,
+                    subbone: null
+                });
+
+                // Add sub-bones to search data
+                for (const subBoneId of boneData.subBones || []) {
+                    const subBoneName = subBoneId.replace(/_/g, " ");
+                    searchData.push({
+                        id: subBoneId,
+                        name: subBoneName,
+                        type: "subbone",
+                        boneset: bonesetData.id,
+                        bone: boneData.id,
+                        subbone: subBoneId
+                    });
+                }
+            }
+        }
+
+        searchCache = searchData;
+        console.log(`Search cache initialized with ${searchData.length} items`);
+    } catch (error) {
+        console.error("Error initializing search cache:", error);
+    }
+}
+
+// Search function with ranking
+function searchItems(query, limit = 20) {
+    if (!searchCache) return [];
+    
+    const q = query.toLowerCase().trim();
+    const results = [];
+    
+    // First pass: prefix matches (higher priority)
+    for (const item of searchCache) {
+        if (item.name.toLowerCase().startsWith(q)) {
+            results.push({ ...item, priority: 1 });
         }
     }
-    return null;
+    
+    // Second pass: substring matches (lower priority)
+    for (const item of searchCache) {
+        if (!item.name.toLowerCase().startsWith(q) && item.name.toLowerCase().includes(q)) {
+            results.push({ ...item, priority: 2 });
+        }
+    }
+    
+    // Sort by priority, then by name
+    results.sort((a, b) => {
+        if (a.priority !== b.priority) return a.priority - b.priority;
+        return a.name.localeCompare(b.name);
+    });
+    
+    return results.slice(0, limit);
 }
 
-
+// Routes
 app.get("/", (_req, res) => {
-    res.json({ message: "Welcome to the Boneset API (GitHub-Integrated)" });
+    res.json({ message: "Welcome to the Boneset API" });
 });
 
 app.get("/combined-data", async (_req, res) => {
     try {
         const bonesetData = await fetchJSON(BONESET_JSON_URL);
-        if (!bonesetData) return res.status(500).json({ error: "Failed to load boneset data" });
+        if (!bonesetData) {
+            return res.status(500).json({ error: "Failed to load boneset data" });
+        }
 
         const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
         const bones = [];
         const subbones = [];
 
-        for (const boneId of bonesetData.bones) {
-            const boneJsonUrl = `${BONES_DIR_URL}${boneId}.json`;
-            const boneData = await fetchJSON(boneJsonUrl);
+        for (const boneId of bonesetData.bones || []) {
+            const boneData = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
             if (boneData) {
                 bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
                 (boneData.subBones || []).forEach((subBoneId) => {
@@ -212,102 +173,75 @@ app.get("/api/description/", async (req, res) => {
     if (!boneId) {
         return res.send(" ");
     }
+    
     const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
 
     try {
         const response = await axios.get(GITHUB_DESC_URL);
         const descriptionData = response.data;
 
-        let html = `<li><strong>${descriptionData.name}</strong></li>`;
+        let html = `<li><strong>${escapeHtml(descriptionData.name)}</strong></li>`;
         descriptionData.description.forEach(point => {
-            html += `<li>${point}</li>`;
+            html += `<li>${escapeHtml(point)}</li>`;
         });
         res.send(html);
-
     } catch (error) {
         res.send("<li>Description not available.</li>");
     }
 });
 
-app.get("/api/search", async (req, res) => {
+// Search endpoint
+app.get("/api/search", searchLimiter, (req, res) => {
     const query = req.query.q;
+    
+    console.log("Search request received for:", query);
 
-    if (!query || query.trim() === "") {
-        return res.send("<li>Enter a search term</li>");
+    // Handle empty or too short queries
+    if (!query || query.trim().length < 2) {
+        return res.send("<li class='search-placeholder'>Enter at least 2 characters to search</li>");
     }
 
-    const searchTerm = query.toLowerCase().trim();
-
+    const searchTerm = query.trim();
+    
     try {
-        const bonesetData = await fetchJSON(BONESET_JSON_URL);
-        if (!bonesetData) {
-            return res.send("<li>No data available</li>");
+        if (!searchCache) {
+            return res.send("<li class='search-error'>Search not available - cache not initialized</li>");
         }
 
-        const results = [];
+        const results = searchItems(searchTerm, 20);
+        console.log(`Found ${results.length} results for "${searchTerm}"`);
 
-        // Search boneset name
-        if (bonesetData.name && bonesetData.name.toLowerCase().includes(searchTerm)) {
-            results.push({
-                type: "boneset",
-                id: bonesetData.id,
-                name: bonesetData.name
-            });
-        }
-
-        // Search through bones
-        if (bonesetData.bones) {
-            for (const boneId of bonesetData.bones) {
-                const boneData = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
-
-                if (boneData) {
-                    // Search bone name
-                    if (boneData.name && boneData.name.toLowerCase().includes(searchTerm)) {
-                        results.push({
-                            type: "bone",
-                            id: boneData.id,
-                            name: boneData.name
-                        });
-                    }
-
-                    // Search sub-bones
-                    if (boneData.subBones) {
-                        for (const subBoneId of boneData.subBones) {
-                            const subBoneName = subBoneId.replace(/_/g, " ");
-                            if (subBoneName.toLowerCase().includes(searchTerm)) {
-                                results.push({
-                                    type: "subbone",
-                                    id: subBoneId,
-                                    name: subBoneName,
-                                    parentBone: boneData.id
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Format results as HTML
         if (results.length === 0) {
-            return res.send("<li>No results found</li>");
+            return res.send("<li class='search-no-results'>No results found</li>");
         }
 
         let html = "";
-        results.forEach(result => {
-            const escapedName = result.name.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-            html += `<li class="search-result" data-type="${result.type}" data-id="${result.id}">${escapedName} <small>(${result.type})</small></li>`;
-        });
+        for (const result of results) {
+            const escapedName = escapeHtml(result.name);
+            const escapedType = escapeHtml(result.type);
+            
+            html += `<li class="search-result" 
+                        data-type="${escapedType}" 
+                        data-id="${escapeHtml(result.id)}"
+                        data-boneset="${escapeHtml(result.boneset || "")}"
+                        data-bone="${escapeHtml(result.bone || "")}"
+                        data-subbone="${escapeHtml(result.subbone || "")}"
+                        tabindex="0"
+                        role="option">
+                        ${escapedName} <small>(${escapedType})</small>
+                     </li>`;
+        }
 
         res.send(html);
-
     } catch (error) {
         console.error("Search error:", error);
-        res.status(500).send("<li>Search error occurred</li>");
+        res.status(500).send("<li class='search-error'>Search error occurred</li>");
     }
 });
 
-// Only one app.listen() at the very end
+// Initialize search cache on startup
+initializeSearchCache();
+
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
 });
