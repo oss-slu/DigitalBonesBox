@@ -6,7 +6,9 @@
   "main": "server.js",
   "scripts": {
     "test": "jest",
-    "start": "concurrently \"npm start --prefix boneset-api\" \"live-server templates --open=boneset.html\"",
+    "start": "concurrently \"npm run start:api\" \"npm run start:web\"",
+    "start:api": "npm start --prefix boneset-api",
+    "start:web": "live-server --port=5500 --open=templates/boneset.html",
     "lint": "eslint . --ext .js",
     "lint:fix": "eslint . --ext .js --fix"
   },
