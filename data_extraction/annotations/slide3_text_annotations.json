@@ -14,8 +14,12 @@
         "rotation": 0,
         "shape_id": "148"
       },
-      "has_hyperlink": false,
-      "hyperlink": {},
+      "has_hyperlink": true,
+      "hyperlink": {
+        "rId": "rId13",
+        "target": "/ppt/slides/slide5.xml",
+        "target_slide": 5
+      },
       "pointer_lines": [
         {
           "line_id": "line_1",
@@ -76,8 +80,12 @@
         "rotation": 0,
         "shape_id": "151"
       },
-      "has_hyperlink": false,
-      "hyperlink": {},
+      "has_hyperlink": true,
+      "hyperlink": {
+        "rId": "rId14",
+        "target": "/ppt/slides/slide6.xml",
+        "target_slide": 6
+      },
       "pointer_lines": [
         {
           "line_id": "line_3",
@@ -138,8 +146,12 @@
         "rotation": 0,
         "shape_id": "153"
       },
-      "has_hyperlink": false,
-      "hyperlink": {},
+      "has_hyperlink": true,
+      "hyperlink": {
+        "rId": "rId15",
+        "target": "/ppt/slides/slide6.xml",
+        "target_slide": 6
+      },
       "pointer_lines": [
         {
           "line_id": "line_4",
@@ -200,8 +212,12 @@
         "rotation": 0,
         "shape_id": "155"
       },
-      "has_hyperlink": false,
-      "hyperlink": {},
+      "has_hyperlink": true,
+      "hyperlink": {
+        "rId": "rId16",
+        "target": "/ppt/slides/slide7.xml",
+        "target_slide": 7
+      },
       "pointer_lines": [
         {
           "line_id": "line_5",
@@ -262,8 +278,12 @@
         "rotation": 0,
         "shape_id": "157"
       },
-      "has_hyperlink": false,
-      "hyperlink": {},
+      "has_hyperlink": true,
+      "hyperlink": {
+        "rId": "rId17",
+        "target": "/ppt/slides/slide7.xml",
+        "target_slide": 7
+      },
       "pointer_lines": [
         {
           "line_id": "line_6",
@@ -324,8 +344,12 @@
         "rotation": 0,
         "shape_id": "159"
       },
-      "has_hyperlink": false,
-      "hyperlink": {},
+      "has_hyperlink": true,
+      "hyperlink": {
+        "rId": "rId18",
+        "target": "/ppt/slides/slide8.xml",
+        "target_slide": 8
+      },
       "pointer_lines": [
         {
           "line_id": "line_7",

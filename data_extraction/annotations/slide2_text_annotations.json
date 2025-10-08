@@ -14,8 +14,12 @@
         "rotation": 0,
         "shape_id": "107"
       },
-      "has_hyperlink": false,
-      "hyperlink": {},
+      "has_hyperlink": true,
+      "hyperlink": {
+        "rId": "rId8",
+        "target": "/ppt/slides/slide3.xml",
+        "target_slide": 3
+      },
       "pointer_lines": [
         {
           "line_id": "line_1",
@@ -76,8 +80,12 @@
         "rotation": 0,
         "shape_id": "115"
       },
-      "has_hyperlink": false,
-      "hyperlink": {},
+      "has_hyperlink": true,
+      "hyperlink": {
+        "rId": "rId12",
+        "target": "/ppt/slides/slide15.xml",
+        "target_slide": 15
+      },
       "pointer_lines": [
         {
           "line_id": "line_5",
@@ -138,8 +146,12 @@
         "rotation": 0,
         "shape_id": "116"
       },
-      "has_hyperlink": false,
-      "hyperlink": {},
+      "has_hyperlink": true,
+      "hyperlink": {
+        "rId": "rId13",
+        "target": "/ppt/slides/slide9.xml",
+        "target_slide": 9
+      },
       "pointer_lines": [
         {
           "line_id": "line_3",
