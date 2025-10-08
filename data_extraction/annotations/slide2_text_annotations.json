@@ -1,0 +1,316 @@
+{
+  "slide_number": 2,
+  "text_annotations": [
+    {
+      "annotation_id": "annot_1",
+      "bone_name": "Bony Pelvis",
+      "subbone_name": "Ilium",
+      "text_content": "Ilium",
+      "text_box": {
+        "x": 5586937,
+        "y": 2083816,
+        "width": 393457,
+        "height": 215444,
+        "rotation": 0,
+        "shape_id": "107"
+      },
+      "has_hyperlink": false,
+      "hyperlink": {},
+      "pointer_lines": [
+        {
+          "line_id": "line_1",
+          "line_type": "straight_arrow",
+          "start_point": {
+            "x": 4267237,
+            "y": 2191538
+          },
+          "end_point": {
+            "x": 5586937,
+            "y": 2191538
+          },
+          "style": {
+            "width": 9525,
+            "arrow_head": "none"
+          },
+          "shape_id": "108"
+        },
+        {
+          "line_id": "line_2",
+          "line_type": "straight_arrow",
+          "start_point": {
+            "x": 5980394,
+            "y": 2191538
+          },
+          "end_point": {
+            "x": 7391294,
+            "y": 2191538
+          },
+          "style": {
+            "width": 9525,
+            "arrow_head": "none"
+          },
+          "shape_id": "109"
+        }
+      ],
+      "target_regions": [
+        {
+          "x": 5586937,
+          "y": 2191538
+        },
+        {
+          "x": 7391294,
+          "y": 2191538
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot_2",
+      "bone_name": "Bony Pelvis",
+      "subbone_name": "Pubis",
+      "text_content": "Pubis",
+      "text_box": {
+        "x": 5682077,
+        "y": 4259252,
+        "width": 419318,
+        "height": 215444,
+        "rotation": 0,
+        "shape_id": "115"
+      },
+      "has_hyperlink": false,
+      "hyperlink": {},
+      "pointer_lines": [
+        {
+          "line_id": "line_5",
+          "line_type": "straight_arrow",
+          "start_point": {
+            "x": 6101395,
+            "y": 4366974
+          },
+          "end_point": {
+            "x": 6705595,
+            "y": 4366974
+          },
+          "style": {
+            "width": 9525,
+            "arrow_head": "none"
+          },
+          "shape_id": "119"
+        },
+        {
+          "line_id": "line_6",
+          "line_type": "straight_arrow",
+          "start_point": {
+            "x": 5105477,
+            "y": 4366974
+          },
+          "end_point": {
+            "x": 5682077,
+            "y": 4366974
+          },
+          "style": {
+            "width": 9525,
+            "arrow_head": "none"
+          },
+          "shape_id": "120"
+        }
+      ],
+      "target_regions": [
+        {
+          "x": 6705595,
+          "y": 4366974
+        },
+        {
+          "x": 5682077,
+          "y": 4366974
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot_3",
+      "bone_name": "Bony Pelvis",
+      "subbone_name": "Ischium",
+      "text_content": "Ischium",
+      "text_box": {
+        "x": 5446767,
+        "y": 5263629,
+        "width": 507320,
+        "height": 215444,
+        "rotation": 0,
+        "shape_id": "116"
+      },
+      "has_hyperlink": false,
+      "hyperlink": {},
+      "pointer_lines": [
+        {
+          "line_id": "line_3",
+          "line_type": "straight_arrow",
+          "start_point": {
+            "x": 5954087,
+            "y": 5371351
+          },
+          "end_point": {
+            "x": 6915287,
+            "y": 5371351
+          },
+          "style": {
+            "width": 9525,
+            "arrow_head": "none"
+          },
+          "shape_id": "117"
+        },
+        {
+          "line_id": "line_4",
+          "line_type": "straight_arrow",
+          "start_point": {
+            "x": 4495767,
+            "y": 5371351
+          },
+          "end_point": {
+            "x": 5446767,
+            "y": 5371351
+          },
+          "style": {
+            "width": 9525,
+            "arrow_head": "none"
+          },
+          "shape_id": "118"
+        }
+      ],
+      "target_regions": [
+        {
+          "x": 6915287,
+          "y": 5371351
+        },
+        {
+          "x": 5446767,
+          "y": 5371351
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot_4",
+      "bone_name": "Bony Pelvis",
+      "subbone_name": "Acetabulum",
+      "text_content": "Acetabulum",
+      "text_box": {
+        "x": 5450756,
+        "y": 3572102,
+        "width": 692939,
+        "height": 215444,
+        "rotation": 0,
+        "shape_id": "122"
+      },
+      "has_hyperlink": false,
+      "hyperlink": {},
+      "pointer_lines": [
+        {
+          "line_id": "line_8",
+          "line_type": "straight_arrow",
+          "start_point": {
+            "x": 5171456,
+            "y": 3679824
+          },
+          "end_point": {
+            "x": 5450756,
+            "y": 3679824
+          },
+          "style": {
+            "width": 9525,
+            "arrow_head": "none"
+          },
+          "shape_id": "123"
+        },
+        {
+          "line_id": "line_6",
+          "line_type": "straight_arrow",
+          "start_point": {
+            "x": 5105477,
+            "y": 4366974
+          },
+          "end_point": {
+            "x": 5682077,
+            "y": 4366974
+          },
+          "style": {
+            "width": 9525,
+            "arrow_head": "none"
+          },
+          "shape_id": "120"
+        }
+      ],
+      "target_regions": [
+        {
+          "x": 5450756,
+          "y": 3679824
+        },
+        {
+          "x": 5682077,
+          "y": 4366974
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot_5",
+      "bone_name": "Bony Pelvis",
+      "subbone_name": "Obturator foramen",
+      "text_content": "Obturator foramen",
+      "text_box": {
+        "x": 7893051,
+        "y": 4868445,
+        "width": 692939,
+        "height": 338554,
+        "rotation": 0,
+        "shape_id": "125"
+      },
+      "has_hyperlink": false,
+      "hyperlink": {},
+      "pointer_lines": [
+        {
+          "line_id": "line_10",
+          "line_type": "straight_arrow",
+          "start_point": {
+            "x": 7010451,
+            "y": 4648322
+          },
+          "end_point": {
+            "x": 7893051,
+            "y": 5037722
+          },
+          "style": {
+            "width": 9525,
+            "arrow_head": "none"
+          },
+          "shape_id": "126"
+        },
+        {
+          "line_id": "line_7",
+          "line_type": "straight_arrow",
+          "start_point": {
+            "x": 6915150,
+            "y": 5022851
+          },
+          "end_point": {
+            "x": 7391400,
+            "y": 5371352
+          },
+          "style": {
+            "width": 9525,
+            "arrow_head": "none"
+          },
+          "shape_id": "121"
+        }
+      ],
+      "target_regions": [
+        {
+          "x": 7893051,
+          "y": 5037722
+        },
+        {
+          "x": 7391400,
+          "y": 5371352
+        }
+      ]
+    }
+  ],
+  "total_text_annotations": 5
+}
