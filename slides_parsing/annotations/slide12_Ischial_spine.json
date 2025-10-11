@@ -1,0 +1,52 @@
+{
+  "slide_number": 12,
+  "has_hyperlinks": true,
+  "colored_regions": [
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_384",
+      "color": {
+        "name": "green",
+        "hex": "#008000",
+        "rgb": "0, 128, 0"
+      },
+      "region_boundaries": {
+        "x": 3905959,
+        "y": 4656774,
+        "width": 701319,
+        "height": 827730,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "384",
+      "shape_type": "freeform"
+    },
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_385",
+      "color": {
+        "name": "green",
+        "hex": "#008000",
+        "rgb": "0, 128, 0"
+      },
+      "region_boundaries": {
+        "x": 6784821,
+        "y": 4524085,
+        "width": 949959,
+        "height": 664092,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "385",
+      "shape_type": "freeform"
+    }
+  ],
+  "total_colored_regions": 2,
+  "colors_found": [
+    "green"
+  ]
+}

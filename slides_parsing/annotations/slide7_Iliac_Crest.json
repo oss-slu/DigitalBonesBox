@@ -1,0 +1,95 @@
+{
+  "slide_number": 7,
+  "has_hyperlinks": true,
+  "colored_regions": [
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_256",
+      "color": {
+        "name": "green",
+        "hex": "#008000",
+        "rgb": "0, 128, 0"
+      },
+      "region_boundaries": {
+        "x": 8277423,
+        "y": 2807407,
+        "width": 163357,
+        "height": 336862,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "256",
+      "shape_type": "freeform"
+    },
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_257",
+      "color": {
+        "name": "pink",
+        "hex": "#FF00E6",
+        "rgb": "255, 0, 230"
+      },
+      "region_boundaries": {
+        "x": 8025418,
+        "y": 3317242,
+        "width": 227455,
+        "height": 195875,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "257",
+      "shape_type": "freeform"
+    },
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_258",
+      "color": {
+        "name": "green",
+        "hex": "#008000",
+        "rgb": "0, 128, 0"
+      },
+      "region_boundaries": {
+        "x": 3187112,
+        "y": 3159452,
+        "width": 208500,
+        "height": 420061,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "258",
+      "shape_type": "freeform"
+    },
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_259",
+      "color": {
+        "name": "pink",
+        "hex": "#FF00E6",
+        "rgb": "255, 0, 230"
+      },
+      "region_boundaries": {
+        "x": 3343640,
+        "y": 3639487,
+        "width": 259045,
+        "height": 189556,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "259",
+      "shape_type": "freeform"
+    }
+  ],
+  "total_colored_regions": 4,
+  "colors_found": [
+    "green",
+    "pink"
+  ]
+}

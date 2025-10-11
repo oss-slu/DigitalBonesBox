@@ -1,0 +1,75 @@
+{
+  "slide_number": 11,
+  "has_hyperlinks": true,
+  "colored_regions": [
+    {
+      "bone_name": "Ramus",
+      "subbone_name": "Ischial tuberosity Ischial spine Sciatic notches",
+      "color": {
+        "name": "green",
+        "hex": "#008000",
+        "rgb": "0, 128, 0"
+      },
+      "region_boundaries": {
+        "x": 8823069,
+        "y": 1322155,
+        "width": 983675,
+        "height": 805605,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": true,
+        "target_slide": 12,
+        "rId": "rId9"
+      },
+      "shape_id": "357",
+      "shape_type": "rect"
+    },
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_361",
+      "color": {
+        "name": "green",
+        "hex": "#008000",
+        "rgb": "0, 128, 0"
+      },
+      "region_boundaries": {
+        "x": 4335594,
+        "y": 4884243,
+        "width": 657092,
+        "height": 511803,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "361",
+      "shape_type": "freeform"
+    },
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_362",
+      "color": {
+        "name": "green",
+        "hex": "#008000",
+        "rgb": "0, 128, 0"
+      },
+      "region_boundaries": {
+        "x": 6774417,
+        "y": 4745234,
+        "width": 701319,
+        "height": 454936,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "362",
+      "shape_type": "freeform"
+    }
+  ],
+  "total_colored_regions": 3,
+  "colors_found": [
+    "green"
+  ]
+}
