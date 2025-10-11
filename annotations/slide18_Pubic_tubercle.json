@@ -1,0 +1,31 @@
+{
+  "slide_number": 18,
+  "has_hyperlinks": true,
+  "colored_regions": [
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_548",
+      "color": {
+        "name": "green",
+        "hex": "#008000",
+        "rgb": "0, 128, 0"
+      },
+      "region_boundaries": {
+        "x": 2956772,
+        "y": 4412140,
+        "width": 906215,
+        "height": 846707,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "548",
+      "shape_type": "freeform"
+    }
+  ],
+  "total_colored_regions": 1,
+  "colors_found": [
+    "green"
+  ]
+}
