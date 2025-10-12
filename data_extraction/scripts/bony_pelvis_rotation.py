@@ -6,6 +6,8 @@ NS = {
     "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
     "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
 }
+PKG_REL_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
+
 EMU_PER_DEG = 60000.0
 _SLIDE_NUM_RE = re.compile(r"(\d+)")
 
@@ -40,7 +42,6 @@ def two_largest_pics(root, min_area_frac=0.05):
             "flipV": (xfrm.get("flipV") == "1"),
             "embed": embed
         })
-
     pics.sort(key=lambda d: d["area"], reverse=True)
     if not pics:
         return []
@@ -119,9 +120,33 @@ def audit_slide(slide_path, template, tol, min_area_frac):
             fails.append(f"{side}.rot_deg")
     return {"slide": _slide_num(slide_path), "ok": not fails, "fails": fails}
 
+# ---- rId -> filename/path resolver (optional via --rels-dir) ----
+
+def _read_rels_map(rels_path):
+    if not os.path.exists(rels_path):
+        return {}
+    root = ET.parse(rels_path).getroot()
+    out = {}
+    for rel in root.findall(f".//{{{PKG_REL_NS}}}Relationship"):
+        rid = rel.attrib.get("Id")
+        if rid:
+            out[rid] = {"Type": rel.attrib.get("Type",""), "Target": rel.attrib.get("Target","")}
+    return out
+
+def resolve_media_path(slides_dir, rels_dir, slide_num, rid):
+    rels_path = os.path.join(rels_dir, f"slide{slide_num}.xml.rels")
+    rels = _read_rels_map(rels_path)
+    info = rels.get(rid)
+    if not info or not info.get("Target"):
+        return {"target": "", "path": ""}
+    target = info["Target"]
+    fs_path = os.path.normpath(os.path.join(slides_dir, target))
+    return {"target": target, "path": fs_path}
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--slides-dir", required=True)
+    ap.add_argument("--rels-dir", required=False, default=None, help="Directory of slideN.xml.rels (optional)")
     ap.add_argument("--slides", type=int, nargs="+", default=[2,3])
     ap.add_argument("--representative", type=int, default=2)
     ap.add_argument("--out-template", default="data_extraction/annotations/template_bony_pelvis.json")
@@ -155,6 +180,14 @@ def main():
             continue
         md = extract_slide_metadata(path, "Bony Pelvis", args.min_area)
         if md:
+            # enrich with media targets/paths if rels-dir provided
+            if args.rels_dir:
+                left  = resolve_media_path(args.slides_dir, args.rels_dir, n, md["left_media"])
+                right = resolve_media_path(args.slides_dir, args.rels_dir, n, md["right_media"])
+                md["left_media_target"]  = left["target"]
+                md["right_media_target"] = right["target"]
+                md["left_media_path"]    = left["path"]
+                md["right_media_path"]   = right["path"]
             metadata.append(md)
             if args.audit:
                 res = audit_slide(path, template, args.tolerance, args.min_area)

@@ -6,7 +6,11 @@
       "left_media": "rId7",
       "right_media": "rId10",
       "subbone": null,
-      "sub_subbone": null
+      "sub_subbone": null,
+      "left_media_target": "../media/image1.jpg",
+      "right_media_target": "../media/image3.jpg",
+      "left_media_path": "data_extraction/fixtures/media/image1.jpg",
+      "right_media_path": "data_extraction/fixtures/media/image3.jpg"
     },
     {
       "slide": 3,
@@ -14,7 +18,11 @@
       "left_media": "rId11",
       "right_media": "rId12",
       "subbone": null,
-      "sub_subbone": null
+      "sub_subbone": null,
+      "left_media_target": "../media/image1.jpg",
+      "right_media_target": "../media/image3.jpg",
+      "left_media_path": "data_extraction/fixtures/media/image1.jpg",
+      "right_media_path": "data_extraction/fixtures/media/image3.jpg"
     }
   ],
   "audit": {
