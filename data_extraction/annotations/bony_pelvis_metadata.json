@@ -1,0 +1,28 @@
+{
+  "slides": [
+    {
+      "slide": 2,
+      "bone_set": "Bony Pelvis",
+      "left_media": "rId7",
+      "right_media": "rId10",
+      "subbone": null,
+      "sub_subbone": null
+    },
+    {
+      "slide": 3,
+      "bone_set": "Bony Pelvis",
+      "left_media": "rId11",
+      "right_media": "rId12",
+      "subbone": null,
+      "sub_subbone": null
+    }
+  ],
+  "audit": {
+    "tolerance": 0.02,
+    "verified_slides": [
+      2,
+      3
+    ],
+    "failed_slides": []
+  }
+}
