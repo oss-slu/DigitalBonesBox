@@ -237,6 +237,11 @@ def main():
                     pointer_lines.append(ln)
         # keep outputs small & stable
         pointer_lines.sort(key=lambda ln: (ln["shape_id"] or 0, ln["line_id"]))
+        # sort target points by distance from the label center
+        tcx = t["text_box"]["x"] + t["text_box"]["width"] / 2.0
+        tcy = t["text_box"]["y"] + t["text_box"]["height"] / 2.0
+        term_pts.sort(key=lambda p: (p["x"] - tcx)**2 + (p["y"] - tcy)**2)
+        
         t["pointer_lines"] = pointer_lines
         t["target_regions"] = term_pts
 
