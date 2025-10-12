@@ -7,11 +7,11 @@
       "subbone_name": "Ilium",
       "text_content": "Ilium",
       "text_box": {
-        "x": 5586937,
-        "y": 2083816,
-        "width": 393457,
-        "height": 215444,
-        "rotation": 0,
+        "x": 5586937.0,
+        "y": 2083816.0,
+        "width": 393457.0,
+        "height": 215444.0,
+        "rotation_emu": 0.0,
         "shape_id": "107"
       },
       "has_hyperlink": true,
@@ -23,47 +23,61 @@
       "pointer_lines": [
         {
           "line_id": "line_1",
-          "line_type": "straight_arrow",
+          "kind": "connector",
           "start_point": {
-            "x": 4267237,
-            "y": 2191538
+            "x": 4267237.0,
+            "y": 2191538.0
           },
           "end_point": {
-            "x": 5586937,
-            "y": 2191538
+            "x": 5586937.0,
+            "y": 2191538.0
           },
           "style": {
             "width": 9525,
             "arrow_head": "none"
           },
-          "shape_id": "108"
+          "shape_id": "108",
+          "bbox": {
+            "x": 4267237.0,
+            "y": 2191538.0,
+            "width": 1319700.0,
+            "height": 0.0,
+            "rotation_emu": 0.0
+          }
         },
         {
           "line_id": "line_2",
-          "line_type": "straight_arrow",
+          "kind": "connector",
           "start_point": {
-            "x": 5980394,
-            "y": 2191538
+            "x": 5980394.0,
+            "y": 2191538.0
           },
           "end_point": {
-            "x": 7391294,
-            "y": 2191538
+            "x": 7391294.0,
+            "y": 2191538.0
           },
           "style": {
             "width": 9525,
             "arrow_head": "none"
           },
-          "shape_id": "109"
+          "shape_id": "109",
+          "bbox": {
+            "x": 5980394.0,
+            "y": 2191538.0,
+            "width": 1410900.0,
+            "height": 0.0,
+            "rotation_emu": 0.0
+          }
         }
       ],
       "target_regions": [
         {
-          "x": 5586937,
-          "y": 2191538
+          "x": 4264000.0,
+          "y": 2192000.0
         },
         {
-          "x": 7391294,
-          "y": 2191538
+          "x": 7392000.0,
+          "y": 2192000.0
         }
       ]
     },
@@ -73,11 +87,11 @@
       "subbone_name": "Pubis",
       "text_content": "Pubis",
       "text_box": {
-        "x": 5682077,
-        "y": 4259252,
-        "width": 419318,
-        "height": 215444,
-        "rotation": 0,
+        "x": 5682077.0,
+        "y": 4259252.0,
+        "width": 419318.0,
+        "height": 215444.0,
+        "rotation_emu": 0.0,
         "shape_id": "115"
       },
       "has_hyperlink": true,
@@ -89,47 +103,61 @@
       "pointer_lines": [
         {
           "line_id": "line_5",
-          "line_type": "straight_arrow",
+          "kind": "connector",
           "start_point": {
-            "x": 6101395,
-            "y": 4366974
+            "x": 6101395.0,
+            "y": 4366974.0
           },
           "end_point": {
-            "x": 6705595,
-            "y": 4366974
+            "x": 6705595.0,
+            "y": 4366974.0
           },
           "style": {
             "width": 9525,
             "arrow_head": "none"
           },
-          "shape_id": "119"
+          "shape_id": "119",
+          "bbox": {
+            "x": 6101395.0,
+            "y": 4366974.0,
+            "width": 604200.0,
+            "height": 0.0,
+            "rotation_emu": 0.0
+          }
         },
         {
           "line_id": "line_6",
-          "line_type": "straight_arrow",
+          "kind": "connector",
           "start_point": {
-            "x": 5105477,
-            "y": 4366974
+            "x": 5105477.0,
+            "y": 4366974.0
           },
           "end_point": {
-            "x": 5682077,
-            "y": 4366974
+            "x": 5682077.0,
+            "y": 4366974.0
           },
           "style": {
             "width": 9525,
             "arrow_head": "none"
           },
-          "shape_id": "120"
+          "shape_id": "120",
+          "bbox": {
+            "x": 5105477.0,
+            "y": 4366974.0,
+            "width": 576600.0,
+            "height": 0.0,
+            "rotation_emu": 0.0
+          }
         }
       ],
       "target_regions": [
         {
-          "x": 6705595,
-          "y": 4366974
+          "x": 6704000.0,
+          "y": 4368000.0
         },
         {
-          "x": 5682077,
-          "y": 4366974
+          "x": 5104000.0,
+          "y": 4368000.0
         }
       ]
     },
@@ -139,11 +167,11 @@
       "subbone_name": "Ischium",
       "text_content": "Ischium",
       "text_box": {
-        "x": 5446767,
-        "y": 5263629,
-        "width": 507320,
-        "height": 215444,
-        "rotation": 0,
+        "x": 5446767.0,
+        "y": 5263629.0,
+        "width": 507320.0,
+        "height": 215444.0,
+        "rotation_emu": 0.0,
         "shape_id": "116"
       },
       "has_hyperlink": true,
@@ -155,47 +183,61 @@
       "pointer_lines": [
         {
           "line_id": "line_3",
-          "line_type": "straight_arrow",
+          "kind": "connector",
           "start_point": {
-            "x": 5954087,
-            "y": 5371351
+            "x": 5954087.0,
+            "y": 5371351.0
           },
           "end_point": {
-            "x": 6915287,
-            "y": 5371351
+            "x": 6915287.0,
+            "y": 5371351.0
           },
           "style": {
             "width": 9525,
             "arrow_head": "none"
           },
-          "shape_id": "117"
+          "shape_id": "117",
+          "bbox": {
+            "x": 5954087.0,
+            "y": 5371351.0,
+            "width": 961200.0,
+            "height": 0.0,
+            "rotation_emu": 0.0
+          }
         },
         {
           "line_id": "line_4",
-          "line_type": "straight_arrow",
+          "kind": "connector",
           "start_point": {
-            "x": 4495767,
-            "y": 5371351
+            "x": 4495767.0,
+            "y": 5371351.0
           },
           "end_point": {
-            "x": 5446767,
-            "y": 5371351
+            "x": 5446767.0,
+            "y": 5371351.0
           },
           "style": {
             "width": 9525,
             "arrow_head": "none"
           },
-          "shape_id": "118"
+          "shape_id": "118",
+          "bbox": {
+            "x": 4495767.0,
+            "y": 5371351.0,
+            "width": 951000.0,
+            "height": 0.0,
+            "rotation_emu": 0.0
+          }
         }
       ],
       "target_regions": [
         {
-          "x": 6915287,
-          "y": 5371351
+          "x": 6912000.0,
+          "y": 5368000.0
         },
         {
-          "x": 5446767,
-          "y": 5371351
+          "x": 4496000.0,
+          "y": 5368000.0
         }
       ]
     },
@@ -205,11 +247,11 @@
       "subbone_name": "Acetabulum",
       "text_content": "Acetabulum",
       "text_box": {
-        "x": 5450756,
-        "y": 3572102,
-        "width": 692939,
-        "height": 215444,
-        "rotation": 0,
+        "x": 5450756.0,
+        "y": 3572102.0,
+        "width": 692939.0,
+        "height": 215444.0,
+        "rotation_emu": 0.0,
         "shape_id": "122"
       },
       "has_hyperlink": false,
@@ -217,47 +259,33 @@
       "pointer_lines": [
         {
           "line_id": "line_8",
-          "line_type": "straight_arrow",
+          "kind": "connector",
           "start_point": {
-            "x": 5171456,
-            "y": 3679824
+            "x": 5171456.0,
+            "y": 3679824.0
           },
           "end_point": {
-            "x": 5450756,
-            "y": 3679824
+            "x": 5450756.0,
+            "y": 3679824.0
           },
           "style": {
             "width": 9525,
             "arrow_head": "none"
           },
-          "shape_id": "123"
-        },
-        {
-          "line_id": "line_6",
-          "line_type": "straight_arrow",
-          "start_point": {
-            "x": 5105477,
-            "y": 4366974
-          },
-          "end_point": {
-            "x": 5682077,
-            "y": 4366974
-          },
-          "style": {
-            "width": 9525,
-            "arrow_head": "none"
-          },
-          "shape_id": "120"
+          "shape_id": "123",
+          "bbox": {
+            "x": 5171456.0,
+            "y": 3679824.0,
+            "width": 279300.0,
+            "height": 0.0,
+            "rotation_emu": 0.0
+          }
         }
       ],
       "target_regions": [
         {
-          "x": 5450756,
-          "y": 3679824
-        },
-        {
-          "x": 5682077,
-          "y": 4366974
+          "x": 5168000.0,
+          "y": 3680000.0
         }
       ]
     },
@@ -267,11 +295,11 @@
       "subbone_name": "Obturator foramen",
       "text_content": "Obturator foramen",
       "text_box": {
-        "x": 7893051,
-        "y": 4868445,
-        "width": 692939,
-        "height": 338554,
-        "rotation": 0,
+        "x": 7893051.0,
+        "y": 4868445.0,
+        "width": 692939.0,
+        "height": 338554.0,
+        "rotation_emu": 0.0,
         "shape_id": "125"
       },
       "has_hyperlink": false,
@@ -279,50 +307,40 @@
       "pointer_lines": [
         {
           "line_id": "line_10",
-          "line_type": "straight_arrow",
+          "kind": "connector",
           "start_point": {
-            "x": 7010451,
-            "y": 4648322
+            "x": 7010451.0,
+            "y": 4648322.0
           },
           "end_point": {
-            "x": 7893051,
-            "y": 5037722
+            "x": 7893051.0,
+            "y": 5037722.0
           },
           "style": {
             "width": 9525,
             "arrow_head": "none"
           },
-          "shape_id": "126"
-        },
-        {
-          "line_id": "line_7",
-          "line_type": "straight_arrow",
-          "start_point": {
-            "x": 6915150,
-            "y": 5022851
-          },
-          "end_point": {
-            "x": 7391400,
-            "y": 5371352
-          },
-          "style": {
-            "width": 9525,
-            "arrow_head": "none"
-          },
-          "shape_id": "121"
+          "shape_id": "126",
+          "bbox": {
+            "x": 7010451.0,
+            "y": 4648322.0,
+            "width": 882600.0,
+            "height": 389400.0,
+            "rotation_emu": 0.0
+          }
         }
       ],
       "target_regions": [
         {
-          "x": 7893051,
-          "y": 5037722
-        },
-        {
-          "x": 7391400,
-          "y": 5371352
+          "x": 7008000.0,
+          "y": 4648000.0
         }
       ]
     }
   ],
-  "total_text_annotations": 5
+  "total_text_annotations": 5,
+  "config": {
+    "padding_emu": 4000.0,
+    "snap_emu": 8000.0
+  }
 }
