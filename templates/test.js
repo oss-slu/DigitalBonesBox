@@ -226,9 +226,13 @@ describe("Viewer Display Logic", () => {
         boneImage.style.display = "none";
         annotationsOverlay.innerHTML = "<p>Select a bone to view image and annotations.</p>";
 
+        console.log("boneImage.src actual:", boneImage.src);
+
         expect(boneImage.src).toBe("");
         expect(boneImage.style.display).toBe("none");
         expect(annotationsOverlay.innerHTML).toBe("<p>Select a bone to view image and annotations.</p>");
+
+
     });
 
     test("handles bone with no annotations gracefully", () => {
@@ -335,6 +339,7 @@ describe("Help Modal Functionality", () => {
 
         // Simulate pressing Escape key
         const escapeKeyEvent = new KeyboardEvent("keydown", { key: "Escape" });
+
         document.dispatchEvent(escapeKeyEvent);
 
         expect(helpModal.classList.contains("is-visible")).toBeFalsy();
