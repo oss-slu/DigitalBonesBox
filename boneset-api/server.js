@@ -242,6 +242,18 @@ app.get("/api/search", searchLimiter, (req, res) => {
 // Initialize search cache on startup
 initializeSearchCache();
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
-});
+//CODE CHANGE -> Make express app testable, lets the tests import app without starting
+// a real server
+if (require.main == module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://127.0.0.1:${PORT}`);
+  });
+}
+
+module.exports = {
+  app,
+  escapeHtml,
+  searchItems,
+  initializeSearchCache,
+};
+
