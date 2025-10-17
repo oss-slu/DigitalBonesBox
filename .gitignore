@@ -1,2 +1,7 @@
 node_modules/
 .vscode/
+
+# raw PPT fixtures
+data_extraction/fixtures/slides/
+data_extraction/fixtures/rels/
+data_extraction/fixtures/media/
