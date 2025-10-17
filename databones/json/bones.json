@@ -1,0 +1,25 @@
+{
+    "bones": [
+        {
+            "bone_id": "1",
+            "name": "Skull",
+            "description": "The bony structure of the head that protects the brain.",
+            "image_path": "images/skull.jpg",
+            "annotations": [1]
+        },
+        {
+            "bone_id": "2",
+            "name": "Femur",
+            "description": "The longest bone in the human body, located in the thigh.",
+            "image_path": "images/femur.jpg",
+            "annotations": [2]
+        },
+        {
+            "bone_id": "3",
+            "name": "Humerus",
+            "description": "Long bone in the upper arm that runs from the shoulder to the elbow.",
+            "image_path": "images/humerus.jpg",
+            "annotations": [3]
+        }
+    ]
+}
