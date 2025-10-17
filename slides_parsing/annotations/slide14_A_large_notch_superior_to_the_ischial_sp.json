@@ -1,0 +1,95 @@
+{
+  "slide_number": 14,
+  "has_hyperlinks": true,
+  "colored_regions": [
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_436",
+      "color": {
+        "name": "orange",
+        "hex": "#FF6600",
+        "rgb": "255, 102, 0"
+      },
+      "region_boundaries": {
+        "x": 3470002,
+        "y": 3721628,
+        "width": 518092,
+        "height": 657130,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "436",
+      "shape_type": "freeform"
+    },
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_437",
+      "color": {
+        "name": "orange",
+        "hex": "#FF6600",
+        "rgb": "255, 102, 0"
+      },
+      "region_boundaries": {
+        "x": 7387281,
+        "y": 3475205,
+        "width": 511773,
+        "height": 669767,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "437",
+      "shape_type": "freeform"
+    },
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_438",
+      "color": {
+        "name": "pink",
+        "hex": "#FF00E6",
+        "rgb": "255, 0, 230"
+      },
+      "region_boundaries": {
+        "x": 3883734,
+        "y": 4549360,
+        "width": 94844,
+        "height": 300272,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "438",
+      "shape_type": "freeform"
+    },
+    {
+      "bone_name": "Anatomical_Region",
+      "subbone_name": "Shape_439",
+      "color": {
+        "name": "pink",
+        "hex": "#FF00E6",
+        "rgb": "255, 0, 230"
+      },
+      "region_boundaries": {
+        "x": 7632700,
+        "y": 4302936,
+        "width": 67378,
+        "height": 237087,
+        "rotation": 0
+      },
+      "hyperlink": {
+        "has_hyperlink": false
+      },
+      "shape_id": "439",
+      "shape_type": "freeform"
+    }
+  ],
+  "total_colored_regions": 4,
+  "colors_found": [
+    "orange",
+    "pink"
+  ]
+}
