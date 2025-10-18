@@ -14,4 +14,14 @@ export default [
       quotes: ["error", "double"],
     },
   },
+  // Safely ignore non-project folders.
+  {
+    ignores: [
+      "node_modules/",
+      "venv/",
+      "coverage/",
+      "dist/",
+    ],
+  }
+
 ];
