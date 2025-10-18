@@ -2,5 +2,5 @@
 // We are manually triggering the DOMContentLoaded event.
 
 beforeAll(() => {
-  document.dispatchEvent(new Event('DOMContentLoaded'));
+  document.dispatchEvent(new Event("DOMContentLoaded"));
 });
