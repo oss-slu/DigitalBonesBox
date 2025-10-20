@@ -15,8 +15,8 @@ class AnatomicalShapeParser:
     
     def __init__(self, xml_files_folder):
         self.xml_files_folder = Path(xml_files_folder)
-        self.output_folder = Path("enhanced_annotations")
-        self.output_folder.mkdir(exist_ok=True)
+        self.output_folder = Path("annotations/color_regions")
+        self.output_folder.mkdir(parents=True, exist_ok=True)
         
         # XML namespaces
         self.namespaces = {
@@ -361,7 +361,7 @@ class AnatomicalShapeParser:
 
 def main():
     """Main execution function"""
-    xml_folder = "/Users/jennioishee/Capstone/DigitalBonesBox/.xml Files"
+    xml_folder = "/Users/jennioishee/Capstone/DigitalBonesBox"
     
     parser = AnatomicalShapeParser(xml_folder)
     
