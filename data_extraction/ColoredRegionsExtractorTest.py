@@ -2,7 +2,7 @@
 import json
 import sys
 from pathlib import Path
-from slides_parsing.parser import AnatomicalShapeParser
+from data_extraction.ColoredRegionsExtractor import AnatomicalShapeParser
 
 
 def test_parser_functionality():
