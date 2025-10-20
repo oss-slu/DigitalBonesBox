@@ -1,62 +1,106 @@
-# DigitalBoneBox : A Web-Based Study Tool for Human Anatomy
+# DigitalBoneBox: A Web-Based Study Tool for Human Anatomy
 
-This project is a Web App project aims to convert an existing PowerPoint-based educational tool into an interactive, mobile-friendly web application.
+> **An interactive and mobile-friendly anatomy study tool inspired by Prof. Brian Elliott’s educational work.**
 
-## How / why did we get here?
+---
 
-This project is based on the work of Prof. Brian Elliott, created during his final years of education.
-In the human anatomy class, students must purchase a bone set to study the bones of the human body,
-but they are not allowed to take these models out of the lab. Prof. Elliott observed that this
-restriction could cause inconvenience for students who want to quickly review the bones before an exam. To address this, he created a PowerPoint presentation that includes images of the bones taken from different angles (with permission from the department), and he annotated these images to highlight the various bones in the set using different colors and filters. He utilized all available features to create an easily accessible presentation that students could use for quick revision or brief study sessions before tests.
+## 📖 Overview
 
-However, he wanted to make this resource even more accessible. He envisioned offering students a
-platform they could access on their iPads, or laptops—devices commonly used by students. This is
-where the web application comes in. It is designed to be a quick and easy guide for students to use
-for exams, to quiz themselves on essential knowledge, or to learn from material that is simple and
-provides an overview of the human bones. This application is based on the information in the
-presentations created by Prof. Brian Elliott.
+**DigitalBoneBox** transforms an existing PowerPoint-based educational tool into a **modern web application** that helps students study human anatomy interactively on any device — laptops, tablets, or phones.
 
-## Tech Stack
+---
 
-This project was developed using the following technologies:
+## 💡 Background: How & Why We Got Here
 
-Node.js: Used for server-side development to handle requests and serve the application.
-HTML: For structuring the content of the web pages.
-HTMX: A lightweight JavaScript library for enhancing interactivity by allowing partial page updates without a full page reload.
-CSS: For styling and layout of the web pages to ensure a clean and responsive design for users across devices.
+This project is based on the innovative work of **Prof. Brian Elliott**, developed during his academic journey.
 
-## Features
+In human anatomy classes, students often need to purchase physical bone sets, which they **cannot take outside the lab**. Prof. Elliott noticed this limitation made it difficult for students to review before exams.
 
-Interactive and accessible web application for students to study human anatomy.
-Quick revision tool with annotated images of bones.
-Designed for use on iPads, laptops, or other devices commonly used by students.
+To solve this, he created a **PowerPoint presentation** with:
 
-- **Toggle Sidebar**:
-  - A collapsible sidebar that enhances navigation within the app.
-  - Includes **placeholder options** such as **Search**, **Contact**, **Recent**, and **Help**, which are non-functional and reserved for future implementation.
-  - Users can open and close the sidebar using the ☰ button on the top-left corner of the page.
+- High-quality images of bones from multiple angles (with departmental permission)
+- **Annotated visuals** using colors and filters to highlight key structures
 
-## Setup:
+However, he wanted a more accessible solution — a **web-based version** that allows students to:
 
-To run this project locally, you will need to have Node.js installed. The application consists of a backend API and a frontend client, which can be run together with a single command.
+- Revise quickly before exams
+- Quiz themselves on bone anatomy
+- Access visual aids on any device, anywhere
 
-1. Clone the repository:
+Thus, **DigitalBoneBox** was born.
 
-- git clone [https://github.com/oss-slu/DigitalBonesBox.git](https://github.com/oss-slu/DigitalBonesBox.git)
-- cd DigitalBonesBox
+---
 
-2. Install dependencies:
-This command will install the necessary packages for both the root project and the boneset-api server.
+## 🛠️ Tech Stack
 
-- npm install && npm install --prefix boneset-api
+| Technology  | Purpose                                    |
+| ----------- | ------------------------------------------ |
+| **Node.js** | Server-side logic & API handling           |
+| **HTML**    | Content structure                          |
+| **HTMX**    | Dynamic interactivity without full reloads |
+| **CSS**     | Styling & responsive layout design         |
 
-3. Run the application:
-This command will start both the backend API server and the frontend live server concurrently.
+---
 
-- npm start
+## ✨ Features
 
-Your browser should automatically open to the application.
+- 📚 **Interactive Study Platform** – Explore annotated bone images for quick revision
+- ⚡ **Lightweight & Responsive** – Works seamlessly on laptops, tablets, and iPads
+- 🧭 **Toggle Sidebar Navigation**
+  - Expandable sidebar for smooth navigation
+  - Placeholder sections for **Search**, **Contact**, **Recent**, and **Help**
+  - Easily toggle using the ☰ button on the top-left corner
 
-## Contributing
+---
 
-Contributions are welcome! Check out the CONTRIBUTING.md for guidelines.
+## ⚙️ Setup & Installation
+
+Follow these steps to run the project locally:
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/oss-slu/DigitalBonesBox.git
+cd DigitalBonesBox
+```
+
+### 2. Install dependencies
+
+This installs required packages for both frontend and backend:
+
+```bash
+npm install && npm install --prefix boneset-api
+```
+
+### 3. Start the application
+
+Run both backend API and frontend simultaneously:
+
+```bash
+npm start
+```
+
+The app will open automatically in your default browser.
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the community!
+
+Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed contribution guidelines before submitting a pull request.
+
+---
+
+## 🧬 Acknowledgments
+
+Special thanks to **Prof. Brian Elliott** for his vision and dedication to improving anatomy education through accessible digital tools.
+
+---
+
+## 📜 License
+
+This project is open-source and distributed under the **MIT License**.  
+Feel free to fork, modify, and contribute!
+
+---
