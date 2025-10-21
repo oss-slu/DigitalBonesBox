@@ -1,16 +1,16 @@
-const backToTopBtn = document.getElementById('backToTopBtn')
+const backToTopBtn = document.getElementById("backToTopBtn");
 
-window.addEventListener('scroll', () => {
+window.addEventListener("scroll", () => {
   if (document.documentElement.scrollTop > 20) {
-    backToTopBtn.classList.add('show')
+    backToTopBtn.classList.add("show");
   } else {
-    backToTopBtn.classList.remove('show')
+    backToTopBtn.classList.remove("show");
   }
-})
+});
 
-backToTopBtn.addEventListener('click', () => {
+backToTopBtn.addEventListener("click", () => {
   window.scrollTo({
     top: 0,
-    behavior: 'smooth',
-  })
-})
+    behavior: "smooth",
+  });
+});
