@@ -455,7 +455,7 @@ ul li {
   z-index: 99;
   border: none;
   cursor: pointer;
-  padding: 0;
+  padding: 5px;
   border-radius: 10px;
   transition: opacity 0.3s ease, bottom 0.3s ease;
   opacity: 0;
