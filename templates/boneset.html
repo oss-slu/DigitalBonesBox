@@ -5,6 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bone Set Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
@@ -12,18 +15,33 @@
 
 <body>
     <div id="badge">
-        <button id="toggle-sidebar">☰</button>
-        <span id="text-button-Home" role="button">Home</span>
-        <span id="text-button-Tutor" role="button">Tutor</span>
-        <span id="text-button-Study" role="button">Study</span>
-        <div id="help-button-container"></div>
+        <div class="header-left">
+            <button id="toggle-sidebar">☰</button>
+            <span id="text-button-Home" role="button">Home</span>
+            <span id="text-button-Tutor" role="button">Tutor</span>
+            <span id="text-button-Study" role="button">Study</span>
+            <div id="help-button-container"></div>
+        </div>
+        <div class="header-center">
+            <span class="university-name">Saint Louis University</span>
+        </div>
         <div id="innerbadge">
             <span id="text-button-Login" role="button">Login</span>
             <span id="text-button-SignUp" role="button">Sign Up</span>
         </div>
     </div>
 
-    <div id="sidebar-container"></div>
+    <div id="sidebar-container">
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h3>Quick Navigation</h3>
+                <button id="close-sidebar">&times;</button>
+            </div>
+            <div class="sidebar-content">
+                <!-- Sidebar content will be added later -->
+            </div>
+        </div>
+    </div>
 
     <div id="editor-view">
         <div class="container">
@@ -40,9 +58,9 @@
             
             <ul id="search-results" class="search-results"></ul>
             
-            <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="selection-container">
                 <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
+                <div class="select-group">
                     <select id="boneset-select" 
                             name="boneId"
                             hx-get="http://127.0.0.1:8000/api/description/" 
