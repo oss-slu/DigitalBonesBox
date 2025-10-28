@@ -1,3 +1,7 @@
+// js/main.js
+
+console.log("main.js loaded");
+
 import { fetchCombinedData, fetchMockBoneData } from "./api.js";
 import { populateBonesetDropdown, setupDropdownListeners } from "./dropdowns.js";
 import { initializeSidebar, loadHelpButton } from "./sidebar.js";
@@ -9,86 +13,71 @@ import { initializeSearch } from "./search.js";
 let combinedData = { bonesets: [], bones: [], subbones: [] };
 let mockBoneData = null;
 
-/**
- * Handles bone selection from dropdown
- * @param {string} boneId - The ID of the selected bone
- */
+/** Optional: keep this if you still want to render mock viewer details */
 function handleBoneSelection(boneId) {
-    if (!mockBoneData) {
-        console.log("Mock data not available");
-        return;
-    }
-
-    const bone = mockBoneData.bones.find(b => b.id === boneId);
-    if (!bone) {
-        console.log(`No mock data found for bone: ${boneId}`);
-        clearViewer();
-        return;
-    }
-
-    // Use the dedicated viewer module to display the bone
-    displayBoneData(bone);
+  if (!mockBoneData) {
+    console.warn("Mock data not available");
+    return;
+  }
+  const bone = mockBoneData.bones?.find((b) => b.id === boneId);
+  if (!bone) {
+    console.warn(`No mock data found for bone: ${boneId}`);
+    clearViewer();
+    return;
+  }
+  displayBoneData(bone);
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    // 1. Initialize search functionality
-    initializeSearch();
-    
-    // 2. Sidebar behavior and help button
-    initializeSidebar();
-    loadHelpButton();
+  // 1) Initialize UI bits
+  initializeSearch?.();
+  initializeSidebar?.();
+  loadHelpButton?.();
 
-    // 3. Load mock bone data using centralized API
+  // 2) Load data
+  try {
     mockBoneData = await fetchMockBoneData();
-    
-    // 4. Fetch data and populate dropdowns
     combinedData = await fetchCombinedData();
-    populateBonesetDropdown(combinedData.bonesets);
-    setupDropdownListeners(combinedData);
+  } catch (err) {
+    console.error("Failed to load data:", err);
+    return;
+  }
 
-    // 5. Setup navigation after everything else
-    setupNavigation(combinedData);
+  // 3) Populate boneset dropdown (matches your dropdowns.js signature)
+  populateBonesetDropdown(combinedData.bonesets);
+
+  // 4) Let dropdowns.js attach its own listeners for boneset/bone/subbone
+  setupDropdownListeners(combinedData);
+
+  // 5) (Optional) Add a lightweight listener ONLY for navigation + mock viewer
+  //    This avoids duplicating the DOM work already done in dropdowns.js.
+  const boneSelect = document.getElementById("bone-select");
+  boneSelect.addEventListener("change", (e) => {
+    const selectedBoneId = e.target.value;
+
+    const relatedSubbones = combinedData.subbones
+      .filter((sb) => sb.bone === selectedBoneId)
+      .map((sb) => sb.id);
+
+    setBoneAndSubbones(selectedBoneId, relatedSubbones);
     disableButtons();
 
-    // 6. Update navigation when bone changes
-    const boneDropdown = document.getElementById("bone-select");
-    boneDropdown.addEventListener("change", (event) => {
-        const selectedBone = event.target.value;
+    // If you want the mock viewer to render too:
+    if (selectedBoneId) handleBoneSelection(selectedBoneId);
+    else clearViewer();
+  });
 
-        const relatedSubbones = combinedData.subbones
-            .filter(sb => sb.bone === selectedBone)
-            .map(sb => sb.id);
+  // 6) Initial navigation wiring
+  setupNavigation(combinedData);
+  disableButtons();
 
-        setBoneAndSubbones(selectedBone, relatedSubbones);
-        populateSubboneDropdown(document.getElementById("subbone-select"), relatedSubbones);
-        disableButtons();
+  // 7) Auto-select the first boneset to kick things off
+  const bonesetSelect = document.getElementById("boneset-select");
+  if (combinedData.bonesets?.length && bonesetSelect) {
+    bonesetSelect.value = combinedData.bonesets[0].id;
+    bonesetSelect.dispatchEvent(new Event("change"));
+  }
 
-        // Handle bone selection using dedicated function
-        if (selectedBone) {
-            handleBoneSelection(selectedBone);
-        } else {
-            clearViewer();
-        }
-    });
-
-    // 7. Auto-select the first boneset
-    const boneset = combinedData.bonesets[0];
-    if (boneset) {
-        document.getElementById("boneset-select").value = boneset.id;
-        const event = new Event("change");
-        document.getElementById("boneset-select").dispatchEvent(event);
-    }
-
-    // 8. Initialize display
-    clearViewer();
+  // 8) Start with a clear viewer
+  clearViewer();
 });
-
-function populateSubboneDropdown(dropdown, subbones) {
-    dropdown.innerHTML = "";
-    subbones.forEach((subboneId) => {
-        const option = document.createElement("option");
-        option.value = subboneId;
-        option.textContent = subboneId.replace(/_/g, " ");
-        dropdown.appendChild(option);
-    });
-}

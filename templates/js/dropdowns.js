@@ -1,9 +1,11 @@
 // js/dropdowns.js
 import { loadDescription } from "./description.js";
+import { loadBoneImages, clearImages } from "./imagedisplay.js";
 
 export function populateBonesetDropdown(bonesets) {
   const bonesetSelect = document.getElementById("boneset-select");
-  bonesetSelect.innerHTML = "<option value=\"\">--Please select a Boneset--</option>";
+  bonesetSelect.innerHTML =
+    '<option value="">--Please select a Boneset--</option>';
 
   bonesets.forEach((set) => {
     const option = document.createElement("option");
@@ -18,13 +20,20 @@ export function setupDropdownListeners(combinedData) {
   const boneSelect = document.getElementById("bone-select");
   const subboneSelect = document.getElementById("subbone-select");
 
+  // 🦴 When Boneset changes
   bonesetSelect.addEventListener("change", (e) => {
     const selectedBonesetId = e.target.value;
 
-    boneSelect.innerHTML = "<option value=\"\">--Please choose a Bone--</option>";
-    subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
+    // Reset dependent dropdowns
+    boneSelect.innerHTML = '<option value="">--Please choose a Bone--</option>';
+    subboneSelect.innerHTML =
+      '<option value="">--Please choose a Sub-Bone--</option>';
     subboneSelect.disabled = true;
 
+    // Clear any currently shown images
+    clearImages();
+
+    // Populate bones that belong to the selected boneset
     const relatedBones = combinedData.bones.filter(
       (b) => b.boneset === selectedBonesetId
     );
@@ -38,11 +47,15 @@ export function setupDropdownListeners(combinedData) {
     boneSelect.disabled = relatedBones.length === 0;
   });
 
+  // 🦴 When Bone changes
   boneSelect.addEventListener("change", (e) => {
     const selectedBoneId = e.target.value;
 
-    subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
+    // Reset sub-bone dropdown
+    subboneSelect.innerHTML =
+      '<option value="">--Please choose a Sub-Bone--</option>';
 
+    // Populate sub-bones related to this bone
     const relatedSubbones = combinedData.subbones.filter(
       (sb) => sb.bone === selectedBoneId
     );
@@ -55,11 +68,24 @@ export function setupDropdownListeners(combinedData) {
 
     subboneSelect.disabled = relatedSubbones.length === 0;
 
-    if (selectedBoneId) loadDescription(selectedBoneId);
+    // Load data for the selected bone
+    if (selectedBoneId) {
+      loadDescription(selectedBoneId);
+      loadBoneImages(selectedBoneId);
+    } else {
+      clearImages();
+    }
   });
 
+  // 🦴 When Sub-bone changes
   subboneSelect.addEventListener("change", (e) => {
     const selectedSubboneId = e.target.value;
-    if (selectedSubboneId) loadDescription(selectedSubboneId);
+
+    if (selectedSubboneId) {
+      loadDescription(selectedSubboneId);
+      loadBoneImages(selectedSubboneId);
+    } else {
+      clearImages();
+    }
   });
 }
