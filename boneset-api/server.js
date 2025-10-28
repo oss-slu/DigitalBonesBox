@@ -190,6 +190,62 @@ app.get("/api/description/", async (req, res) => {
     }
 });
 
+// New endpoint: Get bone data with images
+app.get("/api/bone-data/", async (req, res) => {
+    const { boneId } = req.query;
+    
+    // Validate boneId parameter
+    if (!boneId) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "boneId query parameter is required" 
+        });
+    }
+    
+    // Build GitHub URL for the description JSON
+    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
+    const GITHUB_IMAGES_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/images/";
+
+    try {
+        // Fetch the description JSON from GitHub
+        const response = await axios.get(GITHUB_DESC_URL, { timeout: 10000 });
+        const descriptionData = response.data;
+
+        // Extract the images array from the JSON
+        const imagesArray = descriptionData.images || [];
+        
+        // Build image objects with filename and full URL
+        const images = imagesArray.map(filename => ({
+            filename: filename,
+            url: `${GITHUB_IMAGES_BASE_URL}${filename}`
+        }));
+
+        // Return the complete bone data as JSON
+        res.json({
+            name: descriptionData.name,
+            id: descriptionData.id,
+            description: descriptionData.description,
+            images: images
+        });
+
+    } catch (error) {
+        // Handle 404 - bone not found
+        if (error.response && error.response.status === 404) {
+            return res.status(404).json({ 
+                error: "Not Found", 
+                message: `Bone with id '${boneId}' not found` 
+            });
+        }
+        
+        // Handle other server errors
+        console.error(`Error fetching bone data for ${boneId}:`, error.message);
+        res.status(500).json({ 
+            error: "Internal Server Error", 
+            message: "Failed to fetch bone data" 
+        });
+    }
+});
+
 // Search endpoint
 app.get("/api/search", searchLimiter, (req, res) => {
     const query = req.query.q;
@@ -256,4 +312,3 @@ module.exports = {
   searchItems,
   initializeSearchCache,
 };
-
