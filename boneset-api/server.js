@@ -39,7 +39,7 @@ function escapeHtml(str = "") {
 // Input validation helper for boneId
 function isValidBoneId(boneId) {
     // Ensure boneId is a string (not an array or other type)
-    if (typeof boneId !== 'string') {
+    if (typeof boneId !== "string") {
         return false;
     }
     
