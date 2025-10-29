@@ -38,10 +38,15 @@ function escapeHtml(str = "") {
 
 // Input validation helper for boneId
 function isValidBoneId(boneId) {
+    // Ensure boneId is a string (not an array or other type)
+    if (typeof boneId !== 'string') {
+        return false;
+    }
+    
     // Only allow alphanumeric characters and underscores
     // This prevents path traversal and URL injection attacks
     const validBoneIdPattern = /^[a-z0-9_]+$/i;
-    return validBoneIdPattern.test(boneId) && boneId.length <= 100;
+    return validBoneIdPattern.test(boneId) && boneId.length > 0 && boneId.length <= 100;
 }
 
 // GitHub JSON fetcher
