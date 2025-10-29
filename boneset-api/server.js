@@ -238,7 +238,7 @@ app.get("/api/bone-data/", async (req, res) => {
         }
         
         // Handle other server errors
-        console.error(`Error fetching bone data for ${boneId}:`, error.message);
+        console.error("Error fetching bone data for '%s': %s", boneId, error.message);
         res.status(500).json({ 
             error: "Internal Server Error", 
             message: "Failed to fetch bone data" 
