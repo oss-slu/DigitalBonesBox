@@ -36,6 +36,14 @@ function escapeHtml(str = "") {
     })[c]);
 }
 
+// Input validation helper for boneId
+function isValidBoneId(boneId) {
+    // Only allow alphanumeric characters and underscores
+    // This prevents path traversal and URL injection attacks
+    const validBoneIdPattern = /^[a-z0-9_]+$/i;
+    return validBoneIdPattern.test(boneId) && boneId.length <= 100;
+}
+
 // GitHub JSON fetcher
 async function fetchJSON(url) {
     try {
@@ -174,6 +182,11 @@ app.get("/api/description/", async (req, res) => {
         return res.send(" ");
     }
     
+    // Validate boneId to prevent SSRF attacks
+    if (!isValidBoneId(boneId)) {
+        return res.send("<li>Invalid bone ID.</li>");
+    }
+    
     const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
 
     try {
@@ -199,6 +212,14 @@ app.get("/api/bone-data/", async (req, res) => {
         return res.status(400).json({ 
             error: "Bad Request", 
             message: "boneId query parameter is required" 
+        });
+    }
+    
+    // Validate boneId format to prevent SSRF attacks
+    if (!isValidBoneId(boneId)) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "Invalid boneId format. Only alphanumeric characters and underscores are allowed." 
         });
     }
     
