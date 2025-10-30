@@ -445,3 +445,112 @@ ul li {
     }
 }
 
+/* ─── Images section container ─────────────────────────────────────────────── */
+#bone-images-section {
+  background: #fff;
+  padding: 16px 20px;
+  margin-top: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+
+#bone-images-heading {
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Main image container */
+#bone-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 12px;
+  background: #f6f7f8;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Empty state text */
+.images-empty-state {
+  color: #6b7280; /* neutral gray */
+  font-size: 0.95rem;
+}
+
+/* ─── Single image layout ─────────────────────────────────────────────────── */
+.single-image-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+}
+
+.single-image-wrapper .image-box {
+  width: 100%;
+}
+
+.bone-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.12);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+
+.bone-image.loaded {
+  opacity: 1;
+}
+
+/* ─── Two images layout ───────────────────────────────────────────────────── */
+.double-image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.double-image-wrapper .image-box {
+  flex: 1 1 0;
+}
+
+.double-image-wrapper .bone-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.12);
+}
+
+/* ─── 3+ images layout ────────────────────────────────────────────────────── */
+.multiple-image-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.multiple-image-wrapper .image-box {
+  width: 100%;
+}
+
+/* ─── Responsive tweaks ───────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  #bone-image-container { min-height: 320px; }
+  .double-image-wrapper { gap: 20px; max-width: 1000px; }
+  .single-image-wrapper { max-width: 680px; }
+}
+
+@media (max-width: 768px) {
+  #bone-image-container { min-height: 260px; padding: 8px; }
+  .double-image-wrapper {
+    flex-direction: column;    /* stack the two images */
+    gap: 16px;
+    max-width: 680px;
+  }
+}
