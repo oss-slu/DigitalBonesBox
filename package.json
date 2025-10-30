@@ -12,12 +12,6 @@
     "lint": "eslint . --ext .js",
     "lint:fix": "eslint . --ext .js --fix"
   },
-  "jest": {
-    "testEnvironment": "jsdom",
-    "setupFilesAfterEnv": [
-      "<rootDir>/jest.setup.js"
-    ]
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
