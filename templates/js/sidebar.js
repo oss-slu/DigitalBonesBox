@@ -1,5 +1,5 @@
 // js/sidebar.js
-async function initializeSidebar() {
+export async function initializeSidebar() {
     const toggleButton = document.getElementById("toggle-sidebar");
     const sidebarContainer = document.getElementById("sidebar-container");
 
@@ -32,28 +32,28 @@ async function initializeSidebar() {
     }
 }
 
-async function loadHelpButton() {
+export async function loadHelpButton() {
     const helpButtonContainer = document.getElementById("help-button-container");
     if (helpButtonContainer) {
         try {
             const response = await fetch("helpButton.html");
             const helpButtonHTML = await response.text();
             helpButtonContainer.innerHTML = helpButtonHTML;
-            
+
             const helpButton = document.getElementById("text-button-Help");
             const helpModal = document.getElementById("help-modal");
             const closeHelpModal = document.getElementById("close-help-modal");
-            
+
             if (helpButton && helpModal && closeHelpModal) {
                 // Handle click events
                 helpButton.addEventListener("click", () => {
                     helpModal.classList.add("is-visible");
                 });
-                
+
                 closeHelpModal.addEventListener("click", () => {
                     helpModal.classList.remove("is-visible");
                 });
-                
+
                 // Handle keyboard events
                 helpButton.addEventListener("keydown", (event) => {
                     if (event.key === "Enter" || event.key === " ") {
@@ -61,7 +61,7 @@ async function loadHelpButton() {
                         helpModal.classList.add("is-visible");
                     }
                 });
-                
+
                 // Close on escape key
                 document.addEventListener("keydown", (event) => {
                     if (event.key === "Escape" && helpModal.classList.contains("is-visible")) {
@@ -75,11 +75,6 @@ async function loadHelpButton() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    initializeSidebar();
-    loadHelpButton();
-});
-
-// Export for CommonJS
-module.exports = { initializeSidebar, loadHelpButton };
+// Note: initialization is performed by the app's entrypoint (`main.js`).
+// This file uses ES module exports so it can be imported with `type="module"` scripts.
 
