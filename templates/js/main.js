@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (subboneSelectEl) {
         subboneSelectEl.disabled = true;
         // Ensure the placeholder is present and selected
-        subboneSelectEl.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
+        subboneSelectEl.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
         subboneSelectEl.selectedIndex = 0;
     }
 
