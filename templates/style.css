@@ -459,7 +459,7 @@ ul li {
   font-weight: 600;
 }
 
-/* Main image container */
+/* image container */
 #bone-image-container {
   display: flex;
   align-items: center;
@@ -519,10 +519,13 @@ ul li {
 .double-image-wrapper {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  gap: 30px;
+  align-items: center;
+  gap: 5px; /* was 30px — smaller gap pushes them closer */
   width: 100%;
   max-width: 1200px;
+  background: #000;      /* black background */
+  border-radius: 10px;   /* smooth edges */
+  overflow: hidden;      /* hides rotated corners */
 }
 
 .double-image-wrapper .image-box {
@@ -531,6 +534,14 @@ ul li {
   align-items: center;
   justify-content: center;
 }
+.double-image-wrapper .image-box:first-child {
+  transform: translateX(14%);  /* move left image slightly right */
+}
+
+.double-image-wrapper .image-box:last-child {
+  transform: translateX(-14%); /* move right image slightly left */
+}
+
 
 .double-image-wrapper .bone-image {
   width: 85%;         /* was 100% */
