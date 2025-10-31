@@ -22,13 +22,17 @@ export function displayBoneImages(images) {
 
   clearImages();
 
-  if (!Array.isArray(images) || images.length === 0) {
-    const p = document.createElement("p");
-    p.textContent = "No images available for this selection.";
-    p.className = "images-empty-state";
-    container.appendChild(p);
+    if (!Array.isArray(images) || images.length === 0) {
+    const placeholder = document.createElement("div");
+    placeholder.className = "images-empty-state";
+    placeholder.innerHTML = `
+        <p>Select a boneset, bone, or sub-bone to view images.</p>
+    `;
+    container.appendChild(placeholder);
     return;
-  }
+    }
+
+
 
   if (images.length === 1) {
     displaySingleImage(images[0], container);

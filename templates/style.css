@@ -466,7 +466,7 @@ ul li {
   justify-content: center;
   min-height: 400px;
   padding: 12px;
-  background: #000; /* ← changed from #f6f7f8 */
+  background: #f6f7f8; /* light gray bg */
   border-radius: 10px;
   overflow: visible; /* let rotated edges show fully */
 }
@@ -481,9 +481,22 @@ ul li {
 
 /* Empty state text */
 .images-empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 300px;
+  width: 100%;
   color: #6b7280;
+  background: transparent;   /* shows the neutral container bg */
+  border-radius: 10px;
   font-size: 0.95rem;
 }
+
+.images-empty-state p {
+  margin: 0;
+}
+
 
 /* ─── Single image layout ─────────────────────────────────────────────────── */
 .single-image-wrapper {
