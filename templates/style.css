@@ -466,10 +466,18 @@ ul li {
   justify-content: center;
   min-height: 400px;
   padding: 12px;
-  background: #f6f7f8;
+  background: #000; /* ← changed from #f6f7f8 */
   border-radius: 10px;
-  overflow: visible; /* allow full image to show */
+  overflow: visible; /* let rotated edges show fully */
 }
+
+/* For both single and double image wrappers */
+.single-image-wrapper,
+.double-image-wrapper {
+  background: #000; /* unify both sides */
+  border-radius: 10px;
+}
+
 
 /* Empty state text */
 .images-empty-state {
