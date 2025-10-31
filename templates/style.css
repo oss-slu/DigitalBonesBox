@@ -444,7 +444,6 @@ ul li {
         border: 2px solid CanvasText;
     }
 }
-
 /* ─── Images section container ─────────────────────────────────────────────── */
 #bone-images-section {
   background: #fff;
@@ -469,12 +468,12 @@ ul li {
   padding: 12px;
   background: #f6f7f8;
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible; /* allow full image to show */
 }
 
 /* Empty state text */
 .images-empty-state {
-  color: #6b7280; /* neutral gray */
+  color: #6b7280;
   font-size: 0.95rem;
 }
 
@@ -489,11 +488,16 @@ ul li {
 
 .single-image-wrapper .image-box {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .bone-image {
-  width: 100%;
+  width: 85%;          /* was 100% */
+  max-height: 520px;   /* cap height so it’s not too zoomed */
   height: auto;
+  object-fit: contain; /* never crop */
   display: block;
   border-radius: 10px;
   box-shadow: 0 3px 12px rgba(0,0,0,.12);
@@ -501,9 +505,7 @@ ul li {
   transition: opacity .25s ease;
 }
 
-.bone-image.loaded {
-  opacity: 1;
-}
+.bone-image.loaded { opacity: 1; }
 
 /* ─── Two images layout ───────────────────────────────────────────────────── */
 .double-image-wrapper {
@@ -517,11 +519,16 @@ ul li {
 
 .double-image-wrapper .image-box {
   flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .double-image-wrapper .bone-image {
-  width: 100%;
+  width: 85%;         /* was 100% */
+  max-height: 520px;
   height: auto;
+  object-fit: contain;
   border-radius: 10px;
   box-shadow: 0 3px 12px rgba(0,0,0,.12);
 }
@@ -537,6 +544,9 @@ ul li {
 
 .multiple-image-wrapper .image-box {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ─── Responsive tweaks ───────────────────────────────────────────────────── */
@@ -544,13 +554,20 @@ ul li {
   #bone-image-container { min-height: 320px; }
   .double-image-wrapper { gap: 20px; max-width: 1000px; }
   .single-image-wrapper { max-width: 680px; }
+  .bone-image,
+  .double-image-wrapper .bone-image { max-height: 420px; }
 }
 
 @media (max-width: 768px) {
   #bone-image-container { min-height: 260px; padding: 8px; }
   .double-image-wrapper {
-    flex-direction: column;    /* stack the two images */
+    flex-direction: column; /* stack the two images */
     gap: 16px;
     max-width: 680px;
+  }
+  .bone-image,
+  .double-image-wrapper .bone-image {
+    width: 90%;
+    max-height: 320px;
   }
 }
