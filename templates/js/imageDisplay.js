@@ -60,12 +60,28 @@ function displaySingleImage(image, container) {
   container.appendChild(wrapper);
 }
 
-/** 2 images (side-by-side) */
+// --- Minimal two-image rotation template (from DataPelvis/annotations/rotations/rotations.json)
+const TWO_IMAGE_ROTATION = {
+  left:  { rot_deg: -16.999, flipH: false },
+  right: { rot_deg: 0,       flipH: false }
+};
+
+function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
+  // Build a safe transform string
+  const parts = [];
+  if (flipH) parts.push("scaleX(-1)");
+  if (rot_deg && Math.abs(rot_deg) > 0.001) parts.push(`rotate(${rot_deg}deg)`);
+  imgEl.style.transform = parts.join(" ") || "none";
+  imgEl.style.transformOrigin = "50% 50%";
+  imgEl.style.willChange = "transform";
+}
+
+/** 2 images (side-by-side with template rotation) */
 function displayTwoImages(images, container) {
   const wrapper = document.createElement("div");
   wrapper.className = "double-image-wrapper";
 
-  images.slice(0, 2).forEach((image) => {
+  images.slice(0, 2).forEach((image, idx) => {
     const imgBox = document.createElement("div");
     imgBox.className = "image-box";
 
@@ -74,7 +90,12 @@ function displayTwoImages(images, container) {
     img.src = image.url || image.src || "";
     img.alt = image.alt || image.filename || "Bone image";
 
-    img.addEventListener("load", () => img.classList.add("loaded"));
+    img.addEventListener("load", () => {
+      img.classList.add("loaded");
+      // Apply the rotation template once the image is ready
+      const cfg = idx === 0 ? TWO_IMAGE_ROTATION.left : TWO_IMAGE_ROTATION.right;
+      applyRotation(img, cfg);
+    });
     img.addEventListener("error", () => (imgBox.textContent = "Failed to load image."));
 
     imgBox.appendChild(img);
@@ -83,6 +104,7 @@ function displayTwoImages(images, container) {
 
   container.appendChild(wrapper);
 }
+
 
 /** 3+ images (simple grid wrapper) */
 function displayMultipleImages(images, container) {
