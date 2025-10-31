@@ -72,29 +72,42 @@ export function setupDropdownListeners(combinedData) {
     Array.isArray(combinedData.subbones) ? combinedData.subbones.length : typeof combinedData.subbones
   );
 
-  // Boneset change → repopulate bones, clear subbones & images
   bonesetSelect.addEventListener("change", (e) => {
-    const selectedBonesetId = e.target.value;
+  const selectedBonesetId = e.target.value;
 
-    boneSelect.innerHTML = "<option value=\"\">--Please choose a Bone--</option>";
-    subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
-    subboneSelect.disabled = true;
+  boneSelect.innerHTML = "<option value=\"\">--Please choose a Bone--</option>";
+  subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
+  subboneSelect.disabled = true;
 
-    // Clear any currently shown images when boneset changes
-    clearImages(); // ← NEW
+  clearImages();
 
-    const relatedBones = combinedData.bones.filter((b) => b.boneset === selectedBonesetId);
-    console.debug("boneset change, related bones:", relatedBones.length, relatedBones.map(b => b.id).slice(0, 10));
+  const relatedBones = combinedData.bones.filter(
+    (b) => b.boneset === selectedBonesetId
+  );
+  console.debug("boneset change, related bones:", relatedBones.length, relatedBones.map(b => b.id).slice(0, 10));
 
-    relatedBones.forEach((bone) => {
-      const option = document.createElement("option");
-      option.value = bone.id;
-      option.textContent = bone.name;
-      boneSelect.appendChild(option);
-    });
-
-    boneSelect.disabled = relatedBones.length === 0;
+  relatedBones.forEach((bone) => {
+    const option = document.createElement("option");
+    option.value = bone.id;
+    option.textContent = bone.name;
+    boneSelect.appendChild(option);
   });
+
+  boneSelect.disabled = relatedBones.length === 0;
+
+  // ▼ NEW SECTION — show boneset image when no bone is selected yet
+  if (selectedBonesetId) {
+    const firstBone = relatedBones[0];
+    if (firstBone) {
+      loadBoneImages(firstBone.id);
+    } else {
+      clearImages();
+    }
+  } else {
+    clearImages();
+  }
+});
+
 
   // Bone change → repopulate subbones, load description + images
   boneSelect.addEventListener("change", (e) => {
