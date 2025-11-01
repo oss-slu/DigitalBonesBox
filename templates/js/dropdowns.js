@@ -1,26 +1,35 @@
 // js/dropdowns.js
 import { loadDescription } from "./description.js";
-import { displayBoneImages, clearImages } from "./imageDisplay.js"; // ← NEW
+import { displayBoneImages, clearImages, showPlaceholder } from "./imageDisplay.js"; // keep this line
+
+// Show the placeholder as soon as the page loads
+document.addEventListener("DOMContentLoaded", () => {
+  showPlaceholder();
+});
 
 // Backend API base (runs on 8000)
 const API_BASE = "http://127.0.0.1:8000";
 
-// Helper: fetch images for a bone/sub-bone and render them
+/** Helper: fetch images for a bone/sub-bone and render them */
 async function loadBoneImages(boneId) {
-  if (!boneId) { clearImages(); return; }
+  if (!boneId) { showPlaceholder(); return; }   // ← show friendly message if nothing selected
   try {
     const res = await fetch(`${API_BASE}/api/bone-data/?boneId=${encodeURIComponent(boneId)}`);
     if (!res.ok) {
       console.warn("bone-data API error:", res.status, boneId);
-      clearImages();
+      showPlaceholder();                        // ← fallback to message
       return;
     }
     const data = await res.json();
     const images = Array.isArray(data.images) ? data.images : [];
-    displayBoneImages(images);
+    if (images.length === 0) {
+      showPlaceholder();                        // ← message if backend returns no images
+    } else {
+      displayBoneImages(images);
+    }
   } catch (err) {
     console.error("Failed to load bone images:", err);
-    clearImages();
+    showPlaceholder();                          // ← message on error
   }
 }
 
@@ -54,96 +63,76 @@ export function populateBonesetDropdown(bonesets) {
   });
   bonesetSelect.disabled = false;
 }
-
 export function setupDropdownListeners(combinedData) {
-  const bonesetSelect = document.getElementById("boneset-select");
-  const boneSelect = document.getElementById("bone-select");
-  const subboneSelect = document.getElementById("subbone-select");
+  const bonesetSelect  = document.getElementById("boneset-select");
+  const boneSelect     = document.getElementById("bone-select");
+  const subboneSelect  = document.getElementById("subbone-select");
 
-  // Defensive logging to verify combinedData shape
-  if (!combinedData) {
-    console.error("setupDropdownListeners: combinedData is falsy");
-    return;
-  }
-  console.debug(
-    "setupDropdownListeners: bones:",
-    Array.isArray(combinedData.bones) ? combinedData.bones.length : typeof combinedData.bones,
-    "subbones:",
-    Array.isArray(combinedData.subbones) ? combinedData.subbones.length : typeof combinedData.subbones
-  );
+  if (!combinedData) return;
 
+  // --- Boneset change → repopulate bones, show default images (no UI auto-select)
   bonesetSelect.addEventListener("change", (e) => {
-  const selectedBonesetId = e.target.value;
+    const selectedBonesetId = e.target.value;
 
-  boneSelect.innerHTML = "<option value=\"\">--Please choose a Bone--</option>";
-  subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
-  subboneSelect.disabled = true;
+    // reset dependent dropdowns
+    boneSelect.innerHTML    = "<option value=\"\">--Please choose a Bone--</option>";
+    subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
+    subboneSelect.disabled  = true;
 
-  clearImages();
+    // populate bones for this boneset
+    const relatedBones = combinedData.bones.filter(b => b.boneset === selectedBonesetId);
+    relatedBones.forEach(b => {
+      const opt = document.createElement("option");
+      opt.value = b.id;
+      opt.textContent = b.name;
+      boneSelect.appendChild(opt);
+    });
+    boneSelect.disabled = relatedBones.length === 0;
 
-  const relatedBones = combinedData.bones.filter(
-    (b) => b.boneset === selectedBonesetId
-  );
-  console.debug("boneset change, related bones:", relatedBones.length, relatedBones.map(b => b.id).slice(0, 10));
+    // nothing selected or no bones → placeholder
+    if (!selectedBonesetId || relatedBones.length === 0) {
+      showPlaceholder();
+      return;
+    }
 
-  relatedBones.forEach((bone) => {
-    const option = document.createElement("option");
-    option.value = bone.id;
-    option.textContent = bone.name;
-    boneSelect.appendChild(option);
+    // show the default images for the boneset *without* changing the UI selection
+    const firstBone = relatedBones[0];
+    loadBoneImages(firstBone.id);
   });
 
-  boneSelect.disabled = relatedBones.length === 0;
-
-  // ▼ NEW SECTION — show boneset image when no bone is selected yet
-  if (selectedBonesetId) {
-    const firstBone = relatedBones[0];
-    if (firstBone) {
-      loadBoneImages(firstBone.id);
-    } else {
-      clearImages();
-    }
-  } else {
-    clearImages();
-  }
-});
-
-
-  // Bone change → repopulate subbones, load description + images
+  // --- Bone change → repopulate subbones + load description/images
   boneSelect.addEventListener("change", (e) => {
     const selectedBoneId = e.target.value;
 
+    // reset subbones
     subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
 
-    const relatedSubbones = combinedData.subbones.filter((sb) => sb.bone === selectedBoneId);
-    console.debug("bone change, related subbones:", relatedSubbones.length);
-
-    relatedSubbones.forEach((sb) => {
-      const option = document.createElement("option");
-      option.value = sb.id;
-      option.textContent = sb.name;
-      subboneSelect.appendChild(option);
+    // repopulate subbones for chosen bone
+    const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
+    relatedSubbones.forEach(sb => {
+      const opt = document.createElement("option");
+      opt.value = sb.id;
+      opt.textContent = sb.name;
+      subboneSelect.appendChild(opt);
     });
-
     subboneSelect.disabled = relatedSubbones.length === 0;
 
     if (selectedBoneId) {
       loadDescription(selectedBoneId);
-      loadBoneImages(selectedBoneId); // ← NEW
+      loadBoneImages(selectedBoneId);
     } else {
-      clearImages(); // ← NEW
+      showPlaceholder();
     }
   });
 
-  // Sub-bone change → load description + images for subbone
+  // --- Sub-bone change → load description/images or placeholder
   subboneSelect.addEventListener("change", (e) => {
     const selectedSubboneId = e.target.value;
-
     if (selectedSubboneId) {
       loadDescription(selectedSubboneId);
-      loadBoneImages(selectedSubboneId); // ← NEW
+      loadBoneImages(selectedSubboneId);
     } else {
-      clearImages(); // ← NEW
+      showPlaceholder();
     }
   });
 }
