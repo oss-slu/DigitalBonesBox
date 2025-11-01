@@ -46,10 +46,10 @@ export function populateBonesetDropdown(bonesets) {
     Array.isArray(bonesets) ? bonesets.length : typeof bonesets
   );
 
-  bonesetSelect.innerHTML = '<option value="">--Please select a Boneset--</option>';
+  bonesetSelect.innerHTML = "<option value=\"\">--Please select a Boneset--</option>";
 
   if (!bonesets || bonesets.length === 0) {
-    bonesetSelect.innerHTML = '<option value="">--No bonesets available--</option>';
+    bonesetSelect.innerHTML = "<option value=\"\">--No bonesets available--</option>";
     bonesetSelect.disabled = true;
     console.warn("populateBonesetDropdown: no bonesets to populate");
     return;
@@ -75,8 +75,8 @@ export function setupDropdownListeners(combinedData) {
     const selectedBonesetId = e.target.value;
 
     // reset dependent dropdowns
-    boneSelect.innerHTML    = '<option value="">--Please choose a Bone--</option>';
-    subboneSelect.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
+    boneSelect.innerHTML    = "<option value=\"\">--Please choose a Bone--</option>";
+    subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
     subboneSelect.disabled  = true;
 
     // populate bones for this boneset
@@ -105,7 +105,7 @@ export function setupDropdownListeners(combinedData) {
     const selectedBoneId = e.target.value;
 
     // reset subbones
-    subboneSelect.innerHTML = '<option value="">--Please choose a Sub-Bone--</option>';
+    subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
 
     // repopulate subbones for chosen bone
     const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
