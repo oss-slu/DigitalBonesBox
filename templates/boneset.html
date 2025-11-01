@@ -73,22 +73,22 @@
                 <h3>Description</h3>
                 <ul id="description-Container"></ul>
             </div>
-
+            <section id="bone-images-section" aria-labelledby="bone-images-heading">
+                <h3 id="bone-images-heading">Images</h3>
+                <div id="bone-image-container" role="region" aria-live="polite"></div>
+            </section>
             <div class="navigation-buttons">
                 <button id="prev-button" disabled>Previous</button>
                 <button id="next-button" disabled>Next</button>
             </div>
            
-            <div class="viewer-wrapper">
-                <img id="bone-image" alt="Bone Image" />
-                <div id="annotations-overlay"></div>
-            </div>
         </div>
     </div>
     
     <script type="module" src="js/search.js"></script>
     <script type="module" src="js/sidebar.js"></script>
     <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/imageDisplay.js"></script>
 </body>
 
 </html>
