@@ -1,18 +1,29 @@
 // js/imageDisplay.js
-// Task 2: Display functions only (no CSS, no dropdown wiring)
+// Rendering helpers for the image area (no dropdown wiring).
 
-/** Get the target container */
 function getImageContainer() {
-  return /** @type {HTMLElement|null} */ (document.getElementById("bone-image-container"));
+  return /** @type {HTMLElement|null} */ (
+    document.getElementById("bone-image-container")
+  );
 }
 
-/** Clear images */
+/** ---- Empty-state / clearing ------------------------------------------- */
+export function showPlaceholder() {
+  const c = getImageContainer();
+  if (!c) return;
+  c.innerHTML = `
+    <div class="images-empty-state">
+      <p>Please select a bone from the dropdown to view its image.</p>
+    </div>
+  `;
+}
+
 export function clearImages() {
-  const container = getImageContainer();
-  if (container) container.innerHTML = "";
+  const c = getImageContainer();
+  if (c) c.innerHTML = "";
 }
 
-/** Main entry: display images array [{ url, filename, alt? }, ...] */
+/** ---- Public entry: render images array -------------------------------- */
 export function displayBoneImages(images) {
   const container = getImageContainer();
   if (!container) {
@@ -22,17 +33,10 @@ export function displayBoneImages(images) {
 
   clearImages();
 
-    if (!Array.isArray(images) || images.length === 0) {
-    const placeholder = document.createElement("div");
-    placeholder.className = "images-empty-state";
-    placeholder.innerHTML = `
-        <p>Select a boneset, bone, or sub-bone to view images.</p>
-    `;
-    container.appendChild(placeholder);
+  if (!Array.isArray(images) || images.length === 0) {
+    showPlaceholder();
     return;
-    }
-
-
+  }
 
   if (images.length === 1) {
     displaySingleImage(images[0], container);
@@ -43,7 +47,7 @@ export function displayBoneImages(images) {
   }
 }
 
-/** 1 image */
+/** ---- Single image ------------------------------------------------------ */
 function displaySingleImage(image, container) {
   const wrapper = document.createElement("div");
   wrapper.className = "single-image-wrapper";
@@ -64,14 +68,13 @@ function displaySingleImage(image, container) {
   container.appendChild(wrapper);
 }
 
-// --- Minimal two-image rotation template (from DataPelvis/annotations/rotations/rotations.json)
+/** ---- Two images (with rotation template) ------------------------------- */
 const TWO_IMAGE_ROTATION = {
   left:  { rot_deg: -16.999, flipH: false },
-  right: { rot_deg: 0,       flipH: false }
+  right: { rot_deg: 0,       flipH: false },
 };
 
 function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
-  // Build a safe transform string
   const parts = [];
   if (flipH) parts.push("scaleX(-1)");
   if (rot_deg && Math.abs(rot_deg) > 0.001) parts.push(`rotate(${rot_deg}deg)`);
@@ -80,7 +83,6 @@ function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
   imgEl.style.willChange = "transform";
 }
 
-/** 2 images (side-by-side with template rotation) */
 function displayTwoImages(images, container) {
   const wrapper = document.createElement("div");
   wrapper.className = "double-image-wrapper";
@@ -96,7 +98,6 @@ function displayTwoImages(images, container) {
 
     img.addEventListener("load", () => {
       img.classList.add("loaded");
-      // Apply the rotation template once the image is ready
       const cfg = idx === 0 ? TWO_IMAGE_ROTATION.left : TWO_IMAGE_ROTATION.right;
       applyRotation(img, cfg);
     });
@@ -109,8 +110,7 @@ function displayTwoImages(images, container) {
   container.appendChild(wrapper);
 }
 
-
-/** 3+ images (simple grid wrapper) */
+/** ---- 3+ images grid ---------------------------------------------------- */
 function displayMultipleImages(images, container) {
   const wrapper = document.createElement("div");
   wrapper.className = "multiple-image-wrapper";
