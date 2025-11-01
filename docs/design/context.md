@@ -1,8 +1,5 @@
 ### DigitalBoneBox – Design Artifact Context
 
-## Project Overview
-DigitalBoneBox is a web-based study tool that enables anatomy students to view and explore high-quality bone images outside the lab. The system organizes data into hierarchical JSON files — Boneset → Bone → Subbone — each containing descriptions and image references. A Node.js + Express backend fetches these JSON files from a GitHub data branch, while the frontend (HTML, CSS, JavaScript, HTMX) renders the content interactively in the browser.
-
 ## Artifacts Created and Purpose
 
 1. System Architecture Diagram – shows how the browser, backend server, and GitHub Raw Data branch communicate, clarifying the flow of requests and data between client, cache, and data source.
