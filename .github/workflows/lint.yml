@@ -1,4 +1,6 @@
-name: Lint JavaScript
+# Added Jest testing step for foundational CI/CD improvement
+
+name: Lint and Test JavaScript
 
 on:
   push:
@@ -8,7 +10,7 @@ on:
 
 
 jobs:
-  lint:
+  lint-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,3 +27,6 @@ jobs:
 
       - name: Run ESLint
         run: npm run lint
+
+      - name: Run Jest Tests
+        run: npm test

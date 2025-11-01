@@ -12,9 +12,6 @@
     "lint": "eslint . --ext .js",
     "lint:fix": "eslint . --ext .js --fix"
   },
-  "jest": {
-    "testEnvironment": "jsdom"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -26,11 +23,15 @@
     "simple-git": "^3.27.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "babel-jest": "^29.7.0",
     "concurrently": "^9.2.1",
     "eslint": "^9.24.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "live-server": "^1.2.2"
+    "live-server": "^1.2.2",
+    "supertest": "^7.1.4"
   },
   "directories": {
     "test": "tests"

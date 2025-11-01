@@ -36,6 +36,19 @@ function escapeHtml(str = "") {
     })[c]);
 }
 
+// Input validation helper for boneId
+function isValidBoneId(boneId) {
+    // Ensure boneId is a string (not an array or other type)
+    if (typeof boneId !== "string") {
+        return false;
+    }
+    
+    // Only allow alphanumeric characters and underscores
+    // This prevents path traversal and URL injection attacks
+    const validBoneIdPattern = /^[a-z0-9_]+$/i;
+    return validBoneIdPattern.test(boneId) && boneId.length > 0 && boneId.length <= 100;
+}
+
 // GitHub JSON fetcher
 async function fetchJSON(url) {
     try {
@@ -174,6 +187,11 @@ app.get("/api/description/", async (req, res) => {
         return res.send(" ");
     }
     
+    // Validate boneId to prevent SSRF attacks
+    if (!isValidBoneId(boneId)) {
+        return res.send("<li>Invalid bone ID.</li>");
+    }
+    
     const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
 
     try {
@@ -187,6 +205,70 @@ app.get("/api/description/", async (req, res) => {
         res.send(html);
     } catch (error) {
         res.send("<li>Description not available.</li>");
+    }
+});
+
+// New endpoint: Get bone data with images
+app.get("/api/bone-data/", async (req, res) => {
+    const { boneId } = req.query;
+    
+    // Validate boneId parameter
+    if (!boneId) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "boneId query parameter is required" 
+        });
+    }
+    
+    // Validate boneId format to prevent SSRF attacks
+    if (!isValidBoneId(boneId)) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "Invalid boneId format. Only alphanumeric characters and underscores are allowed." 
+        });
+    }
+    
+    // Build GitHub URL for the description JSON
+    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
+    const GITHUB_IMAGES_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/images/";
+
+    try {
+        // Fetch the description JSON from GitHub
+        const response = await axios.get(GITHUB_DESC_URL, { timeout: 10000 });
+        const descriptionData = response.data;
+
+        // Extract the images array from the JSON
+        const imagesArray = descriptionData.images || [];
+        
+        // Build image objects with filename and full URL
+        const images = imagesArray.map(filename => ({
+            filename: filename,
+            url: `${GITHUB_IMAGES_BASE_URL}${filename}`
+        }));
+
+        // Return the complete bone data as JSON
+        res.json({
+            name: descriptionData.name,
+            id: descriptionData.id,
+            description: descriptionData.description,
+            images: images
+        });
+
+    } catch (error) {
+        // Handle 404 - bone not found
+        if (error.response && error.response.status === 404) {
+            return res.status(404).json({ 
+                error: "Not Found", 
+                message: `Bone with id '${boneId}' not found` 
+            });
+        }
+        
+        // Handle other server errors
+        console.error("Error fetching bone data for '%s': %s", boneId, error.message);
+        res.status(500).json({ 
+            error: "Internal Server Error", 
+            message: "Failed to fetch bone data" 
+        });
     }
 });
 
@@ -242,6 +324,17 @@ app.get("/api/search", searchLimiter, (req, res) => {
 // Initialize search cache on startup
 initializeSearchCache();
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://127.0.0.1:${PORT}`);
-});
+//CODE CHANGE -> Make express app testable, lets the tests import app without starting
+// a real server
+if (require.main == module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://127.0.0.1:${PORT}`);
+  });
+}
+
+module.exports = {
+  app,
+  escapeHtml,
+  searchItems,
+  initializeSearchCache,
+};
