@@ -12,40 +12,103 @@
 <style>
     #sidebar {
         position: fixed;
-        top: 50px;
-        left: -250px; /* Hidden by default */
-        width: 250px;
-        height: calc(100% - 50px);
-        background-color: #333;
-        color: #fff;
+        top: 75px;
+        left: -300px; /* Hidden by default - extra margin to ensure full hide */
+        width: 280px;
+        height: calc(100% - 75px);
+        background: linear-gradient(135deg, #003366 0%, #1e40af 100%);
+        color: white;
         overflow: hidden;
-        transition: left 0.3s ease;
+        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 999;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-right: 2px solid rgba(255, 215, 0, 0.3);
+    }
+
+    #sidebar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #FFD700 0%, #f59e0b 100%);
     }
     /* Sidebar list styles */
     #sidebar ul {
         list-style: none;
-        padding: 0;
+        padding: 20px 0;
         margin: 0;
     }
 
     #sidebar ul li {
         display: flex;
         align-items: center;
-        padding: 15px 20px;
-        color: #fff;
-        font-size: 18px;
-        border-bottom: 1px solid #444; /* Optional: Divider between items */
+        padding: 18px 25px;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        cursor: pointer;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #sidebar ul li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: #FFD700;
+        transform: scaleY(0);
+        transition: transform 0.3s ease;
+        transform-origin: bottom;
+    }
+
+    #sidebar ul li:hover::before {
+        transform: scaleY(1);
     }
 
     #sidebar ul li i {
-        margin-right: 10px; /* Space between icon and text */
-        font-size: 20px; /* Adjust icon size */
+        margin-right: 15px;
+        font-size: 1.2rem;
+        width: 20px;
+        text-align: center;
+        color: #FFD700;
+        transition: all 0.3s ease;
     }
 
     #sidebar ul li:hover {
-        background-color: #444; /* Highlight effect on hover */
-        cursor: pointer;
+        background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
+        color: #FFD700;
+        transform: translateX(8px);
+        padding-left: 33px;
+    }
+
+    #sidebar ul li:hover i {
+        color: #FFD700;
+        transform: scale(1.1);
+    }
+
+    #sidebar ul li:active {
+        transform: translateX(4px);
+        transition: transform 0.1s ease;
+    }
+
+    /* First item special styling */
+    #sidebar ul li:first-child {
+        margin-top: 10px;
+    }
+
+    /* Last item special styling */
+    #sidebar ul li:last-child {
+        border-bottom: none;
+        margin-bottom: 20px;
     }
 
 
