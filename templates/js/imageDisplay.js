@@ -12,7 +12,7 @@ export function showPlaceholder() {
   const c = getImageContainer();
   if (!c) return;
   c.innerHTML = `
-    <div class="images-empty-state">
+    <div class="images-placeholder">
       <p>Please select a bone from the dropdown to view its image.</p>
     </div>
   `;

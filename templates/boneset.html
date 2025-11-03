@@ -4,91 +4,213 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bone Set Viewer</title>
+    <title>Digital Bones Box - Bone Set Viewer</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:,">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 
 <body>
-    <div id="badge">
-        <button id="toggle-sidebar">☰</button>
-        <span id="text-button-Home" role="button">Home</span>
-        <span id="text-button-Tutor" role="button">Tutor</span>
-        <span id="text-button-Study" role="button">Study</span>
-        <div id="help-button-container"></div>
-        <div id="innerbadge">
-            <span id="text-button-Login" role="button">Login</span>
-            <span id="text-button-SignUp" role="button">Sign Up</span>
-        </div>
-    </div>
-
-    <div id="sidebar-container"></div>
-
-    <div id="editor-view">
-        <div class="container">
-            <h1>Bone Set Viewer</h1>
-            
-            <!-- Search functionality -->
-            <div class="search-container">
-                <input type="text" 
-                       id="search-bar" 
-                       placeholder="Search bones or sub-bones (min 2 characters)"
-                       autocomplete="off" />
-                <div id="search-loading" class="search-loading" style="display: none;">Searching...</div>
-            </div>
-            
-            <ul id="search-results" class="search-results"></ul>
-            
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <label for="bonesets">Choose a Boneset, Bone, or Sub-bone:</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="boneset-select" 
-                            name="boneId"
-                            hx-get="http://127.0.0.1:8000/api/description/" 
-                            hx-target="#description-Container"
-                            hx-trigger="change">
-                        <option value="">--Please select a Boneset--</option>
-                    </select>
-                    <select id="bone-select" 
-                            name="boneId"
-                            hx-get="http://127.0.0.1:8000/api/description/" 
-                            hx-target="#description-Container"
-                            hx-trigger="change"
-                            disabled>
-                        <option value="">--Please select a Bone--</option>
-                    </select>
-                    <select id="subbone-select"
-                            name="boneId"
-                            hx-get="http://127.0.0.1:8000/api/description/" 
-                            hx-target="#description-Container"
-                            hx-trigger="change"
-                            disabled>
-                        <option value="">--Please choose a Sub-Bone--</option>
-                    </select>
+    <!-- Header Navigation -->
+    <header id="badge" role="banner">
+        <div class="header-left">
+            <button id="toggle-sidebar" aria-label="Toggle navigation menu">☰</button>
+            <nav class="main-navigation" role="navigation">
+                <span id="text-button-Home" role="button" tabindex="0">Home</span>
+                <span id="text-button-Tutor" role="button" tabindex="0">Tutor</span>
+                <span id="text-button-Study" role="button" tabindex="0">Study</span>
+                <div id="help-button-container">
+                    <span id="text-button-Help" role="button" tabindex="0" onclick="document.getElementById('new-help-modal').style.display='flex';" style="pointer-events: auto !important; z-index: 9999 !important; cursor: pointer;">Help</span>
                 </div>
+            </nav>
+        </div>
+        
+        <div class="header-center">
+            <!-- Empty center section -->
+        </div>
+        
+        <div class="header-right">
+            <div id="innerbadge">
+                <span id="text-button-Login" role="button" tabindex="0">Login</span>
+                <span id="text-button-SignUp" role="button" tabindex="0">Sign Up</span>
             </div>
+        </div>
+    </header>
 
-            <div id="bone-Description-Container">
-                <h3>Description</h3>
-                <ul id="description-Container"></ul>
-            </div>
-            <section id="bone-images-section" aria-labelledby="bone-images-heading">
-                <h3 id="bone-images-heading">Images</h3>
-                <div id="bone-image-container" role="region" aria-live="polite"></div>
+    <!-- Sidebar Container -->
+    <aside id="sidebar-container" role="complementary"></aside>
+
+    <!-- Main Content Area -->
+    <main id="editor-view" role="main">
+        <div class="container">
+            <header class="page-header">
+                <h1>Digital Bones Box</h1>
+                <p class="subtitle">Interactive Anatomical Learning Platform</p>
+            </header>
+            
+            <!-- Search Section -->
+            <section class="search-section">
+                <div class="form-group">
+                    <label for="search-bar">Search Bones and Sub-bones</label>
+                    <div class="search-container">
+                        <input type="text" 
+                               id="search-bar" 
+                               placeholder="Enter bone name (minimum 2 characters)"
+                               autocomplete="off" />
+                        <div id="search-loading" class="search-loading" style="display: none;">Searching...</div>
+                    </div>
+                </div>
+                
+                <ul id="search-results" class="search-results" role="listbox" aria-label="Search results"></ul>
             </section>
-            <div class="navigation-buttons">
-                <button id="prev-button" disabled>Previous</button>
-                <button id="next-button" disabled>Next</button>
+            
+            <!-- Selection Section -->
+            <section class="selection-section">
+                <div class="form-group">
+                    <label>Select Anatomical Structure</label>
+                    <div class="form-row">
+                        <div class="select-group">
+                            <label for="boneset-select">Boneset</label>
+                            <select id="boneset-select" 
+                                    name="boneId"
+                                    hx-get="http://127.0.0.1:8000/api/description/" 
+                                    hx-target="#description-Container"
+                                    hx-trigger="change">
+                                <option value="">Select a boneset</option>
+                            </select>
+                        </div>
+                        
+                        <div class="select-group">
+                            <label for="bone-select">Bone</label>
+                            <select id="bone-select" 
+                                    name="boneId"
+                                    hx-get="http://127.0.0.1:8000/api/description/" 
+                                    hx-target="#description-Container"
+                                    hx-trigger="change"
+                                    disabled>
+                                <option value="">Select a bone</option>
+                            </select>
+                        </div>
+                        
+                        <div class="select-group">
+                            <label for="subbone-select">Sub-bone</label>
+                            <select id="subbone-select"
+                                    name="boneId"
+                                    hx-get="http://127.0.0.1:8000/api/description/" 
+                                    hx-target="#description-Container"
+                                    hx-trigger="change"
+                                    disabled>
+                                <option value="">Select a sub-bone</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Grid: Description and Images Side by Side -->
+            <div class="content-grid">
+                <!-- Description Section -->
+                <section id="bone-Description-Container" class="description-panel">
+                    <div class="panel-header">
+                        <h2>Anatomical Description</h2>
+                    </div>
+                    <div class="description-content">
+                        <ul id="description-Container" role="list" aria-live="polite"></ul>
+                        <div class="description-placeholder">
+                            <p>Select a bone or sub-bone above to view detailed anatomical descriptions.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Images Section -->
+                <section id="bone-images-section" class="images-panel">
+                    <div class="panel-header">
+                        <h2>Visual Reference</h2>
+                    </div>
+                    <div class="images-content">
+                        <div id="bone-image-container" role="region" aria-live="polite"></div>
+                        <div class="images-placeholder">
+                            <p>Please select a bone from the dropdown to view its image.</p>
+                        </div>
+                    </div>
+                </section>
             </div>
-           
+            
+            <!-- Navigation -->
+            <nav class="navigation-buttons" role="navigation">
+                <button id="prev-button" class="btn-secondary" disabled>Previous</button>
+                <button id="next-button" disabled>Next</button>
+            </nav>
+        </div>
+    </main>
+    
+    <!-- NEW Help Modal - Clean Version -->
+    <div id="new-help-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 40px; border-radius: 16px; max-width: 650px; margin: 20px; border: 3px solid #FFD700; box-shadow: 0 25px 60px rgba(0,0,0,0.4);">
+            <h2 style="color: #003366; text-align: center; margin-bottom: 25px; border-bottom: 3px solid #FFD700; padding-bottom: 15px; font-size: 1.6rem; font-weight: bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">How to Use the Digital Bones Box</h2>
+            <div style="margin: 25px 0;">
+                <div style="color: #2d3748; font-size: 1.1rem; line-height: 1.8; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 30px; border-radius: 12px; border-left: 5px solid #0369a1; margin-bottom: 25px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <p style="margin: 0 0 20px 0; font-weight: 500; color: #1a365d;">Welcome to the <strong>Digital Bones Box</strong>, your interactive anatomical learning platform.</p>
+                    
+                    <p style="margin: 0 0 15px 0;">Getting started is simple:</p>
+                    
+                    <ul style="margin: 15px 0; padding-left: 25px; list-style-type: none;">
+                        <li style="margin: 8px 0; position: relative; padding-left: 25px;">
+                            <span style="position: absolute; left: 0; color: #0369a1; font-weight: bold;">•</span>
+                            Use the dropdown menus above to navigate through different bone sets
+                        </li>
+                        <li style="margin: 8px 0; position: relative; padding-left: 25px;">
+                            <span style="position: absolute; left: 0; color: #0369a1; font-weight: bold;">•</span>
+                            Select a boneset from the first dropdown to enable the bone selection menu
+                        </li>
+                        <li style="margin: 8px 0; position: relative; padding-left: 25px;">
+                            <span style="position: absolute; left: 0; color: #0369a1; font-weight: bold;">•</span>
+                            Choose a specific bone to view detailed anatomical descriptions and high-quality images
+                        </li>
+                        <li style="margin: 8px 0; position: relative; padding-left: 25px;">
+                            <span style="position: absolute; left: 0; color: #0369a1; font-weight: bold;">•</span>
+                            Select sub-bones for more specific anatomical details
+                        </li>
+                        <li style="margin: 8px 0; position: relative; padding-left: 25px;">
+                            <span style="position: absolute; left: 0; color: #0369a1; font-weight: bold;">•</span>
+                            Use Previous and Next navigation buttons to browse through related items
+                        </li>
+                    </ul>
+                    
+                    <p style="margin: 20px 0 0 0; font-style: italic; color: #4a5568; font-size: 1rem;">Press the ESC key to close this help window at any time.</p>
+                </div>
+                <button onclick="document.getElementById('new-help-modal').style.display='none'" style="background: linear-gradient(135deg, #003366 0%, #1e40af 100%); color: white; border: 2px solid #FFD700; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1.1rem; display: block; margin: 0 auto; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,51,102,0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,51,102,0.4)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 12px rgba(0,51,102,0.3)'">
+                    Close Guide
+                </button>
+            </div>
         </div>
     </div>
     
-    <script type="module" src="js/search.js"></script>
+    <!-- Scripts -->
     <script type="module" src="js/sidebar.js"></script>
     <script type="module" src="js/main.js"></script>
     <script type="module" src="js/imageDisplay.js"></script>
+    
+    <!-- Simple Escape Key Handler -->
+    <script>
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('new-help-modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

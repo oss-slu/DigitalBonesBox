@@ -1,6 +1,6 @@
 import { fetchCombinedData, fetchBoneData } from "./api.js";
 import { populateBonesetDropdown, setupDropdownListeners } from "./dropdowns.js";
-import { initializeSidebar, loadHelpButton } from "./sidebar.js";
+import { initializeSidebar } from "./sidebar.js";
 import { setupNavigation, setBoneAndSubbones, disableButtons } from "./navigation.js";
 import { loadDescription } from "./description.js";
 import { displayBoneData, clearViewer } from "./viewer.js";
@@ -18,9 +18,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 1. Initialize search functionality
     initializeSearch();
 
-    // 2. Sidebar behavior and help button
+    // 2. Sidebar behavior
     initializeSidebar();
-    loadHelpButton();
 
 
 
