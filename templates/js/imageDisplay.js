@@ -18,9 +18,9 @@ export function showPlaceholder() {
   `;
   
   // Remove black background class when showing placeholder
-  const imagesContent = document.querySelector('.images-content');
+  const imagesContent = document.querySelector(".images-content");
   if (imagesContent) {
-    imagesContent.classList.remove('has-images');
+    imagesContent.classList.remove("has-images");
   }
 }
 
@@ -29,9 +29,9 @@ export function clearImages() {
   if (c) c.innerHTML = "";
   
   // Remove black background class when clearing images
-  const imagesContent = document.querySelector('.images-content');
+  const imagesContent = document.querySelector(".images-content");
   if (imagesContent) {
-    imagesContent.classList.remove('has-images');
+    imagesContent.classList.remove("has-images");
   }
 }
 
@@ -59,9 +59,9 @@ export function displayBoneImages(images) {
   }
   
   // Add has-images class when images are displayed
-  const imagesContent = document.querySelector('.images-content');
+  const imagesContent = document.querySelector(".images-content");
   if (imagesContent) {
-    imagesContent.classList.add('has-images');
+    imagesContent.classList.add("has-images");
   }
 }
 
