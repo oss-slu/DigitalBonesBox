@@ -16,11 +16,23 @@ export function showPlaceholder() {
       <p>Please select a bone from the dropdown to view its image.</p>
     </div>
   `;
+  
+  // Remove black background class when showing placeholder
+  const imagesContent = document.querySelector('.images-content');
+  if (imagesContent) {
+    imagesContent.classList.remove('has-images');
+  }
 }
 
 export function clearImages() {
   const c = getImageContainer();
   if (c) c.innerHTML = "";
+  
+  // Remove black background class when clearing images
+  const imagesContent = document.querySelector('.images-content');
+  if (imagesContent) {
+    imagesContent.classList.remove('has-images');
+  }
 }
 
 /** ---- Public entry: render images array -------------------------------- */
@@ -44,6 +56,12 @@ export function displayBoneImages(images) {
     displayTwoImages(images, container);
   } else {
     displayMultipleImages(images, container);
+  }
+  
+  // Add has-images class when images are displayed
+  const imagesContent = document.querySelector('.images-content');
+  if (imagesContent) {
+    imagesContent.classList.add('has-images');
   }
 }
 
@@ -84,30 +102,25 @@ function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
 }
 
 function displayTwoImages(images, container) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "double-image-wrapper";
+  // Add the two-images class to the container for CSS styling
+  container.className = "two-images";
 
   images.slice(0, 2).forEach((image, idx) => {
-    const imgBox = document.createElement("div");
-    imgBox.className = "image-box";
+    const imgItem = document.createElement("div");
+    imgItem.className = "image-item";
 
     const img = document.createElement("img");
-    img.className = "bone-image";
     img.src = image.url || image.src || "";
     img.alt = image.alt || image.filename || "Bone image";
 
     img.addEventListener("load", () => {
       img.classList.add("loaded");
-      const cfg = idx === 0 ? TWO_IMAGE_ROTATION.left : TWO_IMAGE_ROTATION.right;
-      applyRotation(img, cfg);
     });
-    img.addEventListener("error", () => (imgBox.textContent = "Failed to load image."));
+    img.addEventListener("error", () => (imgItem.textContent = "Failed to load image."));
 
-    imgBox.appendChild(img);
-    wrapper.appendChild(imgBox);
+    imgItem.appendChild(img);
+    container.appendChild(imgItem);
   });
-
-  container.appendChild(wrapper);
 }
 
 /** ---- 3+ images grid ---------------------------------------------------- */
