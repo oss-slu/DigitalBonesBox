@@ -1,0 +1,362 @@
+{
+  "slide_number": 17,
+  "image_dimensions": {
+    "width": 12192000,
+    "height": 6858000
+  },
+  "colored_regions": [
+    {
+      "anatomical_name": "Ischium",
+      "color": "FF00E6",
+      "color_name": "magenta",
+      "shape_id": "521",
+      "path_data": [
+        {
+          "path_width": 483403,
+          "path_height": 527327,
+          "commands": [
+            {
+              "type": "moveTo",
+              "x": 5035262,
+              "y": 4077998
+            },
+            {
+              "type": "lineTo",
+              "x": 5026473,
+              "y": 4262562
+            },
+            {
+              "type": "lineTo",
+              "x": 4973738,
+              "y": 4368028
+            },
+            {
+              "type": "lineTo",
+              "x": 4960554,
+              "y": 4416366
+            },
+            {
+              "type": "lineTo",
+              "x": 4995711,
+              "y": 4482282
+            },
+            {
+              "type": "lineTo",
+              "x": 5017684,
+              "y": 4574564
+            },
+            {
+              "type": "lineTo",
+              "x": 5022078,
+              "y": 4605325
+            },
+            {
+              "type": "lineTo",
+              "x": 5153915,
+              "y": 4600931
+            },
+            {
+              "type": "lineTo",
+              "x": 5290147,
+              "y": 4535015
+            },
+            {
+              "type": "lineTo",
+              "x": 5443957,
+              "y": 4429549
+            },
+            {
+              "type": "lineTo",
+              "x": 5443957,
+              "y": 4429549
+            },
+            {
+              "type": "lineTo",
+              "x": 5364855,
+              "y": 4381211
+            },
+            {
+              "type": "lineTo",
+              "x": 5281358,
+              "y": 4328478
+            },
+            {
+              "type": "lineTo",
+              "x": 5215439,
+              "y": 4271351
+            },
+            {
+              "type": "lineTo",
+              "x": 5140732,
+              "y": 4218619
+            },
+            {
+              "type": "lineTo",
+              "x": 5035262,
+              "y": 4077998
+            },
+            {
+              "type": "close"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "anatomical_name": "Ischium",
+      "color": "FF00E6",
+      "color_name": "magenta",
+      "shape_id": "522",
+      "path_data": [
+        {
+          "path_width": 531743,
+          "path_height": 610821,
+          "commands": [
+            {
+              "type": "moveTo",
+              "x": 6916137,
+              "y": 4209830
+            },
+            {
+              "type": "lineTo",
+              "x": 6841430,
+              "y": 4288929
+            },
+            {
+              "type": "lineTo",
+              "x": 6823852,
+              "y": 4372422
+            },
+            {
+              "type": "lineTo",
+              "x": 6766722,
+              "y": 4469099
+            },
+            {
+              "type": "lineTo",
+              "x": 6749144,
+              "y": 4574564
+            },
+            {
+              "type": "lineTo",
+              "x": 6744749,
+              "y": 4640480
+            },
+            {
+              "type": "lineTo",
+              "x": 6713987,
+              "y": 4671241
+            },
+            {
+              "type": "lineTo",
+              "x": 6546994,
+              "y": 4640480
+            },
+            {
+              "type": "lineTo",
+              "x": 6388789,
+              "y": 4526226
+            },
+            {
+              "type": "lineTo",
+              "x": 6485470,
+              "y": 4420761
+            },
+            {
+              "type": "lineTo",
+              "x": 6599729,
+              "y": 4306506
+            },
+            {
+              "type": "lineTo",
+              "x": 6665647,
+              "y": 4192252
+            },
+            {
+              "type": "lineTo",
+              "x": 6696409,
+              "y": 4108759
+            },
+            {
+              "type": "lineTo",
+              "x": 6713987,
+              "y": 4060420
+            },
+            {
+              "type": "lineTo",
+              "x": 6784300,
+              "y": 4060420
+            },
+            {
+              "type": "lineTo",
+              "x": 6867797,
+              "y": 4082392
+            },
+            {
+              "type": "lineTo",
+              "x": 6920532,
+              "y": 4152703
+            },
+            {
+              "type": "lineTo",
+              "x": 6916137,
+              "y": 4209830
+            },
+            {
+              "type": "close"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "anatomical_name": "Ilium",
+      "color": "FF6600",
+      "color_name": "orange",
+      "shape_id": "523",
+      "path_data": [
+        {
+          "path_width": 369143,
+          "path_height": 312002,
+          "commands": [
+            {
+              "type": "moveTo",
+              "x": 4894636,
+              "y": 4886565
+            },
+            {
+              "type": "lineTo",
+              "x": 4991316,
+              "y": 5031580
+            },
+            {
+              "type": "lineTo",
+              "x": 5061629,
+              "y": 4970059
+            },
+            {
+              "type": "lineTo",
+              "x": 5171493,
+              "y": 4921720
+            },
+            {
+              "type": "lineTo",
+              "x": 5263779,
+              "y": 4882171
+            },
+            {
+              "type": "lineTo",
+              "x": 5140732,
+              "y": 4794283
+            },
+            {
+              "type": "lineTo",
+              "x": 5013289,
+              "y": 4719578
+            },
+            {
+              "type": "lineTo",
+              "x": 4964949,
+              "y": 4763522
+            },
+            {
+              "type": "lineTo",
+              "x": 4921003,
+              "y": 4820649
+            },
+            {
+              "type": "lineTo",
+              "x": 4894636,
+              "y": 4886565
+            },
+            {
+              "type": "close"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "anatomical_name": "Ilium",
+      "color": "FF6600",
+      "color_name": "orange",
+      "shape_id": "524",
+      "path_data": [
+        {
+          "path_width": 351566,
+          "path_height": 298819,
+          "commands": [
+            {
+              "type": "moveTo",
+              "x": 7074341,
+              "y": 4926116
+            },
+            {
+              "type": "lineTo",
+              "x": 6960082,
+              "y": 4934905
+            },
+            {
+              "type": "lineTo",
+              "x": 6880980,
+              "y": 4904144
+            },
+            {
+              "type": "lineTo",
+              "x": 6806272,
+              "y": 4851411
+            },
+            {
+              "type": "lineTo",
+              "x": 6779905,
+              "y": 4921721
+            },
+            {
+              "type": "lineTo",
+              "x": 6757932,
+              "y": 5027187
+            },
+            {
+              "type": "lineTo",
+              "x": 6788694,
+              "y": 5115075
+            },
+            {
+              "type": "lineTo",
+              "x": 6797483,
+              "y": 5150230
+            },
+            {
+              "type": "lineTo",
+              "x": 6929320,
+              "y": 5128258
+            },
+            {
+              "type": "lineTo",
+              "x": 7004028,
+              "y": 5128258
+            },
+            {
+              "type": "lineTo",
+              "x": 7039184,
+              "y": 5093103
+            },
+            {
+              "type": "lineTo",
+              "x": 7109498,
+              "y": 4996426
+            },
+            {
+              "type": "lineTo",
+              "x": 7074341,
+              "y": 4926116
+            },
+            {
+              "type": "close"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "slide_number": 13,
+  "image_dimensions": {
+    "width": 12192000,
+    "height": 6858000
+  },
+  "colored_regions": [
+    {
+      "anatomical_name": "Pubis",
+      "color": "008000",
+      "color_name": "green_variant",
+      "shape_id": "413",
+      "path_data": [
+        {
+          "path_width": 151637,
+          "path_height": 183238,
+          "commands": [
+            {
+              "type": "moveTo",
+              "x": 3943868,
+              "y": 4397713
+            },
+            {
+              "type": "lineTo",
+              "x": 3887004,
+              "y": 4435625
+            },
+            {
+              "type": "lineTo",
+              "x": 3861731,
+              "y": 4460899
+            },
+            {
+              "type": "lineTo",
+              "x": 3861731,
+              "y": 4498810
+            },
+            {
+              "type": "lineTo",
+              "x": 3880686,
+              "y": 4530403
+            },
+            {
+              "type": "lineTo",
+              "x": 3924913,
+              "y": 4580951
+            },
+            {
+              "type": "lineTo",
+              "x": 3988095,
+              "y": 4580951
+            },
+            {
+              "type": "lineTo",
+              "x": 4013368,
+              "y": 4448262
+            },
+            {
+              "type": "lineTo",
+              "x": 3943868,
+              "y": 4397713
+            },
+            {
+              "type": "close"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "anatomical_name": "Pubis",
+      "color": "008000",
+      "color_name": "green_variant",
+      "shape_id": "414",
+      "path_data": [
+        {
+          "path_width": 176909,
+          "path_height": 214831,
+          "commands": [
+            {
+              "type": "moveTo",
+              "x": 7583145,
+              "y": 4126016
+            },
+            {
+              "type": "lineTo",
+              "x": 7538918,
+              "y": 4195521
+            },
+            {
+              "type": "lineTo",
+              "x": 7526281,
+              "y": 4271343
+            },
+            {
+              "type": "lineTo",
+              "x": 7557872,
+              "y": 4328210
+            },
+            {
+              "type": "lineTo",
+              "x": 7602099,
+              "y": 4340847
+            },
+            {
+              "type": "lineTo",
+              "x": 7671600,
+              "y": 4340847
+            },
+            {
+              "type": "lineTo",
+              "x": 7703190,
+              "y": 4277662
+            },
+            {
+              "type": "lineTo",
+              "x": 7703190,
+              "y": 4201839
+            },
+            {
+              "type": "lineTo",
+              "x": 7614736,
+              "y": 4170246
+            },
+            {
+              "type": "lineTo",
+              "x": 7583145,
+              "y": 4126016
+            },
+            {
+              "type": "close"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 // js/imageDisplay.js
 // Rendering helpers for the image area (no dropdown wiring).
 
+import { renderAnnotations, clearAnnotations } from "./annotationOverlay.js";
+let __disposeAnnotations = null;
+
 function getImageContainer() {
   return /** @type {HTMLElement|null} */ (
     document.getElementById("bone-image-container")
@@ -26,7 +29,12 @@ export function showPlaceholder() {
 
 export function clearImages() {
   const c = getImageContainer();
-  if (c) c.innerHTML = "";
+  if (c) {
+    // Clear any existing annotations overlay first
+    if (__disposeAnnotations) { __disposeAnnotations(); __disposeAnnotations = null; }
+    clearAnnotations(c);
+    c.innerHTML = "";
+  }
   
   // Remove black background class when clearing images
   const imagesContent = document.querySelector(".images-content");
@@ -36,7 +44,7 @@ export function clearImages() {
 }
 
 /** ---- Public entry: render images array -------------------------------- */
-export function displayBoneImages(images) {
+export function displayBoneImages(images, options = {}) {
   const container = getImageContainer();
   if (!container) {
     console.warn("bone-image-container not found");
@@ -62,6 +70,19 @@ export function displayBoneImages(images) {
   const imagesContent = document.querySelector(".images-content");
   if (imagesContent) {
     imagesContent.classList.add("has-images");
+  }
+   // ---- NEW: render annotations if we were given a boneId or a jsonUrl
+  const { boneId, annotationsJsonUrl } = options || {};
+  if (boneId || annotationsJsonUrl) {
+    // Defer to next frame to ensure layout is settled
+    requestAnimationFrame(async () => {
+      if (__disposeAnnotations) { __disposeAnnotations(); __disposeAnnotations = null; }
+      __disposeAnnotations = await renderAnnotations({
+        boneId,
+        jsonUrl: annotationsJsonUrl,
+        container
+      });
+    });
   }
 }
 

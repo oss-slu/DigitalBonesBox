@@ -25,7 +25,10 @@ async function loadBoneImages(boneId) {
     if (images.length === 0) {
       showPlaceholder();                        // ← message if backend returns no images
     } else {
-      displayBoneImages(images);
+      // TEMP: force annotation overlay for slide 02 (Bony Pelvis)
+      const jsonUrl = "data/DataPelvis/annotations/text_label_annotations/slide02_bony_pelvis.json";
+      displayBoneImages(images, { annotationsJsonUrl: jsonUrl });
+
     }
   } catch (err) {
     console.error("Failed to load bone images:", err);

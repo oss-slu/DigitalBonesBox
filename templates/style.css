@@ -1749,3 +1749,70 @@ button:disabled {
     0% { left: -100%; }
     100% { left: 100%; }
 }
+
+
+/* === Annotation overlay (scoped, minimal) === */
+.annotation-stage {
+  position: absolute;
+  inset: 0;            /* fill #bone-image-container */
+  pointer-events: none;
+}
+
+.annotation-svg {
+  position: absolute;
+  inset: 0;
+}
+
+.annotation-labels {
+  position: absolute;
+  inset: 0;
+}
+
+.annotation-label {
+  position: absolute;
+  background: #ffffff;
+  border: 1px solid #000000;
+  padding: 2px 6px;
+  font: 500 12px/1.25 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #000;
+  border-radius: 2px;
+  box-shadow: none;
+  pointer-events: auto; /* future interactivity if needed */
+  user-select: text;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Clean, crisp lines */
+.annotation-line {
+  stroke: #000000;
+  stroke-width: 2;
+}
+
+/* When annotations are active, remove layout spacing so coordinates align */
+#bone-image-container.annotations-active {
+  padding: 0 !important;
+  gap: 0 !important;
+}
+
+/* Remove inner image padding that would offset coordinates */
+#bone-image-container.annotations-active .image-item img,
+#bone-image-container.annotations-active .bone-image {
+  padding: 0 !important;
+}
+
+/* Ensure the container can host absolute overlays */
+#bone-image-container {
+  position: relative; /* safe default for overlay */
+}
+
+/* Make sure images don't layer above labels/lines */
+#bone-image-container .image-item,
+#bone-image-container .image-box {
+  position: relative;
+  z-index: 1;
+}
+#bone-image-container .annotation-stage {
+  z-index: 2;
+}
