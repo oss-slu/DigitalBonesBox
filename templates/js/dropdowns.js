@@ -25,7 +25,7 @@ async function loadBoneImages(boneId) {
     if (images.length === 0) {
       showPlaceholder();                        // ← message if backend returns no images
     } else {
-      displayBoneImages(images);
+      displayBoneImages(images, boneId);        // ← Pass boneId for colored regions
     }
   } catch (err) {
     console.error("Failed to load bone images:", err);
