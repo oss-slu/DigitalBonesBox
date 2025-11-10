@@ -5,6 +5,7 @@ import { setupNavigation, setBoneAndSubbones, disableButtons } from "./navigatio
 import { loadDescription } from "./description.js";
 import { displayBoneData, clearViewer } from "./viewer.js";
 import { initializeSearch } from "./search.js";
+import quizManager from "./quiz.js";
 
 let combinedData = { bonesets: [], bones: [], subbones: [] };
 
@@ -21,12 +22,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 2. Sidebar behavior
     initializeSidebar();
 
-
-
-    // 4. Fetch data and populate dropdowns
+    // 3. Fetch data FIRST (moved from step 4)
     combinedData = await fetchCombinedData();
     populateBonesetDropdown(combinedData.bonesets);
     setupDropdownListeners(combinedData);
+
+    // 4. Initialize quiz system AFTER data is loaded
+    try {
+        // Manually set the bones data in quizManager
+        quizManager.allBones = combinedData.bones || [];
+        
+        if (quizManager.allBones.length >= 3) {
+            quizManager.setupEventListeners();
+            console.log("Quiz system initialized successfully with", quizManager.allBones.length, "bones");
+        } else {
+            console.warn("Not enough bones for quiz:", quizManager.allBones.length);
+        }
+    } catch (error) {
+        console.error("Error initializing quiz:", error);
+    }
 
     // Keep bone and subbone selects disabled until the user explicitly selects a boneset
     const boneSelectEl = document.getElementById("bone-select");
