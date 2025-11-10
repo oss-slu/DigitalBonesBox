@@ -34,7 +34,7 @@ async function maybeLoadAnnotations(boneId) {
     // If your HTML file is at /templates/boneset.html, "./data/..." is correct.
     await loadAndDrawAnnotations(
       stage,
-      "./data/DataPelvis/annotations/text_label_annotations/slide02_bony_pelvis.json"
+      "./templates/data/DataPelvis/annotations/text_label_annotations/slide02_bony_pelvis.json"
     );
   }
 }
@@ -43,7 +43,7 @@ async function maybeLoadAnnotations(boneId) {
 const API_BASE = "http://127.0.0.1:8000";
 
 /** Helper: fetch images for a bone/sub-bone and render them */
-async function loadBoneImages(boneId) {
+async function loadBoneImages(boneId, options = {}) {
   const stage = getImageStage();
   if (!boneId) {
     showPlaceholder();
@@ -64,7 +64,7 @@ async function loadBoneImages(boneId) {
       showPlaceholder();
       if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
     } else {
-      displayBoneImages(images);
+      displayBoneImages(images, options);
       await maybeLoadAnnotations(boneId); // <- draw labels/lines if we have a rule
     }
   } catch (err) {
@@ -106,33 +106,41 @@ export function setupDropdownListeners(combinedData) {
   _boneById = Object.fromEntries((combinedData.bones || []).map(b => [b.id, b]));
 
   // Boneset change
-  bonesetSelect.addEventListener("change", (e) => {
-    const selectedBonesetId = e.target.value;
+bonesetSelect.addEventListener("change", (e) => {
+  const selectedBonesetId = e.target.value;
 
-    boneSelect.innerHTML    = "<option value=\"\">--Please choose a Bone--</option>";
-    subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
-    subboneSelect.disabled  = true;
+  boneSelect.innerHTML    = "<option value=\"\">--Please choose a Bone--</option>";
+  subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
+  subboneSelect.disabled  = true;
 
-    const relatedBones = combinedData.bones.filter(b => b.boneset === selectedBonesetId);
-    relatedBones.forEach(b => {
-      const opt = document.createElement("option");
-      opt.value = b.id;
-      opt.textContent = b.name;
-      boneSelect.appendChild(opt);
-    });
-    boneSelect.disabled = relatedBones.length === 0;
-
-    if (!selectedBonesetId || relatedBones.length === 0) {
-      showPlaceholder();
-      const stage = getImageStage();
-      if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
-      return;
-    }
-
-    // Optionally preview first bone’s images
-    const firstBone = relatedBones[0];
-    loadBoneImages(firstBone.id);
+  const relatedBones = combinedData.bones.filter(b => b.boneset === selectedBonesetId);
+  relatedBones.forEach(b => {
+    const opt = document.createElement("option");
+    opt.value = b.id;
+    opt.textContent = b.name;
+    boneSelect.appendChild(opt);
   });
+  boneSelect.disabled = relatedBones.length === 0;
+
+  if (!selectedBonesetId || relatedBones.length === 0) {
+    showPlaceholder();
+    const stage = getImageStage();
+    if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
+    return;
+  }
+
+  // Preview first bone’s images
+  const firstBone = relatedBones[0];
+  const bonesetName =
+    (bonesetSelect.options[bonesetSelect.selectedIndex]?.text || "").trim().toLowerCase();
+
+  const opts = (bonesetName === "bony pelvis")
+    ? { annotationsUrl: "./data/DataPelvis/annotations/text_label_annotations/slide02_bony_pelvis.json" }
+    : {};
+
+  loadBoneImages(firstBone.id, opts);
+});
+
 
   // Bone change
   boneSelect.addEventListener("change", (e) => {
@@ -151,7 +159,14 @@ export function setupDropdownListeners(combinedData) {
 
     if (selectedBoneId) {
       loadDescription(selectedBoneId);
-      loadBoneImages(selectedBoneId);
+         // if the selected bone's label is exactly "Bony Pelvis", add the overlay for slide 02
+     const boneName =
+       (boneSelect.options[boneSelect.selectedIndex]?.text || "").trim().toLowerCase();
+     const opts =
+       boneName === "bony pelvis"
+         ? { annotationsUrl: "./templates/data/DataPelvis/annotations/text_label_annotations/slide02_bony_pelvis.json" }
+         : {};
+     loadBoneImages(selectedBoneId, opts);
     } else {
       showPlaceholder();
       const stage = getImageStage();
