@@ -1,35 +1,76 @@
-// js/dropdowns.js
+// templates/js/dropdowns.js
 import { loadDescription } from "./description.js";
-import { displayBoneImages, clearImages, showPlaceholder } from "./imageDisplay.js"; // keep this line
+import { displayBoneImages, clearImages, showPlaceholder } from "./imageDisplay.js";
+import { loadAndDrawAnnotations, clearAnnotations } from "./annotationOverlay.js";
 
-// Show the placeholder as soon as the page loads
+// Show the placeholder ASAP
 document.addEventListener("DOMContentLoaded", () => {
   showPlaceholder();
 });
+
+// ---- Map/lookup you can extend later -----------------
+let _boneById = {}; // filled in setupDropdownListeners
+
+function getImageStage() {
+  return /** @type {HTMLElement|null} */ (document.getElementById("bone-image-container"));
+}
+
+async function maybeLoadAnnotations(boneId) {
+  const stage = getImageStage();
+  if (!stage) return;
+
+  // remove any previous overlay
+  clearAnnotations(stage);
+  stage.classList.remove("with-annotations");
+
+  const bone = _boneById[boneId];
+  if (!bone) return;
+
+  // Example rule: show annotations for Bony Pelvis (extend as you add more)
+  if (bone.name === "Bony Pelvis") {
+    stage.classList.add("with-annotations");
+
+    // IMPORTANT: this path is relative to the PAGE URL, not this JS file.
+    // If your HTML file is at /templates/boneset.html, "./data/..." is correct.
+    await loadAndDrawAnnotations(
+      stage,
+      "./data/DataPelvis/annotations/text_label_annotations/slide02_bony_pelvis.json"
+    );
+  }
+}
 
 // Backend API base (runs on 8000)
 const API_BASE = "http://127.0.0.1:8000";
 
 /** Helper: fetch images for a bone/sub-bone and render them */
 async function loadBoneImages(boneId) {
-  if (!boneId) { showPlaceholder(); return; }   // ← show friendly message if nothing selected
+  const stage = getImageStage();
+  if (!boneId) {
+    showPlaceholder();
+    if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
+    return;
+  }
   try {
     const res = await fetch(`${API_BASE}/api/bone-data/?boneId=${encodeURIComponent(boneId)}`);
     if (!res.ok) {
       console.warn("bone-data API error:", res.status, boneId);
-      showPlaceholder();                        // ← fallback to message
+      showPlaceholder();
+      if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
       return;
     }
     const data = await res.json();
     const images = Array.isArray(data.images) ? data.images : [];
     if (images.length === 0) {
-      showPlaceholder();                        // ← message if backend returns no images
+      showPlaceholder();
+      if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
     } else {
       displayBoneImages(images);
+      await maybeLoadAnnotations(boneId); // <- draw labels/lines if we have a rule
     }
   } catch (err) {
     console.error("Failed to load bone images:", err);
-    showPlaceholder();                          // ← message on error
+    showPlaceholder();
+    if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
   }
 }
 
@@ -39,22 +80,12 @@ export function populateBonesetDropdown(bonesets) {
     console.error("populateBonesetDropdown: #boneset-select not found in DOM");
     return;
   }
-
-  // Defensive logging
-  console.debug(
-    "populateBonesetDropdown called, bonesets length:",
-    Array.isArray(bonesets) ? bonesets.length : typeof bonesets
-  );
-
   bonesetSelect.innerHTML = "<option value=\"\">--Please select a Boneset--</option>";
-
   if (!bonesets || bonesets.length === 0) {
     bonesetSelect.innerHTML = "<option value=\"\">--No bonesets available--</option>";
     bonesetSelect.disabled = true;
-    console.warn("populateBonesetDropdown: no bonesets to populate");
     return;
   }
-
   bonesets.forEach((set) => {
     const option = document.createElement("option");
     option.value = set.id;
@@ -63,6 +94,7 @@ export function populateBonesetDropdown(bonesets) {
   });
   bonesetSelect.disabled = false;
 }
+
 export function setupDropdownListeners(combinedData) {
   const bonesetSelect  = document.getElementById("boneset-select");
   const boneSelect     = document.getElementById("bone-select");
@@ -70,16 +102,17 @@ export function setupDropdownListeners(combinedData) {
 
   if (!combinedData) return;
 
-  // --- Boneset change → repopulate bones, show default images (no UI auto-select)
+  // Build quick lookup
+  _boneById = Object.fromEntries((combinedData.bones || []).map(b => [b.id, b]));
+
+  // Boneset change
   bonesetSelect.addEventListener("change", (e) => {
     const selectedBonesetId = e.target.value;
 
-    // reset dependent dropdowns
     boneSelect.innerHTML    = "<option value=\"\">--Please choose a Bone--</option>";
     subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
     subboneSelect.disabled  = true;
 
-    // populate bones for this boneset
     const relatedBones = combinedData.bones.filter(b => b.boneset === selectedBonesetId);
     relatedBones.forEach(b => {
       const opt = document.createElement("option");
@@ -89,25 +122,24 @@ export function setupDropdownListeners(combinedData) {
     });
     boneSelect.disabled = relatedBones.length === 0;
 
-    // nothing selected or no bones → placeholder
     if (!selectedBonesetId || relatedBones.length === 0) {
       showPlaceholder();
+      const stage = getImageStage();
+      if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
       return;
     }
 
-    // show the default images for the boneset *without* changing the UI selection
+    // Optionally preview first bone’s images
     const firstBone = relatedBones[0];
     loadBoneImages(firstBone.id);
   });
 
-  // --- Bone change → repopulate subbones + load description/images
+  // Bone change
   boneSelect.addEventListener("change", (e) => {
     const selectedBoneId = e.target.value;
 
-    // reset subbones
     subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
 
-    // repopulate subbones for chosen bone
     const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
     relatedSubbones.forEach(sb => {
       const opt = document.createElement("option");
@@ -122,10 +154,12 @@ export function setupDropdownListeners(combinedData) {
       loadBoneImages(selectedBoneId);
     } else {
       showPlaceholder();
+      const stage = getImageStage();
+      if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
     }
   });
 
-  // --- Sub-bone change → load description/images or placeholder
+  // Sub-bone change
   subboneSelect.addEventListener("change", (e) => {
     const selectedSubboneId = e.target.value;
     if (selectedSubboneId) {
@@ -133,6 +167,8 @@ export function setupDropdownListeners(combinedData) {
       loadBoneImages(selectedSubboneId);
     } else {
       showPlaceholder();
+      const stage = getImageStage();
+      if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
     }
   });
 }
