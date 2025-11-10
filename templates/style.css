@@ -1749,3 +1749,37 @@ button:disabled {
     0% { left: -100%; }
     100% { left: 100%; }
 }
+
+/* Colored Regions Overlay Styles */
+.colored-regions-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+}
+
+.colored-regions-overlay path {
+    transition: all 0.3s ease;
+}
+
+.colored-regions-overlay path:hover {
+    fill-opacity: 0.6 !important;
+    stroke-opacity: 0.8 !important;
+}
+
+/* Ensure image containers support overlays */
+.image-item,
+.image-box,
+.single-image-wrapper {
+    position: relative;
+}
+
+/* Debug mode - add class 'debug-colored-regions' to container to see region outlines */
+.debug-colored-regions .colored-regions-overlay path {
+    stroke: #ff0000 !important;
+    stroke-width: 2 !important;
+    fill-opacity: 0.2 !important;
+}

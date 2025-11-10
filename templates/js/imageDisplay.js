@@ -1,6 +1,9 @@
 // js/imageDisplay.js
 // Rendering helpers for the image area (no dropdown wiring).
 
+// Import colored regions overlay functionality
+// Note: coloredRegionsOverlay.js should be loaded before this file
+
 function getImageContainer() {
   return /** @type {HTMLElement|null} */ (
     document.getElementById("bone-image-container")
@@ -26,7 +29,13 @@ export function showPlaceholder() {
 
 export function clearImages() {
   const c = getImageContainer();
-  if (c) c.innerHTML = "";
+  if (c) {
+    // Clear colored regions overlay before clearing images
+    if (window.ColoredRegionsOverlay) {
+      window.ColoredRegionsOverlay.clearOverlays(c);
+    }
+    c.innerHTML = "";
+  }
   
   // Remove black background class when clearing images
   const imagesContent = document.querySelector(".images-content");
@@ -36,7 +45,7 @@ export function clearImages() {
 }
 
 /** ---- Public entry: render images array -------------------------------- */
-export function displayBoneImages(images) {
+export function displayBoneImages(images, boneId = null) {
   const container = getImageContainer();
   if (!container) {
     console.warn("bone-image-container not found");
@@ -50,12 +59,17 @@ export function displayBoneImages(images) {
     return;
   }
 
+  // Store bone ID for colored regions overlay
+  if (boneId) {
+    container.dataset.boneId = boneId;
+  }
+
   if (images.length === 1) {
-    displaySingleImage(images[0], container);
+    displaySingleImage(images[0], container, boneId);
   } else if (images.length === 2) {
-    displayTwoImages(images, container);
+    displayTwoImages(images, container, boneId);
   } else {
-    displayMultipleImages(images, container);
+    displayMultipleImages(images, container, boneId);
   }
   
   // Add has-images class when images are displayed
@@ -66,7 +80,7 @@ export function displayBoneImages(images) {
 }
 
 /** ---- Single image ------------------------------------------------------ */
-function displaySingleImage(image, container) {
+function displaySingleImage(image, container, boneId = null) {
   const wrapper = document.createElement("div");
   wrapper.className = "single-image-wrapper";
 
@@ -78,7 +92,16 @@ function displaySingleImage(image, container) {
   img.src = image.url || image.src || "";
   img.alt = image.alt || image.filename || "Bone image";
 
-  img.addEventListener("load", () => img.classList.add("loaded"));
+  img.addEventListener("load", () => {
+    img.classList.add("loaded");
+    // Add colored regions overlay after image loads
+    if (boneId && window.ColoredRegionsOverlay) {
+      setTimeout(() => {
+        window.ColoredRegionsOverlay.displayColoredRegions(boneId, imgBox);
+      }, 100); // Small delay to ensure image is fully rendered
+    }
+  });
+  
   img.addEventListener("error", () => (imgBox.textContent = "Failed to load image."));
 
   imgBox.appendChild(img);
@@ -101,7 +124,7 @@ function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
   imgEl.style.willChange = "transform";
 }
 
-function displayTwoImages(images, container) {
+function displayTwoImages(images, container, boneId = null) {
   // Add the two-images class to the container for CSS styling
   container.className = "two-images";
 
@@ -115,6 +138,12 @@ function displayTwoImages(images, container) {
 
     img.addEventListener("load", () => {
       img.classList.add("loaded");
+      // Add colored regions overlay after image loads
+      if (boneId && window.ColoredRegionsOverlay) {
+        setTimeout(() => {
+          window.ColoredRegionsOverlay.displayColoredRegions(boneId, imgItem);
+        }, 100); // Small delay to ensure image is fully rendered
+      }
     });
     img.addEventListener("error", () => (imgItem.textContent = "Failed to load image."));
 
@@ -124,7 +153,7 @@ function displayTwoImages(images, container) {
 }
 
 /** ---- 3+ images grid ---------------------------------------------------- */
-function displayMultipleImages(images, container) {
+function displayMultipleImages(images, container, boneId = null) {
   const wrapper = document.createElement("div");
   wrapper.className = "multiple-image-wrapper";
 
@@ -137,7 +166,15 @@ function displayMultipleImages(images, container) {
     img.src = image.url || image.src || "";
     img.alt = image.alt || image.filename || "Bone image";
 
-    img.addEventListener("load", () => img.classList.add("loaded"));
+    img.addEventListener("load", () => {
+      img.classList.add("loaded");
+      // Add colored regions overlay after image loads
+      if (boneId && window.ColoredRegionsOverlay) {
+        setTimeout(() => {
+          window.ColoredRegionsOverlay.displayColoredRegions(boneId, imgBox);
+        }, 100); // Small delay to ensure image is fully rendered
+      }
+    });
     img.addEventListener("error", () => (imgBox.textContent = "Failed to load image."));
 
     imgBox.appendChild(img);

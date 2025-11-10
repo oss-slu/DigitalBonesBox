@@ -18,3 +18,13 @@ build/
 # OS or editor files
 .DS_Store
 Thumbs.db
+
+# Data extraction folders (local only)
+data_extraction/annotations/
+annotations/
+Slides/
+*.xml
+
+# Python cache
+__pycache__/
+*.pyc
