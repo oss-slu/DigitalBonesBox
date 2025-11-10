@@ -1,0 +1,68 @@
+{
+  "slide_number": 18,
+  "image_dimensions": {
+    "width": 12192000,
+    "height": 6858000
+  },
+  "colored_regions": [
+    {
+      "anatomical_name": "Pubis",
+      "color": "008000",
+      "color_name": "green_variant",
+      "shape_id": "548",
+      "path_data": [
+        {
+          "path_width": 906215,
+          "path_height": 846707,
+          "commands": [
+            {
+              "type": "moveTo",
+              "x": 3862987,
+              "y": 4412140
+            },
+            {
+              "type": "lineTo",
+              "x": 3750537,
+              "y": 4544438
+            },
+            {
+              "type": "lineTo",
+              "x": 3618243,
+              "y": 4696581
+            },
+            {
+              "type": "lineTo",
+              "x": 3505793,
+              "y": 4828879
+            },
+            {
+              "type": "lineTo",
+              "x": 3333810,
+              "y": 4994251
+            },
+            {
+              "type": "lineTo",
+              "x": 3227975,
+              "y": 5093475
+            },
+            {
+              "type": "lineTo",
+              "x": 3135369,
+              "y": 5159624
+            },
+            {
+              "type": "lineTo",
+              "x": 3016305,
+              "y": 5239003
+            },
+            {
+              "type": "lineTo",
+              "x": 2956772,
+              "y": 5258847
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

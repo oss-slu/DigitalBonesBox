@@ -1,6 +1,8 @@
 // js/imageDisplay.js
 // Rendering helpers for the image area (no dropdown wiring).
 
+import { clearAnnotations, loadAndDrawAnnotations } from "./annotationOverlay.js";
+
 function getImageContainer() {
   return /** @type {HTMLElement|null} */ (
     document.getElementById("bone-image-container")
@@ -16,27 +18,30 @@ export function showPlaceholder() {
       <p>Please select a bone from the dropdown to view its image.</p>
     </div>
   `;
-  
+  // Ensure any previous overlay is gone
+  clearAnnotations(c);
+
   // Remove black background class when showing placeholder
   const imagesContent = document.querySelector(".images-content");
-  if (imagesContent) {
-    imagesContent.classList.remove("has-images");
-  }
+  if (imagesContent) imagesContent.classList.remove("has-images");
 }
 
 export function clearImages() {
   const c = getImageContainer();
-  if (c) c.innerHTML = "";
-  
+  if (c) {
+    c.innerHTML = "";
+    clearAnnotations(c);
+  }
+
   // Remove black background class when clearing images
   const imagesContent = document.querySelector(".images-content");
-  if (imagesContent) {
-    imagesContent.classList.remove("has-images");
-  }
+  if (imagesContent) imagesContent.classList.remove("has-images");
 }
 
-/** ---- Public entry: render images array -------------------------------- */
-export function displayBoneImages(images) {
+/** ---- Public entry: render images array --------------------------------
+ * Optionally pass { annotationsUrl: 'templates/data/annotations/xyz.json' }
+ */
+export function displayBoneImages(images, options = {}) {
   const container = getImageContainer();
   if (!container) {
     console.warn("bone-image-container not found");
@@ -57,11 +62,16 @@ export function displayBoneImages(images) {
   } else {
     displayMultipleImages(images, container);
   }
-  
+
   // Add has-images class when images are displayed
   const imagesContent = document.querySelector(".images-content");
-  if (imagesContent) {
-    imagesContent.classList.add("has-images");
+  if (imagesContent) imagesContent.classList.add("has-images");
+
+  // Draw annotations if provided
+  if (options.annotationsUrl) {
+    loadAndDrawAnnotations(container, options.annotationsUrl).catch(err =>
+      console.warn("Failed to load annotations:", err)
+    );
   }
 }
 
@@ -105,7 +115,7 @@ function displayTwoImages(images, container) {
   // Add the two-images class to the container for CSS styling
   container.className = "two-images";
 
-  images.slice(0, 2).forEach((image, idx) => {
+  images.slice(0, 2).forEach((image) => {
     const imgItem = document.createElement("div");
     imgItem.className = "image-item";
 
