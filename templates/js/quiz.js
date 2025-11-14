@@ -242,27 +242,68 @@ class QuizManager {
     /**
      * Start the quiz
      */
-    startQuiz() {
-        // Generate questions
-        this.generateQuestions();
+    /**
+ * Start the quiz
+ */
+startQuiz() {
+    // Generate questions
+    this.generateQuestions();
 
-        if (this.questions.length === 0) {
-            alert("Unable to generate quiz questions. Please try again.");
-            return;
+    if (this.questions.length === 0) {
+        alert("Unable to generate quiz questions. Please try again.");
+        return;
+    }
+
+    // Reset quiz state
+    this.currentQuestionIndex = 0;
+    this.score = 0;
+    this.isQuizActive = true;
+    this.answered = false;
+
+    // Show quiz container, hide main content
+    this.showQuizMode();
+
+    // CRITICAL: Restore the quiz structure (in case we're coming from results screen)
+    const quizContainer = document.getElementById("quiz-container");
+    if (quizContainer) {
+        quizContainer.innerHTML = `
+            <div class="quiz-header">
+                <div class="quiz-info">
+                    <span id="quiz-progress">Question 1 of ${this.questions.length}</span>
+                    <span id="quiz-score">Score: 0/${this.questions.length}</span>
+                </div>
+                <button id="exit-quiz-btn">EXIT QUIZ</button>
+            </div>
+            
+            <div class="quiz-content">
+                <h2 id="quiz-question-text">What bone or sub-bone is this?</h2>
+                <div id="quiz-bone-image"></div>
+                <div id="quiz-choices"></div>
+            </div>
+            
+            <div id="quiz-feedback" style="display: none;"></div>
+            
+            <div class="quiz-actions">
+                <button id="next-question-btn" style="display: none;">NEXT QUESTION</button>
+            </div>
+        `;
+
+        // Re-attach exit button listener
+        const exitBtn = document.getElementById("exit-quiz-btn");
+        if (exitBtn) {
+            exitBtn.onclick = () => this.exitQuiz();
         }
 
-        // Reset quiz state
-        this.currentQuestionIndex = 0;
-        this.score = 0;
-        this.isQuizActive = true;
-        this.answered = false;
-
-        // Show quiz container, hide main content
-        this.showQuizMode();
-
-        // Display first question
-        this.displayQuestion();
+        // Re-attach next button listener
+        const nextBtn = document.getElementById("next-question-btn");
+        if (nextBtn) {
+            nextBtn.onclick = () => this.nextQuestion();
+        }
     }
+
+    // Display first question
+    this.displayQuestion();
+}
 
     /**
      * Display current question
@@ -417,56 +458,79 @@ class QuizManager {
         this.displayQuestion();
     }
 
+  
     /**
      * Show quiz results
      */
-    showResults() {
-        const percentage = Math.round((this.score / this.questions.length) * 100);
-        
-        let message = "";
-        let emoji = "";
-        
-        if (percentage >= 90) {
-            message = "Outstanding! You're a bone expert!";
-            emoji = "🏆";
-        } else if (percentage >= 70) {
-            message = "Great job! You know your bones well!";
-            emoji = "🎉";
-        } else if (percentage >= 50) {
-            message = "Good effort! Keep studying!";
-            emoji = "👍";
-        } else {
-            message = "Keep practicing! You'll improve with time!";
-            emoji = "📚";
-        }
-
-        const quizContainer = document.getElementById("quiz-container");
-        if (!quizContainer) return;
-
-        quizContainer.innerHTML = `
-            <div class="quiz-results">
-                <div class="results-emoji">${emoji}</div>
-                <h2>Quiz Complete!</h2>
-                <div class="results-score">
-                    <div class="score-number">${this.score}/${this.questions.length}</div>
-                    <div class="score-percentage">${percentage}%</div>
-                </div>
-                <p class="results-message">${message}</p>
-                <div class="results-buttons">
-                    <button id="retry-quiz-btn" class="quiz-btn quiz-btn-primary">
-                        Try Again
-                    </button>
-                    <button id="exit-results-btn" class="quiz-btn quiz-btn-secondary">
-                        Exit Quiz
-                    </button>
-                </div>
-            </div>
-        `;
-
-        // Add event listeners to new buttons
-        document.getElementById("retry-quiz-btn")?.addEventListener("click", () => this.startQuiz());
-        document.getElementById("exit-results-btn")?.addEventListener("click", () => this.exitQuiz());
+/**
+ * Show quiz results
+ */
+showResults() {
+    const percentage = Math.round((this.score / this.questions.length) * 100);
+    
+    let message = "";
+    let emoji = "";
+    
+    if (percentage >= 90) {
+        message = "Outstanding! You're a bone expert!";
+        emoji = "🏆";
+    } else if (percentage >= 70) {
+        message = "Great job! You know your bones well!";
+        emoji = "🎉";
+    } else if (percentage >= 50) {
+        message = "Good effort! Keep studying!";
+        emoji = "👍";
+    } else {
+        message = "Keep practicing! You'll improve with time!";
+        emoji = "📚";
     }
+
+    const quizContainer = document.getElementById("quiz-container");
+    if (!quizContainer) return;
+
+    quizContainer.innerHTML = `
+        <div class="quiz-results">
+            <div class="results-emoji">${emoji}</div>
+            <h2>Quiz Complete!</h2>
+            <div class="results-score">
+                <div class="score-number">${this.score}/${this.questions.length}</div>
+                <div class="score-percentage">${percentage}%</div>
+            </div>
+            <p class="results-message">${message}</p>
+            <div class="results-buttons">
+                <button id="retry-quiz-btn" class="quiz-btn quiz-btn-primary">
+                    Try Again
+                </button>
+                <button id="exit-results-btn" class="quiz-btn quiz-btn-secondary">
+                    Exit Quiz
+                </button>
+            </div>
+        </div>
+    `;
+
+    // CRITICAL: Wait for DOM to be ready, then add event listeners with arrow functions
+    requestAnimationFrame(() => {
+        const retryBtn = document.getElementById("retry-quiz-btn");
+        const exitBtn = document.getElementById("exit-results-btn");
+        
+        console.log("Retry button found:", retryBtn); // Debug
+        console.log("Exit button found:", exitBtn); // Debug
+        
+        if (retryBtn) {
+            retryBtn.onclick = () => {
+                console.log("TRY AGAIN CLICKED!"); // Debug
+                this.startQuiz();
+            };
+        }
+        
+        if (exitBtn) {
+            exitBtn.onclick = () => {
+                console.log("EXIT CLICKED!"); // Debug
+                this.exitQuiz();
+            };
+        }
+    });
+}
 
     /**
      * Show quiz mode (hide main content)
