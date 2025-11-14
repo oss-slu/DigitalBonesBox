@@ -53,7 +53,7 @@ class QuizManager {
             this.masterQuestionPool.push({
                 id: bone.id,
                 name: bone.name,
-                type: 'bone'
+                type: "bone"
             });
         });
 
@@ -62,7 +62,7 @@ class QuizManager {
             this.masterQuestionPool.push({
                 id: subbone.id,
                 name: subbone.name,
-                type: 'subbone'
+                type: "subbone"
             });
         });
 
@@ -187,16 +187,16 @@ class QuizManager {
             if (data.images && data.images.length > 0) {
                 // FIX: Access the URL property from the image object
                 const imageUrl = data.images[0].url; // Changed from data.images[0] to data.images[0].url
-                console.log(`Image URL:`, imageUrl); // DEBUG
+                console.log("Image URL:", imageUrl); // DEBUG
                 
                 // Create image element with error handling
-                const img = document.createElement('img');
+                const img = document.createElement("img");
                 img.src = imageUrl;
                 img.alt = itemId;
-                img.style.maxWidth = '100%';
-                img.style.maxHeight = '400px';
-                img.style.objectFit = 'contain';
-                img.style.borderRadius = '8px';
+                img.style.maxWidth = "100%";
+                img.style.maxHeight = "400px";
+                img.style.objectFit = "contain";
+                img.style.borderRadius = "8px";
                 
                 img.onerror = () => {
                     console.error(`Failed to load image from: ${imageUrl}`);
@@ -213,7 +213,7 @@ class QuizManager {
                     console.log(`Image loaded successfully for ${itemId}`);
                 };
                 
-                container.innerHTML = '';
+                container.innerHTML = "";
                 container.appendChild(img);
             } else {
                 console.warn(`No images found for ${itemId}`);
