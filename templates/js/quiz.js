@@ -10,6 +10,8 @@ class QuizManager {
         this.isQuizActive = false;
         this.totalQuestions = 10;
         this.allBones = [];
+        this.allSubbones = [];
+        this.masterQuestionPool = [];
         this.answered = false;
     }
 
@@ -21,9 +23,13 @@ class QuizManager {
             // Fetch bone data
             const data = await fetchCombinedData();
             this.allBones = data.bones || [];
+            this.allSubbones = data.subbones || [];
 
-            if (this.allBones.length < 3) {
-                console.error("Not enough bones to create a quiz");
+            // Create master question pool from bones + subbones
+            this.createMasterQuestionPool();
+
+            if (this.masterQuestionPool.length < 4) {
+                console.error("Not enough items to create a quiz. Need at least 4 items.");
                 return false;
             }
 
@@ -34,6 +40,33 @@ class QuizManager {
             console.error("Error initializing quiz:", error);
             return false;
         }
+    }
+
+    /**
+     * Create a master pool of all bones and subbones
+     */
+    createMasterQuestionPool() {
+        this.masterQuestionPool = [];
+        
+        // Add all bones to the pool
+        this.allBones.forEach(bone => {
+            this.masterQuestionPool.push({
+                id: bone.id,
+                name: bone.name,
+                type: 'bone'
+            });
+        });
+
+        // Add all subbones to the pool
+        this.allSubbones.forEach(subbone => {
+            this.masterQuestionPool.push({
+                id: subbone.id,
+                name: subbone.name,
+                type: 'subbone'
+            });
+        });
+
+        console.log(`Master question pool created with ${this.masterQuestionPool.length} items`);
     }
 
     /**
@@ -58,53 +91,58 @@ class QuizManager {
     }
 
     /**
-     * Generate quiz questions
+     * Generate quiz questions using the master pool
      */
     generateQuestions() {
         this.questions = [];
-        const usedBones = new Set();
+        const usedItems = new Set();
 
         // Generate specified number of questions
-        for (let i = 0; i < this.totalQuestions && this.allBones.length >= 3; i++) {
-            // Get a random bone that hasn't been used
-            let correctBone;
+        for (let i = 0; i < this.totalQuestions && this.masterQuestionPool.length >= 4; i++) {
+            // Get a random item from master pool that hasn't been used
+            let correctItem;
             let attempts = 0;
             do {
-                correctBone = this.allBones[Math.floor(Math.random() * this.allBones.length)];
+                correctItem = this.masterQuestionPool[Math.floor(Math.random() * this.masterQuestionPool.length)];
                 attempts++;
-            } while (usedBones.has(correctBone.id) && attempts < 50);
+            } while (usedItems.has(correctItem.id) && attempts < 50);
 
-            if (usedBones.has(correctBone.id)) break; // Skip if we can't find unused bone
+            if (usedItems.has(correctItem.id)) break; // Skip if we can't find unused item
 
-            usedBones.add(correctBone.id);
+            usedItems.add(correctItem.id);
 
-            // Generate wrong answers
-            const wrongAnswers = this.generateWrongAnswers(correctBone.id, 3);
+            // Generate wrong answers from items that are NOT the correct answer
+            const wrongAnswers = this.generateWrongAnswers(correctItem.id, 3);
 
             // Create question object
             const question = {
-                boneId: correctBone.id,
-                boneName: correctBone.name,
-                correctAnswer: correctBone.name,
-                allAnswers: this.shuffleArray([correctBone.name, ...wrongAnswers]),
-                imageUrl: this.getImageUrl(correctBone.id)
+                itemId: correctItem.id,
+                itemName: correctItem.name,
+                correctAnswer: correctItem.name,
+                allAnswers: this.shuffleArray([correctItem.name, ...wrongAnswers]),
+                imageUrl: this.getImageUrl(correctItem.id)
             };
 
             this.questions.push(question);
         }
+
+        console.log(`Generated ${this.questions.length} questions`);
     }
 
     /**
-     * Generate wrong answer choices
+     * Generate wrong answer choices from the master pool
      */
-    generateWrongAnswers(correctBoneId, count) {
+    generateWrongAnswers(correctItemId, count) {
         const wrongAnswers = [];
-        const availableBones = this.allBones.filter(b => b.id !== correctBoneId);
+        
+        // Create distractor pool: all items EXCEPT the correct answer
+        const distractorPool = this.masterQuestionPool.filter(item => item.id !== correctItemId);
 
-        while (wrongAnswers.length < count && availableBones.length > 0) {
-            const randomIndex = Math.floor(Math.random() * availableBones.length);
-            const bone = availableBones.splice(randomIndex, 1)[0];
-            wrongAnswers.push(bone.name);
+        // Randomly select 'count' items from distractor pool
+        while (wrongAnswers.length < count && distractorPool.length > 0) {
+            const randomIndex = Math.floor(Math.random() * distractorPool.length);
+            const item = distractorPool.splice(randomIndex, 1)[0];
+            wrongAnswers.push(item.name);
         }
 
         return wrongAnswers;
@@ -123,11 +161,82 @@ class QuizManager {
     }
 
     /**
-     * Get image URL for a bone
+     * Get image URL for an item
      */
-    getImageUrl(boneId) {
-        // This returns a placeholder - images will be fetched from API
-        return `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/images/${boneId}_image.png`;
+    getImageUrl(itemId) {
+        // Use the API endpoint that serves bone images
+        return `http://127.0.0.1:8000/api/bone-data/?boneId=${encodeURIComponent(itemId)}`;
+    }
+
+    /**
+     * Fetch and display bone image from API
+     */
+    async fetchBoneImage(itemId, container) {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/bone-data/?boneId=${encodeURIComponent(itemId)}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            console.log(`Bone data for ${itemId}:`, data); // DEBUG
+            
+            // Check if image exists in the response
+            if (data.images && data.images.length > 0) {
+                // FIX: Access the URL property from the image object
+                const imageUrl = data.images[0].url; // Changed from data.images[0] to data.images[0].url
+                console.log(`Image URL:`, imageUrl); // DEBUG
+                
+                // Create image element with error handling
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = itemId;
+                img.style.maxWidth = '100%';
+                img.style.maxHeight = '400px';
+                img.style.objectFit = 'contain';
+                img.style.borderRadius = '8px';
+                
+                img.onerror = () => {
+                    console.error(`Failed to load image from: ${imageUrl}`);
+                    container.innerHTML = `
+                        <div class="quiz-image-placeholder">
+                            <p style="font-size: 4rem;">🦴</p>
+                            <p style="color: #666;">Image failed to load</p>
+                            <p style="color: #999; font-size: 0.8rem;">${itemId}</p>
+                        </div>
+                    `;
+                };
+                
+                img.onload = () => {
+                    console.log(`Image loaded successfully for ${itemId}`);
+                };
+                
+                container.innerHTML = '';
+                container.appendChild(img);
+            } else {
+                console.warn(`No images found for ${itemId}`);
+                // No image available - show placeholder
+                container.innerHTML = `
+                    <div class="quiz-image-placeholder">
+                        <p style="font-size: 4rem;">🦴</p>
+                        <p style="color: #666;">Image not available</p>
+                        <p style="color: #999; font-size: 0.8rem;">${itemId}</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error(`Error fetching image for ${itemId}:`, error);
+            // Show error placeholder
+            container.innerHTML = `
+                <div class="quiz-image-placeholder">
+                    <p style="font-size: 4rem;">🦴</p>
+                    <p style="color: #666;">Unable to load image</p>
+                    <p style="color: #999; font-size: 0.8rem;">${error.message}</p>
+                </div>
+            `;
+        }
     }
 
     /**
@@ -182,19 +291,21 @@ class QuizManager {
         // Update question text
         const questionText = document.getElementById("quiz-question-text");
         if (questionText) {
-            questionText.textContent = "What bone is this?";
+            questionText.textContent = "What bone or sub-bone is this?";
         }
 
-        // Update bone image (placeholder for now - will be enhanced with actual image fetching)
+        // Update bone image - fetch from API
         const imageContainer = document.getElementById("quiz-bone-image");
         if (imageContainer) {
             imageContainer.innerHTML = `
                 <div class="quiz-image-placeholder">
-                    <p>🦴</p>
-                    <p>${question.boneName}</p>
-                    <small>Image loading...</small>
+                    <p style="font-size: 4rem;">🦴</p>
+                    <p>Loading image...</p>
                 </div>
             `;
+            
+            // Fetch bone data with image
+            this.fetchBoneImage(question.itemId, imageContainer);
         }
 
         // Display answer choices

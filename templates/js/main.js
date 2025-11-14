@@ -29,14 +29,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 4. Initialize quiz system AFTER data is loaded
     try {
-        // Manually set the bones data in quizManager
+        // Pass BOTH bones and subbones to quizManager
         quizManager.allBones = combinedData.bones || [];
+        quizManager.allSubbones = combinedData.subbones || [];
         
-        if (quizManager.allBones.length >= 3) {
+        // Create the master question pool
+        quizManager.createMasterQuestionPool();
+        
+        if (quizManager.masterQuestionPool.length >= 4) {
             quizManager.setupEventListeners();
-            console.log("Quiz system initialized successfully with", quizManager.allBones.length, "bones");
+            console.log("Quiz system initialized successfully with", quizManager.masterQuestionPool.length, "items");
         } else {
-            console.warn("Not enough bones for quiz:", quizManager.allBones.length);
+            console.warn("Not enough items for quiz:", quizManager.masterQuestionPool.length);
         }
     } catch (error) {
         console.error("Error initializing quiz:", error);
