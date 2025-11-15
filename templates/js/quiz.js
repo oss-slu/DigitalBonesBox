@@ -169,75 +169,93 @@ class QuizManager {
     }
 
     /**
-     * Fetch and display bone image from API
-     */
-    async fetchBoneImage(itemId, container) {
-        try {
-            const response = await fetch(`http://127.0.0.1:8000/api/bone-data/?boneId=${encodeURIComponent(itemId)}`);
+ * Fetch and display bone image from API
+ */
+async fetchBoneImage(itemId, container) {
+    try {
+        const response = await fetch(`http://127.0.0.1:8000/api/bone-data/?boneId=${encodeURIComponent(itemId)}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        console.log(`Bone data for ${itemId}:`, data); // DEBUG
+        
+        // Check if image exists in the response
+        if (data.images && data.images.length > 0) {
+            // SMART LOGIC: Prefer annotated images over plain images
+            let imageUrl;
             
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            // Try to find an annotated image (colored regions)
+            const annotatedImage = data.images.find(img => 
+                img.filename && (
+                    img.filename.toLowerCase().includes("annotated") ||
+                    img.filename.toLowerCase().includes("annotation") ||
+                    img.filename.toLowerCase().includes("colored")
+                )
+            );
+            
+            if (annotatedImage) {
+                // Use annotated image if available
+                imageUrl = annotatedImage.url;
+                console.log(`✓ Using ANNOTATED image for ${itemId}:`, imageUrl);
+            } else {
+                // Fall back to first image if no annotated version exists yet
+                imageUrl = data.images[0].url;
+                console.log(`Using plain image for ${itemId} (annotated not available yet):`, imageUrl);
             }
             
-            const data = await response.json();
+            // Create image element with error handling
+            const img = document.createElement("img");
+            img.src = imageUrl;
+            img.alt = itemId;
+            img.style.maxWidth = "100%";
+            img.style.maxHeight = "400px";
+            img.style.objectFit = "contain";
+            img.style.borderRadius = "8px";
             
-            console.log(`Bone data for ${itemId}:`, data); // DEBUG
-            
-            // Check if image exists in the response
-            if (data.images && data.images.length > 0) {
-                // FIX: Access the URL property from the image object
-                const imageUrl = data.images[0].url; // Changed from data.images[0] to data.images[0].url
-                console.log("Image URL:", imageUrl); // DEBUG
-                
-                // Create image element with error handling
-                const img = document.createElement("img");
-                img.src = imageUrl;
-                img.alt = itemId;
-                img.style.maxWidth = "100%";
-                img.style.maxHeight = "400px";
-                img.style.objectFit = "contain";
-                img.style.borderRadius = "8px";
-                
-                img.onerror = () => {
-                    console.error(`Failed to load image from: ${imageUrl}`);
-                    container.innerHTML = `
-                        <div class="quiz-image-placeholder">
-                            <p style="font-size: 4rem;">🦴</p>
-                            <p style="color: #666;">Image failed to load</p>
-                            <p style="color: #999; font-size: 0.8rem;">${itemId}</p>
-                        </div>
-                    `;
-                };
-                
-                img.onload = () => {
-                    console.log(`Image loaded successfully for ${itemId}`);
-                };
-                
-                container.innerHTML = "";
-                container.appendChild(img);
-            } else {
-                console.warn(`No images found for ${itemId}`);
-                // No image available - show placeholder
+            img.onerror = () => {
+                console.error(`Failed to load image from: ${imageUrl}`);
                 container.innerHTML = `
                     <div class="quiz-image-placeholder">
                         <p style="font-size: 4rem;">🦴</p>
-                        <p style="color: #666;">Image not available</p>
+                        <p style="color: #666;">Image failed to load</p>
                         <p style="color: #999; font-size: 0.8rem;">${itemId}</p>
                     </div>
                 `;
-            }
-        } catch (error) {
-            console.error(`Error fetching image for ${itemId}:`, error);
-            // Show error placeholder
+            };
+            
+            img.onload = () => {
+                console.log(`Image loaded successfully for ${itemId}`);
+            };
+            
+            container.innerHTML = "";
+            container.appendChild(img);
+        } else {
+            console.warn(`No images found for ${itemId}`);
+            // No image available - show placeholder
             container.innerHTML = `
                 <div class="quiz-image-placeholder">
                     <p style="font-size: 4rem;">🦴</p>
-                    <p style="color: #666;">Unable to load image</p>
-                    <p style="color: #999; font-size: 0.8rem;">${error.message}</p>
+                    <p style="color: #666;">Image not available</p>
+                    <p style="color: #999; font-size: 0.8rem;">${itemId}</p>
                 </div>
             `;
         }
+    } catch (error) {
+        console.error(`Error fetching image for ${itemId}:`, error);
+        // Show error placeholder
+        container.innerHTML = `
+            <div class="quiz-image-placeholder">
+                <p style="font-size: 4rem;">🦴</p>
+                <p style="color: #666;">Unable to load image</p>
+                <p style="color: #999; font-size: 0.8rem;">${error.message}</p>
+            </div>
+        `;
     }
+}
 
     /**
      * Start the quiz
