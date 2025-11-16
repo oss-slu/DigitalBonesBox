@@ -272,6 +272,78 @@ app.get("/api/bone-data/", async (req, res) => {
     }
 });
 
+// 🌟 FINALIZED ENDPOINT: Annotation Data (Fetches & Combines Scaling Data) 🌟
+app.get("/api/annotations/:boneId", async (req, res) => {
+    const { boneId } = req.params;
+
+    // 1. Validation
+    if (!isValidBoneId(boneId)) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "Invalid boneId format." 
+        });
+    }
+    
+    // 2. Define File Paths (Mapping based on boneId)
+    let annotationFilename = '';
+    let templateFilename = '';
+    
+    if (boneId === 'bony_pelvis') {
+        annotationFilename = 'slide02_bony_pelvis.json';
+        templateFilename = 'template_bony_pelvis.json';
+    } else {
+        // Handle other bonesets/bones if they need annotations
+        return res.status(404).json({ 
+            error: "Not Found", 
+            message: `Annotation data not available for boneId: ${boneId}` 
+        });
+    }
+
+    const GITHUB_ANNOTATION_URL = `${GITHUB_REPO}annotations/text_label_annotations/${annotationFilename}`;
+    const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
+
+    try {
+        // 3. Fetch Annotation Data and Template Data concurrently
+        const [annotationResponse, templateResponse] = await Promise.all([
+            axios.get(GITHUB_ANNOTATION_URL, { timeout: 10000 }),
+            axios.get(GITHUB_TEMPLATE_URL, { timeout: 10000 })
+        ]);
+
+        const annotationData = annotationResponse.data;
+        const templateData = templateResponse.data;
+
+        // 4. Combine required data for the frontend
+        // The frontend expects the 'text_annotations' array and the 'normalized_geometry' object.
+        const combinedData = {
+            annotations: annotationData.text_annotations || [],
+            // Use the 'right' image's normalization data for "Bony Pelvis"
+            normalized_geometry: templateData.normalized_geometry
+                ? templateData.normalized_geometry.right 
+                : { normX: 0, normY: 0, normW: 1, normH: 1 } // Fallback to full slide
+        };
+
+        // 5. Send the combined response
+        res.json(combinedData);
+
+    } catch (error) {
+        // Handle 404 or other fetch errors
+        let message = `Failed to fetch resources for boneId: ${boneId}`;
+        let status = 500;
+        
+        if (error.response) {
+             status = error.response.status;
+             message = `GitHub fetch error (Status ${status}): Could not find ${error.config.url.split('/').pop()}`;
+        }
+        
+        console.error("Error fetching annotation/template data:", error.message);
+        res.status(status).json({ 
+            error: error.response?.statusText || "Internal Server Error", 
+            message: message 
+        });
+    }
+});
+// 🌟 END FINALIZED ENDPOINT 🌟
+
 // Search endpoint
 app.get("/api/search", searchLimiter, (req, res) => {
     const query = req.query.q;

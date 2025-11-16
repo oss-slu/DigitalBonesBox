@@ -1,5 +1,0 @@
-{
-    "name": "Bony Pelvis",
-    "id": "bony_pelvis",
-    "bones": ["ilium", "ischium", "pubis"]
-}

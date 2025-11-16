@@ -15,6 +15,7 @@ function getImageStage() {
   return /** @type {HTMLElement|null} */ (document.getElementById("bone-image-container"));
 }
 
+// Function maybeLoadAnnotations: Logic removed. Annotation URL construction is now in the listeners.
 async function maybeLoadAnnotations(boneId) {
   const stage = getImageStage();
   if (!stage) return;
@@ -22,21 +23,9 @@ async function maybeLoadAnnotations(boneId) {
   // remove any previous overlay
   clearAnnotations(stage);
   stage.classList.remove("with-annotations");
-
-  const bone = _boneById[boneId];
-  if (!bone) return;
-
-  // Example rule: show annotations for Bony Pelvis (extend as you add more)
-  if (bone.name === "Bony Pelvis") {
-    stage.classList.add("with-annotations");
-
-    // IMPORTANT: this path is relative to the PAGE URL, not this JS file.
-    // If your HTML file is at /templates/boneset.html, "./data/..." is correct.
-    await loadAndDrawAnnotations(
-      stage,
-      "./templates/data/DataPelvis/annotations/text_label_annotations/slide02_bony_pelvis.json"
-    );
-  }
+  
+  // Note: The logic for loading the annotation file used to be here, but has been 
+  // refactored into the dropdown listeners (using the 'opts' object) to use the API endpoint.
 }
 
 // Backend API base (runs on 8000)
@@ -65,7 +54,6 @@ async function loadBoneImages(boneId, options = {}) {
       if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
     } else {
       displayBoneImages(images, options);
-      await maybeLoadAnnotations(boneId); // <- draw labels/lines if we have a rule
     }
   } catch (err) {
     console.error("Failed to load bone images:", err);
@@ -134,8 +122,9 @@ bonesetSelect.addEventListener("change", (e) => {
   const bonesetName =
     (bonesetSelect.options[bonesetSelect.selectedIndex]?.text || "").trim().toLowerCase();
 
+  // ARCHITECTURAL FIX: Use API endpoint for Bony Pelvis annotations
   const opts = (bonesetName === "bony pelvis")
-    ? { annotationsUrl: "./data/DataPelvis/annotations/text_label_annotations/slide02_bony_pelvis.json" }
+    ? { annotationsUrl: `${API_BASE}/api/annotations/${firstBone.id}` } // **MODIFIED**
     : {};
 
   loadBoneImages(firstBone.id, opts);
@@ -159,14 +148,16 @@ bonesetSelect.addEventListener("change", (e) => {
 
     if (selectedBoneId) {
       loadDescription(selectedBoneId);
-         // if the selected bone's label is exactly "Bony Pelvis", add the overlay for slide 02
-     const boneName =
-       (boneSelect.options[boneSelect.selectedIndex]?.text || "").trim().toLowerCase();
-     const opts =
-       boneName === "bony pelvis"
-         ? { annotationsUrl: "./templates/data/DataPelvis/annotations/text_label_annotations/slide02_bony_pelvis.json" }
-         : {};
-     loadBoneImages(selectedBoneId, opts);
+       // if the selected bone's label is exactly "Bony Pelvis", add the overlay for slide 02
+      const boneName =
+        (boneSelect.options[boneSelect.selectedIndex]?.text || "").trim().toLowerCase();
+
+      // ARCHITECTURAL FIX: Use API endpoint for Bony Pelvis annotations
+      const opts =
+        boneName === "bony pelvis"
+          ? { annotationsUrl: `${API_BASE}/api/annotations/${selectedBoneId}` } // **MODIFIED**
+          : {};
+      loadBoneImages(selectedBoneId, opts);
     } else {
       showPlaceholder();
       const stage = getImageStage();
