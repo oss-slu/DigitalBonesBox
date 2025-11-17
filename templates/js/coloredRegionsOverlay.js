@@ -40,7 +40,7 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     }
 
     // List of bones with colored regions available
-    const bonesWithColoredRegions = ['bony_pelvis', 'iliac_crest', 'anterior_iliac_spines', 'posterior_iliac_spines', 'auricular_surface'];
+    const bonesWithColoredRegions = ['bony_pelvis', 'iliac_crest', 'anterior_iliac_spines', 'posterior_iliac_spines', 'auricular_surface', 'ramus'];
     
     console.log(`🔍 [ColoredRegions] Checking if "${mappedBoneId}" is in list:`, bonesWithColoredRegions);
     console.log(`🔍 [ColoredRegions] Includes check result:`, bonesWithColoredRegions.includes(mappedBoneId));
@@ -171,6 +171,31 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             }
         } catch (error) {
             console.log(`[ColoredRegions] Local file not accessible for auricular_surface:`, error);
+        }
+    }
+
+    // Special handler for ramus
+    if (mappedBoneId === 'ramus') {
+        console.log(`[ColoredRegions] Special case: ramus - loading from local file`);
+        try {
+            // Add cache-busting timestamp to force reload
+            const timestamp = new Date().getTime();
+            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/ramus_colored_regions.json?v=${timestamp}`;
+            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
+            const response = await fetch(localUrl, { 
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log(`[ColoredRegions] ✅ SUCCESS! Loaded from local file: ramus_colored_regions.json`);
+                return data;
+            }
+        } catch (error) {
+            console.log(`[ColoredRegions] Local file not accessible for ramus:`, error);
         }
     }
 
