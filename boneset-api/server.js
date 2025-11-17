@@ -276,7 +276,7 @@ app.get("/api/bone-data/", async (req, res) => {
 });
 
 // 🌟 FINALIZED ENDPOINT: Annotation Data (Fetches & Combines Scaling Data) 🌟
-app.get("/api/annotations/:boneId", async (req, res) => {
+app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     const { boneId } = req.params;
 
     // 1. Validation
