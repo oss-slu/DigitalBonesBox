@@ -6,6 +6,7 @@ import { displayColoredRegions, clearAllColoredRegions } from './coloredRegionsO
 
 // Track the current boneId for colored regions
 let currentBoneId = null;
+let currentIsBonesetSelection = false; // Track if this is a boneset selection
 
 function getImageContainer() {
   return /** @type {HTMLElement|null} */ (
@@ -40,6 +41,7 @@ export function clearImages() {
     clearAllColoredRegions();
   }
   currentBoneId = null;
+  currentIsBonesetSelection = false; // Reset the flag
 
   // Remove black background class when clearing images
   const imagesContent = document.querySelector(".images-content");
@@ -56,11 +58,12 @@ export function displayBoneImages(images, options = {}) {
     return;
   }
 
-  // Store boneId for colored regions
-  currentBoneId = options.boneId || null;
-  console.log(`[ImageDisplay] displayBoneImages called with boneId: ${currentBoneId}, images: ${images.length}`);
-
   clearImages();
+
+  // Store boneId for colored regions AFTER clearing (so it doesn't get reset to null)
+  currentBoneId = options.boneId || null;
+  currentIsBonesetSelection = options.isBonesetSelection || false; // Store boneset flag
+  console.log(`[ImageDisplay] displayBoneImages called with boneId: ${currentBoneId}, isBonesetSelection: ${currentIsBonesetSelection}, images: ${images.length}`);
 
   if (!Array.isArray(images) || images.length === 0) {
     showPlaceholder();
@@ -108,7 +111,7 @@ function displaySingleImage(image, container, options = {}) {
   // 3. Get reference to the image element for colored regions and event handlers
   const img = container.querySelector('img');
   if (img) {
-    img.addEventListener("load", () => {
+    const loadColoredRegions = () => {
       img.classList.add("loaded");
       // Display colored regions after image loads
       if (currentBoneId) {
@@ -123,11 +126,21 @@ function displaySingleImage(image, container, options = {}) {
           console.warn("Failed to load text annotations:", err);
         });
       }
-    });
+    };
+
+    img.addEventListener("load", loadColoredRegions);
     img.addEventListener("error", () => {
       const wrapper = img.parentElement;
       if (wrapper) wrapper.textContent = "Failed to load image.";
     });
+
+    // Check if already loaded (cached) - use setTimeout to let browser process
+    setTimeout(() => {
+      if (img.complete && img.naturalHeight !== 0) {
+        console.log(`[ImageDisplay] Single image was cached, calling loadColoredRegions immediately`);
+        loadColoredRegions();
+      }
+    }, 0);
   }
 }
 
@@ -155,23 +168,43 @@ function displayTwoImages(images, container, options = {}) {
     imgItem.className = "image-item";
 
     const img = document.createElement("img");
-    img.src = image.url || image.src || "";
     img.alt = image.alt || image.filename || "Bone image";
-
-    img.addEventListener("load", () => {
+    
+    const loadColoredRegions = () => {
+      console.log(`🎨🎨🎨 [ImageDisplay] Image ${index} LOAD EVENT FIRED!`);
       img.classList.add("loaded");
       // Display colored regions for this image
       if (currentBoneId) {
-        console.log(`[ImageDisplay] Loading colored regions for: ${currentBoneId}, imageIndex: ${index}`);
-        displayColoredRegions(img, currentBoneId, index).catch(err => {
-          console.warn(`Could not display colored regions for ${currentBoneId} image ${index}:`, err);
+        console.log(`🎨 [ImageDisplay] currentBoneId is: ${currentBoneId}, isBonesetSelection: ${currentIsBonesetSelection}, calling displayColoredRegions for imageIndex: ${index}`);
+        displayColoredRegions(img, currentBoneId, index, currentIsBonesetSelection).catch(err => {
+          console.error(`❌ Could not display colored regions for ${currentBoneId} image ${index}:`, err);
         });
+      } else {
+        console.warn(`⚠️ [ImageDisplay] currentBoneId is NULL! Cannot load colored regions for image ${index}`);
       }
+    };
+
+    // Add event listeners BEFORE setting src
+    img.addEventListener("load", loadColoredRegions);
+    img.addEventListener("error", () => {
+      console.error(`[ImageDisplay] Image ${index} failed to load`);
+      imgItem.textContent = "Failed to load image.";
     });
-    img.addEventListener("error", () => (imgItem.textContent = "Failed to load image."));
 
     imgItem.appendChild(img);
     container.appendChild(imgItem);
+
+    // Set src LAST - this triggers the load
+    img.src = image.url || image.src || "";
+    
+    // CRITICAL: Check if image is already loaded (cached) AFTER setting src
+    // Need to use setTimeout to let the browser process the src assignment first
+    setTimeout(() => {
+      if (img.complete && img.naturalWidth > 0) {
+        console.log(`🔄 [ImageDisplay] Image ${index} was already cached, manually triggering load handler`);
+        loadColoredRegions();
+      }
+    }, 10);
   });
 }
 

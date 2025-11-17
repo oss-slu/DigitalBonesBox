@@ -8,8 +8,8 @@
 const COLORED_REGIONS_CONFIG = {
     // GitHub raw content URL for data branch
     BASE_URL: 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/annotations/ColoredRegions',
-    // Local path for bony_pelvis boneset colored regions
-    LOCAL_PATH: '../data_extraction',
+    // Local path for colored regions JSON files (organized in subfolder)
+    LOCAL_PATH: '../data_extraction/annotations/color_regions',
     // Default opacity for colored overlays (0.3 = 30% transparent)
     DEFAULT_OPACITY: 0.4
 };
@@ -18,23 +18,40 @@ const COLORED_REGIONS_CONFIG = {
  * Fetch colored region data for a specific bone from GitHub data branch
  * Tries multiple filename variations to handle different naming conventions
  * @param {string} boneId - The bone identifier (e.g., "pubis", "ilium")
+ * @param {boolean} isBonesetSelection - Whether this is a boneset selection (not individual bone)
  * @returns {Object|null} - The colored region data or null if not available
  */
-async function fetchColoredRegionData(boneId) {
+async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     if (!boneId) {
         console.debug('[ColoredRegions] No boneId provided for colored regions');
         return null;
     }
 
-    console.log(`[ColoredRegions] Fetching colored region data for: ${boneId}`);
+    console.log(`🔍 [ColoredRegions] Fetching colored region data for boneId: "${boneId}", isBonesetSelection: ${isBonesetSelection}`);
+    
+    // Map ilium to bony_pelvis ONLY if this is a boneset selection
+    let mappedBoneId = boneId;
+    if (boneId === 'ilium' && isBonesetSelection) {
+        console.log(`🔍 [ColoredRegions] Mapping "ilium" → "bony_pelvis" for BONESET selection`);
+        mappedBoneId = 'bony_pelvis';
+    } else if (boneId === 'ilium' && !isBonesetSelection) {
+        console.log(`🔍 [ColoredRegions] Skipping colored regions for "ilium" BONE selection (not boneset)`);
+        return null; // Don't show colored regions for individual ilium bone
+    }
 
     // List of bones with colored regions available
     const bonesWithColoredRegions = ['bony_pelvis', 'iliac_crest', 'anterior_iliac_spines', 'posterior_iliac_spines'];
     
-    if (!bonesWithColoredRegions.includes(boneId)) {
-        console.log(`[ColoredRegions] No colored regions available for: ${boneId}`);
+    console.log(`🔍 [ColoredRegions] Checking if "${mappedBoneId}" is in list:`, bonesWithColoredRegions);
+    console.log(`🔍 [ColoredRegions] Includes check result:`, bonesWithColoredRegions.includes(mappedBoneId));
+    
+    if (!bonesWithColoredRegions.includes(mappedBoneId)) {
+        console.log(`❌ [ColoredRegions] No colored regions available for: ${boneId}`);
         return null;
     }
+    
+    // Use mappedBoneId for the rest of the function
+    boneId = mappedBoneId;
 
     // Special handling for bony_pelvis - use local extracted file
     if (boneId === 'bony_pelvis') {
@@ -416,10 +433,13 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
  * @param {HTMLImageElement} imageElement - The bone image element
  * @param {string} boneId - The bone identifier
  * @param {number} imageIndex - The index of the image (0 for left, 1 for right, etc.)
+ * @param {boolean} isBonesetSelection - Whether this is a boneset selection (not individual bone)
  * @returns {Promise<void>}
  */
-export async function displayColoredRegions(imageElement, boneId, imageIndex = 0) {
-    console.log(`[ColoredRegions] displayColoredRegions called with boneId: ${boneId}, imageIndex: ${imageIndex}`);
+export async function displayColoredRegions(imageElement, boneId, imageIndex = 0, isBonesetSelection = false) {
+    console.log(`🎨 [ColoredRegions] ============ START displayColoredRegions ============`);
+    console.log(`🎨 [ColoredRegions] boneId: ${boneId}, imageIndex: ${imageIndex}, isBonesetSelection: ${isBonesetSelection}`);
+    console.log(`🎨 [ColoredRegions] imageElement:`, imageElement);
     
     if (!imageElement || !boneId) {
         console.debug('[ColoredRegions] Missing image element or boneId for colored regions');
@@ -427,7 +447,8 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
     }
 
     // Fetch colored region data
-    const regionData = await fetchColoredRegionData(boneId);
+    const regionData = await fetchColoredRegionData(boneId, isBonesetSelection);
+    console.log(`🎨 [ColoredRegions] Fetched regionData:`, regionData);
     
     // If no colored region data exists, that's normal - just return
     if (!regionData) {
@@ -515,6 +536,11 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
 
     // Add the SVG overlay
     parent.appendChild(svg);
+    
+    console.log(`🎨🎨🎨 [ColoredRegions] SVG APPENDED TO PARENT!`);
+    console.log(`🎨 [ColoredRegions] Parent element:`, parent);
+    console.log(`🎨 [ColoredRegions] SVG element:`, svg);
+    console.log(`🎨 [ColoredRegions] SVG has ${svg.children.length} path elements`);
 
     console.log(`[ColoredRegions] ✅ Successfully displayed ${regionsToDisplay.length} colored regions for image ${imageIndex}`);
 }

@@ -1480,8 +1480,16 @@ button:disabled {
     transform: none !important;
     position: relative;
     /* --- MODIFIED FOR 4:3 ASPECT RATIO --- */
-    height: 0; /* Collapse height to zero */
-    padding-bottom: 133.33%; /* 4:3 aspect ratio (3/4 * 100 = 75%, but we want container to be tall, so 4/3 * 100 = 133.33%) */
+    min-height: 400px; /* Minimum height to ensure visibility */
+    aspect-ratio: 3 / 4; /* Modern CSS aspect ratio */
+}
+
+/* Fallback for browsers that don't support aspect-ratio */
+@supports not (aspect-ratio: 3 / 4) {
+    .image-item {
+        height: 0;
+        padding-bottom: 133.33%;
+    }
 }
 
 /* Two images should have equal heights */

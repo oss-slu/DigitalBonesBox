@@ -125,7 +125,10 @@ bonesetSelect.addEventListener("change", (e) => {
 
   // ARCHITECTURAL FIX: Use API endpoint for Bony Pelvis annotations
   const opts = (bonesetName === "bony pelvis")
-    ? { annotationsUrl: `${API_BASE}/api/annotations/${firstBone.id}` } // **MODIFIED**
+    ? { 
+        annotationsUrl: `${API_BASE}/api/annotations/${firstBone.id}`,
+        isBonesetSelection: true // Flag to indicate boneset selection
+      }
     : {};
 
   loadBoneImages(firstBone.id, opts);
