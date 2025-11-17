@@ -1826,28 +1826,36 @@ button:disabled {
   height: 100%;
 }
 
-/* Lines (support both classed lines and generic SVG lines) */
+/* In templates/style.css */
+
+/* Lines: Use a dark color and a thin stroke */
 .annotation-line,
 .annotation-svg line {
-  stroke: #fff;
-  stroke-width: 2;
+  stroke: #ffffff; /* Dark gray/black for visibility */
+  stroke-width: 1.5; /* Thin line */
+  opacity: 1;
   vector-effect: non-scaling-stroke;
-  shape-rendering: crispEdges;
-  opacity: 0.95;
 }
 
-/* Label boxes */
+/* Label boxes: Use dark text and transparent styling */
 .annotation-label {
   position: absolute;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.60);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  border-radius: 8px;
-  padding: 4px 8px;
-  font: 600 14px/1.2 Inter, system-ui, sans-serif;
+  /* Appearance to match the slide */
+  color: #ffffff; /* white text */
+  background: transparent; /* Remove background box */
+  border: none; /* Remove border */
+  padding: 0; /* Remove padding */
+  font-weight: 500;
+  font-size: 14px; /* Adjust size */
+  text-shadow: none; /* Remove shadows */
+  box-shadow: none;
   text-align: center;
-  text-shadow: 0 1px 1px rgba(0,0,0,.6);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  white-space: nowrap; /* Keep the text on one line */
+  
+  /* Ensure proper vertical and horizontal centering */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* --- Important for accuracy ---
