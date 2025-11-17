@@ -1,6 +1,11 @@
 // js/imageDisplay.js
 // Rendering helpers for the image area (no dropdown wiring).
 
+import { displayColoredRegions, clearAllColoredRegions } from './coloredRegionsOverlay.js';
+
+// Track the current boneId for colored regions
+let currentBoneId = null;
+
 function getImageContainer() {
   return /** @type {HTMLElement|null} */ (
     document.getElementById("bone-image-container")
@@ -17,6 +22,10 @@ export function showPlaceholder() {
     </div>
   `;
   
+  // Clear colored regions when showing placeholder
+  clearAllColoredRegions();
+  currentBoneId = null;
+  
   // Remove black background class when showing placeholder
   const imagesContent = document.querySelector(".images-content");
   if (imagesContent) {
@@ -28,6 +37,10 @@ export function clearImages() {
   const c = getImageContainer();
   if (c) c.innerHTML = "";
   
+  // Clear colored regions when clearing images
+  clearAllColoredRegions();
+  currentBoneId = null;
+  
   // Remove black background class when clearing images
   const imagesContent = document.querySelector(".images-content");
   if (imagesContent) {
@@ -36,14 +49,20 @@ export function clearImages() {
 }
 
 /** ---- Public entry: render images array -------------------------------- */
-export function displayBoneImages(images) {
+export function displayBoneImages(images, boneId = null) {
   const container = getImageContainer();
   if (!container) {
     console.warn("bone-image-container not found");
     return;
   }
 
+  // Clear any existing colored regions
+  clearAllColoredRegions();
   clearImages();
+  
+  // Store the current boneId for colored regions
+  currentBoneId = boneId;
+  console.log(`[ImageDisplay] displayBoneImages called with boneId: ${boneId}, images: ${images?.length}`);
 
   if (!Array.isArray(images) || images.length === 0) {
     showPlaceholder();
@@ -51,10 +70,13 @@ export function displayBoneImages(images) {
   }
 
   if (images.length === 1) {
+    console.log('[ImageDisplay] Displaying single image');
     displaySingleImage(images[0], container);
   } else if (images.length === 2) {
+    console.log('[ImageDisplay] Displaying two images');
     displayTwoImages(images, container);
   } else {
+    console.log('[ImageDisplay] Displaying multiple images');
     displayMultipleImages(images, container);
   }
   
@@ -78,7 +100,19 @@ function displaySingleImage(image, container) {
   img.src = image.url || image.src || "";
   img.alt = image.alt || image.filename || "Bone image";
 
-  img.addEventListener("load", () => img.classList.add("loaded"));
+  img.addEventListener("load", () => {
+    img.classList.add("loaded");
+    console.log(`[ImageDisplay] Image loaded for boneId: ${currentBoneId}`);
+    // Display colored regions after image loads
+    if (currentBoneId) {
+      console.log(`[ImageDisplay] Calling displayColoredRegions for: ${currentBoneId}, imageIndex: 0`);
+      displayColoredRegions(img, currentBoneId, 0).catch(err => {
+        console.warn(`Could not display colored regions for ${currentBoneId}:`, err);
+      });
+    } else {
+      console.warn('[ImageDisplay] No currentBoneId set, cannot display colored regions');
+    }
+  });
   img.addEventListener("error", () => (imgBox.textContent = "Failed to load image."));
 
   imgBox.appendChild(img);
@@ -115,6 +149,13 @@ function displayTwoImages(images, container) {
 
     img.addEventListener("load", () => {
       img.classList.add("loaded");
+      // Display colored regions after image loads
+      if (currentBoneId) {
+        console.log(`[ImageDisplay] Calling displayColoredRegions for: ${currentBoneId}, imageIndex: ${idx}`);
+        displayColoredRegions(img, currentBoneId, idx).catch(err => {
+          console.warn(`Could not display colored regions for ${currentBoneId}:`, err);
+        });
+      }
     });
     img.addEventListener("error", () => (imgItem.textContent = "Failed to load image."));
 
@@ -128,7 +169,7 @@ function displayMultipleImages(images, container) {
   const wrapper = document.createElement("div");
   wrapper.className = "multiple-image-wrapper";
 
-  images.forEach((image) => {
+  images.forEach((image, idx) => {
     const imgBox = document.createElement("div");
     imgBox.className = "image-box";
 
@@ -137,7 +178,16 @@ function displayMultipleImages(images, container) {
     img.src = image.url || image.src || "";
     img.alt = image.alt || image.filename || "Bone image";
 
-    img.addEventListener("load", () => img.classList.add("loaded"));
+    img.addEventListener("load", () => {
+      img.classList.add("loaded");
+      // Display colored regions after image loads
+      if (currentBoneId) {
+        console.log(`[ImageDisplay] Calling displayColoredRegions for: ${currentBoneId}, imageIndex: ${idx}`);
+        displayColoredRegions(img, currentBoneId, idx).catch(err => {
+          console.warn(`Could not display colored regions for ${currentBoneId}:`, err);
+        });
+      }
+    });
     img.addEventListener("error", () => (imgBox.textContent = "Failed to load image."));
 
     imgBox.appendChild(img);

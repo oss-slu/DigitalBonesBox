@@ -25,7 +25,7 @@ async function loadBoneImages(boneId) {
     if (images.length === 0) {
       showPlaceholder();                        // ← message if backend returns no images
     } else {
-      displayBoneImages(images);
+      displayBoneImages(images, boneId);        // ← pass boneId for colored regions
     }
   } catch (err) {
     console.error("Failed to load bone images:", err);
@@ -96,8 +96,13 @@ export function setupDropdownListeners(combinedData) {
     }
 
     // show the default images for the boneset *without* changing the UI selection
+    // For bony_pelvis boneset, pass the boneset ID to show colored regions
     const firstBone = relatedBones[0];
-    loadBoneImages(firstBone.id);
+    if (selectedBonesetId === 'bony_pelvis') {
+      loadBoneImages('bony_pelvis');  // Pass boneset ID for colored regions
+    } else {
+      loadBoneImages(firstBone.id);
+    }
   });
 
   // --- Bone change → repopulate subbones + load description/images
