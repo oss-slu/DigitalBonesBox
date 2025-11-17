@@ -171,16 +171,16 @@ function displayTwoImages(images, container, options = {}) {
     img.alt = image.alt || image.filename || "Bone image";
     
     const loadColoredRegions = () => {
-      console.log(`🎨🎨🎨 [ImageDisplay] Image ${index} LOAD EVENT FIRED!`);
+      console.log(`[ImageDisplay] Image ${index} load event fired`);
       img.classList.add("loaded");
       // Display colored regions for this image
       if (currentBoneId) {
-        console.log(`🎨 [ImageDisplay] currentBoneId is: ${currentBoneId}, isBonesetSelection: ${currentIsBonesetSelection}, calling displayColoredRegions for imageIndex: ${index}`);
+        console.log(`[ImageDisplay] currentBoneId is: ${currentBoneId}, isBonesetSelection: ${currentIsBonesetSelection}, calling displayColoredRegions for imageIndex: ${index}`);
         displayColoredRegions(img, currentBoneId, index, currentIsBonesetSelection).catch(err => {
-          console.error(`❌ Could not display colored regions for ${currentBoneId} image ${index}:`, err);
+          console.error(`[ImageDisplay] Could not display colored regions for ${currentBoneId} image ${index}:`, err);
         });
       } else {
-        console.warn(`⚠️ [ImageDisplay] currentBoneId is NULL! Cannot load colored regions for image ${index}`);
+        console.warn(`[ImageDisplay] currentBoneId is NULL, cannot load colored regions for image ${index}`);
       }
     };
 
@@ -197,11 +197,11 @@ function displayTwoImages(images, container, options = {}) {
     // Set src LAST - this triggers the load
     img.src = image.url || image.src || "";
     
-    // CRITICAL: Check if image is already loaded (cached) AFTER setting src
-    // Need to use setTimeout to let the browser process the src assignment first
+    // Check if image is already loaded from cache after setting src
+    // Use setTimeout to allow the browser to process the src assignment first
     setTimeout(() => {
       if (img.complete && img.naturalWidth > 0) {
-        console.log(`🔄 [ImageDisplay] Image ${index} was already cached, manually triggering load handler`);
+        console.log(`[ImageDisplay] Image ${index} was already cached, manually triggering load handler`);
         loadColoredRegions();
       }
     }, 10);

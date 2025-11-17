@@ -1835,59 +1835,16 @@ button:disabled {
     z-index: 1; /* Below colored regions overlay */
 }
 
-/* Adjust colored regions overlay position for left bony pelvis image */
-.two-images .image-item:first-child .colored-regions-overlay[data-bone="bony_pelvis"] {
-    transform: translate(32px, 50px) scale(1.16) rotate(0deg); /* X, Y, scale, rotation */
-    transform-origin: center center;
-}
-
-/* Adjust colored regions overlay position for right bony pelvis image */
-.two-images .image-item:last-child .colored-regions-overlay[data-bone="bony_pelvis"] {
-    transform: translate(5px, 45px) scale(1.0) rotate(1deg); /* X, Y, scale, rotation */
-    transform-origin: center center;
-}
-
-/* Adjust colored regions overlay position for left iliac crest image */
-.two-images .image-item:first-child .colored-regions-overlay[data-bone="iliac_crest"] {
-    transform: translate(20px, 10px) scale(1.0) rotate(0deg); /* X, Y, scale, rotation */
-    transform-origin: center center;
-}
-
-/* Adjust colored regions overlay position for right iliac crest image */
-.two-images .image-item:last-child .colored-regions-overlay[data-bone="iliac_crest"] {
-    transform: translate(78px, 50px) scale(1.0) rotate(0deg); /* X, Y, scale, rotation */
-    transform-origin: center center;
-}
-
-/* Adjust colored regions overlay position for left anterior iliac spines image */
-.two-images .image-item:first-child .colored-regions-overlay[data-bone="anterior_iliac_spines"] {
-    transform: translate(38px, 23px) scale(1.0) rotate(0deg); /* X, Y, scale, rotation */
-    transform-origin: center center;
-}
-
-/* Adjust colored regions overlay position for right anterior iliac spines image */
-.two-images .image-item:last-child .colored-regions-overlay[data-bone="anterior_iliac_spines"] {
-    transform: translate(12px, 42px) scale(1.0) rotate(0deg); /* X, Y, scale, rotation */
-    transform-origin: center center;
-}
-
-/* Adjust colored regions overlay position for left posterior iliac spines image */
-.two-images .image-item:first-child .colored-regions-overlay[data-bone="posterior_iliac_spines"] {
-    transform: translate(0px, 0px) scale(1.0) rotate(0deg); /* X, Y, scale, rotation */
-    transform-origin: center center;
-}
-
-/* Adjust colored regions overlay position for right posterior iliac spines image */
-.two-images .image-item:last-child .colored-regions-overlay[data-bone="posterior_iliac_spines"] {
-    transform: translate(0px, 0px) scale(1.0) rotate(0deg); /* X, Y, scale, rotation */
-    transform-origin: center center;
-}
-
 /* Colored region paths with smooth transitions */
 .colored-regions-overlay path {
     transition: opacity 0.3s ease;
     stroke-width: 3;
     stroke-dasharray: 15, 10;
+}
+
+/* Solid lines for stroked paths (like sciatic notches) */
+.colored-regions-overlay path[data-region-type="stroke"] {
+    stroke-dasharray: none; /* Override to make solid lines */
 }
 
 /* Optional: Hover effect to make regions slightly more visible when hovering over image */
