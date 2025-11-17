@@ -221,7 +221,7 @@ body {
     align-items: center;
     flex: 1;
     justify-content: center;
-    margin: 0 var(--space-8);
+    margin: 0;
 }
 
 /* Toggle sidebar button in main navigation - Updated modern styling */
@@ -866,7 +866,7 @@ select:disabled {
     transition: all var(--transition-normal);
     position: relative;
     border: 1px solid #e2e8f0;
-    min-height: 200px;
+    min-height: 400px;
     height: auto;
     display: flex;
     flex-direction: column;
@@ -880,7 +880,7 @@ select:disabled {
     transition: all var(--transition-normal);
     position: relative;
     border: none;
-    min-height: 200px;
+    min-height: 400px;
     height: auto;
     display: flex;
     flex-direction: column;
@@ -953,7 +953,7 @@ select:disabled {
 /* Professional Content Areas */
 .description-content {
     padding: var(--space-6) var(--space-5);
-    min-height: 150px;
+    min-height: 400px;
     height: auto;
     flex: 1;
     position: relative;
@@ -964,13 +964,15 @@ select:disabled {
 
 .images-content {
     padding: var(--space-6) var(--space-5);
-    min-height: 150px;
+    min-height: 400px; 
     height: auto;
     flex: 1;
     position: relative;
     background: #000000;
-    width: 100%;
+    width: 100%; /* Ensure this line is present */
     box-sizing: border-box;
+    /* --- ADD THIS AGGRESSIVE RULE --- */
+    min-width: 100% !important; 
 }
 
 .description-content {
@@ -1008,7 +1010,7 @@ select:disabled {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary);
-    margin: 0 0 var(--space-2) 0;
+    margin: 0;
 }
 
 .panel-subtitle {
@@ -1134,7 +1136,7 @@ select:disabled {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 200px;
+    min-height: 400px;
     height: auto;
     padding: var(--space-6);
     color: #64748b;
@@ -1142,7 +1144,7 @@ select:disabled {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     border-radius: var(--radius-lg);
     border: 2px dashed #cbd5e1;
-    margin: var(--space-2);
+    margin: 0;
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
@@ -1154,7 +1156,7 @@ select:disabled {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 200px;
+    min-height: 400px;
     height: auto;
     padding: var(--space-6);
     color: #888888;
@@ -1162,7 +1164,7 @@ select:disabled {
     background: #000000;
     border-radius: var(--radius-lg);
     border: none;
-    margin: var(--space-2);
+    margin: 0; /* SET MARGIN TO ZERO (was var(--space-2)) */
     transition: all var(--transition-normal);
     position: relative;
     overflow: hidden;
@@ -1249,7 +1251,7 @@ select:disabled {
     margin: 0;
     font-size: 1rem;
     line-height: 1.6;
-    max-width: 280px;
+    max-width: 400px;
     font-weight: 500;
     color: #64748b;
 }
@@ -1430,17 +1432,23 @@ button:disabled {
 }
 
 
-
 #bone-image-container {
     display: grid;
     gap: var(--space-4);
-    min-height: 100px;
+    position: relative; 
     height: auto;
-    padding: var(--space-3);
-    align-items: start;
     width: 100%;
     box-sizing: border-box;
     background: #000000;
+    min-height: 100px; /* Base height when images are present */
+    padding: var(--space-3);
+    align-items: start;
+}
+
+#bone-image-container:empty {
+    /* When empty, remove padding and min-height so the placeholder can take over */
+    min-height: 0;
+    padding: 0;
 }
 
 /* Two images layout - side by side */
@@ -1473,12 +1481,13 @@ button:disabled {
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    /* --- MODIFIED FOR 4:3 ASPECT RATIO --- */
+    height: 0; /* Collapse height to zero */
+    padding-bottom: 100%; 
 }
 
 /* Two images should have equal heights */
 #bone-image-container.two-images .image-item {
-    height: 100%;
     align-self: stretch;
 }
 
@@ -1488,15 +1497,19 @@ button:disabled {
 }
 
 .image-item img {
+    /* --- MODIFIED TO FILL ASPECT RATIO BOX --- */
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%; /* Now fills the proportional container */
+
     width: 100%;
-    height: 180px;
     object-fit: contain;
     object-position: center;
     display: block;
     border: none;
     background: #000000;
     padding: var(--space-2);
-    flex: 1;
     transition: transform 0.3s ease;
 }
 
@@ -1515,12 +1528,6 @@ button:disabled {
 
 .image-item:nth-child(4) img {
     transform: rotate(4.5deg);
-}
-
-/* For two images, make them taller to fill the space better */
-#bone-image-container.two-images .image-item img {
-    height: 220px;
-    min-height: 200px;
 }
 
 .image-caption {
@@ -1544,6 +1551,44 @@ button:disabled {
     transform: translateY(-2px) rotate(4.5deg) scale(1.02);
 }
 
+/* === CRITICAL FIX: Single Image Wrapper Aspect Ratio === */
+/* This container holds the single image and MUST define its own height */
+.single-image-wrapper {
+    /* position: relative; is already defined globally at the top */
+    
+    /* Enforce 4:3 Aspect Ratio using padding-bottom trick, same as .image-item */
+    width: 100%;
+    height: 0;
+    padding-bottom: 55%; 
+    overflow: hidden;
+    background: #000000;
+}
+
+/* Ensure image element inside the wrapper fills the space */
+.single-image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    padding: var(--space-2);
+}
+
+/* Ensure the placeholder fills the single-image wrapper space when it's present */
+/* If the placeholder is placed inside .single-image-wrapper when no image is present,
+   these styles ensure it takes up the full space defined by the padding-bottom. */
+.single-image-wrapper .images-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0 !important;
+}
+
 /* Images Placeholder */
 
 .images-placeholder::before {
@@ -1557,16 +1602,20 @@ button:disabled {
     margin: 0;
     font-size: 1rem;
     line-height: 1.6;
-    max-width: 280px;
+    max-width: 400px;
     font-weight: 500;
     color: #92400e;
 }
+
 
 /* Placeholder styling when inside black images-content */
 .images-content .images-placeholder {
     background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
     border: 2px dashed #6b7280;
     color: #ffffff;
+    /* --- FINAL WIDTH OVERRIDE --- */
+    width: 100% !important; 
+    margin: 0 !important; 
 }
 
 .images-content .images-placeholder p {
@@ -1750,6 +1799,74 @@ button:disabled {
     100% { left: 100%; }
 }
 
+/* ===== Annotations overlay ===== */
+
+/* The image box that receives the overlay must be positioning context */
+#bone-image-container,
+#bone-image-container .image-item,
+#bone-image-container .image-box,
+#bone-image-container .single-image-wrapper {
+  position: relative;
+}
+
+/* Full-bleed overlay that sits above the image */
+.annotation-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 5;           /* above the image */
+  pointer-events: none; /* overlay doesn't block hover/scroll */
+}
+
+/* Overlay layers */
+.annotation-svg,
+.annotation-labels {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* In templates/style.css */
+
+/* Lines: Use a dark color and a thin stroke */
+.annotation-line,
+.annotation-svg line {
+  stroke: #ffffff; /* Dark gray/black for visibility */
+  stroke-width: 1.5; /* Thin line */
+  opacity: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Label boxes: Use dark text and transparent styling */
+.annotation-label {
+  position: absolute;
+  /* Appearance to match the slide */
+  color: #ffffff; /* white text */
+  background: transparent; /* Remove background box */
+  border: none; /* Remove border */
+  padding: 0; /* Remove padding */
+  font-weight: 500;
+  font-size: 14px; /* Adjust size */
+  text-shadow: none; /* Remove shadows */
+  box-shadow: none;
+  text-align: center;
+  white-space: nowrap; /* Keep the text on one line */
+  
+  /* Ensure proper vertical and horizontal centering */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Important for accuracy ---
+   If an image is visually 'tilted' via CSS transforms, the overlay
+   will not match the coordinates. Disable decorative rotations
+   whenever annotations are present.  */
+.image-item:has(.annotation-stage) img { transform: none !important; }
+
+/* Fallback for browsers without :has(). If you add the class
+   'with-annotations' to the container, this will also cancel tilt. */
+.image-item.with-annotations img { transform: none !important; }
 /* Quiz Button in Header */
 #start-quiz-btn {
     padding: var(--space-3) var(--space-6);
