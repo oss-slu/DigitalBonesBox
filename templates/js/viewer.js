@@ -70,7 +70,7 @@ export function displayAnnotations(annotations) {
 }
 
 /**
- * Main function to display complete bone data (image + annotations)
+ * Main function to display complete bone data (annotations only - images handled by imageDisplay.js)
  * @param {Object} boneData - The complete bone object
  */
 export function displayBoneData(boneData) {
@@ -79,24 +79,18 @@ export function displayBoneData(boneData) {
         return;
     }
 
-    displayBoneImage(boneData);
+    // NOTE: Images are now displayed by imageDisplay.js via dropdowns.js
+    // displayBoneImage(boneData); // DISABLED - handled by imageDisplay.js
     displayAnnotations(boneData.annotations);
 }
 
 /**
- * Clears the viewer display
+ * Clears the viewer display (annotations only - images handled by imageDisplay.js)
  */
 export function clearViewer() {
-    const boneImage = document.getElementById("bone-image");
+    // NOTE: Images are now cleared by imageDisplay.js
+    // Only clear annotations here
     const annotationsOverlay = document.getElementById("annotations-overlay");
-    
-    if (boneImage) {
-        boneImage.src = "";
-        boneImage.alt = "";
-        boneImage.style.display = "none";
-        boneImage.onerror = null; // Clear error handlers
-        boneImage.onload = null;
-    }
     
     if (annotationsOverlay) {
         annotationsOverlay.innerHTML = "<p>Select a bone to view image and annotations.</p>";
