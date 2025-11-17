@@ -4,6 +4,9 @@ const axios = require("axios");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 
+const fs = require('fs').promises; // Use promises for async/await file reading
+const path = require('path');
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
@@ -283,11 +286,48 @@ app.get("/api/annotations/:boneId", async (req, res) => {
             message: "Invalid boneId format." 
         });
     }
-    
-    // 2. Define File Paths (Mapping based on boneId)
-    let annotationFilename = '';
-    let templateFilename = '';
-    
+
+    // --- TEMPORARY WORKAROUND (Step 2a) ---
+    // Try to serve the file from the local 'temp_annotations' folder first.
+    let annotationFilename = `slide02_bony_pelvis.json`; // <--- MODIFIED TO HARDCODE FILENAME
+    const localAnnotationPath = path.join(__dirname, 'temp_annotations', annotationFilename);
+
+    try {
+        const localAnnotationData = await fs.readFile(localAnnotationPath, 'utf8');
+        
+        // If the file is found and read successfully, we must still fetch the template
+        // data from GitHub because it contains the required rotation/scaling information!
+        
+        // 2b. Define Template Filename and URL (Same as original logic)
+        let templateFilename = 'template_bony_pelvis.json'; 
+        const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
+        
+        const templateResponse = await axios.get(GITHUB_TEMPLATE_URL, { timeout: 10000 });
+        const templateData = templateResponse.data;
+        const annotationData = JSON.parse(localAnnotationData); // Parse the local file
+
+        // 2c. Combine required data for the frontend (Same as original logic)
+        const combinedData = {
+            annotations: annotationData.text_annotations || [],
+            normalized_geometry: templateData.normalized_geometry
+                ? templateData.normalized_geometry.right 
+                : { normX: 0, normY: 0, normW: 1, normH: 1 } 
+        };
+
+        console.log(`WORKAROUND: Serving local annotation file ${annotationFilename} combined with GitHub template.`);
+        return res.json(combinedData); // Success! Return local annotations + remote template
+        
+    } catch (error) {
+        // If fs.readFile fails (E.g., file not found, which is expected for other bones)
+        // Log the local file failure but continue to the original GitHub logic.
+        if (error.code !== 'ENOENT') {
+             console.warn(`Local file read failed unexpectedly for ${localAnnotationPath}:`, error.message);
+        }
+    }
+    // --- END TEMPORARY WORKAROUND ---
+
+
+    // 3. Define File Paths for GitHub (Original Logic)
     if (boneId === 'bony_pelvis') {
         annotationFilename = 'slide02_bony_pelvis.json';
         templateFilename = 'template_bony_pelvis.json';
@@ -303,7 +343,7 @@ app.get("/api/annotations/:boneId", async (req, res) => {
     const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
 
     try {
-        // 3. Fetch Annotation Data and Template Data concurrently
+        // 4. Fetch Annotation Data and Template Data concurrently from GitHub
         const [annotationResponse, templateResponse] = await Promise.all([
             axios.get(GITHUB_ANNOTATION_URL, { timeout: 10000 }),
             axios.get(GITHUB_TEMPLATE_URL, { timeout: 10000 })
@@ -312,17 +352,15 @@ app.get("/api/annotations/:boneId", async (req, res) => {
         const annotationData = annotationResponse.data;
         const templateData = templateResponse.data;
 
-        // 4. Combine required data for the frontend
-        // The frontend expects the 'text_annotations' array and the 'normalized_geometry' object.
+        // 5. Combine required data for the frontend
         const combinedData = {
             annotations: annotationData.text_annotations || [],
-            // Use the 'right' image's normalization data for "Bony Pelvis"
             normalized_geometry: templateData.normalized_geometry
                 ? templateData.normalized_geometry.right 
-                : { normX: 0, normY: 0, normW: 1, normH: 1 } // Fallback to full slide
+                : { normX: 0, normY: 0, normW: 1, normH: 1 }
         };
-
-        // 5. Send the combined response
+        
+        // 6. Send the combined response
         res.json(combinedData);
 
     } catch (error) {

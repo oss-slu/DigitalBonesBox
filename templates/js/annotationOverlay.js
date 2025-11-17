@@ -27,16 +27,22 @@ export function clearAnnotations(container) {
  * Calculates pixel dimensions based on EMU coordinates and the normalized box size.
  * @param {Object} rect - The EMU rectangle {x, y, width, height}.
  * @param {Object} box - The current container pixel size {w, h}.
+ * @param {Object} norm - The normalized geometry {normX, normY, normW, normH}. <--- ADDED
  * @returns {Object} Pixel coordinates {left, top, width, height}.
  */
-function emuRectToPx(rect, box) {
+function emuRectToPx(rect, box, norm) { // <--- ADDED norm
   // Scaling factors: Container pixel width / (EMU width of the visible area)
-  // EMU width of the visible area = PPT_EMU.W / norm.w
   const sx = box.w / PPT_EMU.W;
   const sy = box.h / PPT_EMU.H;
+
+  // Calculate the EMU offset (translation) based on the normalization factors
+  const emuOffsetX = norm.normX * PPT_EMU.W;
+  const emuOffsetY = norm.normY * PPT_EMU.H;
+
+  // Apply the offset (translation) to the EMU coordinate *before* scaling
   return {
-    left:   rect.x * sx,
-    top:    rect.y * sy,
+    left:   (rect.x - emuOffsetX) * sx, // <--- MODIFIED
+    top:    (rect.y - emuOffsetY) * sy, // <--- MODIFIED
     width:  rect.width  * sx,
     height: rect.height * sy,
   };
@@ -46,12 +52,22 @@ function emuRectToPx(rect, box) {
  * Calculates pixel point based on EMU coordinates and the normalized box size.
  * @param {Object} pt - The EMU point {x, y}.
  * @param {Object} box - The current container pixel size {w, h}.
+ * @param {Object} norm - The normalized geometry {normX, normY, normW, normH}. <--- ADDED
  * @returns {Object} Pixel coordinates {x, y}.
  */
-function emuPointToPx(pt, box) {
+function emuPointToPx(pt, box, norm) { // <--- ADDED norm
   const sx = box.w / PPT_EMU.W;
   const sy = box.h / PPT_EMU.H;
-  return { x: pt.x * sx, y: pt.y * sy };
+  
+  // Calculate the EMU offset (translation) based on the normalization factors
+  const emuOffsetX = norm.normX * PPT_EMU.W;
+  const emuOffsetY = norm.normY * PPT_EMU.H;
+  
+  // Apply the offset (translation) to the EMU coordinate *before* scaling
+  return { 
+    x: (pt.x - emuOffsetX) * sx, // <--- MODIFIED
+    y: (pt.y - emuOffsetY) * sy  // <--- MODIFIED
+  };
 }
 
 /**
@@ -83,43 +99,18 @@ export function drawAnnotations(container, annotationsJson) {
       h: rect.height / norm.normH 
   };
   
-  // 4. Adjust EMU coordinates by the offset (normX, normY) of the crop.
-  // This shifts the origin from the top-left of the original slide to the top-left of the image container.
-  const list = (annotationsJson.annotations || annotationsJson.text_annotations || [])
-    .map(a => {
-        if (!a || !a.text_box) return a;
-        // Calculate the EMU offset based on the normalization factors
-        const emuOffsetX = norm.normX * PPT_EMU.W;
-        const emuOffsetY = norm.normY * PPT_EMU.H;
-        
-        return {
-            ...a,
-            text_box: {
-                ...a.text_box,
-                // Adjust the box position
-                x: a.text_box.x - emuOffsetX,
-                y: a.text_box.y - emuOffsetY,
-            },
-            pointer_lines: (a.pointer_lines || []).map(line => ({
-                start_point: {
-                    // Adjust the line start point
-                    x: line.start_point.x - emuOffsetX,
-                    y: line.start_point.y - emuOffsetY
-                },
-                end_point: {
-                    // Adjust the line end point
-                    x: line.end_point.x - emuOffsetX,
-                    y: line.end_point.y - emuOffsetY
-                }
-            }))
-        };
-    });
+  // 4. Get the list of annotations. The coordinate adjustments were moved 
+  // into emuRectToPx and emuPointToPx.
+  const list = annotationsJson.annotations || annotationsJson.text_annotations || [];
+  
+  // REMOVED: The complex .map() loop that adjusted coordinates is now gone, as 
+  // the logic is correctly integrated into the scaling functions above.
 
   list.forEach((a) => {
     if (!a || !a.text_box) return;
 
     // Text label
-    const px = emuRectToPx(a.text_box, box);
+    const px = emuRectToPx(a.text_box, box, norm); // <--- ADDED norm
     const el = document.createElement("div");
     el.className = "annotation-label";
     el.textContent = a.text_content ?? "";
@@ -138,8 +129,8 @@ export function drawAnnotations(container, annotationsJson) {
     // Pointer lines
     (a.pointer_lines || []).forEach((line) => {
       if (!line?.start_point || !line?.end_point) return;
-      const p1 = emuPointToPx(line.start_point, box);
-      const p2 = emuPointToPx(line.end_point, box);
+      const p1 = emuPointToPx(line.start_point, box, norm); // <--- ADDED norm
+      const p2 = emuPointToPx(line.end_point, box, norm);   // <--- ADDED norm
       const l  = document.createElementNS("http://www.w3.org/2000/svg", "line");
       l.setAttribute("x1", p1.x);
       l.setAttribute("y1", p1.y);
@@ -151,7 +142,7 @@ export function drawAnnotations(container, annotationsJson) {
   });
 
   // Store last json for autoscale redraw
-  stage.__lastJson = { annotations: annotationsJson.annotations || annotationsJson.text_annotations, normalized_geometry: norm }; // Store original list and norm for redraw
+  stage.__lastJson = annotationsJson; // <--- SIMPLIFIED to store the whole JSON
 }
 
 /** Load JSON from a URL and draw it. Returns a promise. */
