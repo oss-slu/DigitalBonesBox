@@ -361,7 +361,7 @@ class AnatomicalShapeParser:
 
 def main():
     """Main execution function"""
-    xml_folder = "/Users/jennioishee/Capstone/DigitalBonesBox"
+    xml_folder = "/Users/jennioishee/Capstone/DigitalBonesBox/slides"
     
     parser = AnatomicalShapeParser(xml_folder)
     

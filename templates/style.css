@@ -1479,11 +1479,17 @@ button:disabled {
     max-width: 100%;
     transform: none !important;
     position: relative;
-    display: flex;
-    flex-direction: column;
     /* --- MODIFIED FOR 4:3 ASPECT RATIO --- */
-    height: 0; /* Collapse height to zero */
-    padding-bottom: 100%; 
+    min-height: 400px; /* Minimum height to ensure visibility */
+    aspect-ratio: 3 / 4; /* Modern CSS aspect ratio */
+}
+
+/* Fallback for browsers that don't support aspect-ratio */
+@supports not (aspect-ratio: 3 / 4) {
+    .image-item {
+        height: 0;
+        padding-bottom: 133.33%;
+    }
 }
 
 /* Two images should have equal heights */
@@ -1799,7 +1805,57 @@ button:disabled {
     100% { left: 100%; }
 }
 
-/* ===== Annotations overlay ===== */
+/* ============================================
+   Colored Regions Overlay Styles (for anatomical colored regions)
+   ============================================ */
+
+/* SVG overlay for colored anatomical regions */
+.colored-regions-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none; /* Allow clicks to pass through to image */
+    z-index: 10; /* Above image, below text annotations */
+    width: 100%;
+    height: 100%;
+}
+
+/* Ensure parent containers support absolute positioning of SVG overlay */
+.image-box,
+.image-item,
+.single-image-wrapper {
+    position: relative;
+    overflow: hidden; /* Clip colored regions to image boundaries */
+}
+
+/* Ensure images in containers are positioned for overlay alignment */
+.image-box img,
+.image-item img {
+    position: relative;
+    z-index: 1; /* Below colored regions overlay */
+}
+
+/* Colored region paths with smooth transitions */
+.colored-regions-overlay path {
+    transition: opacity 0.3s ease;
+    stroke-width: 3;
+    stroke-dasharray: 15, 10;
+}
+
+/* Solid lines for stroked paths (like sciatic notches) */
+.colored-regions-overlay path[data-region-type="stroke"] {
+    stroke-dasharray: none; /* Override to make solid lines */
+}
+
+/* Optional: Hover effect to make regions slightly more visible when hovering over image */
+.image-box:hover .colored-regions-overlay path,
+.image-item:hover .colored-regions-overlay path {
+    opacity: 0.5; /* Slightly increase opacity on hover */
+}
+
+/* ============================================
+   Text Annotations Overlay Styles (for labels and lines)
+   ============================================ */
 
 /* The image box that receives the overlay must be positioning context */
 #bone-image-container,

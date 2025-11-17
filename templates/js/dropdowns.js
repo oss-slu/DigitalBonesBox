@@ -53,7 +53,8 @@ async function loadBoneImages(boneId, options = {}) {
       showPlaceholder();
       if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
     } else {
-      displayBoneImages(images, options);
+      // Pass both boneId (for colored regions) and options (for text annotations)
+      displayBoneImages(images, { ...options, boneId });
     }
   } catch (err) {
     console.error("Failed to load bone images:", err);
@@ -124,7 +125,10 @@ bonesetSelect.addEventListener("change", (e) => {
 
   // ARCHITECTURAL FIX: Use API endpoint for Bony Pelvis annotations
   const opts = (bonesetName === "bony pelvis")
-    ? { annotationsUrl: `${API_BASE}/api/annotations/${firstBone.id}` } // **MODIFIED**
+    ? { 
+        annotationsUrl: `${API_BASE}/api/annotations/${firstBone.id}`,
+        isBonesetSelection: true // Flag to indicate boneset selection
+      }
     : {};
 
   loadBoneImages(firstBone.id, opts);
