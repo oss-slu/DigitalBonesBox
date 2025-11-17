@@ -4,6 +4,9 @@ const axios = require("axios");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 
+const fs = require("fs").promises; // Use promises for async/await file reading
+const path = require("path");
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
@@ -271,6 +274,113 @@ app.get("/api/bone-data/", async (req, res) => {
         });
     }
 });
+
+// 🌟 FINALIZED ENDPOINT: Annotation Data (Fetches & Combines Scaling Data) 🌟
+app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
+    const { boneId } = req.params;
+
+    // 1. Validation
+    if (!isValidBoneId(boneId)) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "Invalid boneId format." 
+        });
+    }
+
+    // --- TEMPORARY WORKAROUND (Step 2a) ---
+    // Try to serve the file from the local 'temp_annotations' folder first.
+    let annotationFilename = "slide02_bony_pelvis.json"; // <--- MODIFIED TO HARDCODE FILENAME
+    const localAnnotationPath = path.join(__dirname, "temp_annotations", annotationFilename);
+
+    try {
+        const localAnnotationData = await fs.readFile(localAnnotationPath, "utf8");
+        
+        // If the file is found and read successfully, we must still fetch the template
+        // data from GitHub because it contains the required rotation/scaling information!
+        
+        // 2b. Define Template Filename and URL (Same as original logic)
+        let templateFilename = "template_bony_pelvis.json"; 
+        const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
+        
+        const templateResponse = await axios.get(GITHUB_TEMPLATE_URL, { timeout: 10000 });
+        const templateData = templateResponse.data;
+        const annotationData = JSON.parse(localAnnotationData); // Parse the local file
+
+        // 2c. Combine required data for the frontend (Same as original logic)
+        const combinedData = {
+            annotations: annotationData.text_annotations || [],
+            normalized_geometry: templateData.normalized_geometry
+                ? templateData.normalized_geometry.right 
+                : { normX: 0, normY: 0, normW: 1, normH: 1 } 
+        };
+
+        console.log(`WORKAROUND: Serving local annotation file ${annotationFilename} combined with GitHub template.`);
+        return res.json(combinedData); // Success! Return local annotations + remote template
+        
+    } catch (error) {
+        // If fs.readFile fails (E.g., file not found, which is expected for other bones)
+        // Log the local file failure but continue to the original GitHub logic.
+        if (error.code !== "ENOENT") {
+             console.warn(`Local file read failed unexpectedly for ${localAnnotationPath}:`, error.message);
+        }
+    }
+    // --- END TEMPORARY WORKAROUND ---
+
+
+    // 3. Define File Paths for GitHub (Original Logic)
+    if (boneId === "bony_pelvis") {
+        annotationFilename = "slide02_bony_pelvis.json";
+        templateFilename = "template_bony_pelvis.json";
+    } else {
+        // Handle other bonesets/bones if they need annotations
+        return res.status(404).json({ 
+            error: "Not Found", 
+            message: `Annotation data not available for boneId: ${boneId}` 
+        });
+    }
+
+    const GITHUB_ANNOTATION_URL = `${GITHUB_REPO}annotations/text_label_annotations/${annotationFilename}`;
+    const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
+
+    try {
+        // 4. Fetch Annotation Data and Template Data concurrently from GitHub
+        const [annotationResponse, templateResponse] = await Promise.all([
+            axios.get(GITHUB_ANNOTATION_URL, { timeout: 10000 }),
+            axios.get(GITHUB_TEMPLATE_URL, { timeout: 10000 })
+        ]);
+
+        const annotationData = annotationResponse.data;
+        const templateData = templateResponse.data;
+
+        // 5. Combine required data for the frontend
+        const combinedData = {
+            annotations: annotationData.text_annotations || [],
+            normalized_geometry: templateData.normalized_geometry
+                ? templateData.normalized_geometry.right 
+                : { normX: 0, normY: 0, normW: 1, normH: 1 }
+        };
+        
+        // 6. Send the combined response
+        res.json(combinedData);
+
+    } catch (error) {
+        // Handle 404 or other fetch errors
+        let message = `Failed to fetch resources for boneId: ${boneId}`;
+        let status = 500;
+        
+        if (error.response) {
+             status = error.response.status;
+             message = `GitHub fetch error (Status ${status}): Could not find ${error.config.url.split("/").pop()}`;
+        }
+        
+        console.error("Error fetching annotation/template data:", error.message);
+        res.status(status).json({ 
+            error: error.response?.statusText || "Internal Server Error", 
+            message: message 
+        });
+    }
+});
+// 🌟 END FINALIZED ENDPOINT 🌟
 
 // Search endpoint
 app.get("/api/search", searchLimiter, (req, res) => {
