@@ -1479,11 +1479,9 @@ button:disabled {
     max-width: 100%;
     transform: none !important;
     position: relative;
-    display: flex;
-    flex-direction: column;
     /* --- MODIFIED FOR 4:3 ASPECT RATIO --- */
     height: 0; /* Collapse height to zero */
-    padding-bottom: 100%; 
+    padding-bottom: 133.33%; /* 4:3 aspect ratio (3/4 * 100 = 75%, but we want container to be tall, so 4/3 * 100 = 133.33%) */
 }
 
 /* Two images should have equal heights */
