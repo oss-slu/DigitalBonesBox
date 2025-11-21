@@ -2,8 +2,8 @@
 // Rendering helpers for the image area (no dropdown wiring).
 
 import { clearAnnotations, loadAndDrawAnnotations } from "./annotationOverlay.js";
-import { displayColoredRegions, clearAllColoredRegions } from './coloredRegionsOverlay.js';
-import { imageCaptions } from './imageCaptions.js';
+import { displayColoredRegions, clearAllColoredRegions } from "./coloredRegionsOverlay.js";
+import { imageCaptions } from "./imageCaptions.js";
 
 // Track the current boneId for colored regions
 let currentBoneId = null;
@@ -115,12 +115,12 @@ function displaySingleImage(image, container, options = {}) {
         src="${image.url || image.src || ""}"
         alt="${image.alt || image.filename || "Bone image"}"
       >
-      ${captions.image1 ? `<p class="image-caption">${captions.image1}</p>` : ''}
+      ${captions.image1 ? `<p class="image-caption">${captions.image1}</p>` : ""}
     </div>
   `;
   
   // 3. Get reference to the image element for colored regions and event handlers
-  const img = container.querySelector('img');
+  const img = container.querySelector("img");
   if (img) {
     const loadColoredRegions = () => {
       img.classList.add("loaded");
@@ -148,7 +148,7 @@ function displaySingleImage(image, container, options = {}) {
     // Check if already loaded (cached) - use setTimeout to let browser process
     setTimeout(() => {
       if (img.complete && img.naturalHeight !== 0) {
-        console.log(`[ImageDisplay] Single image was cached, calling loadColoredRegions immediately`);
+        console.log("[ImageDisplay] Single image was cached, calling loadColoredRegions immediately");
         loadColoredRegions();
       }
     }, 0);
