@@ -2,7 +2,8 @@
 // Rendering helpers for the image area (no dropdown wiring).
 
 import { clearAnnotations, loadAndDrawAnnotations } from "./annotationOverlay.js";
-import { displayColoredRegions, clearAllColoredRegions } from './coloredRegionsOverlay.js';
+import { displayColoredRegions, clearAllColoredRegions } from "./coloredRegionsOverlay.js";
+import { imageCaptions } from "./imageCaptions.js";
 
 // Track the current boneId for colored regions
 let currentBoneId = null;
@@ -12,6 +13,14 @@ function getImageContainer() {
   return /** @type {HTMLElement|null} */ (
     document.getElementById("bone-image-container")
   );
+}
+
+/** Helper function to get captions for a boneId */
+function getCaptionsForBone(boneId) {
+  if (!boneId || !imageCaptions[boneId]) {
+    return { image1: null, image2: null };
+  }
+  return imageCaptions[boneId];
 }
 
 /** ---- Empty-state / clearing ------------------------------------------- */
@@ -92,12 +101,13 @@ export function displayBoneImages(images, options = {}) {
 
 //** ---- Single image ------------------------------------------------------ */
 function displaySingleImage(image, container, options = {}) {
+  // Get captions for this bone
+  const captions = getCaptionsForBone(currentBoneId);
+  
   // 1. CRITICAL FIX: Add the 'single-image' class to the main container.
-  // This CSS class is required for the styles to correctly size the single image layout.
   container.className = "single-image"; 
 
-  // 2. Simplification: Use innerHTML to directly create the necessary structure 
-  // (.single-image-wrapper > img), which better aligns with your CSS.
+  // 2. Create the structure with caption
   container.innerHTML = `
     <div class="single-image-wrapper">
       <img
@@ -105,11 +115,12 @@ function displaySingleImage(image, container, options = {}) {
         src="${image.url || image.src || ""}"
         alt="${image.alt || image.filename || "Bone image"}"
       >
+      ${captions.image1 ? `<p class="image-caption">${captions.image1}</p>` : ""}
     </div>
   `;
   
   // 3. Get reference to the image element for colored regions and event handlers
-  const img = container.querySelector('img');
+  const img = container.querySelector("img");
   if (img) {
     const loadColoredRegions = () => {
       img.classList.add("loaded");
@@ -137,7 +148,7 @@ function displaySingleImage(image, container, options = {}) {
     // Check if already loaded (cached) - use setTimeout to let browser process
     setTimeout(() => {
       if (img.complete && img.naturalHeight !== 0) {
-        console.log(`[ImageDisplay] Single image was cached, calling loadColoredRegions immediately`);
+        console.log("[ImageDisplay] Single image was cached, calling loadColoredRegions immediately");
         loadColoredRegions();
       }
     }, 0);
@@ -160,6 +171,9 @@ function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
 }
 
 function displayTwoImages(images, container, options = {}) {
+  // Get captions for this bone
+  const captions = getCaptionsForBone(currentBoneId);
+  
   // Add the two-images class to the container for CSS styling
   container.className = "two-images";
 
@@ -192,6 +206,16 @@ function displayTwoImages(images, container, options = {}) {
     });
 
     imgItem.appendChild(img);
+    
+    // Add caption below image
+    const captionText = index === 0 ? captions.image1 : captions.image2;
+    if (captionText) {
+      const caption = document.createElement("p");
+      caption.className = "image-caption";
+      caption.textContent = captionText;
+      imgItem.appendChild(caption);
+    }
+    
     container.appendChild(imgItem);
 
     // Set src LAST - this triggers the load

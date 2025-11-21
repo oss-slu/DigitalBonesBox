@@ -1472,16 +1472,16 @@ button:disabled {
     background: #000000;
     border: none;
     border-radius: 0;
-    overflow: hidden;
+    overflow: visible;
     transition: all var(--transition-normal);
     box-shadow: none;
     width: 100%;
     max-width: 100%;
     transform: none !important;
     position: relative;
-    /* --- MODIFIED FOR 4:3 ASPECT RATIO --- */
-    min-height: 400px; /* Minimum height to ensure visibility */
-    aspect-ratio: 3 / 4; /* Modern CSS aspect ratio */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Fallback for browsers that don't support aspect-ratio */
@@ -1536,10 +1536,6 @@ button:disabled {
     transform: rotate(4.5deg);
 }
 
-.image-caption {
-    display: none;
-}
-
 /* Allow natural image orientation while maintaining layout */
 .image-item:nth-child(1):hover img {
     transform: translateY(-2px) rotate(-12deg) scale(1.02);
@@ -1563,24 +1559,25 @@ button:disabled {
     /* position: relative; is already defined globally at the top */
     
     /* Enforce 4:3 Aspect Ratio using padding-bottom trick, same as .image-item */
-    width: 100%;
-    height: 0;
-    padding-bottom: 55%; 
-    overflow: hidden;
+   width: 100%;
     background: #000000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 400px;
+    padding: var(--space-4);
 }
 
 /* Ensure image element inside the wrapper fills the space */
 .single-image-wrapper img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
+   width: 100%;
+    height: auto;
+    max-width: 800px;
+    min-height: 350px;
     object-fit: contain;
     object-position: center;
     display: block;
-    padding: var(--space-2);
+    flex-shrink: 0;
 }
 
 /* Ensure the placeholder fills the single-image wrapper space when it's present */
@@ -2500,3 +2497,54 @@ button:disabled {
         padding: var(--space-2) var(--space-4);
     }
 }
+
+/* Image Caption Styles */
+/* Add this to your style.css file */
+
+.image-caption {
+  text-align: center;
+  font-size: 15px;
+  color: #333;
+  margin-top: 12px;
+  margin-bottom: 0;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 0 8px;
+}
+
+/* For single image layout */
+.single-image .image-caption {
+  margin-top: 16px;
+  font-size: 16px;
+}
+
+/* For two images layout - captions below each image */
+.two-images .image-item .image-caption {
+  margin-top: 12px;
+  font-size: 15px;
+}
+
+/* Ensure captions are readable on dark backgrounds */
+.has-images .image-caption {
+  color: #e0e0e0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .image-caption {
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  .single-image .image-caption {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-caption {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+}
+
