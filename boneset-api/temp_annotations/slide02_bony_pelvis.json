@@ -7,8 +7,8 @@
       "subbone_name": "Ilium",
       "text_content": "Ilium",
       "text_box": {
-        "x": 5586937.0,
-        "y": 2083816.0,
+        "x": 6926937.0,
+        "y": 621816.0,
         "width": 393457.0,
         "height": 215444.0,
         "rotation_emu": 0.0,
@@ -25,12 +25,12 @@
           "line_id": "line_1",
           "kind": "connector",
           "start_point": {
-            "x": 4267237.0,
-            "y": 2191538.0
+            "x": 6117237.0,
+            "y": 729538.0
           },
           "end_point": {
-            "x": 5586937.0,
-            "y": 2191538.0
+            "x": 6926937.0,
+            "y": 729538.0
           },
           "style": {
             "width": 9525,
@@ -49,12 +49,12 @@
           "line_id": "line_2",
           "kind": "connector",
           "start_point": {
-            "x": 5980394.0,
-            "y": 2191538.0
+            "x": 6439900.0,  
+            "y": 2626738.0  
           },
           "end_point": {
-            "x": 7391294.0,
-            "y": 2191538.0
+            "x": 6710000.0,  
+            "y": 2626738.0   
           },
           "style": {
             "width": 9525,
@@ -247,8 +247,8 @@
       "subbone_name": "Acetabulum",
       "text_content": "Acetabulum",
       "text_box": {
-        "x": 5450756.0,
-        "y": 3572102.0,
+        "x": 6750756.0,
+        "y": 2572102.0,
         "width": 692939.0,
         "height": 215444.0,
         "rotation_emu": 0.0,
@@ -261,12 +261,12 @@
           "line_id": "line_8",
           "kind": "connector",
           "start_point": {
-            "x": 5171456.0,
-            "y": 3679824.0
+            "x": 6421000.0,
+            "y": 2629824.0
           },
           "end_point": {
-            "x": 5450756.0,
-            "y": 3679824.0
+            "x": 5900000.0,
+            "y": 3100824.0
           },
           "style": {
             "width": 9525,
