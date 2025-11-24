@@ -157,10 +157,10 @@ bonesetSelect.addEventListener("change", (e) => {
         (boneSelect.options[boneSelect.selectedIndex]?.text || "").trim().toLowerCase();
 
       // ARCHITECTURAL FIX: Use API endpoint for Bony Pelvis annotations
-      const opts =
-        boneName === "bony pelvis"
-          ? { annotationsUrl: `${API_BASE}/api/annotations/${selectedBoneId}` } // **MODIFIED**
-          : {};
+      const opts = { 
+    // Always build the URL, letting the API return a 404/empty data if the file doesn't exist.
+    annotationsUrl: `${API_BASE}/api/annotations/${selectedBoneId}` 
+  };    
       loadBoneImages(selectedBoneId, opts);
     } else {
       showPlaceholder();
