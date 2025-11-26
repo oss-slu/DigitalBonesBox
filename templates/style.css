@@ -2499,4 +2499,56 @@ button:disabled {
         font-size: 0.9rem;
         padding: var(--space-2) var(--space-4);
     }
+
+    * Home button cursor and hover effects */
+#text-button-Home {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+/* Hover effect - slight color change */
+#text-button-Home:hover {
+    color: #FFD700; /* Gold color, adjust to match your theme */
+    transform: translateY(-1px);
+}
+
+/* Active/click effect */
+#text-button-Home:active {
+    transform: translateY(0);
+    opacity: 0.7;
+}
+
+/* Focus effect for keyboard navigation */
+#text-button-Home:focus {
+    outline: 2px solid #FFD700;
+    outline-offset: 2px;
+}
+
+/* Optional: Add underline on hover */
+#text-button-Home:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #FFD700;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+/* Ensure pointer cursor is always visible */
+#text-button-Home {
+    pointer-events: auto !important;
+}
+
 }
