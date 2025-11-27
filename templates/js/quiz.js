@@ -161,7 +161,7 @@ class QuizManager {
     }
 
     /**
-     * Get image URL for an item
+     * Get image URL for an item....
      */
     getImageUrl(itemId) {
         // Use the API endpoint that serves bone images

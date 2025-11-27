@@ -15,6 +15,14 @@ function getImageContainer() {
   );
 }
 
+/** Helper function to get captions for a boneId */
+function getCaptionsForBone(boneId) {
+  if (!boneId || !imageCaptions[boneId]) {
+    return { image1: null, image2: null };
+  }
+  return imageCaptions[boneId];
+}
+
 /** ---- Empty-state / clearing ------------------------------------------- */
 export function showPlaceholder() {
   const c = getImageContainer();
@@ -29,6 +37,12 @@ export function showPlaceholder() {
   clearAllColoredRegions();
   currentBoneId = null;
 
+  // Remove caption container if it exists
+  const captionContainer = document.getElementById("caption-container");
+  if (captionContainer) {
+    captionContainer.remove();
+  }
+
   // Remove black background class when showing placeholder
   const imagesContent = document.querySelector(".images-content");
   if (imagesContent) imagesContent.classList.remove("has-images");
@@ -41,6 +55,13 @@ export function clearImages() {
     clearAnnotations(c);
     clearAllColoredRegions();
   }
+  
+  // Remove caption container if it exists
+  const captionContainer = document.getElementById("caption-container");
+  if (captionContainer) {
+    captionContainer.remove();
+  }
+  
   currentBoneId = null;
   currentIsBonesetSelection = false; // Reset the flag
 
@@ -97,15 +118,15 @@ function displaySingleImage(image, container, options = {}) {
   // This CSS class is required for the styles to correctly size the single image layout.
   container.className = "single-image"; 
 
-  // 2. Simplification: Use innerHTML to directly create the necessary structure 
-  // (.single-image-wrapper > img), which better aligns with your CSS.
   container.innerHTML = `
     <div class="single-image-wrapper">
-      <img
-        class="bone-image"
-        src="${image.url || image.src || ""}"
-        alt="${image.alt || image.filename || "Bone image"}"
-      >
+      <div class="image-wrapper">
+        <img
+          class="bone-image"
+          src="${image.url || image.src || ""}"
+          alt="${image.alt || image.filename || "Bone image"}"
+        >
+      </div>
     </div>
   `;
   
@@ -176,12 +197,19 @@ function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
 }
 
 function displayTwoImages(images, container, options = {}) {
+  // Get captions for this bone
+  const captions = getCaptionsForBone(currentBoneId);
+  
   // Add the two-images class to the container for CSS styling
   container.className = "two-images";
 
+  // Create images first
   images.slice(0, 2).forEach((image, index) => {
     const imgItem = document.createElement("div");
     imgItem.className = "image-item";
+
+    const imgWrapper = document.createElement("div");
+    imgWrapper.className = "image-wrapper";
 
     const img = document.createElement("img");
     img.alt = image.alt || image.filename || "Bone image";
@@ -207,14 +235,14 @@ function displayTwoImages(images, container, options = {}) {
       imgItem.textContent = "Failed to load image.";
     });
 
-    imgItem.appendChild(img);
+    imgWrapper.appendChild(img);
+    imgItem.appendChild(imgWrapper);
     container.appendChild(imgItem);
 
     // Set src LAST - this triggers the load
     img.src = image.url || image.src || "";
     
     // Check if image is already loaded from cache after setting src
-    // Use setTimeout to allow the browser to process the src assignment first
     setTimeout(() => {
       if (img.complete && img.naturalWidth > 0) {
         console.log(`[ImageDisplay] Image ${index} was already cached, manually triggering load handler`);
@@ -222,6 +250,29 @@ function displayTwoImages(images, container, options = {}) {
       }
     }, 10);
   });
+
+  // Create caption container AFTER images, OUTSIDE the grid
+  if (captions.image1 || captions.image2) {
+    const captionContainer = document.createElement("div");
+    captionContainer.id = "caption-container";
+    
+    if (captions.image1) {
+      const caption1 = document.createElement("div");
+      caption1.className = "caption-box image-caption";
+      caption1.textContent = captions.image1;
+      captionContainer.appendChild(caption1);
+    }
+    
+    if (captions.image2) {
+      const caption2 = document.createElement("div");
+      caption2.className = "caption-box image-caption";
+      caption2.textContent = captions.image2;
+      captionContainer.appendChild(caption2);
+    }
+    
+    // Insert caption container after the image container
+    container.parentElement.insertBefore(captionContainer, container.nextSibling);
+  }
 }
 
 /** ---- 3+ images grid ---------------------------------------------------- */
