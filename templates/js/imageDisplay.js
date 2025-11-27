@@ -71,7 +71,7 @@ export function clearImages() {
 }
 
 /** ---- Public entry: render images array --------------------------------
- * Optionally pass { annotationsUrl: 'templates/data/annotations/xyz.json', boneId: 'bone_name' }
+ * Optionally pass { annotationsUrl: "templates/data/annotations/xyz.json", boneId: "bone_name" }
  */
 export function displayBoneImages(images, options = {}) {
   const container = getImageContainer();
@@ -114,9 +114,8 @@ export function displayBoneImages(images, options = {}) {
 
 //** ---- Single image ------------------------------------------------------ */
 function displaySingleImage(image, container, options = {}) {
-  // Get captions for this bone
-  const captions = getCaptionsForBone(currentBoneId);
-  
+  // 1. CRITICAL FIX: Add the "single-image" class to the main container.
+  // This CSS class is required for the styles to correctly size the single image layout.
   container.className = "single-image"; 
 
   container.innerHTML = `
@@ -132,21 +131,21 @@ function displaySingleImage(image, container, options = {}) {
   `;
   
   // Create caption container OUTSIDE the image container if caption exists
-  if (captions.image1) {
+  if (imageCaptions.image1) {
     const captionContainer = document.createElement("div");
     captionContainer.id = "caption-container";
     captionContainer.className = "single-image";
-    
+
     const caption = document.createElement("div");
     caption.className = "caption-box image-caption";
-    caption.textContent = captions.image1;
+    caption.textContent = imageCaptions.image1;
     captionContainer.appendChild(caption);
-    
+
     // Insert caption container after the image container
     container.parentElement.insertBefore(captionContainer, container.nextSibling);
   }
-  
-  // Get reference to the image element for colored regions and event handlers
+
+  // 3. Get reference to the image element for colored regions and event handlers
   const img = container.querySelector("img");
   if (img) {
     const loadColoredRegions = () => {
