@@ -1,10 +1,3 @@
-// js/coloredRegionsOverlay.js
-// Module for rendering colored anatomical regions over bone images
-// Fetches colored region data from GitHub data branch and draws SVG overlays
-
-/**
- * Configuration for fetching colored region data from GitHub
- */
 const COLORED_REGIONS_CONFIG = {
     // GitHub raw content URL for data branch
     BASE_URL: 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/annotations/ColoredRegions',
@@ -37,12 +30,12 @@ const OVERLAY_ADJUSTMENTS = {
         1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
     },
     'pectineal_line': {
-        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
-        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+        0: { x: 10, y: 10, scale: 1.0, rotation: 0 },
+        1: { x: 5, y: 5, scale: 1.0, rotation: 0 }
     },
     'symphyseal_surface': {
-        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
-        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+        0: { x: 5, y: 5, scale: 1.0, rotation: 0 },
+        1: { x: 5, y: 5, scale: 1.0, rotation: 0 }
     },
     'pubic_tubercle': {
         0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
