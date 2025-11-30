@@ -22,12 +22,12 @@ const OVERLAY_ADJUSTMENTS = {
         1: { x: 78, y: 25, scale: 1.0, rotation: 0 }
     },
     'anterior_iliac_spines': {
-        0: { x: 45, y: 45, scale: 1.0, rotation: 0 },
-        1: { x: 12, y: 38, scale: 1.0, rotation: 0 }
+        0: { x: 98, y: -20, scale: 1.0, rotation: 20 },
+        1: { x: 12, y: 20, scale: 1.0, rotation: 0 }
     },
     'posterior_iliac_spines': {
-        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
-        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+        0: { x: 550, y: 50, scale: 1.0, rotation: 0 },
+        1: { x: 580, y: 80, scale: 1.0, rotation: 0 }
     },
     'pectineal_line': {
         0: { x: 10, y: 10, scale: 1.0, rotation: 0 },
@@ -38,6 +38,30 @@ const OVERLAY_ADJUSTMENTS = {
         1: { x: 5, y: 5, scale: 1.0, rotation: 0 }
     },
     'pubic_tubercle': {
+        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
+        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+    },
+    'auricular_surface': {
+        0: { x: 290, y: 140, scale: .8, rotation: 0 },
+        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+    },
+    'ramus': {
+        0: { x: 100, y: 328, scale: 1.0, rotation: 12 },
+        1: { x: 120, y: 328, scale: 1.0, rotation: 0 }
+    },
+    'ischial_tuberosity': {
+        0: { x: 55, y: 298, scale: 1.0, rotation: 0 },
+        1: { x: 115, y: 302, scale: 1.0, rotation: 0 }
+    },
+    'ischial_spine': {
+        0: { x: 65, y: 260, scale: 1.0, rotation: 0 },
+        1: { x: 192, y: 262, scale: 1.0, rotation: 0 }
+    },
+    'sciatic_notches': {
+        0: { x: 77, y: -10, scale: 1.0, rotation: 15 },
+        1: { x: 13, y: 20, scale: 1.0, rotation: 0 }
+    },
+    'pubic_rami': {
         0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
         1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
     }
