@@ -177,15 +177,31 @@ boneSelect.addEventListener("change", (e) => {
 // Sub-bone change
 subboneSelect.addEventListener("change", (e) => {
   const selectedSubboneId = e.target.value;
+  const stage = getImageStage();
+
+  // Always clear any existing annotations from the bone-level view
+  if (stage) {
+    clearAnnotations(stage);
+    stage.classList.remove("with-annotations");
+  }
+
   if (selectedSubboneId) {
+    // Load the text description for this sub-bone
     loadDescription(selectedSubboneId);
-    // Note: No annotations URL is built here, relying on imageDisplay to clear
-    // the previous annotation overlay when loading a new image.
-    loadBoneImages(selectedSubboneId); 
+
+    // 🔑 IMPORTANT:
+    // For sub-bones, load the sub-bone–specific annotation JSON,
+    // e.g. /api/annotations/pubic_tubercle  (mapped to slide20 JSON on the server)
+    const opts = {
+      annotationsUrl: `${API_BASE}/api/annotations/${selectedSubboneId}`,
+    };
+
+    // This will draw the sub-bone image AND its own labels
+    // (or none, if that annotation file has an empty text_annotations array)
+    loadBoneImages(selectedSubboneId, opts);
   } else {
+    // No sub-bone selected → show placeholder
     showPlaceholder();
-    const stage = getImageStage();
-    if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
   }
 });
 }
