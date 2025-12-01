@@ -102,10 +102,13 @@ export function drawAnnotations(container, annotationsJson) {
     if (!a || !a.text_box) return;
 
     // Text label
-    const px = normalizedRectToPx(a.text_box, box, norm); // <--- CALLING NEW FUNCTION
+    const px = normalizedRectToPx(a.text_box, box, norm);
     const el = document.createElement("div");
     el.className = "annotation-label";
-    el.textContent = a.text_content ?? "";
+
+    // this preserves "\n" as real line breaks
+    el.innerText = a.text_content ?? "";
+
     Object.assign(el.style, {
       position: "absolute",
       left: `${px.left}px`,
@@ -115,7 +118,10 @@ export function drawAnnotations(container, annotationsJson) {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      whiteSpace: "pre-line",   // 👈 KEY: show newlines
+      textAlign: "center",      // optional: center both lines
     });
+
     labels.appendChild(el);
 
     // Pointer lines
