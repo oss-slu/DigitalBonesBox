@@ -7,8 +7,8 @@
       "subbone_name": "Iliac Crest",
       "text_content": "Iliac Crest",
       "text_box": {
-        "x": 5431116,
-        "y": 1912315,
+        "x": 6581116,
+        "y": 200000,
         "width": 595035,
         "height": 215444,
         "rotation": 0,
@@ -25,12 +25,12 @@
           "line_id": "line_1",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 4212216,
-            "y": 2020037
+            "x": 4362216,
+            "y": 1870037
           },
           "end_point": {
-            "x": 5431116,
-            "y": 2020037
+            "x": 5581116,
+            "y": 1870037
           },
           "style": {
             "width": 9525,
@@ -42,12 +42,12 @@
           "line_id": "line_2",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 6026151,
-            "y": 2020037
+            "x": 6176151,
+            "y": 1870037
           },
           "end_point": {
-            "x": 7239051,
-            "y": 2020037
+            "x": 7389051,
+            "y": 1870037
           },
           "style": {
             "width": 9525,
@@ -58,12 +58,12 @@
       ],
       "target_regions": [
         {
-          "x": 5431116,
-          "y": 2020037
+          "x": 5581116,
+          "y": 1870037
         },
         {
-          "x": 7239051,
-          "y": 2020037
+          "x": 7389051,
+          "y": 1870037
         }
       ]
     },
@@ -73,8 +73,8 @@
       "subbone_name": "Anterior Superior Iliac Spine",
       "text_content": "Anterior Superior Iliac Spine",
       "text_box": {
-        "x": 5407752,
-        "y": 2590801,
+        "x": 5557752,
+        "y": 2440801,
         "width": 766897,
         "height": 461665,
         "rotation": 0,
@@ -91,12 +91,12 @@
           "line_id": "line_3",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 5008152,
-            "y": 2821634
+            "x": 5158152,
+            "y": 2671634
           },
           "end_point": {
-            "x": 5407752,
-            "y": 2821634
+            "x": 5557752,
+            "y": 2671634
           },
           "style": {
             "width": 9525,
@@ -108,12 +108,12 @@
           "line_id": "line_4",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 4915385,
-            "y": 3459987
+            "x": 5065385,
+            "y": 3309987
           },
           "end_point": {
-            "x": 5271485,
-            "y": 3459987
+            "x": 5421485,
+            "y": 3309987
           },
           "style": {
             "width": 9525,
@@ -124,12 +124,12 @@
       ],
       "target_regions": [
         {
-          "x": 5407752,
-          "y": 2821634
+          "x": 5557752,
+          "y": 2671634
         },
         {
-          "x": 5271485,
-          "y": 3459987
+          "x": 5421485,
+          "y": 3309987
         }
       ]
     },
@@ -139,8 +139,8 @@
       "subbone_name": "Anterior Inferior Iliac Spine",
       "text_content": "Anterior Inferior Iliac Spine",
       "text_box": {
-        "x": 5271485,
-        "y": 3229154,
+        "x": 5421485,
+        "y": 3079154,
         "width": 766897,
         "height": 461665,
         "rotation": 0,
@@ -157,12 +157,12 @@
           "line_id": "line_4",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 4915385,
-            "y": 3459987
+            "x": 5065385,
+            "y": 3309987
           },
           "end_point": {
-            "x": 5271485,
-            "y": 3459987
+            "x": 5421485,
+            "y": 3309987
           },
           "style": {
             "width": 9525,
@@ -174,12 +174,12 @@
           "line_id": "line_3",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 5008152,
-            "y": 2821634
+            "x": 5158152,
+            "y": 2671634
           },
           "end_point": {
-            "x": 5407752,
-            "y": 2821634
+            "x": 5557752,
+            "y": 2671634
           },
           "style": {
             "width": 9525,
@@ -190,12 +190,12 @@
       ],
       "target_regions": [
         {
-          "x": 5271485,
-          "y": 3459987
+          "x": 5421485,
+          "y": 3309987
         },
         {
-          "x": 5407752,
-          "y": 2821634
+          "x": 5557752,
+          "y": 2671634
         }
       ]
     },
@@ -205,8 +205,8 @@
       "subbone_name": "Posterior Inferior Iliac Spine",
       "text_content": "Posterior Inferior Iliac Spine",
       "text_box": {
-        "x": 7887969,
-        "y": 3816698,
+        "x": 8037969,
+        "y": 3666698,
         "width": 766897,
         "height": 461665,
         "rotation": 0,
@@ -223,12 +223,12 @@
           "line_id": "line_5",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 8153518,
-            "y": 3505298
+            "x": 8303518,
+            "y": 3355298
           },
           "end_point": {
-            "x": 8271418,
-            "y": 3816698
+            "x": 8421418,
+            "y": 3666698
           },
           "style": {
             "width": 9525,
@@ -240,12 +240,12 @@
           "line_id": "line_6",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 8264690,
-            "y": 1907234
+            "x": 8414690,
+            "y": 1757234
           },
           "end_point": {
-            "x": 8381990,
-            "y": 3052334
+            "x": 8531990,
+            "y": 2902334
           },
           "style": {
             "width": 9525,
@@ -256,12 +256,12 @@
       ],
       "target_regions": [
         {
-          "x": 8271418,
-          "y": 3816698
+          "x": 8421418,
+          "y": 3666698
         },
         {
-          "x": 8381990,
-          "y": 3052334
+          "x": 8531990,
+          "y": 2902334
         }
       ]
     },
@@ -271,8 +271,8 @@
       "subbone_name": "Posterior Superior Iliac Spine",
       "text_content": "Posterior Superior Iliac Spine",
       "text_box": {
-        "x": 7881241,
-        "y": 1445569,
+        "x": 8031241,
+        "y": 1295569,
         "width": 766897,
         "height": 461665,
         "rotation": 0,
@@ -289,12 +289,12 @@
           "line_id": "line_6",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 8264690,
-            "y": 1907234
+            "x": 8414690,
+            "y": 1757234
           },
           "end_point": {
-            "x": 8381990,
-            "y": 3052334
+            "x": 8531990,
+            "y": 2902334
           },
           "style": {
             "width": 9525,
@@ -306,12 +306,12 @@
           "line_id": "line_7",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 7481740,
-            "y": 1756192
+            "x": 7631740,
+            "y": 1606192
           },
           "end_point": {
-            "x": 7772440,
-            "y": 3124192
+            "x": 7922440,
+            "y": 2974192
           },
           "style": {
             "width": 9525,
@@ -322,12 +322,12 @@
       ],
       "target_regions": [
         {
-          "x": 8381990,
-          "y": 3052334
+          "x": 8531990,
+          "y": 2902334
         },
         {
-          "x": 7772440,
-          "y": 3124192
+          "x": 7922440,
+          "y": 2974192
         }
       ]
     },
@@ -337,8 +337,8 @@
       "subbone_name": "Auricular surface",
       "text_content": "Auricular surface",
       "text_box": {
-        "x": 7169365,
-        "y": 1417638,
+        "x": 7319365,
+        "y": 1267638,
         "width": 624749,
         "height": 338554,
         "rotation": 0,
@@ -355,12 +355,12 @@
           "line_id": "line_7",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 7481740,
-            "y": 1756192
+            "x": 7631740,
+            "y": 1606192
           },
           "end_point": {
-            "x": 7772440,
-            "y": 3124192
+            "x": 7922440,
+            "y": 2974192
           },
           "style": {
             "width": 9525,
@@ -372,12 +372,12 @@
           "line_id": "line_2",
           "line_type": "straight_arrow",
           "start_point": {
-            "x": 6026151,
-            "y": 2020037
+            "x": 6176151,
+            "y": 1870037
           },
           "end_point": {
-            "x": 7239051,
-            "y": 2020037
+            "x": 7389051,
+            "y": 1870037
           },
           "style": {
             "width": 9525,
@@ -388,12 +388,12 @@
       ],
       "target_regions": [
         {
-          "x": 7772440,
-          "y": 3124192
+          "x": 7922440,
+          "y": 2974192
         },
         {
-          "x": 7239051,
-          "y": 2020037
+          "x": 7389051,
+          "y": 1870037
         }
       ]
     }
