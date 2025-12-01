@@ -30,15 +30,15 @@ const OVERLAY_ADJUSTMENTS = {
         1: { x: 580, y: 80, scale: 1.0, rotation: 0 }
     },
     'pectineal_line': {
-        0: { x: 10, y: 10, scale: 1.0, rotation: 0 },
+        0: { x: 95, y: -60, scale: 1.0, rotation: 0 },
         1: { x: 5, y: 5, scale: 1.0, rotation: 0 }
     },
     'symphyseal_surface': {
-        0: { x: 5, y: 5, scale: 1.0, rotation: 0 },
-        1: { x: 5, y: 5, scale: 1.0, rotation: 0 }
+        0: { x: 125, y: -50, scale: 1.0, rotation: 0 },
+        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
     },
     'pubic_tubercle': {
-        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
+        0: { x: 20, y: -45, scale: 1.0, rotation: 0 },
         1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
     },
     'auricular_surface': {
@@ -62,8 +62,8 @@ const OVERLAY_ADJUSTMENTS = {
         1: { x: 13, y: 20, scale: 1.0, rotation: 0 }
     },
     'pubic_rami': {
-        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
-        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+        0: { x: 60, y: 10, scale: 1.0, rotation: 10 },
+        1: { x: 0, y: 35, scale: 1.0, rotation: 0 }
     }
 };
 
@@ -644,7 +644,7 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
         
         if (transforms.length > 0) {
             svg.style.transform = transforms.join(' ');
-            svg.style.transformOrigin = '0 0';
+            svg.style.transformOrigin = 'center';
             console.log(`[ColoredRegions] Applied positioning adjustments for ${boneId} image ${imageIndex}: ${svg.style.transform}`);
         }
     }
