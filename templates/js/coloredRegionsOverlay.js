@@ -26,8 +26,16 @@ const OVERLAY_ADJUSTMENTS = {
         1: { x: 18, y: 10, scale: 1.0, rotation: 0 }
     },
     "posterior_iliac_spines": {
-        0: { x: 550, y: 50, scale: 1.0, rotation: 0 },
-        1: { x: 580, y: 80, scale: 1.0, rotation: 0 }
+        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
+        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+    },
+    "posterior_superior_iliac_spines": {
+        0: { x: 50, y: 200, scale: 1.0, rotation: 0 },
+        1: { x: 60, y: 80, scale: 1.0, rotation: 0 }
+    },
+    "posterior_inferior_iliac_spines": {
+        0: { x: 60, y: 60, scale: 1.0, rotation: 0 },
+        1: { x: 80, y: 60, scale: 1.0, rotation: 0 }
     },
     "pectineal_line": {
         0: { x: 30, y: 75, scale: 1.0, rotation: -2 },
@@ -93,7 +101,7 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     }
 
     // Available bones with colored region data
-    const bonesWithColoredRegions = ["bony_pelvis", "iliac_crest", "anterior_iliac_spines", "posterior_iliac_spines", "auricular_surface", "ramus", "ischial_tuberosity", "ischial_spine", "sciatic_notches", "pubic_rami", "pectineal_line", "symphyseal_surface", "pubic_tubercle"];
+    const bonesWithColoredRegions = ["bony_pelvis", "iliac_crest", "anterior_iliac_spines", "posterior_iliac_spines", "posterior_superior_iliac_spines", "posterior_inferior_iliac_spines", "auricular_surface", "ramus", "ischial_tuberosity", "ischial_spine", "sciatic_notches", "pubic_rami", "pectineal_line", "symphyseal_surface", "pubic_tubercle"];
     
     console.log(`[ColoredRegions] Checking if "${mappedBoneId}" is in available list:`, bonesWithColoredRegions);
     console.log("[ColoredRegions] Validation result:", bonesWithColoredRegions.includes(mappedBoneId));
@@ -200,6 +208,52 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             }
         } catch (error) {
             console.log("[ColoredRegions] Local file not accessible for posterior_iliac_spines:", error);
+        }
+    }
+
+    // Special handling for posterior_superior_iliac_spines - use local extracted file
+    if (boneId === "posterior_superior_iliac_spines") {
+        try {
+            const timestamp = new Date().getTime();
+            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/posterior_superior_iliac_spines_colored_regions.json?v=${timestamp}`;
+            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
+            const response = await fetch(localUrl, { 
+                cache: "no-store",
+                headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("[ColoredRegions] Successfully loaded from local file: posterior_superior_iliac_spines_colored_regions.json");
+                return data;
+            }
+        } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for posterior_superior_iliac_spines:", error);
+        }
+    }
+
+    // Special handling for posterior_inferior_iliac_spines - use local extracted file
+    if (boneId === "posterior_inferior_iliac_spines") {
+        try {
+            const timestamp = new Date().getTime();
+            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/posterior_inferior_iliac_spines_colored_regions.json?v=${timestamp}`;
+            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
+            const response = await fetch(localUrl, { 
+                cache: "no-store",
+                headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("[ColoredRegions] Successfully loaded from local file: posterior_inferior_iliac_spines_colored_regions.json");
+                return data;
+            }
+        } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for posterior_inferior_iliac_spines:", error);
         }
     }
     
