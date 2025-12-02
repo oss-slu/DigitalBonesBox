@@ -147,7 +147,6 @@ function displaySingleImage(image, container, options = {}) {
 
   // 3. Get reference to the image element for colored regions and event handlers
   const img = container.querySelector("img");
-  const img = container.querySelector("img");
   if (img) {
     const loadColoredRegions = () => {
       img.classList.add("loaded");
@@ -175,7 +174,6 @@ function displaySingleImage(image, container, options = {}) {
     // Check if already loaded (cached) - use setTimeout to let browser process
     setTimeout(() => {
       if (img.complete && img.naturalHeight !== 0) {
-        console.log("[ImageDisplay] Single image was cached, calling loadColoredRegions immediately");
         console.log("[ImageDisplay] Single image was cached, calling loadColoredRegions immediately");
         loadColoredRegions();
       }
