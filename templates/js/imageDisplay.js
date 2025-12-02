@@ -298,3 +298,4 @@ function displayMultipleImages(images, container) {
 
   container.appendChild(wrapper);
 }
+

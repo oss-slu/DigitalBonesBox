@@ -357,6 +357,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
                 message: `Annotation data not available for boneId: ${boneId}` 
             });
     }
+
     
     // 🛑 FIX FOR 404 ERROR: Use the single confirmed working template for all slides.
     const templateFilename = "template_bony_pelvis.json";
@@ -450,6 +451,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             message: message 
         });
     }
+    
     // --- END TEMPORARY WORKAROUND ---
 });
 // 🌟 END FINALIZED ENDPOINT 🌟
