@@ -3,6 +3,7 @@
 
 import { clearAnnotations, loadAndDrawAnnotations } from "./annotationOverlay.js";
 import { displayColoredRegions, clearAllColoredRegions } from "./coloredRegionsOverlay.js";
+import { imageCaptions } from "./imageCaptions.js";
 
 // Track the current boneId for colored regions
 let currentBoneId = null;
