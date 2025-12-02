@@ -85,13 +85,27 @@
         const consoleDiv = document.getElementById('consoleOutput');
         let logs = [];
 
+        // Helper function to sanitize input for XSS prevention
+        function escapeHtml(text) {
+            if (!text) return text;
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         function addLog(type, ...args) {
             const timestamp = new Date().toLocaleTimeString();
             const message = args.map(arg => 
                 typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
             ).join(' ');
             const className = type === 'error' ? 'error' : type === 'warn' ? 'warning' : 'success';
-            logs.push(`<span class="${className}">[${timestamp}] ${type.toUpperCase()}: ${message}</span>`);
+            
+            // Applied escapeHtml here to fix the vulnerability
+            logs.push(`<span class="${className}">[${timestamp}] ${type.toUpperCase()}: ${escapeHtml(message)}</span>`);
+            
             consoleDiv.innerHTML = logs.slice(-50).join('\n');
             consoleDiv.scrollTop = consoleDiv.scrollHeight;
         }
