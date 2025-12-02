@@ -314,9 +314,6 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         case "ilium_posterior_spines":
             annotationFilename = "slide07_ilium_posterior_iliac_spines_text_labels.json";
             break;
-        case "ilium_auricular_surface":
-            annotationFilename = "slide08_ilium_auricular_surface_text_labels.json";
-            break;
         case "ischium":
             annotationFilename = "slide09_ischium_text_labels.json";
             break;
