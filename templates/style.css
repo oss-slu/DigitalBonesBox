@@ -989,16 +989,16 @@ select:disabled {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Black background only when images are present - using class-based approach */
+/* Keep images-content white even when images are present */
 .images-content.has-images {
-    background: #000000 !important;
-    color: #ffffff;
+    background: #ffffff !important; /* Changed from #000000 */
+    color: #000000; /* Changed from #ffffff */
 }
 
 /* Fallback for browsers that support :has() */
 .images-content:has(#bone-image-container:not(:empty)) {
-    background: #000000 !important;
-    color: #ffffff;
+    background: #ffffff !important; /* Changed from #000000 */
+    color: #000000; /* Changed from #ffffff */
 }
 
 .panel-content {
@@ -1181,7 +1181,7 @@ select:disabled {
 }
 
 /* Hide HTML placeholder when JavaScript creates content in container */
-#bone-image-container:not(:empty) + .images-placeholder {
+#bone-image-container:not(:empty) ~ .images-placeholder {
     display: none !important;
 }
 
@@ -1433,14 +1433,14 @@ button:disabled {
 
 
 #bone-image-container {
-    display: grid;
+   display: grid;
     gap: var(--space-4);
     position: relative; 
     height: auto;
     width: 100%;
     box-sizing: border-box;
-    background: #000000;
-    min-height: 100px; /* Base height when images are present */
+    background: #000000; 
+    min-height: 100px;
     padding: var(--space-3);
     align-items: start;
 }
@@ -1454,7 +1454,7 @@ button:disabled {
 /* Two images layout - side by side */
 #bone-image-container.two-images {
     grid-template-columns: 1fr 1fr;
-    align-items: stretch;
+    align-items: stretch; /* Keep this */
 }
 
 /* Single image layout when only one image */
@@ -1469,19 +1469,31 @@ button:disabled {
 }
 
 .image-item {
-    background: #000000;
+    background: transparent;
     border: none;
     border-radius: 0;
-    overflow: hidden;
+    overflow: visible;
     transition: all var(--transition-normal);
     box-shadow: none;
     width: 100%;
     max-width: 100%;
     transform: none !important;
     position: relative;
-    /* --- MODIFIED FOR 4:3 ASPECT RATIO --- */
-    min-height: 400px; /* Minimum height to ensure visibility */
-    aspect-ratio: 3 / 4; /* Modern CSS aspect ratio */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; 
+    min-height: 100%; 
+}
+
+/* Wrapper for just the image with black background */
+.image-wrapper {
+    background: #000000; 
+    padding: var(--space-2);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Fallback for browsers that don't support aspect-ratio */
@@ -1503,21 +1515,19 @@ button:disabled {
 }
 
 .image-item img {
-    /* --- MODIFIED TO FILL ASPECT RATIO BOX --- */
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%; /* Now fills the proportional container */
-
+    position: relative;
     width: 100%;
+    height: auto;
+    max-height: 500px;
     object-fit: contain;
     object-position: center;
     display: block;
     border: none;
-    background: #000000;
-    padding: var(--space-2);
+    background: transparent; /* Changed from #000000 */
+    padding: 0; /* Removed padding - it's now on .image-wrapper */
     transition: transform 0.3s ease;
 }
+
 
 /* Add more pronounced natural tilts like the original */
 .image-item:nth-child(1) img {
@@ -1534,10 +1544,6 @@ button:disabled {
 
 .image-item:nth-child(4) img {
     transform: rotate(4.5deg);
-}
-
-.image-caption {
-    display: none;
 }
 
 /* Allow natural image orientation while maintaining layout */
@@ -1557,41 +1563,39 @@ button:disabled {
     transform: translateY(-2px) rotate(4.5deg) scale(1.02);
 }
 
-/* === CRITICAL FIX: Single Image Wrapper Aspect Ratio === */
-/* This container holds the single image and MUST define its own height */
+/* Single Image Wrapper - Updated for caption fix */
 .single-image-wrapper {
-    /* position: relative; is already defined globally at the top */
-    
-    /* Enforce 4:3 Aspect Ratio using padding-bottom trick, same as .image-item */
     width: 100%;
-    height: 0;
-    padding-bottom: 55%; 
-    overflow: hidden;
-    background: #000000;
+    background: transparent; /* Changed from #000000 - black is now on .image-wrapper */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 400px;
+    padding: 0; /* Removed padding - moved to .image-wrapper */
 }
 
-/* Ensure image element inside the wrapper fills the space */
+/* The image-wrapper inside single-image-wrapper gets the black background */
+.single-image-wrapper .image-wrapper {
+    padding: var(--space-4);
+    min-height: 350px;
+}
+
 .single-image-wrapper img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
     width: 100%;
+    height: auto;
+    max-width: 800px;
+    min-height: 350px;
     object-fit: contain;
     object-position: center;
     display: block;
-    padding: var(--space-2);
+    flex-shrink: 0;
 }
 
-/* Ensure the placeholder fills the single-image wrapper space when it's present */
-/* If the placeholder is placed inside .single-image-wrapper when no image is present,
-   these styles ensure it takes up the full space defined by the padding-bottom. */
+/* Placeholder styling */
 .single-image-wrapper .images-placeholder {
-    position: absolute;
-    top: 0;
-    left: 0;
+   position: relative;
     width: 100%;
-    height: 100%;
+    height: auto;
     margin: 0 !important;
 }
 
@@ -2499,4 +2503,137 @@ button:disabled {
         font-size: 0.9rem;
         padding: var(--space-2) var(--space-4);
     }
+
+    * Home button cursor and hover effects */
+#text-button-Home {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+/* Hover effect - slight color change */
+#text-button-Home:hover {
+    color: #FFD700; /* Gold color, adjust to match your theme */
+    transform: translateY(-1px);
+}
+
+/* Active/click effect */
+#text-button-Home:active {
+    transform: translateY(0);
+    opacity: 0.7;
+}
+
+/* Focus effect for keyboard navigation */
+#text-button-Home:focus {
+    outline: 2px solid #FFD700;
+    outline-offset: 2px;
+}
+
+/* Optional: Add underline on hover */
+#text-button-Home:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #FFD700;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+/* Ensure pointer cursor is always visible */
+#text-button-Home {
+    pointer-events: auto !important;
+}
+
+}
+
+/* Image Caption Styles */
+/* Add this to your style.css file */
+.image-caption {
+  text-align: center;
+  font-size: 15px;
+  color: #333; /* Dark text for white background */
+  background: white; /* Explicitly white background */
+  margin-top: 0; /* No gap between image and caption */
+  margin-bottom: 0;
+  padding: 12px 8px; /* Add padding for spacing */
+  font-weight: 500;
+  line-height: 1.4;
+  width: 100%;
+}
+/* Caption container - below the black image area */
+#caption-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    width: 100%;
+    padding: var(--space-3);
+    background: transparent;
+}
+
+#caption-container.single-image {
+    grid-template-columns: 1fr;
+    justify-items: center;
+}
+
+.caption-box {
+    text-align: center;
+    padding: 12px 8px;
+    background: white;
+}
+
+/* For single image layout */
+.single-image .image-caption {
+  margin-top: 0;
+  font-size: 16px;
+  background: white;
+  color: #333;
+}
+
+/* For two images layout - captions below each image */
+.two-images .image-item .image-caption {
+  margin-top: 0;
+  font-size: 15px;
+  background: white;
+  color: #333;
+}
+
+/* Keep captions white background even in dark mode */
+.has-images .image-caption {
+  color: #333;
+  background: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .image-caption {
+    font-size: 14px;
+    padding: 10px 8px;
+  }
+  
+  .single-image .image-caption {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-caption {
+    font-size: 13px;
+    padding: 8px 6px;
+  }
+ 
+.two-images .image-item .image-caption {
+    margin-top: auto;
+}
+
 }
