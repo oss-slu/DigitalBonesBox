@@ -1,0 +1,55 @@
+{
+  "slide_number": 7,
+  "images": [
+    {
+      "index": 0,
+      "name": "pelvis_lat_blk.psd",
+      "width": 2236557,
+      "height": 3535362,
+      "colored_regions": [
+        {
+          "anatomical_name": "Posterior Superior Iliac Spine",
+          "color": "008000",
+          "path_data": [
+            {
+              "path_width": 163357,
+              "path_height": 336862,
+              "commands": [
+                {"type": "moveTo", "x": 92940, "y": 337},
+                {"type": "cubicBezTo", "x1": 65802, "y1": 5241, "x2": 16020, "y2": 62911, "x": 530, "y": 107559},
+                {"type": "cubicBezTo", "x1": 353, "y1": 161114, "x2": 177, "y2": 214668, "x": 0, "y": 268223},
+                {"type": "lineTo", "x": 109048, "y": 336862},
+                {"type": "lineTo", "x": 158677, "y": 198913},
+                {"type": "lineTo", "x": 163357, "y": 78137},
+                {"type": "cubicBezTo", "x1": 152401, "y1": 45041, "x2": 120078, "y2": -4567, "x": 92940, "y": 337},
+                {"type": "close"}
+              ]
+            }
+          ]
+        },
+        {
+          "anatomical_name": "Posterior Inferior Iliac Spine",
+          "color": "FF00E6",
+          "path_data": [
+            {
+              "path_width": 227455,
+              "path_height": 195875,
+              "commands": [
+                {"type": "moveTo", "x": 227455, "y": 0},
+                {"type": "lineTo", "x": 126364, "y": 25274},
+                {"type": "lineTo", "x": 56864, "y": 75822},
+                {"type": "lineTo", "x": 0, "y": 151645},
+                {"type": "lineTo", "x": 0, "y": 170601},
+                {"type": "lineTo", "x": 63182, "y": 195875},
+                {"type": "lineTo", "x": 183228, "y": 151645},
+                {"type": "lineTo", "x": 221137, "y": 151645},
+                {"type": "lineTo", "x": 227455, "y": 0},
+                {"type": "close"}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

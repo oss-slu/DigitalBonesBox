@@ -23,7 +23,7 @@ export async function initializeSidebar() {
             if (sidebarElement) {
                 const currentLeft = window.getComputedStyle(sidebarElement).left;
                 if (currentLeft === "0px") {
-                    sidebarElement.style.left = "-250px"; // Close sidebar
+                    sidebarElement.style.left = "-300px"; // Close sidebar - updated to match CSS
                 } else {
                     sidebarElement.style.left = "0px"; // Open sidebar
                 }

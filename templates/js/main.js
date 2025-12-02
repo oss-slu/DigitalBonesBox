@@ -1,10 +1,11 @@
 import { fetchCombinedData, fetchBoneData } from "./api.js";
 import { populateBonesetDropdown, setupDropdownListeners } from "./dropdowns.js";
-import { initializeSidebar, loadHelpButton } from "./sidebar.js";
+import { initializeSidebar } from "./sidebar.js";
 import { setupNavigation, setBoneAndSubbones, disableButtons } from "./navigation.js";
 import { loadDescription } from "./description.js";
 import { displayBoneData, clearViewer } from "./viewer.js";
 import { initializeSearch } from "./search.js";
+import quizManager from "./quiz.js";
 
 let combinedData = { bonesets: [], bones: [], subbones: [] };
 
@@ -18,16 +19,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 1. Initialize search functionality
     initializeSearch();
 
-    // 2. Sidebar behavior and help button
+    // 2. Sidebar behavior
     initializeSidebar();
-    loadHelpButton();
 
-
-
-    // 4. Fetch data and populate dropdowns
+    // 3. Fetch data FIRST (moved from step 4)
     combinedData = await fetchCombinedData();
     populateBonesetDropdown(combinedData.bonesets);
     setupDropdownListeners(combinedData);
+
+    // 4. Initialize quiz system AFTER data is loaded
+    try {
+        // Pass BOTH bones and subbones to quizManager
+        quizManager.allBones = combinedData.bones || [];
+        quizManager.allSubbones = combinedData.subbones || [];
+        
+        // Create the master question pool
+        quizManager.createMasterQuestionPool();
+        
+        if (quizManager.masterQuestionPool.length >= 4) {
+            quizManager.setupEventListeners();
+            console.log("Quiz system initialized successfully with", quizManager.masterQuestionPool.length, "items");
+        } else {
+            console.warn("Not enough items for quiz:", quizManager.masterQuestionPool.length);
+        }
+    } catch (error) {
+        console.error("Error initializing quiz:", error);
+    }
 
     // Keep bone and subbone selects disabled until the user explicitly selects a boneset
     const boneSelectEl = document.getElementById("bone-select");
