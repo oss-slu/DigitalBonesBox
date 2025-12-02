@@ -94,7 +94,7 @@ export function setupDropdownListeners(combinedData) {
   // Build quick lookup
   _boneById = Object.fromEntries((combinedData.bones || []).map(b => [b.id, b]));
 
-// Boneset change
+  // Boneset change
 bonesetSelect.addEventListener("change", (e) => {
   const selectedBonesetId = e.target.value;
 
@@ -118,90 +118,67 @@ bonesetSelect.addEventListener("change", (e) => {
     return;
   }
 
-  // --- START FIX for Boneset Selection (Loads Slide 2 for Bony Pelvis) ---
+  // Preview first bone’s images
+  const firstBone = relatedBones[0];
   const bonesetName =
     (bonesetSelect.options[bonesetSelect.selectedIndex]?.text || "").trim().toLowerCase();
 
-  let targetId = selectedBonesetId; // Use the Boneset ID (e.g., 'bony_pelvis')
-
-  // Set annotation URL using the Boneset ID.
+  // ARCHITECTURAL FIX: Use API endpoint for Bony Pelvis annotations
   const opts = (bonesetName === "bony pelvis")
     ? { 
-        annotationsUrl: `${API_BASE}/api/annotations/${targetId}`,
+        annotationsUrl: `${API_BASE}/api/annotations/${firstBone.id}`,
         isBonesetSelection: true // Flag to indicate boneset selection
       }
     : {};
 
-  // Load the Boneset description (which shows the overall Boneset text)
-  loadDescription(targetId);
-
-  // Load the boneset image using the Boneset ID (e.g., 'bony_pelvis')
-  loadBoneImages(targetId, opts); 
-  // --- END FIX ---
+  loadBoneImages(firstBone.id, opts);
 });
 
 
-// Bone change
-boneSelect.addEventListener("change", (e) => {
-  const selectedBoneId = e.target.value;
+  // Bone change
+  boneSelect.addEventListener("change", (e) => {
+    const selectedBoneId = e.target.value;
 
-  subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
+    subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
 
-  const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
-  relatedSubbones.forEach(sb => {
-    const opt = document.createElement("option");
-    opt.value = sb.id;
-    opt.textContent = sb.name;
-    subboneSelect.appendChild(opt);
+    const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
+    relatedSubbones.forEach(sb => {
+      const opt = document.createElement("option");
+      opt.value = sb.id;
+      opt.textContent = sb.name;
+      subboneSelect.appendChild(opt);
+    });
+    subboneSelect.disabled = relatedSubbones.length === 0;
+
+    if (selectedBoneId) {
+      loadDescription(selectedBoneId);
+       // if the selected bone's label is exactly "Bony Pelvis", add the overlay for slide 02
+      const boneName =
+        (boneSelect.options[boneSelect.selectedIndex]?.text || "").trim().toLowerCase();
+
+      // ARCHITECTURAL FIX: Use API endpoint for Bony Pelvis annotations
+      const opts =
+        boneName === "bony pelvis"
+          ? { annotationsUrl: `${API_BASE}/api/annotations/${selectedBoneId}` } // **MODIFIED**
+          : {};
+      loadBoneImages(selectedBoneId, opts);
+    } else {
+      showPlaceholder();
+      const stage = getImageStage();
+      if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
+    }
   });
-  subboneSelect.disabled = relatedSubbones.length === 0;
 
-  if (selectedBoneId) {
-    loadDescription(selectedBoneId);
-    
-    // --- FIX for Bone Selection (Ensures all Bone annotations load) ---
-    // Always build the annotation URL using the selectedBoneId
-    const opts = { 
-      annotationsUrl: `${API_BASE}/api/annotations/${selectedBoneId}` 
-    };    
-    
-    loadBoneImages(selectedBoneId, opts);
-  } else {
-    showPlaceholder();
-    const stage = getImageStage();
-    if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
-  }
-});
-
-
-// Sub-bone change
-subboneSelect.addEventListener("change", (e) => {
-  const selectedSubboneId = e.target.value;
-  const stage = getImageStage();
-
-  // Always clear any existing annotations from the bone-level view
-  if (stage) {
-    clearAnnotations(stage);
-    stage.classList.remove("with-annotations");
-  }
-
-  if (selectedSubboneId) {
-    // Load the text description for this sub-bone
-    loadDescription(selectedSubboneId);
-
-    // 🔑 IMPORTANT:
-    // For sub-bones, load the sub-bone–specific annotation JSON,
-    // e.g. /api/annotations/pubic_tubercle  (mapped to slide20 JSON on the server)
-    const opts = {
-      annotationsUrl: `${API_BASE}/api/annotations/${selectedSubboneId}`,
-    };
-
-    // This will draw the sub-bone image AND its own labels
-    // (or none, if that annotation file has an empty text_annotations array)
-    loadBoneImages(selectedSubboneId, opts);
-  } else {
-    // No sub-bone selected → show placeholder
-    showPlaceholder();
-  }
-});
+  // Sub-bone change
+  subboneSelect.addEventListener("change", (e) => {
+    const selectedSubboneId = e.target.value;
+    if (selectedSubboneId) {
+      loadDescription(selectedSubboneId);
+      loadBoneImages(selectedSubboneId);
+    } else {
+      showPlaceholder();
+      const stage = getImageStage();
+      if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
+    }
+  });
 }
