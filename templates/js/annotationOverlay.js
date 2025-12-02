@@ -24,49 +24,45 @@ export function clearAnnotations(container) {
 }
 
 /**
- * Calculates pixel dimensions based on EMU coordinates and the normalized box size.
- * @param {Object} rect - The EMU rectangle {x, y, width, height}.
+ * Calculates pixel dimensions from NORMALIZED coordinates (0.0 to 1.0).
+ * Backend now sends coordinates normalized against the full PPT size.
+ * @param {Object} rect - The NORMALIZED rectangle {x, y, width, height}. <--- CHANGED INPUT MEANING
  * @param {Object} box - The current container pixel size {w, h}.
- * @param {Object} norm - The normalized geometry {normX, normY, normW, normH}. <--- ADDED
+ * @param {Object} norm - The normalized geometry {normX, normY, normW, normH}.
  * @returns {Object} Pixel coordinates {left, top, width, height}.
  */
-function emuRectToPx(rect, box, norm) { // <--- ADDED norm
-  // Scaling factors: Container pixel width / (EMU width of the visible area)
-  const sx = box.w / PPT_EMU.W;
-  const sy = box.h / PPT_EMU.H;
+function normalizedRectToPx(rect, box, norm) { // <--- RENAMED to reflect change
+  // 🛑 FIX: Input coordinates (rect.x, rect.y, etc.) are now normalized decimals (0.0 to 1.0).
+  
+  // Normalized Offset (normX, normY are also 0.0 to 1.0)
+  const normalizedOffsetX = norm.normX;
+  const normalizedOffsetY = norm.normY;
 
-  // Calculate the EMU offset (translation) based on the normalization factors
-  const emuOffsetX = norm.normX * PPT_EMU.W;
-  const emuOffsetY = norm.normY * PPT_EMU.H;
-
-  // Apply the offset (translation) to the EMU coordinate *before* scaling
+  // We now calculate pixel coordinates by: (Normalized Coord - Normalized Offset) * Effective Pixel Size (box.w/h)
   return {
-    left:   (rect.x - emuOffsetX) * sx, // <--- MODIFIED
-    top:    (rect.y - emuOffsetY) * sy, // <--- MODIFIED
-    width:  rect.width  * sx,
-    height: rect.height * sy,
+    left:   (rect.x - normalizedOffsetX) * box.w, 
+    top:    (rect.y - normalizedOffsetY) * box.h, 
+    width:  rect.width  * box.w,
+    height: rect.height * box.h,
   };
 }
 
 /**
- * Calculates pixel point based on EMU coordinates and the normalized box size.
- * @param {Object} pt - The EMU point {x, y}.
+ * Calculates pixel point from NORMALIZED coordinates (0.0 to 1.0).
+ * @param {Object} pt - The NORMALIZED point {x, y}. <--- CHANGED INPUT MEANING
  * @param {Object} box - The current container pixel size {w, h}.
- * @param {Object} norm - The normalized geometry {normX, normY, normW, normH}. <--- ADDED
+ * @param {Object} norm - The normalized geometry {normX, normY, normW, normH}.
  * @returns {Object} Pixel coordinates {x, y}.
  */
-function emuPointToPx(pt, box, norm) { // <--- ADDED norm
-  const sx = box.w / PPT_EMU.W;
-  const sy = box.h / PPT_EMU.H;
+function normalizedPointToPx(pt, box, norm) { // <--- RENAMED to reflect change
+  // 🛑 FIX: Input coordinates (pt.x, pt.y) are now normalized decimals (0.0 to 1.0).
+
+  const normalizedOffsetX = norm.normX;
+  const normalizedOffsetY = norm.normY;
   
-  // Calculate the EMU offset (translation) based on the normalization factors
-  const emuOffsetX = norm.normX * PPT_EMU.W;
-  const emuOffsetY = norm.normY * PPT_EMU.H;
-  
-  // Apply the offset (translation) to the EMU coordinate *before* scaling
   return { 
-    x: (pt.x - emuOffsetX) * sx, // <--- MODIFIED
-    y: (pt.y - emuOffsetY) * sy  // <--- MODIFIED
+    x: (pt.x - normalizedOffsetX) * box.w, 
+    y: (pt.y - normalizedOffsetY) * box.h 
   };
 }
 
@@ -99,21 +95,20 @@ export function drawAnnotations(container, annotationsJson) {
       h: rect.height / norm.normH 
   };
   
-  // 4. Get the list of annotations. The coordinate adjustments were moved 
-  // into emuRectToPx and emuPointToPx.
+  // 4. Get the list of annotations.
   const list = annotationsJson.annotations || annotationsJson.text_annotations || [];
   
-  // REMOVED: The complex .map() loop that adjusted coordinates is now gone, as 
-  // the logic is correctly integrated into the scaling functions above.
-
   list.forEach((a) => {
     if (!a || !a.text_box) return;
 
     // Text label
-    const px = emuRectToPx(a.text_box, box, norm); // <--- ADDED norm
+    const px = normalizedRectToPx(a.text_box, box, norm);
     const el = document.createElement("div");
     el.className = "annotation-label";
-    el.textContent = a.text_content ?? "";
+
+    // this preserves "\n" as real line breaks
+    el.innerText = a.text_content ?? "";
+
     Object.assign(el.style, {
       position: "absolute",
       left: `${px.left}px`,
@@ -123,14 +118,17 @@ export function drawAnnotations(container, annotationsJson) {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      whiteSpace: "pre-line",   // 👈 KEY: show newlines
+      textAlign: "center",      // optional: center both lines
     });
+
     labels.appendChild(el);
 
     // Pointer lines
     (a.pointer_lines || []).forEach((line) => {
       if (!line?.start_point || !line?.end_point) return;
-      const p1 = emuPointToPx(line.start_point, box, norm); // <--- ADDED norm
-      const p2 = emuPointToPx(line.end_point, box, norm);   // <--- ADDED norm
+      const p1 = normalizedPointToPx(line.start_point, box, norm); // <--- CALLING NEW FUNCTION
+      const p2 = normalizedPointToPx(line.end_point, box, norm);   // <--- CALLING NEW FUNCTION
       const l  = document.createElementNS("http://www.w3.org/2000/svg", "line");
       l.setAttribute("x1", p1.x);
       l.setAttribute("y1", p1.y);
@@ -142,7 +140,7 @@ export function drawAnnotations(container, annotationsJson) {
   });
 
   // Store last json for autoscale redraw
-  stage.__lastJson = annotationsJson; // <--- SIMPLIFIED to store the whole JSON
+  stage.__lastJson = annotationsJson; 
 }
 
 /** Load JSON from a URL and draw it. Returns a promise. */
@@ -153,7 +151,6 @@ export async function loadAndDrawAnnotations(container, jsonUrl) {
   const data = await res.json();
 
   // The backend now provides data in the structure expected by drawAnnotations
-  // (i.e., { annotations: [...], normalized_geometry: { normX, normY, normW, normH } })
   drawAnnotations(container, data);
   attachAutoscale(container); // keep aligned on resize
 }

@@ -1,7 +1,9 @@
 const COLORED_REGIONS_CONFIG = {
     // GitHub raw content URL for data branch
     BASE_URL: "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/annotations/ColoredRegions",
+    BASE_URL: "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/annotations/ColoredRegions",
     // Local path for colored regions JSON files (organized in subfolder)
+    LOCAL_PATH: "../data_extraction/annotations/color_regions",
     LOCAL_PATH: "../data_extraction/annotations/color_regions",
     // Default opacity for colored overlays (0.3 = 30% transparent)
     DEFAULT_OPACITY: 0.4
@@ -25,6 +27,7 @@ const OVERLAY_ADJUSTMENTS = {
         0: { x: 34, y: 20, scale: 1.0, rotation: 0 },
         1: { x: 18, y: 10, scale: 1.0, rotation: 0 }
     },
+    "posterior_iliac_spines": {
     "posterior_iliac_spines": {
         0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
         1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
@@ -85,6 +88,7 @@ const OVERLAY_ADJUSTMENTS = {
 async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     if (!boneId) {
         console.debug("[ColoredRegions] No boneId provided for colored regions");
+        console.debug("[ColoredRegions] No boneId provided for colored regions");
         return null;
     }
 
@@ -92,6 +96,11 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     
     // Map ilium to bony_pelvis only for boneset selections
     let mappedBoneId = boneId;
+    if (boneId === "ilium" && isBonesetSelection) {
+        console.log("[ColoredRegions] Mapping \"ilium\" to \"bony_pelvis\" for boneset selection");
+        mappedBoneId = "bony_pelvis";
+    } else if (boneId === "ilium" && !isBonesetSelection) {
+        console.log("[ColoredRegions] Skipping colored regions for individual ilium bone selection");
     if (boneId === "ilium" && isBonesetSelection) {
         console.log("[ColoredRegions] Mapping \"ilium\" to \"bony_pelvis\" for boneset selection");
         mappedBoneId = "bony_pelvis";
@@ -105,6 +114,7 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     
     console.log(`[ColoredRegions] Checking if "${mappedBoneId}" is in available list:`, bonesWithColoredRegions);
     console.log("[ColoredRegions] Validation result:", bonesWithColoredRegions.includes(mappedBoneId));
+    console.log("[ColoredRegions] Validation result:", bonesWithColoredRegions.includes(mappedBoneId));
     
     if (!bonesWithColoredRegions.includes(mappedBoneId)) {
         console.log(`[ColoredRegions] No colored regions available for: ${boneId}`);
@@ -116,6 +126,7 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
 
     // Special handling for bony_pelvis - use local extracted file
     if (boneId === "bony_pelvis") {
+    if (boneId === "bony_pelvis") {
         try {
             // Add cache-busting timestamp to force reload
             const timestamp = new Date().getTime();
@@ -123,7 +134,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -132,14 +146,18 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: bony_pelvis_colored_regions_final.json");
                 console.log("[ColoredRegions] First region Y coordinate (check offset applied):", data.images[0].colored_regions[0].path_data[0].commands[0].y);
+                console.log("[ColoredRegions] Successfully loaded from local file: bony_pelvis_colored_regions_final.json");
+                console.log("[ColoredRegions] First region Y coordinate (check offset applied):", data.images[0].colored_regions[0].path_data[0].commands[0].y);
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible, trying GitHub...");
             console.log("[ColoredRegions] Local file not accessible, trying GitHub...");
         }
     }
     
     // Special handling for iliac_crest - use local extracted file
+    if (boneId === "iliac_crest") {
     if (boneId === "iliac_crest") {
         try {
             // Add cache-busting timestamp to force reload
@@ -148,7 +166,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -156,14 +177,17 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: iliac_crest_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: iliac_crest_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for iliac_crest:", error);
             console.log("[ColoredRegions] Local file not accessible for iliac_crest:", error);
         }
     }
 
     // Special handling for anterior_iliac_spines - use local extracted file
+    if (boneId === "anterior_iliac_spines") {
     if (boneId === "anterior_iliac_spines") {
         try {
             // Add cache-busting timestamp to force reload
@@ -172,7 +196,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -180,14 +207,17 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: anterior_iliac_spines_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: anterior_iliac_spines_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for anterior_iliac_spines:", error);
             console.log("[ColoredRegions] Local file not accessible for anterior_iliac_spines:", error);
         }
     }
 
     // Special handling for posterior_iliac_spines - use local extracted file
+    if (boneId === "posterior_iliac_spines") {
     if (boneId === "posterior_iliac_spines") {
         try {
             // Add cache-busting timestamp to force reload
@@ -196,13 +226,17 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
             });
             if (response.ok) {
                 const data = await response.json();
+                console.log("[ColoredRegions] Successfully loaded from local file: posterior_iliac_spines_colored_regions.json");
                 console.log("[ColoredRegions] Successfully loaded from local file: posterior_iliac_spines_colored_regions.json");
                 return data;
             }
@@ -259,6 +293,7 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     
     // Special handling for auricular_surface - use local extracted file
     if (boneId === "auricular_surface") {
+    if (boneId === "auricular_surface") {
         try {
             // Add cache-busting timestamp to force reload
             const timestamp = new Date().getTime();
@@ -266,7 +301,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -274,14 +312,18 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: auricular_surface_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: auricular_surface_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for auricular_surface:", error);
             console.log("[ColoredRegions] Local file not accessible for auricular_surface:", error);
         }
     }
 
     // Special handler for ramus
+    if (mappedBoneId === "ramus") {
+        console.log("[ColoredRegions] Special case: ramus - loading from local file");
     if (mappedBoneId === "ramus") {
         console.log("[ColoredRegions] Special case: ramus - loading from local file");
         try {
@@ -291,7 +333,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -299,14 +344,18 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: ramus_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: ramus_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for ramus:", error);
             console.log("[ColoredRegions] Local file not accessible for ramus:", error);
         }
     }
 
     // Special handler for ischial_tuberosity
+    if (mappedBoneId === "ischial_tuberosity") {
+        console.log("[ColoredRegions] Special case: ischial_tuberosity - loading from local file");
     if (mappedBoneId === "ischial_tuberosity") {
         console.log("[ColoredRegions] Special case: ischial_tuberosity - loading from local file");
         try {
@@ -316,7 +365,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -324,14 +376,18 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: ischial_tuberosity_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: ischial_tuberosity_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for ischial_tuberosity:", error);
             console.log("[ColoredRegions] Local file not accessible for ischial_tuberosity:", error);
         }
     }
 
     // Special handler for ischial_spine
+    if (mappedBoneId === "ischial_spine") {
+        console.log("[ColoredRegions] Special case: ischial_spine - loading from local file");
     if (mappedBoneId === "ischial_spine") {
         console.log("[ColoredRegions] Special case: ischial_spine - loading from local file");
         try {
@@ -341,7 +397,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -349,14 +408,18 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: ischial_spine_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: ischial_spine_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for ischial_spine:", error);
             console.log("[ColoredRegions] Local file not accessible for ischial_spine:", error);
         }
     }
 
     // Special handler for sciatic_notches
+    if (mappedBoneId === "sciatic_notches") {
+        console.log("[ColoredRegions] Special case: sciatic_notches - loading from local file");
     if (mappedBoneId === "sciatic_notches") {
         console.log("[ColoredRegions] Special case: sciatic_notches - loading from local file");
         try {
@@ -366,7 +429,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -374,14 +440,18 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: sciatic_notches_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: sciatic_notches_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for sciatic_notches:", error);
             console.log("[ColoredRegions] Local file not accessible for sciatic_notches:", error);
         }
     }
 
     // Special handler for pubic_rami
+    if (mappedBoneId === "pubic_rami") {
+        console.log("[ColoredRegions] Special case: pubic_rami - loading from local file");
     if (mappedBoneId === "pubic_rami") {
         console.log("[ColoredRegions] Special case: pubic_rami - loading from local file");
         try {
@@ -391,7 +461,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -399,14 +472,18 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: pubis_rami_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: pubis_rami_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for pubic_rami:", error);
             console.log("[ColoredRegions] Local file not accessible for pubic_rami:", error);
         }
     }
 
     // Special handler for pectineal_line
+    if (mappedBoneId === "pectineal_line") {
+        console.log("[ColoredRegions] Special case: pectineal_line - loading from local file");
     if (mappedBoneId === "pectineal_line") {
         console.log("[ColoredRegions] Special case: pectineal_line - loading from local file");
         try {
@@ -416,7 +493,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -424,14 +504,18 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: pectineal_line_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: pectineal_line_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for pectineal_line:", error);
             console.log("[ColoredRegions] Local file not accessible for pectineal_line:", error);
         }
     }
 
     // Special handler for symphyseal_surface
+    if (mappedBoneId === "symphyseal_surface") {
+        console.log("[ColoredRegions] Special case: symphyseal_surface - loading from local file");
     if (mappedBoneId === "symphyseal_surface") {
         console.log("[ColoredRegions] Special case: symphyseal_surface - loading from local file");
         try {
@@ -441,7 +525,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -449,14 +536,18 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: symphyseal_surface_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: symphyseal_surface_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for symphyseal_surface:", error);
             console.log("[ColoredRegions] Local file not accessible for symphyseal_surface:", error);
         }
     }
 
     // Special handler for pubic_tubercle
+    if (mappedBoneId === "pubic_tubercle") {
+        console.log("[ColoredRegions] Special case: pubic_tubercle - loading from local file");
     if (mappedBoneId === "pubic_tubercle") {
         console.log("[ColoredRegions] Special case: pubic_tubercle - loading from local file");
         try {
@@ -466,7 +557,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
             const response = await fetch(localUrl, { 
                 cache: "no-store",
+                cache: "no-store",
                 headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
                     "Cache-Control": "no-cache",
                     "Pragma": "no-cache"
                 }
@@ -474,9 +568,11 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log("[ColoredRegions] Successfully loaded from local file: pubic_tubercle_colored_regions.json");
+                console.log("[ColoredRegions] Successfully loaded from local file: pubic_tubercle_colored_regions.json");
                 return data;
             }
         } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for pubic_tubercle:", error);
             console.log("[ColoredRegions] Local file not accessible for pubic_tubercle:", error);
         }
     }
@@ -488,7 +584,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
         boneId.charAt(0).toUpperCase() + boneId.slice(1), // Capitalize: "Pubis"
         boneId.replace(/_/g, " ")                         // Replace underscores: "bony pelvis"
             .split(" ")
+        boneId.replace(/_/g, " ")                         // Replace underscores: "bony pelvis"
+            .split(" ")
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join("_"),                                   // Capitalize each word: "Bony_Pelvis"
             .join("_"),                                   // Capitalize each word: "Bony_Pelvis"
     ];
     
@@ -497,6 +596,8 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     const boneName = capitalize(boneId);
     const combinedVariations = [
         // For bony_pelvis boneset, try combined files with all regions
+        boneId === "bony_pelvis" ? "Ischium_and_Pubis" : null,
+        boneId === "bony_pelvis" ? "Pubis_and_Ischium" : null,
         boneId === "bony_pelvis" ? "Ischium_and_Pubis" : null,
         boneId === "bony_pelvis" ? "Pubis_and_Ischium" : null,
         // For individual bones, try their combined files
@@ -533,6 +634,7 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             if (response.ok) {
                 const data = await response.json();
                 console.log(`[ColoredRegions] Successfully loaded colored regions from ${filename}`);
+                console.log("[ColoredRegions] Data:", data);
                 console.log("[ColoredRegions] Data:", data);
                 return data;
             }
@@ -601,6 +703,7 @@ function convertCommandToPixels(command, dimensions, debugInfo = {}) {
 
     // Convert control points for Bezier curves (cubicBezTo)
     if (command.type === "cubicBezTo") {
+    if (command.type === "cubicBezTo") {
         converted.x1 = emuToPixels(command.x1, slideWidth, imageWidth);
         converted.y1 = emuToPixels(command.y1, slideHeight, imageHeight);
         converted.x2 = emuToPixels(command.x2, slideWidth, imageWidth);
@@ -618,32 +721,39 @@ function convertCommandToPixels(command, dimensions, debugInfo = {}) {
  */
 function commandsToSVGPath(commands, dimensions) {
     let pathString = "";
+    let pathString = "";
 
     commands.forEach((command, idx) => {
         const pixelCmd = convertCommandToPixels(command, dimensions, { isFirstCommand: idx === 0 });
 
         switch (pixelCmd.type) {
             case "moveTo":
+            case "moveTo":
                 // M x y - Move to point
                 pathString += `M ${pixelCmd.x} ${pixelCmd.y} `;
                 break;
             
+            case "lineTo":
             case "lineTo":
                 // L x y - Line to point
                 pathString += `L ${pixelCmd.x} ${pixelCmd.y} `;
                 break;
             
             case "cubicBezTo":
+            case "cubicBezTo":
                 // C x1 y1 x2 y2 x y - Cubic Bezier curve
                 pathString += `C ${pixelCmd.x1} ${pixelCmd.y1} ${pixelCmd.x2} ${pixelCmd.y2} ${pixelCmd.x} ${pixelCmd.y} `;
                 break;
             
             case "close":
+            case "close":
                 // Z - Close path
+                pathString += "Z ";
                 pathString += "Z ";
                 break;
             
             default:
+                console.warn("Unknown path command type:", pixelCmd.type);
                 console.warn("Unknown path command type:", pixelCmd.type);
         }
     });
@@ -663,8 +773,18 @@ function commandsToSVGPath(commands, dimensions) {
 function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageData, boneId, imageIndex = 0) {
     // Create SVG namespace
     const svgNS = "http://www.w3.org/2000/svg";
+    const svgNS = "http://www.w3.org/2000/svg";
     
     // Create SVG element that will overlay the image
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("class", "colored-regions-overlay");
+    svg.setAttribute("data-bone", boneId); // Add bone identifier for CSS targeting
+    svg.setAttribute("width", imageWidth);
+    svg.setAttribute("height", imageHeight);
+    svg.style.position = "absolute";
+    svg.style.top = "0";
+    svg.style.left = "0";
+    svg.style.pointerEvents = "none"; // Allow clicks to pass through to image
     const svg = document.createElementNS(svgNS, "svg");
     svg.setAttribute("class", "colored-regions-overlay");
     svg.setAttribute("data-bone", boneId); // Add bone identifier for CSS targeting
@@ -677,10 +797,12 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
     
     console.log(`[ColoredRegions DEBUG] Creating SVG for bone: ${boneId}, imageIndex: ${imageIndex}`);
     console.log("[ColoredRegions DEBUG] OVERLAY_ADJUSTMENTS lookup:", OVERLAY_ADJUSTMENTS[boneId]);
+    console.log("[ColoredRegions DEBUG] OVERLAY_ADJUSTMENTS lookup:", OVERLAY_ADJUSTMENTS[boneId]);
     
     // Apply positioning adjustments if defined for this bone and image
     if (OVERLAY_ADJUSTMENTS[boneId] && OVERLAY_ADJUSTMENTS[boneId][imageIndex]) {
         const adjustments = OVERLAY_ADJUSTMENTS[boneId][imageIndex];
+        console.log("[ColoredRegions DEBUG] Found adjustments:", adjustments);
         console.log("[ColoredRegions DEBUG] Found adjustments:", adjustments);
         const transforms = [];
         
@@ -714,6 +836,7 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
     };
     
     console.log("[ColoredRegions] Coordinate conversion:", {
+    console.log("[ColoredRegions] Coordinate conversion:", {
         sourceWidth: dimensions.slideWidth,
         sourceHeight: dimensions.slideHeight,
         targetWidth: dimensions.imageWidth,
@@ -735,6 +858,8 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
                     // Create path element
                     const path = document.createElementNS(svgNS, "path");
                     path.setAttribute("d", pathData);
+                    const path = document.createElementNS(svgNS, "path");
+                    path.setAttribute("d", pathData);
                     
                     // Apply offset if present (for shapes that need to be positioned relative to image)
                     if (region.offset_x !== undefined && region.offset_y !== undefined) {
@@ -742,15 +867,19 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
                         const offsetXPixels = emuToPixels(region.offset_x, dimensions.slideWidth, dimensions.imageWidth);
                         const offsetYPixels = emuToPixels(region.offset_y, dimensions.slideHeight, dimensions.imageHeight);
                         path.setAttribute("transform", `translate(${offsetXPixels}, ${offsetYPixels})`);
+                        path.setAttribute("transform", `translate(${offsetXPixels}, ${offsetYPixels})`);
                         console.debug(`Applied offset transform: translate(${offsetXPixels}, ${offsetYPixels})`);
                     }
                     
                     // Apply color (add # to hex code from JSON)
                     const color = region.color.startsWith("#") ? region.color : `#${region.color}`;
+                    const color = region.color.startsWith("#") ? region.color : `#${region.color}`;
                     
                     // Check if this is a stroked path (outline only) or filled region
                     if (region.stroke === true) {
                         // This is a stroked path (outline only) - like sciatic notches
+                        path.setAttribute("fill", "none"); // No fill for stroked paths
+                        path.setAttribute("stroke", color); // Use region color for stroke
                         path.setAttribute("fill", "none"); // No fill for stroked paths
                         path.setAttribute("stroke", color); // Use region color for stroke
                         
@@ -760,10 +889,14 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
                         path.setAttribute("stroke-width", strokeWidthPixels);
                         path.setAttribute("stroke-linecap", "round");
                         path.setAttribute("stroke-linejoin", "round");
+                        path.setAttribute("stroke-width", strokeWidthPixels);
+                        path.setAttribute("stroke-linecap", "round");
+                        path.setAttribute("stroke-linejoin", "round");
                         
                         console.debug(`Created stroked path: ${region.anatomical_name} (stroke: ${color}, width: ${strokeWidthPixels.toFixed(2)}px)`);
                     } else {
                         // This is a filled region - standard colored region
+                        path.setAttribute("fill", color);
                         path.setAttribute("fill", color);
                         
                         // Create darker stroke color - handle multiple colors
@@ -775,12 +908,21 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
                             darkerStroke = "#B300A3"; // Darker magenta for magenta regions
                         } else if (colorUpper === "#008000" || colorUpper === "#2F8E29") {
                             darkerStroke = "#1F5E1C"; // Darker green for green regions
+                        if (colorUpper === "#C133AD") {
+                            darkerStroke = "#8B2471"; // Darker pink for pink regions
+                        } else if (colorUpper === "#FF00E6") {
+                            darkerStroke = "#B300A3"; // Darker magenta for magenta regions
+                        } else if (colorUpper === "#008000" || colorUpper === "#2F8E29") {
+                            darkerStroke = "#1F5E1C"; // Darker green for green regions
                         } else {
+                            darkerStroke = "#1F5E1C"; // Default to darker green
                             darkerStroke = "#1F5E1C"; // Default to darker green
                         }
                         path.setAttribute("stroke", darkerStroke); // Darker dashed border
+                        path.setAttribute("stroke", darkerStroke); // Darker dashed border
                         
                         // Apply transparency
+                        path.setAttribute("opacity", COLORED_REGIONS_CONFIG.DEFAULT_OPACITY);
                         path.setAttribute("opacity", COLORED_REGIONS_CONFIG.DEFAULT_OPACITY);
                     }
                     
@@ -788,11 +930,16 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
                     path.setAttribute("data-region-name", region.anatomical_name || `region-${regionIndex}`);
                     path.setAttribute("data-color-name", region.color_name || "unknown");
                     path.setAttribute("data-path-index", pathIndex);
+                    path.setAttribute("data-region-name", region.anatomical_name || `region-${regionIndex}`);
+                    path.setAttribute("data-color-name", region.color_name || "unknown");
+                    path.setAttribute("data-path-index", pathIndex);
                     
                     // Mark stroked paths for CSS styling
                     if (region.stroke === true) {
                         path.setAttribute("data-region-type", "stroke");
+                        path.setAttribute("data-region-type", "stroke");
                     } else {
+                        path.setAttribute("data-region-type", "fill");
                         path.setAttribute("data-region-type", "fill");
                     }
                     
@@ -822,10 +969,13 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
  */
 export async function displayColoredRegions(imageElement, boneId, imageIndex = 0, isBonesetSelection = false) {
     console.log("[ColoredRegions] ============ START displayColoredRegions ============");
+    console.log("[ColoredRegions] ============ START displayColoredRegions ============");
     console.log(`[ColoredRegions] boneId: ${boneId}, imageIndex: ${imageIndex}, isBonesetSelection: ${isBonesetSelection}`);
+    console.log("[ColoredRegions] imageElement:", imageElement);
     console.log("[ColoredRegions] imageElement:", imageElement);
     
     if (!imageElement || !boneId) {
+        console.debug("[ColoredRegions] Missing image element or boneId for colored regions");
         console.debug("[ColoredRegions] Missing image element or boneId for colored regions");
         return;
     }
@@ -835,10 +985,14 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
     if (boneId === "ilium" && isBonesetSelection) {
         mappedBoneId = "bony_pelvis";
         console.log("[ColoredRegions] Using mapped bone ID \"bony_pelvis\" for positioning adjustments");
+    if (boneId === "ilium" && isBonesetSelection) {
+        mappedBoneId = "bony_pelvis";
+        console.log("[ColoredRegions] Using mapped bone ID \"bony_pelvis\" for positioning adjustments");
     }
 
     // Fetch colored region data
     const regionData = await fetchColoredRegionData(boneId, isBonesetSelection);
+    console.log("[ColoredRegions] Fetched regionData:", regionData);
     console.log("[ColoredRegions] Fetched regionData:", regionData);
     
     // Return early if no colored region data exists
@@ -865,6 +1019,7 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
     } else if (regionData.colored_regions) {
         // Old structure: single set of regions for all images
         console.log("[ColoredRegions] Using old single-image structure");
+        console.log("[ColoredRegions] Using old single-image structure");
         regionsToDisplay = regionData.colored_regions;
         imageData = {
             width: regionData.image_dimensions?.width,
@@ -882,7 +1037,9 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
     // Wait for image to load to get correct dimensions
     if (!imageElement.complete) {
         console.log("[ColoredRegions] Waiting for image to complete loading...");
+        console.log("[ColoredRegions] Waiting for image to complete loading...");
         await new Promise(resolve => {
+            imageElement.addEventListener("load", resolve, { once: true });
             imageElement.addEventListener("load", resolve, { once: true });
         });
     }
@@ -897,6 +1054,7 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
     console.log(`[ColoredRegions] Image displayed dimensions: ${imageElement.offsetWidth}x${imageElement.offsetHeight}`);
 
     if (imageWidth === 0 || imageHeight === 0) {
+        console.warn("[ColoredRegions] Image has zero dimensions, cannot display colored regions");
         console.warn("[ColoredRegions] Image has zero dimensions, cannot display colored regions");
         return;
     }
@@ -915,15 +1073,19 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
     const parent = imageElement.parentElement;
     if (!parent) {
         console.warn("[ColoredRegions] Image element has no parent, cannot add overlay");
+        console.warn("[ColoredRegions] Image element has no parent, cannot add overlay");
         return;
     }
 
     // Ensure parent has position relative for absolute positioning of SVG
     if (getComputedStyle(parent).position === "static") {
         parent.style.position = "relative";
+    if (getComputedStyle(parent).position === "static") {
+        parent.style.position = "relative";
     }
 
     // Add class to disable image rotation (so CSS transforms on overlay work correctly)
+    parent.classList.add("with-annotations");
     parent.classList.add("with-annotations");
 
     // Remove any existing colored region overlays
@@ -932,6 +1094,11 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
     // Add the SVG overlay
     parent.appendChild(svg);
     
+    console.log("[ColoredRegions] SVG appended to parent container");
+    console.log("[ColoredRegions] Parent element:", parent);
+    console.log("[ColoredRegions] Parent classes:", parent.className);
+    console.log("[ColoredRegions] SVG data-bone attribute:", svg.getAttribute("data-bone"));
+    console.log("[ColoredRegions] SVG element:", svg);
     console.log("[ColoredRegions] SVG appended to parent container");
     console.log("[ColoredRegions] Parent element:", parent);
     console.log("[ColoredRegions] Parent classes:", parent.className);
@@ -950,6 +1117,7 @@ export function clearColoredRegions(container) {
     if (!container) return;
     
     const existingOverlays = container.querySelectorAll(".colored-regions-overlay");
+    const existingOverlays = container.querySelectorAll(".colored-regions-overlay");
     existingOverlays.forEach(overlay => overlay.remove());
 }
 
@@ -957,6 +1125,7 @@ export function clearColoredRegions(container) {
  * Clear all colored region overlays in the entire image container
  */
 export function clearAllColoredRegions() {
+    const container = document.getElementById("bone-image-container");
     const container = document.getElementById("bone-image-container");
     if (container) {
         clearColoredRegions(container);
