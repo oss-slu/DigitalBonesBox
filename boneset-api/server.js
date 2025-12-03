@@ -287,164 +287,90 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         });
     }
 
-    // --- TEMPORARY WORKAROUND & DYNAMIC MAPPING ---
-    let annotationFilename = null;
-    
-    // Define the view/rotation to select from the template geometry
-    // This assumes all current bone views use the 'right' view coordinates for scaling.
-    const geometryView = 'right'; 
-
-    // Map the boneId from the request URL to the correct local JSON file
-    switch (boneId) {
-        case "bony_pelvis":
-            annotationFilename = "slide02_bony_pelvis.json";
-            break;
-        case "ilium":
-            annotationFilename = "slide03_ilium_text_labels.json";
-            break;
-        case "ilium_image":
-            annotationFilename = "slide04_ilium_image.json";
-            break;
-        case "ilium_crest":
-            annotationFilename = "slide05_ilium_iliac_crest_text_labels.json";
-            break;
-        case "ilium_anterior_spines":
-            annotationFilename = "slide06_ilium_anterior_iliac_spines_text_labels.json";
-            break;
-        case "ilium_posterior_spines":
-            annotationFilename = "slide07_ilium_posterior_iliac_spines_text_labels.json";
-            break;
-        case "ilium_auricular_surface":
-            annotationFilename = "slide08_ilium_auricular_surface_text_labels.json";
-            break;
-        case "ischium":
-            annotationFilename = "slide09_ischium_text_labels.json";
-            break;
-        case "ischium_image":
-            annotationFilename = "slide10_ischium_image.json";
-            break;
-        case "ischium_ramus":
-            annotationFilename = "slide11_ischium_ramus_text_labels.json";
-            break;
-        case "ischial_tuberosity":
-            annotationFilename = "slide12_ischium_ischial_tuberosity_text_labels.json";
-            break;
-        case "ischial_spine":
-            annotationFilename = "slide13_ischium_ischial_spine_text_labels.json";
-            break;
-        case "ischium_sciatic_notches":
-            annotationFilename = "slide14_ischium_sciatic_notches_text_labels.json";
-            break;
-        case "pubis":
-            annotationFilename = "slide15_pubis_text_labels.json";
-            break;
-        case "pubis_image":
-            annotationFilename = "slide16_pubis_image.json";
-            break;
-        case "pubic_rami":
-            annotationFilename = "slide17_pubis_pubic_rami_text_labels.json";
-            break;
-        case "pectineal_line":
-            annotationFilename = "slide18_pubis_pectineal_line_text_labels.json";
-            break;
-        case "symphyseal_surface":
-            annotationFilename = "slide19_pubis_symphyseal_surface_text_labels.json";
-            break;
-        case "pubic_tubercle":
-            annotationFilename = "slide20_pubis_pubic_tubercle_text_labels.json";
-            break;
-        default:
-            // If the boneId is not in the list, assume no annotation data is available
-            return res.status(404).json({ 
-                error: "Not Found", 
-                message: `Annotation data not available for boneId: ${boneId}` 
-            });
-    }
-    
-    // 🛑 FIX FOR 404 ERROR: Use the single confirmed working template for all slides.
-    const templateFilename = "template_bony_pelvis.json";
-
-    // Now that the filenames are set, attempt to serve the local file
+    // --- TEMPORARY WORKAROUND (Step 2a) ---
+    // Try to serve the file from the local 'temp_annotations' folder first.
+    let annotationFilename = "slide02_bony_pelvis.json"; // <--- MODIFIED TO HARDCODE FILENAME
     const localAnnotationPath = path.join(__dirname, "temp_annotations", annotationFilename);
-    const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
 
     try {
-        // 2a. Try to serve the file from the local 'temp_annotations' folder.
         const localAnnotationData = await fs.readFile(localAnnotationPath, "utf8");
         
-        // 2b. Fetch the rotation/scaling template data from GitHub
+        // If the file is found and read successfully, we must still fetch the template
+        // data from GitHub because it contains the required rotation/scaling information!
+        
+        // 2b. Define Template Filename and URL (Same as original logic)
+        let templateFilename = "template_bony_pelvis.json"; 
+        const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
+        
         const templateResponse = await axios.get(GITHUB_TEMPLATE_URL, { timeout: 10000 });
         const templateData = templateResponse.data;
         const annotationData = JSON.parse(localAnnotationData); // Parse the local file
 
-        // 🛑 FIX: Define Full Slide Dimensions for Normalization 🛑
-        // Use standard PPT slide dimensions if 'full_slide_dimensions' is missing from the template.
-        const fullDimensions = templateData.full_slide_dimensions || { 
-            width: 9144000, 
-            height: 5143500 
-        };
-        const slideWidth = fullDimensions.width;
-        const slideHeight = fullDimensions.height;
-        
-        // 2c. Combine required data for the frontend
-        let normalizedGeometry = templateData.normalized_geometry
-            ? templateData.normalized_geometry[geometryView] 
-            : { normX: 0, normY: 0, normW: 1, normH: 1 }; 
-        
-        // *** ALIGNMENT WORKAROUND (Leave this in) ***
-        if (boneId === 'bony_pelvis' && normalizedGeometry) {
-            normalizedGeometry.normX = normalizedGeometry.normX + 0.001; 
-            console.log("ALIGNMENT WORKAROUND APPLIED: Bony Pelvis normX shifted by +0.001");
-        }
-        // *** END ALIGNMENT WORKAROUND ***
-        
-        // 🛑 FIX: Normalize Text Annotation Coordinates 🛑
-        const normalizedAnnotations = (annotationData.text_annotations || []).map(annotation => {
-            if (annotation.text_box && slideWidth && slideHeight) {
-                // Normalize all coordinate values for the bounding box
-                annotation.text_box.x = annotation.text_box.x / slideWidth;
-                annotation.text_box.y = annotation.text_box.y / slideHeight;
-                annotation.text_box.width = annotation.text_box.width / slideWidth;
-                annotation.text_box.height = annotation.text_box.height / slideHeight;
-
-                // Normalize pointer lines (start and end points)
-                (annotation.pointer_lines || []).forEach(line => {
-                    if (line.start_point) {
-                        line.start_point.x = line.start_point.x / slideWidth;
-                        line.start_point.y = line.start_point.y / slideHeight;
-                    }
-                    if (line.end_point) {
-                        line.end_point.x = line.end_point.x / slideWidth;
-                        line.end_point.y = line.end_point.y / slideHeight;
-                    }
-                });
-                
-                // Note: Other coordinates like target_regions might also need normalization 
-                // depending on your frontend implementation, but we start with text_box and pointer_lines.
-            }
-            return annotation;
-        });
-        // 🛑 END FIX: Normalization
-
+        // 2c. Combine required data for the frontend (Same as original logic)
         const combinedData = {
-            annotations: normalizedAnnotations, // Use the normalized array
-            normalized_geometry: normalizedGeometry
+            annotations: annotationData.text_annotations || [],
+            normalized_geometry: templateData.normalized_geometry
+                ? templateData.normalized_geometry.right 
+                : { normX: 0, normY: 0, normW: 1, normH: 1 } 
         };
 
-        console.log(`SUCCESS: Serving local annotation file ${annotationFilename} combined with GitHub template (Coordinates Normalized).`);
+        console.log(`WORKAROUND: Serving local annotation file ${annotationFilename} combined with GitHub template.`);
         return res.json(combinedData); // Success! Return local annotations + remote template
         
     } catch (error) {
-        // If fs.readFile fails (e.g., file not found, permissions issue) or GitHub fetch fails
-        let message = `Failed to serve local annotation file or fetch GitHub template: ${error.message}`;
+        // If fs.readFile fails (E.g., file not found, which is expected for other bones)
+        // Log the local file failure but continue to the original GitHub logic.
+        if (error.code !== "ENOENT") {
+             console.warn(`Local file read failed unexpectedly for ${localAnnotationPath}:`, error.message);
+        }
+    }
+    // --- END TEMPORARY WORKAROUND ---
+
+
+    // 3. Define File Paths for GitHub (Original Logic)
+    if (boneId === "bony_pelvis") {
+        annotationFilename = "slide02_bony_pelvis.json";
+        templateFilename = "template_bony_pelvis.json";
+    } else {
+        // Handle other bonesets/bones if they need annotations
+        return res.status(404).json({ 
+            error: "Not Found", 
+            message: `Annotation data not available for boneId: ${boneId}` 
+        });
+    }
+
+    const GITHUB_ANNOTATION_URL = `${GITHUB_REPO}annotations/text_label_annotations/${annotationFilename}`;
+    const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
+
+    try {
+        // 4. Fetch Annotation Data and Template Data concurrently from GitHub
+        const [annotationResponse, templateResponse] = await Promise.all([
+            axios.get(GITHUB_ANNOTATION_URL, { timeout: 10000 }),
+            axios.get(GITHUB_TEMPLATE_URL, { timeout: 10000 })
+        ]);
+
+        const annotationData = annotationResponse.data;
+        const templateData = templateResponse.data;
+
+        // 5. Combine required data for the frontend
+        const combinedData = {
+            annotations: annotationData.text_annotations || [],
+            normalized_geometry: templateData.normalized_geometry
+                ? templateData.normalized_geometry.right 
+                : { normX: 0, normY: 0, normW: 1, normH: 1 }
+        };
+        
+        // 6. Send the combined response
+        res.json(combinedData);
+
+    } catch (error) {
+        // Handle 404 or other fetch errors
+        let message = `Failed to fetch resources for boneId: ${boneId}`;
         let status = 500;
         
-        if (error.code === "ENOENT") {
-            message = `Annotation file ${annotationFilename} not found locally in temp_annotations.`;
-            status = 404;
-        } else if (error.response) {
+        if (error.response) {
              status = error.response.status;
-             message = `GitHub fetch error (Status ${status}): Could not find ${templateFilename}`;
+             message = `GitHub fetch error (Status ${status}): Could not find ${error.config.url.split("/").pop()}`;
         }
         
         console.error("Error fetching annotation/template data:", error.message);
@@ -453,7 +379,6 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             message: message 
         });
     }
-    // --- END TEMPORARY WORKAROUND ---
 });
 // 🌟 END FINALIZED ENDPOINT 🌟
 
@@ -506,22 +431,17 @@ app.get("/api/search", searchLimiter, (req, res) => {
     }
 });
 
-// 🛑 CORRECTED SERVER STARTUP LOGIC 🛑
-// 1. Initialize cache first. 2. Start server only if run directly (for testability).
-async function startServer() {
-    await initializeSearchCache(); // Wait for the cache to be built
-    
-    // Start the server only if this file is run directly (not imported)
-    if (require.main == module) {
-      app.listen(PORT, () => {
-        console.log(`Server running on http://127.0.0.1:${PORT}`);
-      });
-    }
+// Initialize search cache on startup
+initializeSearchCache();
+
+//CODE CHANGE -> Make express app testable, lets the tests import app without starting
+// a real server
+if (require.main == module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://127.0.0.1:${PORT}`);
+  });
 }
 
-startServer(); // Call the async function to begin startup
-
-// Export for tests or other modules if needed
 module.exports = {
   app,
   escapeHtml,
