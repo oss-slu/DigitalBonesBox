@@ -8,7 +8,7 @@ export const imageCaptions = {
     image2: "Right Pelvis(medial aspect)"
   },
 
-  // Ilium and its subbones
+  // Ilium and its subbones.
   "ilium": {
     image1: "Right Pelvis (lateral aspect)",
     image2: "Right Pelvis(medial aspect)"

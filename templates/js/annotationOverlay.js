@@ -1,4 +1,4 @@
-// templates/js/annotationOverlay.js
+
 // Small, self-contained overlay module.
 
 const PPT_EMU = { W: 9_144_000, H: 6_858_000 }; // PowerPoint slide size in EMUs

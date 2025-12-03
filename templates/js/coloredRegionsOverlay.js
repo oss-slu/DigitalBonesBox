@@ -789,6 +789,7 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
                     path.setAttribute("data-color-name", region.color_name || "unknown");
                     path.setAttribute("data-path-index", pathIndex);
                     
+                    
                     // Mark stroked paths for CSS styling
                     if (region.stroke === true) {
                         path.setAttribute("data-region-type", "stroke");

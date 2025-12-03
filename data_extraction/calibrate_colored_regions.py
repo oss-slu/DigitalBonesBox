@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Calibration tool for colored region positioning
 Adds manual offset adjustments to align regions with web images
