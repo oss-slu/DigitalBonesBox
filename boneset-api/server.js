@@ -190,7 +190,7 @@ app.get("/api/description/", async (req, res) => {
         return res.send(" ");
     }
     
-    // Validate boneId to prevent SSRF attacks
+    // Validate boneId to prevent SSRF-attacks 
     if (!isValidBoneId(boneId)) {
         return res.send("<li>Invalid bone ID.</li>");
     }
