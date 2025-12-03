@@ -57,7 +57,7 @@
 </head>
 <body>
     <h1>Colored Regions Overlay Test</h1>
-   
+    
     <div class="test-container">
         <h2>Test Controls</h2>
         <button onclick="testBone('pubis')">Test Pubis</button>
@@ -85,29 +85,13 @@
         const consoleDiv = document.getElementById('consoleOutput');
         let logs = [];
 
-        // --- FIX START: Added Helper Function ---
-        function escapeHtml(text) {
-            if (!text) return text;
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-        // --- FIX END ---
-
         function addLog(type, ...args) {
             const timestamp = new Date().toLocaleTimeString();
-            const message = args.map(arg =>
+            const message = args.map(arg => 
                 typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
             ).join(' ');
             const className = type === 'error' ? 'error' : type === 'warn' ? 'warning' : 'success';
-           
-            // --- FIX START: Used escapeHtml(message) instead of just message ---
-            logs.push(`<span class="${className}">[${timestamp}] ${type.toUpperCase()}: ${escapeHtml(message)}</span>`);
-            // --- FIX END ---
-
+            logs.push(`<span class="${className}">[${timestamp}] ${type.toUpperCase()}: ${message}</span>`);
             consoleDiv.innerHTML = logs.slice(-50).join('\n');
             consoleDiv.scrollTop = consoleDiv.scrollHeight;
         }
@@ -127,7 +111,7 @@
         window.testBone = async function(boneId) {
             logs = [];
             addLog('log', `Testing colored regions for: ${boneId}`);
-           
+            
             const container = document.getElementById('imageContainer');
             container.innerHTML = '';
 
@@ -135,7 +119,7 @@
             const img = document.createElement('img');
             img.src = 'https://via.placeholder.com/800x600/000000/FFFFFF?text=Test+Bone+Image';
             img.alt = `${boneId} bone`;
-           
+            
             container.appendChild(img);
 
             // Wait for image to load
