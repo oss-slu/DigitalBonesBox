@@ -292,7 +292,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     
     // Define the view/rotation to select from the template geometry
     // This assumes all current bone views use the 'right' view coordinates for scaling.
-    const geometryView = 'right'; 
+    const geometryView = "right"; 
 
     // Map the boneId from the request URL to the correct local JSON file
     switch (boneId) {
@@ -392,7 +392,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             : { normX: 0, normY: 0, normW: 1, normH: 1 }; 
         
         // *** ALIGNMENT WORKAROUND (Leave this in) ***
-        if (boneId === 'bony_pelvis' && normalizedGeometry) {
+        if (boneId === "bony_pelvis" && normalizedGeometry) {
             normalizedGeometry.normX = normalizedGeometry.normX + 0.001; 
             console.log("ALIGNMENT WORKAROUND APPLIED: Bony Pelvis normX shifted by +0.001");
         }
