@@ -25,6 +25,14 @@ export const imageCaptions = {
     image1: "Right Pelvis (lateral aspect)",
     image2: "Right Pelvis(medial aspect)"
   },
+  "posterior_superior_iliac_spines": {
+    image1: "Right Pelvis (lateral aspect)",
+    image2: "Right Pelvis(medial aspect)"
+  },
+  "posterior_inferior_iliac_spines": {
+    image1: "Right Pelvis (lateral aspect)",
+    image2: "Right Pelvis(medial aspect)"
+  },
   "auricular_surface": {
     image1: "Right Pelvis(medial aspect)",
     image2: null
