@@ -8,6 +8,7 @@
       "colored_regions": [
         {
           "region_name": "Symphyseal surface",
+          "anatomical_name": "Symphyseal surface",
           "color": "008000",
           "color_name": "green",
           "opacity": 0.35,
@@ -37,8 +38,8 @@
               ]
             }
           ],
-          "offset_x": 99320,
-          "offset_y": 2939915
+          "offset_x": 0,
+          "offset_y": 0
         }
       ]
     }

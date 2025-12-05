@@ -8,6 +8,7 @@
       "colored_regions": [
         {
           "region_name": "Pubic tubercle",
+          "anatomical_name": "Pubic tubercle",
           "color": "008000",
           "color_name": "green",
           "opacity": 0.29,
@@ -73,10 +74,8 @@
               ]
             }
           ],
-          "offset_x": 3530367,
-          "offset_y": 2436889,
-          "rotation": 564778,
-          "rotation_degrees": 5.64778
+          "offset_x": 0,
+          "offset_y": 0
         }
       ]
     }

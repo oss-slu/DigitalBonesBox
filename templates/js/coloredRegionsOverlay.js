@@ -1,8 +1,8 @@
 const COLORED_REGIONS_CONFIG = {
     // GitHub raw content URL for data branch
     BASE_URL: "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/annotations/ColoredRegions",
-    // Local path for colored regions JSON files (organized in subfolder)
-    LOCAL_PATH: "../data_extraction/annotations/color_regions",
+    // Local path served through API server for colored regions JSON files
+    LOCAL_PATH: "http://127.0.0.1:8000/colored-regions",
     // Default opacity for colored overlays (0.3 = 30% transparent)
     DEFAULT_OPACITY: 0.4
 };
@@ -14,31 +14,63 @@ const COLORED_REGIONS_CONFIG = {
  */
 const OVERLAY_ADJUSTMENTS = {
     "bony_pelvis": {
-        0: { x: 90, y: -10, scale: 1.0, rotation: 18 },   // Left image
-        1: { x: 18, y: 20, scale: 1.0, rotation: 1 }      // Right image
+        0: { x: -5, y: -5, scale: 1.0, rotation: 15 },   // Left image
+        1: { x: 2, y: 5, scale: 0.9, rotation: 1 }      // Right image
     },
     "iliac_crest": {
-        0: { x: 90, y: -20, scale: 1.0, rotation: 20 },
-        1: { x: 78, y: 25, scale: 1.0, rotation: 0 }
+        0: { x: -2, y: 15, scale: 1.0, rotation: 12},
+        1: { x: 65, y: 20, scale: 1.0, rotation: 0 }
     },
     "anterior_iliac_spines": {
-        0: { x: 45, y: 45, scale: 1.0, rotation: 0 },
-        1: { x: 12, y: 38, scale: 1.0, rotation: 0 }
+        0: { x: 2, y: 11, scale: 1.0, rotation: 10 },
+        1: { x: 5, y: 4, scale: 1.0, rotation: 0 }
     },
     "posterior_iliac_spines": {
-        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
-        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+        0: { x: 10, y: -70, scale: 0.95, rotation: 0 },
+        1: { x: -20, y: -15, scale: 1.0, rotation: 0 }
+    },
+    "posterior_superior_iliac_spines": {
+        0: { x: 50, y: 200, scale: 1.0, rotation: 0 },
+        1: { x: 60, y: 80, scale: 1.0, rotation: 0 }
+    },
+    "posterior_inferior_iliac_spines": {
+        0: { x: 60, y: 60, scale: 1.0, rotation: 0 },
+        1: { x: 80, y: 60, scale: 1.0, rotation: 0 }
     },
     "pectineal_line": {
-        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
-        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+        0: { x: 0, y: 5, scale: 1.0, rotation: -2 },
+        1: { x: 5, y: 5, scale: 1.0, rotation: 0 }
     },
     "symphyseal_surface": {
-        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
+        0: { x: 17, y: 245, scale: 1.0, rotation: 0 },
         1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
     },
     "pubic_tubercle": {
-        0: { x: 0, y: 0, scale: 1.0, rotation: 0 },
+        0: { x: 270, y: 210, scale: 1.0, rotation: 0 },
+        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+    },
+    "auricular_surface": {
+        0: { x: 140, y: 135, scale: 1.0, rotation: 0 },
+        1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
+    },
+    "ramus": {
+        0: { x: 50, y: 340, scale: 1.0, rotation: 8 },
+        1: { x: 105, y: 323, scale: 1.0, rotation: 0 }
+    },
+    "ischial_tuberosity": {
+        0: { x: 38, y: 290, scale: 1.0, rotation: 0 },
+        1: { x: 105, y: 295, scale: 1.0, rotation: 0 }
+    },
+    "ischial_spine": {
+        0: { x: 45, y: 260, scale: 1.0, rotation: 0 },
+        1: { x: 192, y: 258, scale: 1.0, rotation: 0 }
+    },
+    "sciatic_notches": {
+        0: { x: 5, y: 0, scale: 1.0, rotation: 17 },
+        1: { x: -5, y: 0, scale: 1.0, rotation: 0 }
+    },
+    "pubic_rami": {
+        0: { x: 10, y: 40, scale: 0.7, rotation: 7 },
         1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
     }
 };
@@ -69,7 +101,7 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     }
 
     // Available bones with colored region data
-    const bonesWithColoredRegions = ["bony_pelvis", "iliac_crest", "anterior_iliac_spines", "posterior_iliac_spines", "auricular_surface", "ramus", "ischial_tuberosity", "ischial_spine", "sciatic_notches", "pubic_rami", "pectineal_line", "symphyseal_surface", "pubic_tubercle"];
+    const bonesWithColoredRegions = ["bony_pelvis", "iliac_crest", "anterior_iliac_spines", "posterior_iliac_spines", "posterior_superior_iliac_spines", "posterior_inferior_iliac_spines", "auricular_surface", "ramus", "ischial_tuberosity", "ischial_spine", "sciatic_notches", "pubic_rami", "pectineal_line", "symphyseal_surface", "pubic_tubercle"];
     
     console.log(`[ColoredRegions] Checking if "${mappedBoneId}" is in available list:`, bonesWithColoredRegions);
     console.log("[ColoredRegions] Validation result:", bonesWithColoredRegions.includes(mappedBoneId));
@@ -176,6 +208,52 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             }
         } catch (error) {
             console.log("[ColoredRegions] Local file not accessible for posterior_iliac_spines:", error);
+        }
+    }
+
+    // Special handling for posterior_superior_iliac_spines - use local extracted file
+    if (boneId === "posterior_superior_iliac_spines") {
+        try {
+            const timestamp = new Date().getTime();
+            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/posterior_superior_iliac_spines_colored_regions.json?v=${timestamp}`;
+            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
+            const response = await fetch(localUrl, { 
+                cache: "no-store",
+                headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("[ColoredRegions] Successfully loaded from local file: posterior_superior_iliac_spines_colored_regions.json");
+                return data;
+            }
+        } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for posterior_superior_iliac_spines:", error);
+        }
+    }
+
+    // Special handling for posterior_inferior_iliac_spines - use local extracted file
+    if (boneId === "posterior_inferior_iliac_spines") {
+        try {
+            const timestamp = new Date().getTime();
+            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/posterior_inferior_iliac_spines_colored_regions.json?v=${timestamp}`;
+            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
+            const response = await fetch(localUrl, { 
+                cache: "no-store",
+                headers: {
+                    "Cache-Control": "no-cache",
+                    "Pragma": "no-cache"
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("[ColoredRegions] Successfully loaded from local file: posterior_inferior_iliac_spines_colored_regions.json");
+                return data;
+            }
+        } catch (error) {
+            console.log("[ColoredRegions] Local file not accessible for posterior_inferior_iliac_spines:", error);
         }
     }
     
@@ -592,9 +670,13 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
     svg.setAttribute("data-bone", boneId); // Add bone identifier for CSS targeting
     svg.setAttribute("width", imageWidth);
     svg.setAttribute("height", imageHeight);
+    svg.setAttribute("viewBox", `0 0 ${imageWidth} ${imageHeight}`);
+    svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     svg.style.position = "absolute";
     svg.style.top = "0";
     svg.style.left = "0";
+    svg.style.width = "100%";
+    svg.style.height = "100%";
     svg.style.pointerEvents = "none"; // Allow clicks to pass through to image
     
     console.log(`[ColoredRegions DEBUG] Creating SVG for bone: ${boneId}, imageIndex: ${imageIndex}`);
@@ -620,7 +702,7 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
         
         if (transforms.length > 0) {
             svg.style.transform = transforms.join(" ");
-            svg.style.transformOrigin = "0 0";
+            svg.style.transformOrigin = "center";
             console.log(`[ColoredRegions] Applied positioning adjustments for ${boneId} image ${imageIndex}: ${svg.style.transform}`);
         }
     }

@@ -1594,6 +1594,17 @@ button:disabled {
     margin: 0 !important;
 }
 
+/* Colored Regions Overlay - Ensures SVG scales with image */
+.colored-regions-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+    z-index: 10;
+}
+
 /* Images Placeholder */
 
 .images-placeholder::before {
@@ -1642,6 +1653,17 @@ button:disabled {
 /* Hide placeholder when images exist */
 #bone-image-container:not(:empty) .images-placeholder {
     display: none;
+}
+
+/* Colored Regions Overlay SVG - Scale with image */
+.colored-regions-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none;
+    z-index: 10;
 }
 
 /* Navigation Buttons */
