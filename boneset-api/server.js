@@ -13,6 +13,10 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
+// Serve colored regions JSON files
+const coloredRegionsPath = path.join(__dirname, "../data_extraction/annotations/color_regions");
+app.use("/colored-regions", express.static(coloredRegionsPath));
+
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;

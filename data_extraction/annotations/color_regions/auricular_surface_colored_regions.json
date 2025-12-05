@@ -10,6 +10,8 @@
         {
           "anatomical_name": "Auricular Surface",
           "color": "008000",
+          "stroke": false,
+          "fill": true,
           "path_data": [
             {
               "path_width": 1604821,
