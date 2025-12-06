@@ -33,16 +33,16 @@ export function clearAnnotations(container) {
  */
 function normalizedRectToPx(rect, box, norm) { // <--- RENAMED to reflect change
   // 🛑 FIX: Input coordinates (rect.x, rect.y, etc.) are now normalized decimals (0.0 to 1.0).
-  
+
   // Normalized Offset (normX, normY are also 0.0 to 1.0)
   const normalizedOffsetX = norm.normX;
   const normalizedOffsetY = norm.normY;
 
   // We now calculate pixel coordinates by: (Normalized Coord - Normalized Offset) * Effective Pixel Size (box.w/h)
   return {
-    left:   (rect.x - normalizedOffsetX) * box.w, 
-    top:    (rect.y - normalizedOffsetY) * box.h, 
-    width:  rect.width  * box.w,
+    left: (rect.x - normalizedOffsetX) * box.w,
+    top: (rect.y - normalizedOffsetY) * box.h,
+    width: rect.width * box.w,
     height: rect.height * box.h,
   };
 }
@@ -59,10 +59,10 @@ function normalizedPointToPx(pt, box, norm) { // <--- RENAMED to reflect change
 
   const normalizedOffsetX = norm.normX;
   const normalizedOffsetY = norm.normY;
-  
-  return { 
-    x: (pt.x - normalizedOffsetX) * box.w, 
-    y: (pt.y - normalizedOffsetY) * box.h 
+
+  return {
+    x: (pt.x - normalizedOffsetX) * box.w,
+    y: (pt.y - normalizedOffsetY) * box.h
   };
 }
 
@@ -73,8 +73,8 @@ function normalizedPointToPx(pt, box, norm) { // <--- RENAMED to reflect change
 export function drawAnnotations(container, annotationsJson) {
   if (!container || !annotationsJson) return;
 
-  const stage  = ensureStage(container);
-  const svg    = stage.querySelector(".annotation-svg");
+  const stage = ensureStage(container);
+  const svg = stage.querySelector(".annotation-svg");
   const labels = stage.querySelector(".annotation-labels");
 
   // Clear previous
@@ -83,21 +83,21 @@ export function drawAnnotations(container, annotationsJson) {
 
   // 1. Get current pixel dimensions of the image container.
   const rect = container.getBoundingClientRect();
-  
+
   // 2. Extract the normalization factors from the JSON (provided by backend).
   const norm = annotationsJson.normalized_geometry || { normX: 0, normY: 0, normW: 1, normH: 1 };
 
   // 3. Define the *effective* coordinate box for scaling.
   // We scale the container size (rect.width/height) by the crop ratios (normW/normH).
   // This calculates the effective pixel dimensions relative to the full PPT slide size.
-  const box  = { 
-      w: rect.width / norm.normW, 
-      h: rect.height / norm.normH 
+  const box = {
+    w: rect.width / norm.normW,
+    h: rect.height / norm.normH
   };
-  
+
   // 4. Get the list of annotations.
   const list = annotationsJson.annotations || annotationsJson.text_annotations || [];
-  
+
   list.forEach((a) => {
     if (!a || !a.text_box) return;
 
@@ -129,7 +129,7 @@ export function drawAnnotations(container, annotationsJson) {
       if (!line?.start_point || !line?.end_point) return;
       const p1 = normalizedPointToPx(line.start_point, box, norm); // <--- CALLING NEW FUNCTION
       const p2 = normalizedPointToPx(line.end_point, box, norm);   // <--- CALLING NEW FUNCTION
-      const l  = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
       l.setAttribute("x1", p1.x);
       l.setAttribute("y1", p1.y);
       l.setAttribute("x2", p2.x);
@@ -140,7 +140,7 @@ export function drawAnnotations(container, annotationsJson) {
   });
 
   // Store last json for autoscale redraw
-  stage.__lastJson = annotationsJson; 
+  stage.__lastJson = annotationsJson;
 }
 
 /** Load JSON from a URL and draw it. Returns a promise. */
