@@ -8,7 +8,7 @@
     "test": "jest",
     "start": "concurrently \"npm run start:api\" \"npm run start:web\"",
     "start:api": "npm start --prefix boneset-api",
-    "start:web": "http-server --port=5500 --open templates/boneset.html",
+    "start:web": "http-server -o /templates/boneset.html",
     "lint": "eslint . --ext .js",
     "lint:fix": "eslint . --ext .js --fix"
   },

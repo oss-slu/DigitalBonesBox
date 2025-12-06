@@ -3,6 +3,7 @@
 
 import { clearAnnotations, loadAndDrawAnnotations } from "./annotationOverlay.js";
 import { displayColoredRegions, clearAllColoredRegions } from "./coloredRegionsOverlay.js";
+import { imageCaptions } from "./imageCaptions.js";
 
 // Track the current boneId for colored regions
 let currentBoneId = null;
@@ -12,6 +13,22 @@ function getImageContainer() {
   return /** @type {HTMLElement|null} */ (
     document.getElementById("bone-image-container")
   );
+}
+
+/** Helper function to get captions for a boneId */
+function getCaptionsForBone(boneId) {
+  if (!boneId || !imageCaptions[boneId]) {
+    return { image1: null, image2: null };
+  }
+  return imageCaptions[boneId];
+}
+
+/** Helper to clear existing caption container */
+function clearCaptionContainer() {
+  const existingCaptions = document.getElementById("caption-container");
+  if (existingCaptions) {
+    existingCaptions.remove();
+  }
 }
 
 /** ---- Empty-state / clearing ------------------------------------------- */
@@ -28,6 +45,9 @@ export function showPlaceholder() {
   clearAllColoredRegions();
   currentBoneId = null;
 
+  // Clear caption container
+  clearCaptionContainer();
+
   // Remove black background class when showing placeholder
   const imagesContent = document.querySelector(".images-content");
   if (imagesContent) imagesContent.classList.remove("has-images");
@@ -40,6 +60,10 @@ export function clearImages() {
     clearAnnotations(c);
     clearAllColoredRegions();
   }
+
+  // Clear caption container
+  clearCaptionContainer();
+
   currentBoneId = null;
   currentIsBonesetSelection = false; // Reset the flag
 
@@ -92,12 +116,14 @@ export function displayBoneImages(images, options = {}) {
 
 //** ---- Single image ------------------------------------------------------ */
 function displaySingleImage(image, container, options = {}) {
-  // 1. CRITICAL FIX: Add the 'single-image' class to the main container.
-  // This CSS class is required for the styles to correctly size the single image layout.
-  container.className = "single-image"; 
+  // Get captions for this bone
+  const captions = getCaptionsForBone(currentBoneId);
+  console.log("[DEBUG] Single image - currentBoneId:", currentBoneId, "captions:", captions);
 
-  // 2. Simplification: Use innerHTML to directly create the necessary structure 
-  // (.single-image-wrapper > img), which better aligns with your CSS.
+  // 1. CRITICAL FIX: Add the 'single-image' class to the main container.
+  container.className = "single-image";
+
+  // 2. Use innerHTML to directly create the necessary structure
   container.innerHTML = `
     <div class="single-image-wrapper">
       <img
@@ -107,7 +133,34 @@ function displaySingleImage(image, container, options = {}) {
       >
     </div>
   `;
-  
+
+  // --- MODIFIED: Caption Logic ---
+  if (captions.image1) {
+    console.log("[DEBUG] Adding single image caption:", captions.image1);
+
+    clearCaptionContainer();
+
+    const captionContainer = document.createElement("div");
+    captionContainer.id = "caption-container";
+
+    // UPDATED: Added margin-top: 15px to move it down
+    captionContainer.style.cssText = `
+      text-align: center;
+      padding: 12px 0 5px 0;
+      background: #000000;
+      color: #ffffff; 
+      font-size: 14px;
+      font-weight: 600;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 15px; 
+    `;
+    captionContainer.textContent = captions.image1;
+
+    // Insert right after the bone-image-container (inside the Visual Reference panel)
+    container.insertAdjacentElement('afterend', captionContainer);
+  }
+
   // 3. Get reference to the image element for colored regions and event handlers
   const img = container.querySelector("img");
   if (img) {
@@ -146,8 +199,8 @@ function displaySingleImage(image, container, options = {}) {
 
 /** ---- Two images (with rotation template) ------------------------------- */
 const TWO_IMAGE_ROTATION = {
-  left:  { rot_deg: -16.999, flipH: false },
-  right: { rot_deg: 0,       flipH: false },
+  left: { rot_deg: -16.999, flipH: false },
+  right: { rot_deg: 0, flipH: false },
 };
 
 function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
@@ -160,6 +213,10 @@ function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
 }
 
 function displayTwoImages(images, container, options = {}) {
+  // Get captions for this bone
+  const captions = getCaptionsForBone(currentBoneId);
+  console.log("[DEBUG] Two images - currentBoneId:", currentBoneId, "captions:", captions);
+
   // Add the two-images class to the container for CSS styling
   container.className = "two-images";
 
@@ -169,7 +226,7 @@ function displayTwoImages(images, container, options = {}) {
 
     const img = document.createElement("img");
     img.alt = image.alt || image.filename || "Bone image";
-    
+
     const loadColoredRegions = () => {
       console.log(`[ImageDisplay] Image ${index} load event fired`);
       img.classList.add("loaded");
@@ -196,7 +253,7 @@ function displayTwoImages(images, container, options = {}) {
 
     // Set src LAST - this triggers the load
     img.src = image.url || image.src || "";
-    
+
     // Check if image is already loaded from cache after setting src
     // Use setTimeout to allow the browser to process the src assignment first
     setTimeout(() => {
@@ -206,6 +263,51 @@ function displayTwoImages(images, container, options = {}) {
       }
     }, 10);
   });
+
+  // --- MODIFIED: Caption Logic ---
+  if (captions.image1 || captions.image2) {
+    console.log("[DEBUG] Adding two image captions:", captions.image1, captions.image2);
+
+    clearCaptionContainer();
+
+    const captionContainer = document.createElement("div");
+    captionContainer.id = "caption-container";
+
+    // UPDATED: Added margin-top: 15px to move it down
+    captionContainer.style.cssText = `
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      padding: 12px 0 5px 0;
+      width: 100%;
+      background: #000000;
+      box-sizing: border-box;
+      margin-top: 15px;
+    `;
+
+    // UPDATED: Changed text color to white for visibility
+    const captionStyle = `
+      text-align: center;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+    `;
+
+    // Add first caption
+    const caption1 = document.createElement("div");
+    caption1.style.cssText = captionStyle;
+    caption1.textContent = captions.image1 || "";
+    captionContainer.appendChild(caption1);
+
+    // Add second caption
+    const caption2 = document.createElement("div");
+    caption2.style.cssText = captionStyle;
+    caption2.textContent = captions.image2 || "";
+    captionContainer.appendChild(caption2);
+
+    // Insert right after the bone-image-container (inside the Visual Reference panel)
+    container.insertAdjacentElement('afterend', captionContainer);
+  }
 }
 
 /** ---- 3+ images grid ---------------------------------------------------- */
