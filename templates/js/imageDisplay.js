@@ -87,7 +87,6 @@ export function displayBoneImages(images, options = {}) {
   // Store boneId for colored regions AFTER clearing (so it doesn't get reset to null)
   currentBoneId = options.boneId || null;
   currentIsBonesetSelection = options.isBonesetSelection || false; // Store boneset flag
-  console.log(`[ImageDisplay] displayBoneImages called with boneId: ${currentBoneId}, isBonesetSelection: ${currentIsBonesetSelection}, images: ${images.length}`);
 
   if (!Array.isArray(images) || images.length === 0) {
     showPlaceholder();
@@ -118,7 +117,6 @@ export function displayBoneImages(images, options = {}) {
 function displaySingleImage(image, container, options = {}) {
   // Get captions for this bone
   const captions = getCaptionsForBone(currentBoneId);
-  console.log("[DEBUG] Single image - currentBoneId:", currentBoneId, "captions:", captions);
 
   // 1. CRITICAL FIX: Add the 'single-image' class to the main container.
   container.className = "single-image";
@@ -136,8 +134,6 @@ function displaySingleImage(image, container, options = {}) {
 
   // --- MODIFIED: Caption Logic ---
   if (captions.image1) {
-    console.log("[DEBUG] Adding single image caption:", captions.image1);
-
     clearCaptionContainer();
 
     const captionContainer = document.createElement("div");
@@ -158,7 +154,7 @@ function displaySingleImage(image, container, options = {}) {
     captionContainer.textContent = captions.image1;
 
     // Insert right after the bone-image-container (inside the Visual Reference panel)
-    container.insertAdjacentElement('afterend', captionContainer);
+    container.insertAdjacentElement("afterend", captionContainer);
   }
 
   // 3. Get reference to the image element for colored regions and event handlers
@@ -168,7 +164,6 @@ function displaySingleImage(image, container, options = {}) {
       img.classList.add("loaded");
       // Display colored regions after image loads
       if (currentBoneId) {
-        console.log(`[ImageDisplay] Loading colored regions for: ${currentBoneId}, imageIndex: 0`);
         displayColoredRegions(img, currentBoneId, 0).catch(err => {
           console.warn(`Could not display colored regions for ${currentBoneId}:`, err);
         });
@@ -190,7 +185,6 @@ function displaySingleImage(image, container, options = {}) {
     // Check if already loaded (cached) - use setTimeout to let browser process
     setTimeout(() => {
       if (img.complete && img.naturalHeight !== 0) {
-        console.log("[ImageDisplay] Single image was cached, calling loadColoredRegions immediately");
         loadColoredRegions();
       }
     }, 0);
@@ -215,7 +209,6 @@ function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
 function displayTwoImages(images, container, options = {}) {
   // Get captions for this bone
   const captions = getCaptionsForBone(currentBoneId);
-  console.log("[DEBUG] Two images - currentBoneId:", currentBoneId, "captions:", captions);
 
   // Add the two-images class to the container for CSS styling
   container.className = "two-images";
@@ -228,11 +221,9 @@ function displayTwoImages(images, container, options = {}) {
     img.alt = image.alt || image.filename || "Bone image";
 
     const loadColoredRegions = () => {
-      console.log(`[ImageDisplay] Image ${index} load event fired`);
       img.classList.add("loaded");
       // Display colored regions for this image
       if (currentBoneId) {
-        console.log(`[ImageDisplay] currentBoneId is: ${currentBoneId}, isBonesetSelection: ${currentIsBonesetSelection}, calling displayColoredRegions for imageIndex: ${index}`);
         displayColoredRegions(img, currentBoneId, index, currentIsBonesetSelection).catch(err => {
           console.error(`[ImageDisplay] Could not display colored regions for ${currentBoneId} image ${index}:`, err);
         });
@@ -258,7 +249,6 @@ function displayTwoImages(images, container, options = {}) {
     // Use setTimeout to allow the browser to process the src assignment first
     setTimeout(() => {
       if (img.complete && img.naturalWidth > 0) {
-        console.log(`[ImageDisplay] Image ${index} was already cached, manually triggering load handler`);
         loadColoredRegions();
       }
     }, 10);
@@ -266,8 +256,6 @@ function displayTwoImages(images, container, options = {}) {
 
   // --- MODIFIED: Caption Logic ---
   if (captions.image1 || captions.image2) {
-    console.log("[DEBUG] Adding two image captions:", captions.image1, captions.image2);
-
     clearCaptionContainer();
 
     const captionContainer = document.createElement("div");
@@ -306,7 +294,7 @@ function displayTwoImages(images, container, options = {}) {
     captionContainer.appendChild(caption2);
 
     // Insert right after the bone-image-container (inside the Visual Reference panel)
-    container.insertAdjacentElement('afterend', captionContainer);
+    container.insertAdjacentElement("afterend", captionContainer);
   }
 }
 
