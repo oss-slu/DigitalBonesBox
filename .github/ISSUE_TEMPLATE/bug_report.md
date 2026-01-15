@@ -7,15 +7,18 @@ assignees: ''
 
 ---
 
-### Bug description and expecgted behavior
+## Bug description and expecgted behavior
+
 *A clear and concise description of what the bug is, and what you expected to happen.*
 
 ---
 
-### Steps to reproduce
+## Steps to reproduce
+
 *A list of steps it takes to see this bug.*
 
 ---
 
-### Additional context
+## Additional context
+
 *Add any other context or screenshots about the bug here.*

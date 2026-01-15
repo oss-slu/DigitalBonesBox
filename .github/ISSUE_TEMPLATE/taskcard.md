@@ -7,12 +7,14 @@ assignees: ''
 
 ---
 
-### 🎯 Goal / Objective
+## 🎯 Goal / Objective
+
 *A clear and concise description of what this task aims to achieve. Why is this task important for the sprint?*
 
 ---
 
-### ✅ Tasks to be Completed
+## ✅ Tasks to be Completed
+
 *A checklist of the specific, actionable steps required to complete this issue. This helps track progress.*
 
 - [ ] Task 1:
@@ -21,7 +23,8 @@ assignees: ''
 
 ---
 
-### Acceptance Criteria
+## Acceptance Criteria
+
 *A checklist of conditions that must be met for this task to be considered complete. How will we verify that it's done correctly?*
 
 - [ ] The new feature is implemented as described.
@@ -31,5 +34,6 @@ assignees: ''
 
 ---
 
-### Additional Context
+## Additional Context
+
 *Add any other context, notes, screenshots, or links that might be helpful for completing this task.*
