@@ -19,6 +19,17 @@ assignees: ''
 
 ---
 
+## Acceptance Criteria
+
+*A checklist of conditions that must be met for this task to be considered complete. How will we verify that it's done correctly?*
+
+- [ ] The new feature is implemented as described.
+- [ ] All related code passes the repository's workflow checks (linting, tests).
+- [ ] The application runs without errors after the changes are made.
+- [ ] (If applicable) New automated tests have been added to cover the changes.
+
+---
+
 ## Additional context
 
 *Add any other context or screenshots about the feature request here.*
