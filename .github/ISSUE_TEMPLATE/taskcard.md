@@ -1,9 +1,10 @@
 ---
 name: General Task Card
 about: For standard development tasks, chores, or refactoring.
-title: '[Task]: '
+title: ''
 labels: task, enhancement
 assignees: ''
+type: Task
 
 ---
 
