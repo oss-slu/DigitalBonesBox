@@ -10,13 +10,17 @@ type: Feature
 
 ## Feature description
 
-*A clear and concise description of the feature, and why is should be added to the project.*
+*A clear and concise description of the feature, and why it should be added to the project.*
 
 ---
 
 ## ✅ Tasks to be Completed
 
-*A list of individual tasks that likely must be done before the feature can be considered "complete".*
+*A checklist of individual tasks that likely must be done before the feature can be considered "complete".*
+
+- [ ] Task 1:
+- [ ] Task 2:
+- [ ] Task 3:
 
 ---
 

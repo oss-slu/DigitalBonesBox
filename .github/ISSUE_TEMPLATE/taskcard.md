@@ -10,7 +10,7 @@ type: Task
 
 ## 🎯 Goal / Objective
 
-*A clear and concise description of what this task aims to achieve. Why is this task important for the sprint?*
+*A clear and concise description of what this task aims to achieve. Why is this task important?*
 
 ---
 
