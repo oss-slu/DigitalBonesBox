@@ -2,7 +2,7 @@
 
 ## Overview
 
-This documentation explains how the PowerPoint anatomical shape parser at `ColoredRegionsExtractor.py` works and how to use it effectively. The parser was created to extract precise anatomical shape boundaries from PowerPoint slides containing colored anatomical regions.
+This documentation explains how the PowerPoint anatomical shape parser works and how to use it effectively. The parser was created to extract precise anatomical shape boundaries from PowerPoint slides containing colored anatomical regions.
 
 ## What This Parser Does
 
@@ -29,6 +29,10 @@ This is the main parsing script that does all the heavy lifting. It reads PowerP
 4. Converts the path coordinates to usable format
 5. Identifies anatomical names based on colors and nearby text
 6. Saves everything as JSON files with descriptive names
+
+### ColoredRegionsExtractorTest.py
+
+A simple testing script to make sure everything is working correctly. It checks that the parser can read files, extract data, and create proper output.
 
 ## How to Use the Parser
 
