@@ -1,8 +1,10 @@
 # bony_pelvis_text_labels
 
+## Overview
+
 This file documents the behavior of `data_extraction/scripts/bony_pelvis_text_labels.py`.
 
-### Purpose:
+## Purpose
 
 Extracts white text labels and the white leader lines/connector lines that point from labels into the image on a given slide. Outputs one JSON per slide containing:
 
@@ -18,7 +20,7 @@ Extracts white text labels and the white leader lines/connector lines that point
 
 Uses a small graph walk from any line endpoints that touch the label’s text box (with padding), then collects terminal endpoints outside the box.
 
-### Expected inputs:
+## Expected inputs
 
 - `--slides-dir`: directory containing slideN.xml
 
@@ -26,7 +28,7 @@ Uses a small graph walk from any line endpoints that touch the label’s text bo
 
 - `--slide`: the slide number to process
 
-### Outputs:
+## Outputs
 
 `--out`: path to write JSON. If not provided, writes
 `data_extraction/annotations/slide{N}_text_annotations.json`.
@@ -53,7 +55,7 @@ Each JSON contains:
 }
 ```
 
-### How it works (brief):
+## How it works (brief)
 
 Detect labels: White-filled text (either srgbClr #FFFFFF or scheme colors lt1/bg1).
 
@@ -61,15 +63,15 @@ Detect lines: White-stroke p:cxnSp connectors and simple p:sp lines.
 
 Graph follow: Build a snapped endpoint graph, start from nodes that lie within the label’s padded box, traverse connected edges, and collect terminal nodes outside the label as candidate target regions.
 
-# Key options:
+## Key options
 
 - `--padding` (default 4000 EMU): padding around the text box to consider endpoints “touching” the label.
 
 - `--snap` (default 8000 EMU): snap size for coalescing nearly identical line junctions.
 
-### Quickstart:
+## Quickstart
 
-# Example: dump slide 9 labels/lines to default path
+### Example: dump slide 9 labels/lines to default path
 
 ```
 python3 data_extraction/scripts/bony_pelvis_text_labels.py \
@@ -78,7 +80,7 @@ python3 data_extraction/scripts/bony_pelvis_text_labels.py \
   --slide 9
 ```
 
-# Write to a custom file (e.g., renamed convention)
+### Write to a custom file (e.g., renamed convention)
 
 ```
 python3 data_extraction/scripts/bony_pelvis_text_labels.py \
@@ -88,7 +90,7 @@ python3 data_extraction/scripts/bony_pelvis_text_labels.py \
   --out DataPelvis/annotations/slide09_ischium_text_labels.json
 ```
 
-#### Notes & tips:
+## Notes & tips:
 
 Only white labels/lines are considered—keep that styling consistent in PPT.
 

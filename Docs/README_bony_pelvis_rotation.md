@@ -1,8 +1,10 @@
 # bony_pelvis_rotation
 
+## Overview
+
 This file documents the behavior of `data_extraction/scripts/bony_pelvis_rotation.py`.
 
-### Purpose:
+## Purpose
 
 Parses PowerPoint slide XML to:
 
@@ -14,7 +16,7 @@ optionally audit each slide to see whether its two main images match the templat
 
 ⚠️ Designed for slides that have two main pictures (side-by-side). One-image slides will fail the audit with reason: "fewer-than-two-pics".
 
-### Expected inputs:
+## Expected inputs
 
 - `--slides-dir`: directory containing slideN.xml
 
@@ -22,7 +24,7 @@ optionally audit each slide to see whether its two main images match the templat
 
 Representative slide number with the desired geometry (defaults to 2)
 
-### Outputs:
+## Outputs
 
 - `--out-template (JSON)`: normalized geometry for left/right images
   (template_bony_pelvis.json)
@@ -31,7 +33,7 @@ Representative slide number with the desired geometry (defaults to 2)
 
 When `--audit` is set: an "audit" block with tolerance, verified_slides, and failed_slides.
 
-### Key options:
+## Key options
 
 - `--slides`: list of slide numbers to process (default: 2 3)
 
@@ -43,9 +45,9 @@ When `--audit` is set: an "audit" block with tolerance, verified_slides, and fai
 
 - `--min-area`: minimum area fraction to consider a picture “main” (default: 0.05)
 
-### Quickstart:
+## Quickstart
 
-# 1) Create template + metadata (no audit)
+1. Create template + metadata (no audit)
 
 ```
 python3 data_extraction/scripts/bony_pelvis_rotation.py \
@@ -57,7 +59,7 @@ python3 data_extraction/scripts/bony_pelvis_rotation.py \
   --out-metadata  data_extraction/annotations/bony_pelvis_metadata.json
 ```
 
-# 2) With audit (recommended before committing)
+2. With audit (recommended before committing)
 
 ```
 python3 data_extraction/scripts/bony_pelvis_rotation.py \
@@ -68,7 +70,7 @@ python3 data_extraction/scripts/bony_pelvis_rotation.py \
   --audit --tolerance 0.02
 ```
 
-### Interpreting the audit:
+### Interpreting the audit
 
 - `verified_slides`: slides whose two main images match the template within --tolerance
 
@@ -76,7 +78,7 @@ python3 data_extraction/scripts/bony_pelvis_rotation.py \
 
 - reason: "fewer-than-two-pics": the slide doesn’t have two “main” pictures (common for single-image slides)
 
-### Handling one-image slides:
+## Handling one-image slides
 
 This script can’t produce a side-by-side match for single-image slides. You can either:
 
@@ -85,7 +87,7 @@ This script can’t produce a side-by-side match for single-image slides. You ca
 - Keep them listed but expect fewer-than-two-pics in audit results.
   (Downstream apps should treat these as single-image layouts.)
 
-### File structure example:
+## File structure example
 
 data_extraction/
   fixtures/
