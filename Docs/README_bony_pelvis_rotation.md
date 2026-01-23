@@ -49,7 +49,7 @@ When `--audit` is set: an "audit" block with tolerance, verified_slides, and fai
 
 1. Create template + metadata (no audit)
 
-```
+```bash
 python3 data_extraction/scripts/bony_pelvis_rotation.py \
   --slides-dir data_extraction/fixtures/slides \
   --rels-dir  data_extraction/fixtures/rels \
@@ -61,7 +61,7 @@ python3 data_extraction/scripts/bony_pelvis_rotation.py \
 
 2. With audit (recommended before committing)
 
-```
+```bash
 python3 data_extraction/scripts/bony_pelvis_rotation.py \
   --slides-dir data_extraction/fixtures/slides \
   --rels-dir  data_extraction/fixtures/rels \

@@ -73,7 +73,7 @@ Graph follow: Build a snapped endpoint graph, start from nodes that lie within t
 
 ### Example: dump slide 9 labels/lines to default path
 
-```
+```bash
 python3 data_extraction/scripts/bony_pelvis_text_labels.py \
   --slides-dir data_extraction/fixtures/slides \
   --rels-dir   data_extraction/fixtures/rels \
@@ -82,7 +82,7 @@ python3 data_extraction/scripts/bony_pelvis_text_labels.py \
 
 ### Write to a custom file (e.g., renamed convention)
 
-```
+```bash
 python3 data_extraction/scripts/bony_pelvis_text_labels.py \
   --slides-dir data_extraction/fixtures/slides \
   --rels-dir   data_extraction/fixtures/rels \
