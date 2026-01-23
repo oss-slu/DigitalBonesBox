@@ -18,10 +18,8 @@ The extraction process involves multiple Python scripts that work together to ex
 ### 1. Image Extraction
 
 - **Purpose**: Extract bone images from PowerPoint slides
-- **Scripts**: 
-  - `AutomatedExtractionScript.py` - Basic image extraction by slide
-  - `extract_bone_images.py` - Advanced extraction with bone-based naming
-  - `extract_ppt_annotations.py` - Combined image and text annotation extraction
+- **Script**: `extract_bone_images.py`
+- **Output**: Image files taken from the slides.
 
 ### 2. Bone Hierarchy Extraction
 
@@ -38,10 +36,7 @@ The extraction process involves multiple Python scripts that work together to ex
 ### 4. Colored Region Extraction
 
 - **Purpose**: Extract precise path data for anatomical region overlays
-- **Scripts**:
-  - `ExtractBonyPelvisRegions.py` - Slide 2 left/right regions
-  - `extract_posterior_iliac_spines.py` - Slide 7 posterior spine regions
-  - `ColoredRegionsExtractor.py` - General curved shape extraction for all slides
+- **Script**: `ColoredRegionsExtractor.py`
 - **Output**: JSON files with path coordinates for region overlays
 
 ### 5. Text Label & Pointer Line Extraction
@@ -107,3 +102,16 @@ data_extraction/
 │   └── template_bony_pelvis.json
 └── output.json                # Bone hierarchy data
 ```
+
+## Outdated and Redundant Files
+
+Some of the data extraction files are to be ignored, as they are outdated and will be removed in the future. These include:
+
+* `extract_ppt_annotations.py` - Combined image and text annotation extraction. It is made redudant by `extract_bone_images.py` for image extraction and `scripts/bony_pelvis_text_labels.py` for text annotation extraction.
+* `AutomatedExtractionScript.py` - Basic image extraction by slide. It is made redundant by `extract_bone_images.py`, which has the advantage of giving images their final names.
+* `ExtractBonyPelvisRegions.py` - Slide 2 left/right regions. It is made redundant by `ColoredRegionsExtractor.py`, which provides generalized extraction for multiple slides for any PowerPoint.
+* `extract_posterior_iliac_spines.py` - Slide 7 posterior spine regions. It is made redundant by `ColoredRegionsExtractor.py`, which provides generalized extraction for multiple slides for any PowerPoint.
+  
+  
+
+
