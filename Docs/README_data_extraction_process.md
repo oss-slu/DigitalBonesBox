@@ -111,7 +111,3 @@ Some of the data extraction files are to be ignored, as they are outdated and wi
 * `AutomatedExtractionScript.py` - Basic image extraction by slide. It is made redundant by `extract_bone_images.py`, which has the advantage of giving images their final names.
 * `ExtractBonyPelvisRegions.py` - Slide 2 left/right regions. It is made redundant by `ColoredRegionsExtractor.py`, which provides generalized extraction for multiple slides for any PowerPoint.
 * `extract_posterior_iliac_spines.py` - Slide 7 posterior spine regions. It is made redundant by `ColoredRegionsExtractor.py`, which provides generalized extraction for multiple slides for any PowerPoint.
-  
-  
-
-
