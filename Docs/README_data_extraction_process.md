@@ -11,47 +11,45 @@ The extraction process involves multiple Python scripts that work together to ex
 - **Colored regions** (anatomical region overlays with precise path coordinates)
 - **Metadata** (bone relationships, hierarchies, and hyperlinks)
 
-**All Python scripts in the `data_extraction/` folder should be run** to ensure complete data extraction. Each script handles a specific aspect of the extraction process and produces JSON files that the web application uses to render interactive bone anatomy.
-
 ## Extraction Components
 
-### 1. Image Extraction
+### Image Extraction
 
 - **Purpose**: Extract bone images from PowerPoint slides
 - **Script**: `extract_bone_images.py`
 - **Output**: Image files taken from the slides.
 
-### 2. Bone Hierarchy Extraction
+### Bone Hierarchy Extraction
 
 - **Purpose**: Extract boneset/bone/subbone relationships
 - **Script**: `xml_boneset_reader.py`
 - **Output**: JSON files defining bone hierarchies (e.g., `bonesets.json`, `bones.json`, `subbones.json`)
 
-### 3. Text Description Extraction
+### Text Description Extraction
 
 - **Purpose**: Extract descriptive text and bullet points from slides
 - **Script**: `Extract_Bone_Descriptions.py`
 - **Output**: Per-slide description JSONs with bone names and anatomical descriptions
 
-### 4. Colored Region Extraction
+### Colored Region Extraction
 
 - **Purpose**: Extract precise path data for anatomical region overlays
 - **Script**: `ColoredRegionsExtractor.py`
 - **Output**: JSON files with path coordinates for region overlays
 
-### 5. Text Label & Pointer Line Extraction
+### Text Label & Pointer Line Extraction
 
 - **Purpose**: Extract annotation labels with their pointer lines and target regions
 - **Script**: `scripts/bony_pelvis_text_labels.py`
 - **Output**: JSON with text positions, pointer line paths, and connection endpoints
 
-### 6. Rotation & Layout Metadata
+### Rotation & Layout Metadata
 
 - **Purpose**: Extract image rotation, flip, and side-by-side layout information
 - **Script**: `scripts/bony_pelvis_rotation.py`
 - **Output**: Template JSON for consistent image positioning across slides
 
-### 7. Calibration & Post-Processing
+### Calibration & Post-Processing
 
 - **Purpose**: Apply offset corrections to align extracted regions with images
 - **Script**: `calibrate_colored_regions.py`
@@ -64,27 +62,21 @@ The extraction process involves multiple Python scripts that work together to ex
 2. In each file necessary, rewrite the directory structures included to be the folder that the PowerPoint data was extracted to.
 
 3. Extract all data by running the scripts in this order:
-    a. **`AutomatedExtractionScript.py`** or **`extract_bone_images.py`**  
+    a. **`extract_bone_images.py`**  
     Extract raw images from slides
     b. **`xml_boneset_reader.py`**  
     Generate bone hierarchy lookup files
     c. **`Extract_Bone_Descriptions.py`**  
     Extract descriptive text for each bone
-    d. **Colored region extractors**  
+    d. **`ColoredRegionsExtractor.py`**
+    Extract colored regions
+    e. **`scripts/bony_pelvis_text_labels.py`**  
+    Extract annotation labels and pointer lines
+    f. **`scripts/bony_pelvis_rotation.py`**  
+    Extract layout and rotation metadata
+    g. **`calibrate_colored_regions.py`**  
+    Apply offset corrections to region coordinates
    
-   - `ExtractBonyPelvisRegions.py`
-   
-   - `extract_posterior_iliac_spines.py`
-   
-   - `ColoredRegionsExtractor.py`
-     e. **`scripts/bony_pelvis_text_labels.py`**  
-     Extract annotation labels and pointer lines
-     f. **`scripts/bony_pelvis_rotation.py`**  
-     Extract layout and rotation metadata
-     g. **`calibrate_colored_regions.py`**  
-     Apply offset corrections to region coordinates
-     h. **`extract_ppt_annotations.py`** *(when completed)*  
-     Final unified extraction combining images, annotations, and hyperlinks
 
 ## Output Structure
 
