@@ -34,9 +34,7 @@ Thank you for checking out **Digital Bones Box**! We are so happy you are here. 
 
 ### 1. Choose an Issue
 
-- Choose an issue to work on. If you're new to the repository, look for one with the label `good first issue`.
-- If you're contributing as part of Hacktoberfest, choose one with the `hacktoberfest` label.
-- Carefully read all the details and acceptance criteria for the issue before starting to work on the issue.
+Choose an issue to work on. If you're new to the repository, look for one with the label `good first issue`. If you're contributing as part of Hacktoberfest, choose one with the `hacktoberfest` label. Carefully read all the details and acceptance criteria for the issue before starting to work on the issue.
 
 ### 2. Make Your Changes
 
@@ -45,21 +43,21 @@ Thank you for checking out **Digital Bones Box**! We are so happy you are here. 
 
 ### 3. Commit Your Changes
 
-- Commit messages should be clear and concise. Follow the format:
-  
-  ```bash
-  git commit -m "Add feature X to improve performance"
-  ```
+Commit messages should be clear and concise. Follow the format:
 
-- Make sure your commit is properly documented and explains the **why** and **what** of the changes.
+```bash
+git commit -m "Add feature X to improve performance"
+```
+
+Make sure your commit is properly documented and explains the **why** and **what** of the changes.
 
 ### 4. Push Your Changes
 
-- Push your branch to GitHub:
-  
-  ```bash
-  git push origin feature-branch
-  ```
+Push your branch to GitHub:
+
+```bash
+git push origin feature-branch
+```
 
 ### 5. Submit a Pull Request (PR)
 
