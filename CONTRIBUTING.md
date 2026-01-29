@@ -94,6 +94,6 @@ git push origin feature-branch
 
 ## Community
 
-- If you have any questions or need guidance, feel free to or reach out via email wendy.onwuagana@slu.edu or daniel.shown@slu.edu
+- If you have any questions or need guidance, feel free to ask in the Discussions tab in GitHub or join the [OSS Slack workspace](https://join.slack.com/t/oswslu/shared_invite/zt-24f0qhjbo-NkSfQ4LOg5wXxBdxP4vzfA).
 
 Thank you for your contributions!
