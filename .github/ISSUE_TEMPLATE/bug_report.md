@@ -8,7 +8,7 @@ type: Bug
 
 ---
 
-## Bug description and expecgted behavior
+## Bug description and expected behavior
 
 *A clear and concise description of what the bug is, and what you expected to happen.*
 
