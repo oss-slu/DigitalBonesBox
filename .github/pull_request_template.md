@@ -1,8 +1,12 @@
 ## Pull Request Summary
 
-Closes #xxx
+Closes #xxx <!-- Add the issue number here -->
 
-*A brief description/summary of your PR here. What does it add, and why is it necessary? Does this new feature solve any problems or bugs? How was it tested?*
+*A brief description/summary of your PR here. **What** does it add? **Why** is it necessary? **How** was the change made, and how was it tested?*
+
+## Screenshots
+
+*If applicable, add screenshots showing the before and after of any UI changes made.*
 
 ## PR Checklist
 
