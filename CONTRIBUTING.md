@@ -32,9 +32,12 @@ Thank you for checking out **Digital Bones Box**! We are so happy you are here. 
 
 ## Contribution Workflow
 
-### 1.Choose an Issue associated with the label **hacktoberfest**
-- Choose the Issue associated with the label hacktoberfest and clearly read all the details and acceptance criteria for the issue before starting to work on the issue.
-  
+### 1. Choose an Issue
+
+- Choose an issue to work on. If you're new to the repository, look for one with the label `good first issue`.
+- If you're contributing as part of Hacktoberfest, choose one with the `hacktoberfest` label.
+- Carefully read all the details and acceptance criteria for the issue before starting to work on the issue.
+
 ### 2. Make Your Changes
 
 - Work on your branch locally. Implement your changes and test them thoroughly to ensure they work correctly.
