@@ -6,11 +6,10 @@ For slide 2 with two bone images side by side
 
 import xml.etree.ElementTree as ET
 import json
+import argparse
 
-def extract_bony_pelvis_regions():
+def extract_bony_pelvis_regions(slide_file):
     """Extract colored regions for bony pelvis with proper image-relative positioning"""
-    
-    slide_file = "/Users/jennioishee/Capstone/DigitalBonesBox/slides/slide2.xml"
     
     namespaces = {
         'a': 'http://schemas.openxmlformats.org/drawingml/2006/main',
@@ -265,4 +264,9 @@ def extract_bony_pelvis_regions():
             print(f"    - {region['anatomical_name']} (#{region['color']})")
 
 if __name__ == "__main__":
-    extract_bony_pelvis_regions()
+    parser = argparse.ArgumentParser(description="Extract bony pelvis colored regions.")
+    parser.add_argument("--slide-file", required=True, help="Path to the slide XML file.")
+    
+    args = parser.parse_args()
+    
+    extract_bony_pelvis_regions(args.slide_file)

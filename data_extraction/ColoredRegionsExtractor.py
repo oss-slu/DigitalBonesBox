@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 import json
 import os
 from pathlib import Path
+import argparse
 
 
 class AnatomicalShapeParser:
@@ -361,19 +362,22 @@ class AnatomicalShapeParser:
 
 def main():
     """Main execution function"""
-    xml_folder = "/Users/jennioishee/Capstone/DigitalBonesBox/slides"
+    parser = argparse.ArgumentParser(description="Extract anatomical shapes from PowerPoint slides.")
+    parser.add_argument("--xml-folder", required=True, help="Path to the folder containing XML files.")
     
-    parser = AnatomicalShapeParser(xml_folder)
+    args = parser.parse_args()
+    
+    parser_instance = AnatomicalShapeParser(args.xml_folder)
     
     print("Starting enhanced anatomical shape extraction...")
     print("=" * 60)
     
     # Parse all slides
-    results = parser.parse_all_slides()
+    results = parser_instance.parse_all_slides()
     
     print("=" * 60)
     print(f"✓ Extraction complete! Processed {len(results)} slides")
-    print(f"✓ Enhanced annotations saved to: {parser.output_folder}")
+    print(f"✓ Enhanced annotations saved to: {parser_instance.output_folder}")
     print("\nKey improvements:")
     print("• Precise curved/irregular shape boundaries (not rectangles)")
     print("• Specific anatomical names for each region") 
