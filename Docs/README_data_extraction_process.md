@@ -1,145 +1,105 @@
-# Data Extraction Process Documentation
+# Data Extraction Process
 
-This document outlines the data extraction scripts available in the `data_extraction/` directory and their usage.
+## Overview
 
-## Scripts Overview
+This document describes the automated data extraction pipeline for processing PowerPoint anatomy presentations and converting them into structured JSON data for the Digital Bones Box web application.
 
-### AutomatedExtractionScript.py
-Extracts images from PowerPoint slide XML files and renames them based on rId.
+The extraction process involves multiple Python scripts that work together to extract different types of data from PowerPoint XML files:
 
-**Arguments:**
-- `--slides-folder`: Path to the folder containing slide XML files
-- `--rels-folder`: Path to the folder containing relationships XML files
-- `--media-folder`: Path to the media folder containing images
-- `--output-folder`: Path to store extracted images
+- **Images** (bone illustrations in various views)
+- **Text annotations** (bone names, labels, descriptions)
+- **Colored regions** (anatomical region overlays with precise path coordinates)
+- **Metadata** (bone relationships, hierarchies, and hyperlinks)
 
-**Usage:**
-```bash
-python AutomatedExtractionScript.py --slides-folder /path/to/slides --rels-folder /path/to/rels --media-folder /path/to/media --output-folder /path/to/output
+## Extraction Components
+
+### Image Extraction
+
+- **Purpose**: Extract bone images from PowerPoint slides
+- **Script**: `extract_bone_images.py`
+- **Output**: Image files taken from the slides.
+
+### Bone Hierarchy Extraction
+
+- **Purpose**: Extract boneset/bone/subbone relationships
+- **Script**: `xml_boneset_reader.py`
+- **Output**: JSON files defining bone hierarchies (e.g., `bonesets.json`, `bones.json`, `subbones.json`)
+
+### Text Description Extraction
+
+- **Purpose**: Extract descriptive text and bullet points from slides
+- **Script**: `Extract_Bone_Descriptions.py`
+- **Output**: Per-slide description JSONs with bone names and anatomical descriptions
+
+### Colored Region Extraction
+
+- **Purpose**: Extract precise path data for anatomical region overlays
+- **Script**: `ColoredRegionsExtractor.py`
+- **Output**: JSON files with path coordinates for region overlays
+
+### Text Label & Pointer Line Extraction
+
+- **Purpose**: Extract annotation labels with their pointer lines and target regions
+- **Script**: `scripts/bony_pelvis_text_labels.py`
+- **Output**: JSON with text positions, pointer line paths, and connection endpoints
+
+### Rotation & Layout Metadata
+
+- **Purpose**: Extract image rotation, flip, and side-by-side layout information
+- **Script**: `scripts/bony_pelvis_rotation.py`
+- **Output**: Template JSON for consistent image positioning across slides
+
+### Calibration & Post-Processing
+
+- **Purpose**: Apply offset corrections to align extracted regions with images
+- **Script**: `calibrate_colored_regions.py`
+- **Output**: Calibrated region JSON files with adjusted coordinates
+
+## Extraction Steps
+
+1. Rename the PowerPoint file extension from `.pptx` to `.zip`. This will convert it into a zipped folder that you can then extract to a folder.
+
+2. In each file necessary, rewrite the directory structures included to be the folder that the PowerPoint data was extracted to.
+
+3. Extract all data by running the scripts in this order:
+    a. **`extract_bone_images.py`**  
+    Extract raw images from slides
+    b. **`xml_boneset_reader.py`**  
+    Generate bone hierarchy lookup files
+    c. **`Extract_Bone_Descriptions.py`**  
+    Extract descriptive text for each bone
+    d. **`ColoredRegionsExtractor.py`**
+    Extract colored regions
+    e. **`scripts/bony_pelvis_text_labels.py`**  
+    Extract annotation labels and pointer lines
+    f. **`scripts/bony_pelvis_rotation.py`**  
+    Extract layout and rotation metadata
+    g. **`calibrate_colored_regions.py`**  
+    Apply offset corrections to region coordinates
+   
+
+## Output Structure
+
+Extracted data is organized as follows:
+
+```
+data_extraction/
+├── AutomatedScript/           # Extracted images by slide
+│   ├── slide2/
+│   ├── slide3/
+│   └── ...
+├── annotations/
+│   ├── color_regions/         # Colored region path data
+│   ├── slide*_text_annotations.json
+│   └── template_bony_pelvis.json
+└── output.json                # Bone hierarchy data
 ```
 
-### calibrate_colored_regions.py
-Calibrates colored region positioning by adding manual offset adjustments.
+## Outdated and Redundant Files
 
-**Arguments:**
-- `--input-file`: Path to input JSON file
-- `--output-file`: Path to output JSON file
+Some of the data extraction files are to be ignored, as they are outdated and will be removed in the future. These include:
 
-**Usage:**
-```bash
-python calibrate_colored_regions.py --input-file input.json --output-file output.json
-```
-
-### ColoredRegionsExtractor.py
-Extracts precise path data for anatomical shapes from PowerPoint slides.
-
-**Arguments:**
-- `--xml-folder`: Path to the folder containing XML files
-
-**Usage:**
-```bash
-python ColoredRegionsExtractor.py --xml-folder /path/to/xml/folder
-```
-
-### Extract_Bone_Descriptions.py
-Extracts bone descriptions from slide XML files.
-
-**Arguments:**
-- `--xml-file`: Path to the slide XML file
-- `--output-json`: Path to the output JSON file
-
-**Usage:**
-```bash
-python Extract_Bone_Descriptions.py --xml-file slide.xml --output-json output.json
-```
-
-### extract_bone_images.py
-Extracts bone images from PowerPoint slides and names them based on featured bones.
-
-**Arguments:**
-- `--slides-dir`: Path to the slides directory
-- `--rels-dir`: Path to the relationships directory
-- `--media-dir`: Path to the media directory
-- `--output-dir`: Path to the output directory
-- `--slide-number`: Specific slide number to process (optional)
-
-**Usage:**
-```bash
-python extract_bone_images.py --slides-dir /path/to/slides --rels-dir /path/to/rels --media-dir /path/to/media --output-dir /path/to/output
-```
-
-### extract_posterior_iliac_spines.py
-Extracts posterior iliac spine regions from slide XML.
-
-**Arguments:**
-- `--xml-file`: Path to the slide XML file
-
-**Usage:**
-```bash
-python extract_posterior_iliac_spines.py --xml-file slide.xml
-```
-
-### extract_ppt_annotations.py
-Extracts PPT annotations and images.
-
-**Arguments:**
-- `--slides-folder`: Path to the folder containing slide XML files
-- `--rels-folder`: Path to the folder containing relationships XML files
-- `--media-folder`: Path to the media folder containing images
-- `--output-folder`: Path to store extracted images
-- `--json-output`: Path to the JSON output file
-- `--json-directory`: Path to the JSON directory
-
-**Usage:**
-```bash
-python extract_ppt_annotations.py --slides-folder /path/to/slides --rels-folder /path/to/rels --media-folder /path/to/media --output-folder /path/to/output --json-output output.json --json-directory /path/to/json
-```
-
-### ExtractBonyPelvisRegions.py
-Extracts bony pelvis colored regions with image-relative coordinates.
-
-**Arguments:**
-- `--slide-file`: Path to the slide XML file
-
-**Usage:**
-```bash
-python ExtractBonyPelvisRegions.py --slide-file slide.xml
-```
-
-### xml_boneset_reader.py
-Extracts bonesets from XML files.
-
-**Arguments:**
-- `--xml-file`: Path to the XML file
-- `--json-file`: Path to the output JSON file
-
-**Usage:**
-```bash
-python xml_boneset_reader.py --xml-file input.xml --json-file output.json
-```
-
-## Scripts Directory
-
-The `scripts/` subdirectory contains additional extraction tools:
-
-### bony_pelvis_rotation.py
-Handles rotation detection and normalization for bony pelvis slides.
-
-**Arguments:**
-- `--slides-dir`: Path to the slides directory
-- `--rels-dir`: Path to the relationships directory (optional)
-- `--slides`: Slide numbers to process (default: [2,3])
-- `--representative`: Representative slide number (default: 2)
-- `--out-template`: Output template file path
-- `--out-metadata`: Output metadata file path
-- Other options for auditing and tolerance
-
-### bony_pelvis_text_labels.py
-Extracts text labels from bony pelvis slides.
-
-**Arguments:**
-- `--slides-dir`: Path to the slides directory
-- `--rels-dir`: Path to the relationships directory
-- `--slide`: Slide number to process
-- `--out`: Output file path (optional)
-- Other options for padding and snap settings
+* `extract_ppt_annotations.py` - Combined image and text annotation extraction. It is made redudant by `extract_bone_images.py` for image extraction and `scripts/bony_pelvis_text_labels.py` for text annotation extraction.
+* `AutomatedExtractionScript.py` - Basic image extraction by slide. It is made redundant by `extract_bone_images.py`, which has the advantage of giving images their final names.
+* `ExtractBonyPelvisRegions.py` - Slide 2 left/right regions. It is made redundant by `ColoredRegionsExtractor.py`, which provides generalized extraction for multiple slides for any PowerPoint.
+* `extract_posterior_iliac_spines.py` - Slide 7 posterior spine regions. It is made redundant by `ColoredRegionsExtractor.py`, which provides generalized extraction for multiple slides for any PowerPoint.

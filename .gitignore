@@ -18,3 +18,7 @@ build/
 # OS or editor files
 .DS_Store
 Thumbs.db
+
+# Cache files
+__pycache__/
+*.pyc
