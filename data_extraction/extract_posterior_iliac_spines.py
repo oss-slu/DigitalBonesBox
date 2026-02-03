@@ -7,6 +7,7 @@ Extracts: Left PSIS, Left PIIS, Right PSIS, Right PIIS
 import xml.etree.ElementTree as ET
 import json
 from pathlib import Path
+import argparse
 
 def extract_path_from_shape(shape_elem):
     """Extract path data from a PowerPoint shape element"""
@@ -84,7 +85,12 @@ def get_shape_color(shape_elem):
     return None
 
 def main():
-    xml_file = Path('/Users/jennioishee/Capstone/DigitalBonesBox/data_extraction/annotations/color_regions/slide7.xml')
+    parser = argparse.ArgumentParser(description="Extract posterior iliac spine regions from slide XML.")
+    parser.add_argument("--xml-file", required=True, help="Path to the slide XML file.")
+    
+    args = parser.parse_args()
+    
+    xml_file = Path(args.xml_file)
     
     tree = ET.parse(xml_file)
     root = tree.getroot()

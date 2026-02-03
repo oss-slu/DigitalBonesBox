@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import json
 import os
+import argparse
 
 def parse_slide_xml(xml_file, output_json_path):
     tree = ET.parse(xml_file)
@@ -46,7 +47,11 @@ def parse_slide_xml(xml_file, output_json_path):
     
     print(f"Descriptions saved to {output_json_path}")
 
-# Example usage
-xml_file = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides/slide3.xml"
-output_json = "slide3_Descriptions.json"
-parse_slide_xml(xml_file, output_json)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Extract bone descriptions from slide XML.")
+    parser.add_argument("--xml-file", required=True, help="Path to the slide XML file.")
+    parser.add_argument("--output-json", required=True, help="Path to the output JSON file.")
+    
+    args = parser.parse_args()
+    
+    parse_slide_xml(args.xml_file, args.output_json)

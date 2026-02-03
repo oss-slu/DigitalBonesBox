@@ -1,6 +1,7 @@
 import os
 import xml.etree.ElementTree as ET
 import json
+import argparse
 
 
 def load_bone_data(json_directory):
@@ -177,13 +178,15 @@ def process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder
 
 
 if __name__ == "__main__":
-    # Folder paths (replace with your paths)
-    slides_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides"
-    rels_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides/_rels"
-    media_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/media"
-    output_folder = "/Users/joshbudzynski/Downloads/example_folder/ppt/AutomatedScript"
-    json_output = "/Users/joshbudzynski/Downloads/example_folder/ppt/json_output"
-    json_directory = "/Users/joshbudzynski/Downloads/example_folder/ppt/data/json"
-
+    parser = argparse.ArgumentParser(description="Extract PPT annotations.")
+    parser.add_argument("--slides-folder", required=True, help="Path to the folder containing slide XML files.")
+    parser.add_argument("--rels-folder", required=True, help="Path to the folder containing relationships XML files.")
+    parser.add_argument("--media-folder", required=True, help="Path to the media folder containing images.")
+    parser.add_argument("--output-folder", required=True, help="Path to store extracted images.")
+    parser.add_argument("--json-output", required=True, help="Path to the JSON output file.")
+    parser.add_argument("--json-directory", required=True, help="Path to the JSON directory.")
+    
+    args = parser.parse_args()
+    
     # Run the process for all slides
-    process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder, json_output, json_directory)
+    process_pptx_folders(args.slides_folder, args.rels_folder, args.media_folder, args.output_folder, args.json_output, args.json_directory)

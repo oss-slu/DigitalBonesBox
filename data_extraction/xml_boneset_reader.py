@@ -1,6 +1,7 @@
 import os
 import xml.etree.ElementTree as ET
 import json
+import argparse
 
 def extract_bones_from_xml(xml_path):
     """
@@ -86,15 +87,14 @@ def generate_json_output(bonesets, output_json_path):
         print(f"Error writing to {output_json_path}: {e}")
 
 if __name__ == "__main__":
-    # Get the directory of the current script
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-
-    # Define the XML and JSON file paths relative to the script's directory
-    xml_file_path = os.path.join(current_dir, "slide9Pelvis.xml")
-    json_file_path = os.path.join(current_dir, "output.json")
-
+    parser = argparse.ArgumentParser(description="Extract bonesets from XML.")
+    parser.add_argument("--xml-file", required=True, help="Path to the XML file.")
+    parser.add_argument("--json-file", required=True, help="Path to the output JSON file.")
+    
+    args = parser.parse_args()
+    
     # Extract bonesets and their bones
-    bonesets, bonesetContent = extract_bones_from_xml(xml_file_path)
+    bonesets, bonesetContent = extract_bones_from_xml(args.xml_file)
 
     # Generate and save JSON output
-    generate_json_output(bonesets, json_file_path)
+    generate_json_output(bonesets, args.json_file)

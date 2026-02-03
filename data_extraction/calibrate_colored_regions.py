@@ -5,6 +5,7 @@ Adds manual offset adjustments to align regions with web images
 """
 
 import json
+import argparse
 
 def add_offset_to_regions(input_file, output_file, offsets):
     """
@@ -54,8 +55,11 @@ def add_offset_to_regions(input_file, output_file, offsets):
 
 
 if __name__ == "__main__":
-    input_file = "/Users/jennioishee/Capstone/DigitalBonesBox/data_extraction/bony_pelvis_colored_regions.json"
-    output_file = input_file  # Overwrite the original file
+    parser = argparse.ArgumentParser(description="Calibrate colored region positioning.")
+    parser.add_argument("--input-file", required=True, help="Path to input JSON file.")
+    parser.add_argument("--output-file", required=True, help="Path to output JSON file.")
+    
+    args = parser.parse_args()
     
     # Calibration offsets (adjust these values by trial and error)
     # Positive x = move right, Negative x = move left
@@ -67,13 +71,13 @@ if __name__ == "__main__":
     
     print("🎯 Colored Region Calibration Tool")
     print("=" * 50)
-    print(f"Input file: {input_file}")
-    print(f"Output file: {output_file}")
+    print(f"Input file: {args.input_file}")
+    print(f"Output file: {args.output_file}")
     print(f"\nOffsets to apply:")
     for idx, (x, y) in offsets.items():
         print(f"  Image {idx}: x={x:+d}, y={y:+d} EMUs")
     
-    add_offset_to_regions(input_file, output_file, offsets)
+    add_offset_to_regions(args.input_file, args.output_file, offsets)
     
     print("\n📋 Next steps:")
     print("1. Hard reload the browser (Cmd+Shift+R)")
