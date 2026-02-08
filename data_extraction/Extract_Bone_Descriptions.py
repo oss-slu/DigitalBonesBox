@@ -6,7 +6,26 @@ import sys
 
 # Configuration
 slides_dir = "ppt/slides"
-output_filename = "all_bone_descriptions.json"
+
+def _get_output_filename():
+    try:
+        pres_xml = "ppt/presentation.xml"
+        if os.path.exists(pres_xml):
+            tree = ET.parse(pres_xml)
+            root = tree.getroot()
+            for elem in root.iter():
+                if 'title' in elem.tag.lower() or elem.tag.endswith('}title'):
+                    if elem.text and elem.text.strip():
+                        title = elem.text.strip()
+                        safe_title = "".join(c if c.isalnum() or c in (' ', '-', '_') else '' for c in title)
+                        safe_title = safe_title.strip().replace(' ', '_')
+                        if safe_title:
+                            return f"{safe_title}_bone_descriptions.json"
+    except Exception:
+        pass
+    return "all_bone_descriptions.json"
+
+output_filename = _get_output_filename()
 
 
 def extract_descriptions_from_slide(xml_file):
@@ -63,8 +82,7 @@ def extract_descriptions_from_slide(xml_file):
         bone_name = all_text_content[0]
         bone_name_idx = 0
     
-    # Collect descriptions - prefer text that comes after bone name
-    # or is in groups with multiple elements (likely descriptions)
+    # Collect descriptions 
     descriptions = []
     
     for text_group in shape_text_groups:
