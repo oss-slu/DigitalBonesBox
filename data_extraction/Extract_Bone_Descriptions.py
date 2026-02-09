@@ -3,8 +3,6 @@ import json
 import os
 import sys
 
-
-# Configuration
 slides_dir = "ppt/slides"
 
 def _get_output_filename():
