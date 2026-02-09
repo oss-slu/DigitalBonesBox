@@ -65,12 +65,15 @@ def extract_descriptions_from_slide(xml_file): # Extract descriptions from a sin
             "description": []
         }
     
-    # Extract bone name (first meaningful text element)
+    # Extract bone name (first meaningful text element from description region)
     bone_name = "Unknown"
     bone_name_idx = 0
     
+    # Prefer extracting bone name from description_text (the actual description region)
+    search_text = description_text if description_text else all_text_content
+    
     # Look for bone name - prefer standalone short titles
-    for i, text in enumerate(all_text_content):
+    for i, text in enumerate(search_text):
         # Skip spacing-only text, labels, and very long text
         if len(text) < 50 and text not in ['', 'No Labels', '   ']:
             # Check if this looks like a bone name (short, standalone)
@@ -79,9 +82,9 @@ def extract_descriptions_from_slide(xml_file): # Extract descriptions from a sin
                 bone_name_idx = i
                 break
     
-    # If no bone keyword found, use first non-empty text
-    if bone_name == "Unknown" and all_text_content:
-        bone_name = all_text_content[0]
+    # If no bone keyword found, use first non-empty text from description region
+    if bone_name == "Unknown" and search_text:
+        bone_name = search_text[0]
         bone_name_idx = 0
     
     # Collect descriptions 
