@@ -1,0 +1,5 @@
+{
+    "name": "Skull",
+    "id": "skull",
+    "bones": ["anterior", "lateral", "inferior(base)","superior(cavity)"]
+}

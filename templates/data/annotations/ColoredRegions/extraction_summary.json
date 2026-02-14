@@ -1,0 +1,117 @@
+{
+  "total_slides": 13,
+  "slides_with_annotations": [
+    11,
+    12,
+    8,
+    5,
+    14,
+    19,
+    17,
+    6,
+    7,
+    18,
+    13,
+    2,
+    20
+  ],
+  "extraction_summary": {
+    "11": {
+      "regions_found": 2,
+      "anatomical_names": [
+        "Pubis",
+        "Pubis"
+      ]
+    },
+    "12": {
+      "regions_found": 2,
+      "anatomical_names": [
+        "Pubis",
+        "Pubis"
+      ]
+    },
+    "8": {
+      "regions_found": 1,
+      "anatomical_names": [
+        "Pubis"
+      ]
+    },
+    "5": {
+      "regions_found": 2,
+      "anatomical_names": [
+        "Pubis",
+        "Pubis"
+      ]
+    },
+    "14": {
+      "regions_found": 4,
+      "anatomical_names": [
+        "Ilium",
+        "Ilium",
+        "Ischium",
+        "Ischium"
+      ]
+    },
+    "19": {
+      "regions_found": 1,
+      "anatomical_names": [
+        "Pubis"
+      ]
+    },
+    "17": {
+      "regions_found": 4,
+      "anatomical_names": [
+        "Ischium",
+        "Ischium",
+        "Ilium",
+        "Ilium"
+      ]
+    },
+    "6": {
+      "regions_found": 4,
+      "anatomical_names": [
+        "Pubis",
+        "Pubis",
+        "Ischium",
+        "Ischium"
+      ]
+    },
+    "7": {
+      "regions_found": 4,
+      "anatomical_names": [
+        "Pubis",
+        "Ischium",
+        "Pubis",
+        "Ischium"
+      ]
+    },
+    "18": {
+      "regions_found": 1,
+      "anatomical_names": [
+        "Pubis"
+      ]
+    },
+    "13": {
+      "regions_found": 2,
+      "anatomical_names": [
+        "Pubis",
+        "Pubis"
+      ]
+    },
+    "2": {
+      "regions_found": 4,
+      "anatomical_names": [
+        "Ischium",
+        "Pubis",
+        "Ischium",
+        "Pubis"
+      ]
+    },
+    "20": {
+      "regions_found": 1,
+      "anatomical_names": [
+        "Pubis"
+      ]
+    }
+  }
+}
