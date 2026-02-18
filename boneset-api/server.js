@@ -60,10 +60,11 @@ function isValidBoneId(boneId) {
 async function fetchJSON(url) {
     try {
         const response = await axios.get(url, { timeout: 10_000 });
-        return response.data;
+        return { data: response.data, status: response.status };
     } catch (error) {
         console.error(`Failed to fetch ${url}:`, error.message);
-        return null;
+        const status = error.response?.status || 500;
+        return { data: null, status };
     }
 }
 
@@ -71,7 +72,8 @@ async function fetchJSON(url) {
 async function initializeSearchCache() {
     try {
         console.log("Initializing search cache...");
-        const bonesetData = await fetchJSON(BONESET_JSON_URL);
+        const bonesetResult = await fetchJSON(BONESET_JSON_URL);
+        const bonesetData = bonesetResult.data;
         if (!bonesetData) {
             console.error("Failed to load boneset data for search cache");
             return;
@@ -91,7 +93,8 @@ async function initializeSearchCache() {
 
         // Load all bones and sub-bones
         for (const boneId of bonesetData.bones || []) {
-            const boneData = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneData = boneResult.data;
             if (boneData) {
                 // Add bone to search data
                 searchData.push({
@@ -162,9 +165,10 @@ app.get("/", (_req, res) => {
 
 app.get("/combined-data", async (_req, res) => {
     try {
-        const bonesetData = await fetchJSON(BONESET_JSON_URL);
+        const bonesetResult = await fetchJSON(BONESET_JSON_URL);
+        const bonesetData = bonesetResult.data;
         if (!bonesetData) {
-            return res.status(500).json({ error: "Failed to load boneset data" });
+            return res.status(bonesetResult.status).json({ error: "Failed to load boneset data" });
         }
 
         const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
@@ -172,7 +176,8 @@ app.get("/combined-data", async (_req, res) => {
         const subbones = [];
 
         for (const boneId of bonesetData.bones || []) {
-            const boneData = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneData = boneResult.data;
             if (boneData) {
                 bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
                 (boneData.subBones || []).forEach((subBoneId) => {
@@ -303,18 +308,20 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
 
     try {
         // Fetch annotation data from GitHub
-        const annotationData = await fetchJSON(GITHUB_ANNOTATION_URL);
+        const annotationResult = await fetchJSON(GITHUB_ANNOTATION_URL);
+        const annotationData = annotationResult.data;
         if (!annotationData) {
-            return res.status(404).json({ 
+            return res.status(annotationResult.status).json({ 
                 error: "Not Found", 
                 message: `Annotation data not available for boneId: ${boneId}` 
             });
         }
         
         // Fetch the rotation/scaling template data from GitHub
-        const templateData = await fetchJSON(GITHUB_TEMPLATE_URL);
+        const templateResult = await fetchJSON(GITHUB_TEMPLATE_URL);
+        const templateData = templateResult.data;
         if (!templateData) {
-            return res.status(404).json({ 
+            return res.status(templateResult.status).json({ 
                 error: "Not Found", 
                 message: `Template data not found: ${templateFilename}` 
             });
