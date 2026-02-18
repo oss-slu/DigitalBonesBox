@@ -124,7 +124,7 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
         return data;
         
     } catch (error) {
-        console.error(`[ColoredRegions] Error fetching colored regions from API:`, error);
+        console.error("[ColoredRegions] Error fetching colored regions from API:", error);
         return null;
     }
 }
