@@ -51,9 +51,18 @@ This command will install the necessary packages for both the root project and t
 - npm install && npm install --prefix boneset-api
 
 3. Run the application:
-This command will start both the backend API server and the frontend live server concurrently.
 
-- npm start
+To start both the backend API server and the frontend server concurrently, with the server automatically reloaded each time changes are made, run
+
+```bash
+npm run dev
+```
+
+Or, to run without live server reloading, run
+
+```bash
+npm start
+```
 
 Your browser should automatically open to the application.
 
