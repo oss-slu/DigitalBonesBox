@@ -9,6 +9,8 @@
     "start": "concurrently \"npm run start:api\" \"npm run start:web\"",
     "start:api": "npm start --prefix boneset-api",
     "start:web": "http-server -o /templates/boneset.html",
+    "dev": "concurrently \"npm run dev:api\" \"npm run start:web\"",
+    "dev:api": "npm run dev --prefix boneset-api",
     "lint": "eslint . --ext .js",
     "lint:fix": "eslint . --ext .js --fix"
   },

@@ -42,18 +42,32 @@ To run this project locally, you will need to have Node.js installed. The applic
 
 1. Clone the repository:
 
-- git clone [https://github.com/oss-slu/DigitalBonesBox.git](https://github.com/oss-slu/DigitalBonesBox.git)
-- cd DigitalBonesBox
+```bash
+git clone https://github.com/oss-slu/DigitalBonesBox.git
+cd DigitalBonesBox
+```
 
 2. Install dependencies:
 This command will install the necessary packages for both the root project and the boneset-api server.
 
-- npm install && npm install --prefix boneset-api
+```bash
+npm install
+npm install --prefix boneset-api
+```
 
 3. Run the application:
-This command will start both the backend API server and the frontend live server concurrently.
 
-- npm start
+To start both the backend API server and the frontend server concurrently, with the server automatically reloaded each time changes are made, run
+
+```bash
+npm run dev
+```
+
+Or, to run without live server reloading, run
+
+```bash
+npm start
+```
 
 Your browser should automatically open to the application.
 
