@@ -164,7 +164,7 @@ function displaySingleImage(image, container, options = {}) {
       img.classList.add("loaded");
       // Display colored regions after image loads
       if (currentBoneId) {
-        displayColoredRegions(img, currentBoneId, 0).catch(err => {
+        displayColoredRegions(img, currentBoneId, 0, currentIsBonesetSelection).catch(err => {
           console.warn(`Could not display colored regions for ${currentBoneId}:`, err);
         });
       }

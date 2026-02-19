@@ -56,10 +56,11 @@ function isValidBoneId(boneId) {
 async function fetchJSON(url) {
     try {
         const response = await axios.get(url, { timeout: 10_000 });
-        return response.data;
+        return { data: response.data, status: response.status };
     } catch (error) {
         console.error(`Failed to fetch ${url}:`, error.message);
-        return null;
+        const status = error.response?.status || 500;
+        return { data: null, status };
     }
 }
 
@@ -67,7 +68,8 @@ async function fetchJSON(url) {
 async function initializeSearchCache() {
     try {
         console.log("Initializing search cache...");
-        const bonesetData = await fetchJSON(BONESET_JSON_URL);
+        const bonesetResult = await fetchJSON(BONESET_JSON_URL);
+        const bonesetData = bonesetResult.data;
         if (!bonesetData) {
             console.error("Failed to load boneset data for search cache");
             return;
@@ -87,7 +89,8 @@ async function initializeSearchCache() {
 
         // Load all bones and sub-bones
         for (const boneId of bonesetData.bones || []) {
-            const boneData = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneData = boneResult.data;
             if (boneData) {
                 // Add bone to search data
                 searchData.push({
@@ -158,7 +161,8 @@ app.get("/", (_req, res) => {
 
 app.get("/combined-data", async (_req, res) => {
     try {
-        const bonesetData = await fetchJSON(BONESET_JSON_URL);
+        const bonesetResult = await fetchJSON(BONESET_JSON_URL);
+        const bonesetData = bonesetResult.data;
         if (!bonesetData) {
             return res.status(500).json({ error: "Failed to load boneset data" });
         }
@@ -168,7 +172,8 @@ app.get("/combined-data", async (_req, res) => {
         const subbones = [];
 
         for (const boneId of bonesetData.bones || []) {
-            const boneData = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneData = boneResult.data;
             if (boneData) {
                 bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
                 (boneData.subBones || []).forEach((subBoneId) => {
@@ -295,8 +300,36 @@ app.get("/api/colored-regions", async (req, res) => {
         });
     }
     
+    // Map bone IDs to actual GitHub filenames
+    const boneIdToFilename = {
+        "bony_pelvis": "Ilium_and_Ischium.json",
+        "iliac_crest": "Ilium_and_Ischium.json",
+        "anterior_iliac_spines": "Ilium_and_Ischium.json",
+        "posterior_iliac_spines": "Ilium_and_Ischium.json",
+        "posterior_superior_iliac_spines": "Ilium_and_Ischium.json",
+        "posterior_inferior_iliac_spines": "Ilium_and_Ischium.json",
+        "auricular_surface": "Ilium_and_Ischium.json",
+        "ramus": "Ischium_and_Pubis.json",
+        "ischial_tuberosity": "Ischium_and_Pubis.json",
+        "ischial_spine": "Ischium_and_Pubis.json",
+        "sciatic_notches": "Ischium_and_Pubis.json",
+        "pubic_rami": "Pubis.json",
+        "pectineal_line": "Pubis.json",
+        "symphyseal_surface": "Pubis.json",
+        "pubic_tubercle": "Pubis.json"
+    };
+
+    // Get the filename for this bone ID
+    const filename = boneIdToFilename[boneId];
+    if (!filename) {
+        return res.status(404).json({ 
+            error: "Not Found", 
+            message: `No colored region data available for boneId: ${boneId}` 
+        });
+    }
+
     // Build GitHub URL for the colored regions JSON
-    const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/${boneId}_colored_regions.json`;
+    const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/${filename}`;
 
     try {
         const coloredRegionsResult = await fetchJSON(GITHUB_COLORED_REGIONS_URL);
