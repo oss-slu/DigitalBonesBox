@@ -1,3 +1,5 @@
+const API_BASE = "http://127.0.0.1:8000";
+
 const COLORED_REGIONS_CONFIG = {
     // Default opacity for colored overlays (0.3 = 30% transparent)
     DEFAULT_OPACITY: 0.4
@@ -111,8 +113,8 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     boneId = mappedBoneId;
 
     try {
-        console.log(`[ColoredRegions] Fetching from API endpoint: /api/colored-regions?boneId=${boneId}`);
-        const response = await fetch(`/api/colored-regions?boneId=${encodeURIComponent(boneId)}`);
+        console.log(`[ColoredRegions] Fetching from API endpoint: ${API_BASE}/api/colored-regions?boneId=${boneId}`);
+        const response = await fetch(`${API_BASE}/api/colored-regions?boneId=${encodeURIComponent(boneId)}`);
         
         if (!response.ok) {
             console.log(`[ColoredRegions] Failed to fetch colored regions from API: ${response.status}`);
