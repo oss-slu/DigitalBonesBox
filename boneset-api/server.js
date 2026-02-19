@@ -13,10 +13,6 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
-// Serve colored regions JSON files
-const coloredRegionsPath = path.join(__dirname, "../data_extraction/annotations/color_regions");
-app.use("/colored-regions", express.static(coloredRegionsPath));
-
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
@@ -279,7 +275,52 @@ app.get("/api/bone-data/", async (req, res) => {
     }
 });
 
-// 🌟 FINALIZED ENDPOINT: Annotation Data (Fetches & Combines Scaling Data) 🌟
+// New endpoint: Get colored region annotations for a bone
+app.get("/api/colored-regions", async (req, res) => {
+    const { boneId } = req.query;
+    
+    // Validate boneId parameter
+    if (!boneId) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "boneId query parameter is required" 
+        });
+    }
+    
+    // Validate boneId format to prevent SSRF attacks
+    if (!isValidBoneId(boneId)) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "Invalid boneId format. Only alphanumeric characters and underscores are allowed." 
+        });
+    }
+    
+    // Build GitHub URL for the colored regions JSON
+    const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/${boneId}_colored_regions.json`;
+
+    try {
+        const coloredRegionsResult = await fetchJSON(GITHUB_COLORED_REGIONS_URL);
+        const coloredRegionsData = coloredRegionsResult.data;
+        
+        if (!coloredRegionsData) {
+            return res.status(coloredRegionsResult.status).json({ 
+                error: "Not Found", 
+                message: `Colored region data not available for boneId: ${boneId}` 
+            });
+        }
+
+        res.json(coloredRegionsData);
+
+    } catch (error) {
+        console.error("Error fetching colored region data for '%s': %s", boneId, error.message);
+        res.status(500).json({ 
+            error: "Internal Server Error", 
+            message: "Failed to fetch colored region data" 
+        });
+    }
+});
+
+//  FINALIZED ENDPOINT: Annotation Data (Fetches & Combines Scaling Data) 
 app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     const { boneId } = req.params;
 
@@ -365,7 +406,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             });
     }
     
-    // 🛑 FIX FOR 404 ERROR: Use the single confirmed working template for all slides.
+    //  FIX FOR 404 ERROR: Use the single confirmed working template for all slides.
     const templateFilename = "template_bony_pelvis.json";
 
     // Now that the filenames are set, attempt to serve the local file
@@ -381,7 +422,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         const templateData = templateResponse.data;
         const annotationData = JSON.parse(localAnnotationData); // Parse the local file
 
-        // 🛑 FIX: Define Full Slide Dimensions for Normalization 🛑
+        //  FIX: Define Full Slide Dimensions for Normalization 
         // Use standard PPT slide dimensions if 'full_slide_dimensions' is missing from the template.
         const fullDimensions = templateData.full_slide_dimensions || { 
             width: 9144000, 
@@ -402,7 +443,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         }
         // *** END ALIGNMENT WORKAROUND ***
         
-        // 🛑 FIX: Normalize Text Annotation Coordinates 🛑
+        //  FIX: Normalize Text Annotation Coordinates 
         const normalizedAnnotations = (annotationData.text_annotations || []).map(annotation => {
             if (annotation.text_box && slideWidth && slideHeight) {
                 // Normalize all coordinate values for the bounding box
@@ -428,7 +469,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             }
             return annotation;
         });
-        // 🛑 END FIX: Normalization
+        // END FIX: Normalization
 
         const combinedData = {
             annotations: normalizedAnnotations, // Use the normalized array
@@ -459,7 +500,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     }
     // --- END TEMPORARY WORKAROUND ---
 });
-// 🌟 END FINALIZED ENDPOINT 🌟
+//  END FINALIZED ENDPOINT 
 
 // Search endpoint
 app.get("/api/search", searchLimiter, (req, res) => {
@@ -510,7 +551,7 @@ app.get("/api/search", searchLimiter, (req, res) => {
     }
 });
 
-// 🛑 CORRECTED SERVER STARTUP LOGIC 🛑
+//  CORRECTED SERVER STARTUP LOGIC 
 // 1. Initialize cache first. 2. Start server only if run directly (for testability).
 async function startServer() {
     await initializeSearchCache(); // Wait for the cache to be built
