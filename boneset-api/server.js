@@ -284,7 +284,7 @@ app.get("/api/bone-data/", async (req, res) => {
     }
 });
 
-// 🌟 FINALIZED ENDPOINT: Annotation Data (Fetches & Combines Scaling Data) 🌟
+//  FINALIZED ENDPOINT: Annotation Data (Fetches & Combines Scaling Data) 
 app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     const { boneId } = req.params;
 
@@ -311,9 +311,13 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         const annotationResult = await fetchJSON(GITHUB_ANNOTATION_URL);
         const annotationData = annotationResult.data;
         if (!annotationData) {
-            return res.status(annotationResult.status).json({ 
-                error: "Not Found", 
-                message: `Annotation data not available for boneId: ${boneId}` 
+            const status = annotationResult.status;
+            const errorMessage = status === 404 
+                ? `Annotation data not available for boneId: ${boneId}`
+                : `Failed to fetch annotation data (HTTP ${status})`;
+            return res.status(status).json({ 
+                error: status === 404 ? "Not Found" : "Internal Server Error", 
+                message: errorMessage
             });
         }
         
@@ -321,9 +325,13 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         const templateResult = await fetchJSON(GITHUB_TEMPLATE_URL);
         const templateData = templateResult.data;
         if (!templateData) {
-            return res.status(templateResult.status).json({ 
-                error: "Not Found", 
-                message: `Template data not found: ${templateFilename}` 
+            const status = templateResult.status;
+            const errorMessage = status === 404 
+                ? `Template data not found: ${templateFilename}`
+                : `Failed to fetch template data (HTTP ${status})`;
+            return res.status(status).json({ 
+                error: status === 404 ? "Not Found" : "Internal Server Error", 
+                message: errorMessage
             });
         }
 
