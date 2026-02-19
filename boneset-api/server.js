@@ -303,6 +303,9 @@ app.get("/api/colored-regions", async (req, res) => {
     // Map bone IDs to actual GitHub filenames
     const boneIdToFilename = {
         "bony_pelvis": "Ilium_and_Ischium.json",
+        "ilium": "Ilium_and_Ischium.json", // Map top-level ilium to combined file
+        "ischium": "Ischium_and_Pubis.json", // Map top-level ischium to combined file
+        "pubis": "Pubis.json", // Map top-level pubis
         "iliac_crest": "Ilium_and_Ischium.json",
         "anterior_iliac_spines": "Ilium_and_Ischium.json",
         "posterior_iliac_spines": "Ilium_and_Ischium.json",
