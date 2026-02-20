@@ -580,6 +580,7 @@ function emuToPixels(emuValue, emuMax, pixelMax) {
  * Convert a path command from EMU coordinates to pixel coordinates
  * @param {Object} command - Path command object with type and coordinates
  * @param {Object} dimensions - Object containing slideWidth, slideHeight, imageWidth, imageHeight
+ * @param {Object} debugInfo - Optional debug info (e.g., isFirstCommand) for logging
  * @returns {Object} - Command with converted pixel coordinates
  */
 function convertCommandToPixels(command, dimensions, debugInfo = {}) {
@@ -658,6 +659,7 @@ function commandsToSVGPath(commands, dimensions) {
  * @param {number} imageHeight - Height of the image in pixels
  * @param {Object} imageData - Image metadata (width, height, etc.)
  * @param {string} boneId - Bone identifier for data-bone attribute
+ * @param {number} imageIndex - Index of the image (for applying specific adjustments)
  * @returns {SVGElement} - SVG element with colored regions
  */
 function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageData, boneId, imageIndex = 0) {
