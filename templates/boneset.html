@@ -23,15 +23,13 @@
     <!-- Header Navigation -->
     <header id="badge" role="banner">
         <div class="header-left">
-            <button id="toggle-sidebar" aria-label="Toggle navigation menu">☰</button>
+            <button id="toggle-sidebar" type="button" aria-label="Toggle navigation menu">☰</button>
             <nav class="main-navigation" role="navigation">
-                <span id="text-button-Home" role="button" tabindex="0">Home</span>
-                <span id="text-button-Tutor" role="button" tabindex="0">Tutor</span>
-                <span id="text-button-Study" role="button" tabindex="0">Study</span>
-                <span id="start-quiz-btn" role="button" tabindex="0">Quiz Me </span>
-                <div id="help-button-container">
-                    <span id="text-button-Help" role="button" tabindex="0" onclick="document.getElementById('new-help-modal').style.display='flex';" style="pointer-events: auto !important; z-index: 9999 !important; cursor: pointer;">Help</span>
-                </div>
+                <button id="text-button-Home" type="button" >Home</button>
+                <button id="text-button-Tutor" type="button" >Tutor</button>
+                <button id="text-button-Study" type="button" >Study</button>
+                <button id="start-quiz-btn" type="button" aria-haspopup="dialog" aria-controls="quiz-modal" >Quiz Me </button>
+                <button id="text-button-Help" type="button" aria-haspopup="dialog" aria-controls="new-help-modal" onclick="document.getElementById('new-help-modal').style.display='flex';">Help</button>
             </nav>
         </div>
         
@@ -146,8 +144,8 @@
             
             <!-- Navigation -->
             <nav class="navigation-buttons" role="navigation">
-                <button id="prev-button" class="btn-secondary" disabled>Previous</button>
-                <button id="next-button" disabled>Next</button>
+                <button id="prev-button" type="button" class="btn-secondary" disabled>Previous</button>
+                <button id="next-button" type="button" disabled>Next</button>
             </nav>
         </div>
     </main>
@@ -161,7 +159,7 @@
                     <div id="quiz-progress">Question 1 of 10</div>
                     <div id="quiz-score">Score: 0/10</div>
                 </div>
-                <button id="exit-quiz-btn" aria-label="Exit quiz">Exit Quiz</button>
+                <button id="exit-quiz-btn" type="button" aria-label="Exit quiz">Exit Quiz</button>
             </div>
             
             <!-- Quiz Content -->
@@ -189,7 +187,7 @@
             
             <!-- Quiz Actions -->
             <div class="quiz-actions">
-                <button id="next-question-btn" style="display: none;">Next Question</button>
+                <button id="next-question-btn" type="button" style="display: none;">Next Question</button>
             </div>
         </div>
     </div>
@@ -233,7 +231,7 @@
                     
                     <p style="margin: 20px 0 0 0; font-style: italic; color: #4a5568; font-size: 1rem;">Press the ESC key to close this help window at any time.</p>
                 </div>
-                <button onclick="document.getElementById('new-help-modal').style.display='none'" style="background: linear-gradient(135deg, #003366 0%, #1e40af 100%); color: white; border: 2px solid #FFD700; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1.1rem; display: block; margin: 0 auto; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,51,102,0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,51,102,0.4)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 12px rgba(0,51,102,0.3)'">
+                <button onclick="document.getElementById('new-help-modal').style.display='none'" type="button" style="background: linear-gradient(135deg, #003366 0%, #1e40af 100%); color: white; border: 2px solid #FFD700; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 1.1rem; display: block; margin: 0 auto; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0,51,102,0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,51,102,0.4)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 12px rgba(0,51,102,0.3)'">
                     Close Guide
                 </button>
             </div>
