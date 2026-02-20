@@ -32,6 +32,7 @@ type: Task
 - [ ] All related code passes the repository's workflow checks (linting, tests).
 - [ ] The application runs without errors after the changes are made.
 - [ ] (If applicable) New automated tests have been added to cover the changes.
+- [ ] Any related documentation has been updated, including JSDoc comments or docstrings
 
 ---
 
