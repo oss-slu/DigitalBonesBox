@@ -1872,6 +1872,37 @@ button:disabled {
     overflow-y: auto;
 }
 
+/* Back To Top */
+
+#backToTopBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  z-index: 99;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 10px;
+  transition: opacity 0.3s ease, bottom 0.3s ease;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#backToTopBtn.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#backToTopBtn:hover {
+  bottom: 15px;
+/* ─── Single image layout ─────────────────────────────────────────────────── */
+.single-image-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
 #quiz-modal.active {
     display: flex;
 }
