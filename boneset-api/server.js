@@ -188,6 +188,10 @@ app.get("/combined-data", async (_req, res) => {
     }
 });
 
+/**
+ * Gets description of boneset, bone, or subbone, formatted as HTML list items.
+ * Expects a 'boneId' query parameter.
+ */
 app.get("/api/description/", async (req, res) => {
     const { boneId } = req.query;
     if (!boneId) {
@@ -215,7 +219,10 @@ app.get("/api/description/", async (req, res) => {
     }
 });
 
-// New endpoint: Get bone data with images
+/**
+ * Gets detailed bone data including plaintext description and image URLs.
+ * Expects a 'boneId' query parameter.
+ */
 app.get("/api/bone-data/", async (req, res) => {
     const { boneId } = req.query;
     
