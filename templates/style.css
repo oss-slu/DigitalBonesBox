@@ -402,52 +402,9 @@ body {
     left: 0;
 }
 
-/* Original help button styling for backwards compatibility */
 #text-button-Help {
-    padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-lg);
-    cursor: pointer !important;
-    font-weight: 600;
-    transition: all var(--transition-normal);
-    border: 2px solid rgba(255, 215, 0, 0.3);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    color: white;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    min-width: 80px;
-    text-align: center;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
     pointer-events: auto !important;
     z-index: 9999 !important;
-}
-
-#text-button-Help::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-secondary);
-    transition: left var(--transition-slow);
-    z-index: -1;
-}
-
-#text-button-Help:hover {
-    color: var(--slu-navy);
-    border-color: var(--slu-gold);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-accent);
-}
-
-#text-button-Help:hover::before {
-    left: 0;
 }
 
 /* Help Modal */
@@ -1945,52 +1902,6 @@ button:disabled {
    'with-annotations' to the container, this will also cancel tilt. */
 .image-item.with-annotations img {
     transform: none !important;
-}
-
-/* Quiz Button in Header */
-#start-quiz-btn {
-    padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    color: white;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    transition: all var(--transition-normal);
-    position: relative;
-    overflow: hidden;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    min-width: 100px;
-    text-align: center;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#start-quiz-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: var(--gradient-secondary);
-    transition: left var(--transition-slow);
-    z-index: -1;
-}
-
-#start-quiz-btn:hover {
-    color: var(--slu-navy);
-    border-color: var(--slu-gold);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-accent);
-}
-
-#start-quiz-btn:hover::before {
-    left: 0;
 }
 
 /* Quiz Modal Container */
