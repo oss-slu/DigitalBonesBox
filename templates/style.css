@@ -223,29 +223,6 @@ body {
     margin: 0;
 }
 
-/* Toggle sidebar button in main navigation - Updated modern styling */
-.main-navigation #toggle-sidebar {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-    color: white;
-    border: 2px solid rgba(255, 215, 0, 0.6);
-    padding: var(--space-3);
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 1.2rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
 .main-navigation #toggle-sidebar:hover {
     background: linear-gradient(135deg, var(--slu-gold) 0%, #f59e0b 100%);
     color: var(--slu-navy);
@@ -255,7 +232,7 @@ body {
 }
 
 .main-navigation span,
-.header-left .main-navigation span {
+#text-button-Help {
     padding: var(--space-3) var(--space-6);
     border-radius: var(--radius-lg);
     cursor: pointer;
@@ -400,31 +377,6 @@ body {
 
 #help-button-container {
     margin-right: var(--space-2);
-}
-
-/* Help button in main navigation */
-.header-left .main-navigation #text-button-Help {
-    padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    color: white;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    border: 2px solid rgba(255, 215, 0, 0.3);
-    transition: all var(--transition-normal);
-    position: relative;
-    overflow: hidden;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    min-width: 80px;
-    text-align: center;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: auto;
-    user-select: none;
 }
 
 .header-left .main-navigation #text-button-Help::before {
