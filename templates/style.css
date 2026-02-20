@@ -223,7 +223,7 @@ body {
     margin: 0;
 }
 
-.main-navigation span {
+.main-navigation button {
     padding: var(--space-3) var(--space-6);
     border-radius: var(--radius-lg);
     cursor: pointer;
@@ -245,7 +245,7 @@ body {
     justify-content: center;
 }
 
-.main-navigation span::before {
+.main-navigation button::before {
     content: '';
     position: absolute;
     top: 0;
@@ -257,14 +257,14 @@ body {
     z-index: -1;
 }
 
-.main-navigation span:hover {
+.main-navigation button:hover {
     color: var(--slu-navy);
     border-color: var(--slu-gold);
     transform: translateY(-2px);
     box-shadow: var(--shadow-accent);
 }
 
-.main-navigation span:hover::before {
+.main-navigation button:hover::before {
     left: 0;
 }
 

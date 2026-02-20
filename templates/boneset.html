@@ -25,11 +25,11 @@
         <div class="header-left">
             <button id="toggle-sidebar" aria-label="Toggle navigation menu">☰</button>
             <nav class="main-navigation" role="navigation">
-                <span id="text-button-Home" role="button" tabindex="0">Home</span>
-                <span id="text-button-Tutor" role="button" tabindex="0">Tutor</span>
-                <span id="text-button-Study" role="button" tabindex="0">Study</span>
-                <span id="start-quiz-btn" role="button" tabindex="0">Quiz Me </span>
-                <span id="text-button-Help" role="button" tabindex="0" onclick="document.getElementById('new-help-modal').style.display='flex';">Help</span>
+                <button id="text-button-Home" type="button" tabindex="0">Home</button>
+                <button id="text-button-Tutor" type="button" tabindex="0">Tutor</button>
+                <button id="text-button-Study" type="button" tabindex="0">Study</button>
+                <button id="start-quiz-btn" type="button" aria-haspopup="dialog" aria-controls="quiz-modal" tabindex="0">Quiz Me </button>
+                <button id="text-button-Help" type="button" aria-haspopup="dialog" aria-controls="new-help-modal" onclick="document.getElementById('new-help-modal').style.display='flex';">Help</button>
             </nav>
         </div>
         
