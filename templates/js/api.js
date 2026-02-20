@@ -5,7 +5,8 @@ const API_CONFIG = {
     BASE_URL: "http://127.0.0.1:8000",
     ENDPOINTS: {
         COMBINED_DATA: "/combined-data",
-        MOCK_BONE_DATA: "./js/mock-bone-data.json"
+        MOCK_BONE_DATA: "./js/mock-bone-data.json",
+        BONE_DATA: "/api/bone-data/"
     }
 };
 
@@ -47,7 +48,7 @@ export async function fetchMockBoneData() {
 export async function fetchBoneData(boneId) {
     if (!boneId) return null;
 
-    const url = `${API_CONFIG.BASE_URL}/api/bone-data/?boneId=${encodeURIComponent(boneId)}`;
+    const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.BONE_DATA}?boneId=${encodeURIComponent(boneId)}`;
     try {
         const resp = await fetch(url);
         if (!resp.ok) {
