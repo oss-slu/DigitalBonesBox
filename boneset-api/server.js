@@ -163,6 +163,9 @@ app.get("/", (_req, res) => {
     res.json({ message: "Welcome to the Boneset API" });
 });
 
+/**
+ * Gets combined data for a boneset, its bones, and their subbones.
+ */
 app.get("/combined-data", async (_req, res) => {
     try {
         const bonesetResult = await fetchJSON(BONESET_JSON_URL);
@@ -193,6 +196,10 @@ app.get("/combined-data", async (_req, res) => {
     }
 });
 
+/**
+ * Gets description of boneset, bone, or subbone, formatted as HTML list items.
+ * Expects a 'boneId' query parameter.
+ */
 app.get("/api/description/", async (req, res) => {
     const { boneId } = req.query;
     if (!boneId) {
@@ -220,7 +227,10 @@ app.get("/api/description/", async (req, res) => {
     }
 });
 
-// New endpoint: Get bone data with images
+/**
+ * Gets detailed bone data including plaintext description and image URLs.
+ * Expects a 'boneId' query parameter.
+ */
 app.get("/api/bone-data/", async (req, res) => {
     const { boneId } = req.query;
     
@@ -284,7 +294,9 @@ app.get("/api/bone-data/", async (req, res) => {
     }
 });
 
-//  FINALIZED ENDPOINT: Annotation Data (Fetches & Combines Scaling Data) 
+/**
+ * Gets annotation data for a specific boneId.
+ */
 app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     const { boneId } = req.params;
 
@@ -399,9 +411,12 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         });
     }
 });
-//  END FINALIZED ENDPOINT 
 
-// Search endpoint
+/**
+ * Looks for bonesets, bones, and sub-bones that match the search query.
+ * Returns HTML list items with data attributes for frontend use.
+ * Expects a 'q' query parameter for the search term.
+ */
 app.get("/api/search", searchLimiter, (req, res) => {
     const query = req.query.q;
     
