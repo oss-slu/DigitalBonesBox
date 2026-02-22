@@ -60,10 +60,11 @@ function isValidBoneId(boneId) {
 async function fetchJSON(url) {
     try {
         const response = await axios.get(url, { timeout: 10_000 });
-        return response.data;
+        return { data: response.data, status: response.status };
     } catch (error) {
         console.error(`Failed to fetch ${url}:`, error.message);
-        return null;
+        const status = error.response?.status || 500;
+        return { data: null, status };
     }
 }
 
@@ -71,7 +72,8 @@ async function fetchJSON(url) {
 async function initializeSearchCache() {
     try {
         console.log("Initializing search cache...");
-        const bonesetData = await fetchJSON(BONESET_JSON_URL);
+        const bonesetResult = await fetchJSON(BONESET_JSON_URL);
+        const bonesetData = bonesetResult.data;
         if (!bonesetData) {
             console.error("Failed to load boneset data for search cache");
             return;
@@ -91,7 +93,8 @@ async function initializeSearchCache() {
 
         // Load all bones and sub-bones
         for (const boneId of bonesetData.bones || []) {
-            const boneData = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneData = boneResult.data;
             if (boneData) {
                 // Add bone to search data
                 searchData.push({
@@ -165,9 +168,10 @@ app.get("/", (_req, res) => {
  */
 app.get("/combined-data", async (_req, res) => {
     try {
-        const bonesetData = await fetchJSON(BONESET_JSON_URL);
+        const bonesetResult = await fetchJSON(BONESET_JSON_URL);
+        const bonesetData = bonesetResult.data;
         if (!bonesetData) {
-            return res.status(500).json({ error: "Failed to load boneset data" });
+            return res.status(bonesetResult.status).json({ error: "Failed to load boneset data" });
         }
 
         const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
@@ -175,7 +179,8 @@ app.get("/combined-data", async (_req, res) => {
         const subbones = [];
 
         for (const boneId of bonesetData.bones || []) {
-            const boneData = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+            const boneData = boneResult.data;
             if (boneData) {
                 bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
                 (boneData.subBones || []).forEach((subBoneId) => {
@@ -303,97 +308,40 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         });
     }
 
-    // --- TEMPORARY WORKAROUND & DYNAMIC MAPPING ---
-    let annotationFilename = null;
-    
     // Define the view/rotation to select from the template geometry
     // This assumes all current bone views use the 'right' view coordinates for scaling.
     const geometryView = "right"; 
 
-    // Map the boneId from the request URL to the correct local JSON file
-    switch (boneId) {
-        case "bony_pelvis":
-            annotationFilename = "slide02_bony_pelvis.json";
-            break;
-        case "ilium":
-            annotationFilename = "slide03_ilium_text_labels.json";
-            break;
-        case "ilium_image":
-            annotationFilename = "slide04_ilium_image.json";
-            break;
-        case "ilium_crest":
-            annotationFilename = "slide05_ilium_iliac_crest_text_labels.json";
-            break;
-        case "ilium_anterior_spines":
-            annotationFilename = "slide06_ilium_anterior_iliac_spines_text_labels.json";
-            break;
-        case "ilium_posterior_spines":
-            annotationFilename = "slide07_ilium_posterior_iliac_spines_text_labels.json";
-            break;
-        case "ilium_auricular_surface":
-            annotationFilename = "slide08_ilium_auricular_surface_text_labels.json";
-            break;
-        case "ischium":
-            annotationFilename = "slide09_ischium_text_labels.json";
-            break;
-        case "ischium_image":
-            annotationFilename = "slide10_ischium_image.json";
-            break;
-        case "ischium_ramus":
-            annotationFilename = "slide11_ischium_ramus_text_labels.json";
-            break;
-        case "ischial_tuberosity":
-            annotationFilename = "slide12_ischium_ischial_tuberosity_text_labels.json";
-            break;
-        case "ischial_spine":
-            annotationFilename = "slide13_ischium_ischial_spine_text_labels.json";
-            break;
-        case "ischium_sciatic_notches":
-            annotationFilename = "slide14_ischium_sciatic_notches_text_labels.json";
-            break;
-        case "pubis":
-            annotationFilename = "slide15_pubis_text_labels.json";
-            break;
-        case "pubis_image":
-            annotationFilename = "slide16_pubis_image.json";
-            break;
-        case "pubic_rami":
-            annotationFilename = "slide17_pubis_pubic_rami_text_labels.json";
-            break;
-        case "pectineal_line":
-            annotationFilename = "slide18_pubis_pectineal_line_text_labels.json";
-            break;
-        case "symphyseal_surface":
-            annotationFilename = "slide19_pubis_symphyseal_surface_text_labels.json";
-            break;
-        case "pubic_tubercle":
-            annotationFilename = "slide20_pubis_pubic_tubercle_text_labels.json";
-            break;
-        default:
-            // If the boneId is not in the list, assume no annotation data is available
-            return res.status(404).json({ 
-                error: "Not Found", 
-                message: `Annotation data not available for boneId: ${boneId}` 
-            });
-    }
-    
-    // 🛑 FIX FOR 404 ERROR: Use the single confirmed working template for all slides.
+    // Construct GitHub URLs for annotation data and template
+    const annotationFilename = `${boneId}_text_annotations.json`;
+    const GITHUB_ANNOTATION_URL = `${GITHUB_REPO}annotations/text_label_annotations/${annotationFilename}`;
     const templateFilename = "template_bony_pelvis.json";
-
-    // Now that the filenames are set, attempt to serve the local file
-    const localAnnotationPath = path.join(__dirname, "temp_annotations", annotationFilename);
     const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
 
     try {
-        // 2a. Try to serve the file from the local 'temp_annotations' folder.
-        const localAnnotationData = await fs.readFile(localAnnotationPath, "utf8");
+        // Fetch annotation data from GitHub
+        const annotationResult = await fetchJSON(GITHUB_ANNOTATION_URL);
+        const annotationData = annotationResult.data;
+        if (!annotationData) {
+            const status = annotationResult.status;
+            const errorMessage = `Failed to fetch annotation data (HTTP ${status})`;
+            return res.status(status).json({ 
+                message: errorMessage
+            });
+        }
         
-        // 2b. Fetch the rotation/scaling template data from GitHub
-        const templateResponse = await axios.get(GITHUB_TEMPLATE_URL, { timeout: 10000 });
-        const templateData = templateResponse.data;
-        const annotationData = JSON.parse(localAnnotationData); // Parse the local file
+        // Fetch the rotation/scaling template data from GitHub
+        const templateResult = await fetchJSON(GITHUB_TEMPLATE_URL);
+        const templateData = templateResult.data;
+        if (!templateData) {
+            const status = templateResult.status;
+            const errorMessage = `Failed to fetch template data (HTTP ${status})`;
+            return res.status(status).json({ 
+                message: errorMessage
+            });
+        }
 
-        // 🛑 FIX: Define Full Slide Dimensions for Normalization 🛑
+        // Define Full Slide Dimensions for Normalization
         // Use standard PPT slide dimensions if 'full_slide_dimensions' is missing from the template.
         const fullDimensions = templateData.full_slide_dimensions || { 
             width: 9144000, 
@@ -402,7 +350,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         const slideWidth = fullDimensions.width;
         const slideHeight = fullDimensions.height;
         
-        // 2c. Combine required data for the frontend
+        // Combine required data for the frontend
         let normalizedGeometry = templateData.normalized_geometry
             ? templateData.normalized_geometry[geometryView] 
             : { normX: 0, normY: 0, normW: 1, normH: 1 }; 
@@ -414,7 +362,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         }
         // *** END ALIGNMENT WORKAROUND ***
         
-        // 🛑 FIX: Normalize Text Annotation Coordinates 🛑
+        // Normalize Text Annotation Coordinates
         const normalizedAnnotations = (annotationData.text_annotations || []).map(annotation => {
             if (annotation.text_box && slideWidth && slideHeight) {
                 // Normalize all coordinate values for the bounding box
@@ -440,36 +388,22 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             }
             return annotation;
         });
-        // 🛑 END FIX: Normalization
 
         const combinedData = {
-            annotations: normalizedAnnotations, // Use the normalized array
+            annotations: normalizedAnnotations,
             normalized_geometry: normalizedGeometry
         };
 
-        console.log(`SUCCESS: Serving local annotation file ${annotationFilename} combined with GitHub template (Coordinates Normalized).`);
-        return res.json(combinedData); // Success! Return local annotations + remote template
+        console.log(`SUCCESS: Serving annotation data for ${boneId} from GitHub combined with template (Coordinates Normalized).`);
+        return res.json(combinedData);
         
     } catch (error) {
-        // If fs.readFile fails (e.g., file not found, permissions issue) or GitHub fetch fails
-        let message = `Failed to serve local annotation file or fetch GitHub template: ${error.message}`;
-        let status = 500;
-        
-        if (error.code === "ENOENT") {
-            message = `Annotation file ${annotationFilename} not found locally in temp_annotations.`;
-            status = 404;
-        } else if (error.response) {
-             status = error.response.status;
-             message = `GitHub fetch error (Status ${status}): Could not find ${templateFilename}`;
-        }
-        
         console.error("Error fetching annotation/template data:", error.message);
-        res.status(status).json({ 
-            error: error.response?.statusText || "Internal Server Error", 
-            message: message 
+        res.status(500).json({ 
+            error: "Internal Server Error", 
+            message: `Failed to fetch annotation data for boneId: ${boneId}` 
         });
     }
-    // --- END TEMPORARY WORKAROUND ---
 });
 
 /**
@@ -525,7 +459,7 @@ app.get("/api/search", searchLimiter, (req, res) => {
     }
 });
 
-// 🛑 CORRECTED SERVER STARTUP LOGIC 🛑
+//  CORRECTED SERVER STARTUP LOGIC 
 // 1. Initialize cache first. 2. Start server only if run directly (for testability).
 async function startServer() {
     await initializeSearchCache(); // Wait for the cache to be built
