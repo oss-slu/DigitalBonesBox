@@ -324,11 +324,8 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         const annotationData = annotationResult.data;
         if (!annotationData) {
             const status = annotationResult.status;
-            const errorMessage = status === 404 
-                ? `Annotation data not available for boneId: ${boneId}`
-                : `Failed to fetch annotation data (HTTP ${status})`;
+            const errorMessage = `Failed to fetch annotation data (HTTP ${status})`;
             return res.status(status).json({ 
-                error: status === 404 ? "Not Found" : "Internal Server Error", 
                 message: errorMessage
             });
         }
@@ -338,11 +335,8 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         const templateData = templateResult.data;
         if (!templateData) {
             const status = templateResult.status;
-            const errorMessage = status === 404 
-                ? `Template data not found: ${templateFilename}`
-                : `Failed to fetch template data (HTTP ${status})`;
+            const errorMessage = `Failed to fetch template data (HTTP ${status})`;
             return res.status(status).json({ 
-                error: status === 404 ? "Not Found" : "Internal Server Error", 
                 message: errorMessage
             });
         }
