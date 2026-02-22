@@ -13,13 +13,13 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
-// Serve colored regions JSON files
-const coloredRegionsPath = path.join(__dirname, "../data_extraction/annotations/color_regions");
-app.use("/colored-regions", express.static(coloredRegionsPath));
-
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
+const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
+
+// Local colored regions path for fallback
+const coloredRegionsPath = path.join(__dirname, "../data_extraction/annotations/color_regions");
 
 // Rate limiter for search endpoint
 const searchLimiter = rateLimit({
@@ -63,6 +63,17 @@ async function fetchJSON(url) {
         return response.data;
     } catch (error) {
         console.error(`Failed to fetch ${url}:`, error.message);
+        return null;
+    }
+}
+
+// Helper to fetch colored regions from local filesystem
+async function fetchLocalColoredRegion(filename) {
+    try {
+        const filePath = path.join(coloredRegionsPath, filename);
+        const data = await fs.readFile(filePath, "utf8");
+        return JSON.parse(data);
+    } catch (error) {
         return null;
     }
 }
@@ -189,6 +200,75 @@ app.get("/combined-data", async (_req, res) => {
         console.error("Error fetching combined data:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
     }
+});
+
+/**
+ * Gets colored region data for a specific bone.
+ * Tries GitHub data branch first, then falls back to local files.
+ * Expects a 'boneId' query parameter.
+ */
+app.get("/api/colored-regions", async (req, res) => {
+    const { boneId } = req.query;
+
+    if (!boneId) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "boneId query parameter is required" 
+        });
+    }
+
+    if (!isValidBoneId(boneId)) {
+        return res.status(400).json({ 
+            error: "Bad Request", 
+            message: "Invalid boneId format" 
+        });
+    }
+
+    // Define filename patterns to try on GitHub and local
+    const filenamesToTry = [
+        `${boneId}_colored_regions.json`,
+        `${boneId}_colored_regions_final.json`,
+        boneId + ".json",
+    ];
+
+    console.log(`[ColoredRegions API] Fetching colored regions for: ${boneId}`);
+
+    // Try GitHub first
+    for (const filename of filenamesToTry) {
+        const githubUrl = `${GITHUB_COLORED_REGIONS_URL}${filename}`;
+        try {
+            console.log(`[ColoredRegions API] Trying GitHub: ${filename}`);
+            const response = await axios.get(githubUrl, { timeout: 5000 });
+            console.log(`[ColoredRegions API] Success from GitHub: ${filename}`);
+            return res.json(response.data);
+        } catch (error) {
+            if (error.response?.status !== 404) {
+                console.warn(`[ColoredRegions API] Error fetching ${filename} from GitHub:`, error.message);
+            }
+        }
+    }
+
+    // Try local fallback
+    console.log(`[ColoredRegions API] GitHub not found, trying local files...`);
+    for (const filename of filenamesToTry) {
+        try {
+            console.log(`[ColoredRegions API] Trying local: ${filename}`);
+            const data = await fetchLocalColoredRegion(filename);
+            if (data) {
+                console.log(`[ColoredRegions API] Success from local: ${filename}`);
+                return res.json(data);
+            }
+        } catch (error) {
+            console.debug(`[ColoredRegions API] Local file not found: ${filename}`);
+        }
+    }
+
+    // Nothing found
+    console.log(`[ColoredRegions API] No colored region data found for: ${boneId}`);
+    return res.status(404).json({ 
+        error: "Not Found", 
+        message: `Colored region data not available for boneId: ${boneId}` 
+    });
 });
 
 /**

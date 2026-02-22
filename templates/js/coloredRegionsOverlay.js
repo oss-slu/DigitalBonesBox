@@ -1,8 +1,6 @@
 const COLORED_REGIONS_CONFIG = {
-    // GitHub raw content URL for data branch
-    BASE_URL: "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/annotations/ColoredRegions",
-    // Local path served through API server for colored regions JSON files
-    LOCAL_PATH: "http://127.0.0.1:8000/colored-regions",
+    // API endpoint for fetching colored regions data by bone ID
+    API_URL: "http://127.0.0.1:8000/api/colored-regions",
     // Default opacity for colored overlays (0.3 = 30% transparent)
     DEFAULT_OPACITY: 0.4
 };
@@ -76,8 +74,7 @@ const OVERLAY_ADJUSTMENTS = {
 };
 
 /**
- * Fetch colored region data for a specific bone from GitHub data branch
- * Tries multiple filename variations to handle different naming conventions
+ * Fetch colored region data for a specific bone from the API server
  * @param {string} boneId - The bone identifier (e.g., "pubis", "ilium")
  * @param {boolean} isBonesetSelection - Whether this is a boneset selection (not individual bone)
  * @returns {Object|null} - The colored region data or null if not available
@@ -104,464 +101,37 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     const bonesWithColoredRegions = ["bony_pelvis", "iliac_crest", "anterior_iliac_spines", "posterior_iliac_spines", "posterior_superior_iliac_spines", "posterior_inferior_iliac_spines", "auricular_surface", "ramus", "ischial_tuberosity", "ischial_spine", "sciatic_notches", "pubic_rami", "pectineal_line", "symphyseal_surface", "pubic_tubercle"];
     
     console.log(`[ColoredRegions] Checking if "${mappedBoneId}" is in available list:`, bonesWithColoredRegions);
-    console.log("[ColoredRegions] Validation result:", bonesWithColoredRegions.includes(mappedBoneId));
     
     if (!bonesWithColoredRegions.includes(mappedBoneId)) {
         console.log(`[ColoredRegions] No colored regions available for: ${boneId}`);
         return null;
     }
-    
-    // Use mappedBoneId for the rest of the function
-    boneId = mappedBoneId;
 
-    // Special handling for bony_pelvis - use local extracted file
-    if (boneId === "bony_pelvis") {
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/bony_pelvis_colored_regions_final.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: bony_pelvis_colored_regions_final.json");
-                console.log("[ColoredRegions] First region Y coordinate (check offset applied):", data.images[0].colored_regions[0].path_data[0].commands[0].y);
-                return data;
+    try {
+        // Fetch from the API endpoint
+        const url = `${COLORED_REGIONS_CONFIG.API_URL}?boneId=${encodeURIComponent(mappedBoneId)}`;
+        console.log(`[ColoredRegions] Fetching from API: ${url}`);
+        
+        const response = await fetch(url, {
+            cache: "no-store",
+            headers: {
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache"
             }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible, trying GitHub...");
+        });
+
+        if (!response.ok) {
+            console.warn(`[ColoredRegions] API returned status ${response.status}: ${response.statusText}`);
+            return null;
         }
+
+        const data = await response.json();
+        console.log(`[ColoredRegions] Successfully fetched colored regions for ${mappedBoneId}`);
+        return data;
+    } catch (error) {
+        console.error(`[ColoredRegions] Error fetching colored regions for ${boneId}:`, error);
+        return null;
     }
-    
-    // Special handling for iliac_crest - use local extracted file
-    if (boneId === "iliac_crest") {
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/iliac_crest_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: iliac_crest_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for iliac_crest:", error);
-        }
-    }
-
-    // Special handling for anterior_iliac_spines - use local extracted file
-    if (boneId === "anterior_iliac_spines") {
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/anterior_iliac_spines_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: anterior_iliac_spines_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for anterior_iliac_spines:", error);
-        }
-    }
-
-    // Special handling for posterior_iliac_spines - use local extracted file
-    if (boneId === "posterior_iliac_spines") {
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/posterior_iliac_spines_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: posterior_iliac_spines_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for posterior_iliac_spines:", error);
-        }
-    }
-
-    // Special handling for posterior_superior_iliac_spines - use local extracted file
-    if (boneId === "posterior_superior_iliac_spines") {
-        try {
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/posterior_superior_iliac_spines_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: posterior_superior_iliac_spines_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for posterior_superior_iliac_spines:", error);
-        }
-    }
-
-    // Special handling for posterior_inferior_iliac_spines - use local extracted file
-    if (boneId === "posterior_inferior_iliac_spines") {
-        try {
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/posterior_inferior_iliac_spines_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: posterior_inferior_iliac_spines_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for posterior_inferior_iliac_spines:", error);
-        }
-    }
-    
-    // Special handling for auricular_surface - use local extracted file
-    if (boneId === "auricular_surface") {
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/auricular_surface_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: auricular_surface_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for auricular_surface:", error);
-        }
-    }
-
-    // Special handler for ramus
-    if (mappedBoneId === "ramus") {
-        console.log("[ColoredRegions] Special case: ramus - loading from local file");
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/ramus_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: ramus_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for ramus:", error);
-        }
-    }
-
-    // Special handler for ischial_tuberosity
-    if (mappedBoneId === "ischial_tuberosity") {
-        console.log("[ColoredRegions] Special case: ischial_tuberosity - loading from local file");
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/ischial_tuberosity_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: ischial_tuberosity_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for ischial_tuberosity:", error);
-        }
-    }
-
-    // Special handler for ischial_spine
-    if (mappedBoneId === "ischial_spine") {
-        console.log("[ColoredRegions] Special case: ischial_spine - loading from local file");
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/ischial_spine_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: ischial_spine_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for ischial_spine:", error);
-        }
-    }
-
-    // Special handler for sciatic_notches
-    if (mappedBoneId === "sciatic_notches") {
-        console.log("[ColoredRegions] Special case: sciatic_notches - loading from local file");
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/sciatic_notches_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: sciatic_notches_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for sciatic_notches:", error);
-        }
-    }
-
-    // Special handler for pubic_rami
-    if (mappedBoneId === "pubic_rami") {
-        console.log("[ColoredRegions] Special case: pubic_rami - loading from local file");
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/pubis_rami_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: pubis_rami_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for pubic_rami:", error);
-        }
-    }
-
-    // Special handler for pectineal_line
-    if (mappedBoneId === "pectineal_line") {
-        console.log("[ColoredRegions] Special case: pectineal_line - loading from local file");
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/pectineal_line_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: pectineal_line_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for pectineal_line:", error);
-        }
-    }
-
-    // Special handler for symphyseal_surface
-    if (mappedBoneId === "symphyseal_surface") {
-        console.log("[ColoredRegions] Special case: symphyseal_surface - loading from local file");
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/symphyseal_surface_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: symphyseal_surface_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for symphyseal_surface:", error);
-        }
-    }
-
-    // Special handler for pubic_tubercle
-    if (mappedBoneId === "pubic_tubercle") {
-        console.log("[ColoredRegions] Special case: pubic_tubercle - loading from local file");
-        try {
-            // Add cache-busting timestamp to force reload
-            const timestamp = new Date().getTime();
-            const localUrl = `${COLORED_REGIONS_CONFIG.LOCAL_PATH}/pubic_tubercle_colored_regions.json?v=${timestamp}`;
-            console.log(`[ColoredRegions] Trying local file (with cache-bust): ${localUrl}`);
-            const response = await fetch(localUrl, { 
-                cache: "no-store",
-                headers: {
-                    "Cache-Control": "no-cache",
-                    "Pragma": "no-cache"
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("[ColoredRegions] Successfully loaded from local file: pubic_tubercle_colored_regions.json");
-                return data;
-            }
-        } catch (error) {
-            console.log("[ColoredRegions] Local file not accessible for pubic_tubercle:", error);
-        }
-    }
-
-    // Generate filename variations to try
-    const variations = [
-        boneId,                                          // Original: "pubis"
-        boneId.toLowerCase(),                            // Lowercase: "pubis"
-        boneId.charAt(0).toUpperCase() + boneId.slice(1), // Capitalize: "Pubis"
-        boneId.replace(/_/g, " ")                         // Replace underscores: "bony pelvis"
-            .split(" ")
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join("_"),                                   // Capitalize each word: "Bony_Pelvis"
-    ];
-    
-    // Add common combined filename patterns (many bones are in combined files)
-    // e.g., "ilium" might be in "Ilium_and_Ischium.json" or "Ischium_and_Ilium.json"
-    const boneName = capitalize(boneId);
-    const combinedVariations = [
-        // For bony_pelvis boneset, try combined files with all regions
-        boneId === "bony_pelvis" ? "Ischium_and_Pubis" : null,
-        boneId === "bony_pelvis" ? "Pubis_and_Ischium" : null,
-        // For individual bones, try their combined files
-        `${boneName}_and_Ischium`,
-        `${boneName}_and_Pubis`,
-        `${boneName}_and_Ilium`,
-        `Ischium_and_${boneName}`,
-        `Pubis_and_${boneName}`,
-        `Ilium_and_${boneName}`,
-        `${boneName}_single`,
-        `${boneName}_anterior`,
-        `${boneName}_posterior`,
-        `${boneName}_lateral`,
-        `${boneName}_medial`,
-        `${boneName}_superior`,
-        `${boneName}_inferior`,
-    ].filter(v => v !== null);  // Remove null values
-    
-    // Combine all variations
-    const allVariations = [...variations, ...combinedVariations];
-
-    console.log(`[ColoredRegions] Trying ${allVariations.length} filename variations...`);
-
-    // Try each variation
-    for (const variation of allVariations) {
-        const filename = `${variation}.json`;
-        const url = `${COLORED_REGIONS_CONFIG.BASE_URL}/${filename}`;
-
-        try {
-            console.debug(`[ColoredRegions] Trying: ${url}`);
-            const response = await fetch(url);
-            
-            // File found, return the data
-            if (response.ok) {
-                const data = await response.json();
-                console.log(`[ColoredRegions] Successfully loaded colored regions from ${filename}`);
-                console.log("[ColoredRegions] Data:", data);
-                return data;
-            }
-            
-            // If 404, try next variation
-            if (response.status === 404) {
-                console.debug(`[ColoredRegions] File not found (404): ${filename}, trying next...`);
-                continue;
-            }
-            
-            // Other errors - log and try next
-            console.warn(`[ColoredRegions] Error fetching ${filename}: ${response.status}`);
-        } catch (error) {
-            // Network error or parsing error - try next variation
-            console.debug(`[ColoredRegions] Error with ${filename}:`, error.message);
-        }
-    }
-
-    // No matching file found after trying all variations
-    console.log(`[ColoredRegions] No colored regions file found for bone: ${boneId} (tried ${allVariations.length} variations)`);
-    return null;
-}
-
-/**
- * Helper function to capitalize first letter
- */
-function capitalize(str) {
-    if (!str) return str;
-    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 /**
