@@ -12,7 +12,7 @@ Closes #xxx <!-- Add the issue number here -->
 
 - [ ] Project builds and runs
 - [ ] Tests and linters pass
-- [ ] Any related documentation has been updated
+- [ ] Any related documentation has been updated, including JSDoc comments or docstrings
 
 ## Detailed Description
 

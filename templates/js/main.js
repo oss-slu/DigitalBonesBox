@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initializeSearch();
 
     // 2. Sidebar behavior
-    initializeSidebar();
+    await initializeSidebar();
 
     // 3. Fetch data FIRST (moved from step 4)
     combinedData = await fetchCombinedData();
