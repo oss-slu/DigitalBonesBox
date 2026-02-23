@@ -282,10 +282,10 @@ app.get("/api/colored-regions", async (req, res) => {
     ];
 
     console.log(`[ColoredRegions API] Fetching colored regions for: ${boneId}`);
-    console.log(`[ColoredRegions API] Files to try:`, filenamesToTry);
+    console.log("[ColoredRegions API] Files to try:", filenamesToTry);
 
     // Try local first (working coordinate system)
-    console.log(`[ColoredRegions API] Trying local files first...`);
+    console.log("[ColoredRegions API] Trying local files first...");
     for (const filename of filenamesToTry) {
         try {
             console.log(`[ColoredRegions API] Trying local: ${filename}`);
@@ -300,7 +300,7 @@ app.get("/api/colored-regions", async (req, res) => {
     }
 
     // Try GitHub as fallback
-    console.log(`[ColoredRegions API] Local not found, trying GitHub...`);
+    console.log("[ColoredRegions API] Local not found, trying GitHub...");
     for (const filename of filenamesToTry) {
         const githubUrl = `${GITHUB_COLORED_REGIONS_URL}${filename}`;
         try {
