@@ -78,6 +78,49 @@ async function fetchLocalColoredRegion(filename) {
     }
 }
 
+// Transform GitHub data format to local file format for compatibility
+function transformGitHubDataToLocalFormat(githubData) {
+    if (!githubData || !githubData.colored_regions) {
+        return null;
+    }
+
+    // GitHub format has top-level image_dimensions and colored_regions
+    // Local format wraps colored_regions inside an images array
+    const localFormat = {
+        slide_number: githubData.slide_number || 0,
+        images: [
+            {
+                image_name: "github_data",
+                width: githubData.image_dimensions?.width || 12192000,
+                height: githubData.image_dimensions?.height || 6858000,
+                colored_regions: githubData.colored_regions
+            }
+        ]
+    };
+
+    return localFormat;
+}
+
+// Mapping from front-end bone IDs to GitHub data branch filenames
+// Simple pattern-based approach: {bone_id}_colored_regions.json
+const BONE_ID_TO_GITHUB_FILENAME = {
+    "bony_pelvis": ["bony_pelvis_colored_regions.json"],
+    "iliac_crest": ["iliac_crest_colored_regions.json"],
+    "anterior_iliac_spines": ["anterior_iliac_spines_colored_regions.json"],
+    "posterior_iliac_spines": ["posterior_iliac_spines_colored_regions.json"],
+    "posterior_superior_iliac_spines": ["posterior_superior_iliac_spines_colored_regions.json"],
+    "posterior_inferior_iliac_spines": ["posterior_inferior_iliac_spines_colored_regions.json"],
+    "auricular_surface": ["auricular_surface_colored_regions.json"],
+    "ischial_tuberosity": ["ischial_tuberosity_colored_regions.json"],
+    "ischial_spine": ["ischial_spine_colored_regions.json"],
+    "sciatic_notches": ["sciatic_notches_colored_regions.json"],
+    "ramus": ["ramus_colored_regions.json"],
+    "pubic_rami": ["pubic_rami_colored_regions.json"],
+    "pectineal_line": ["pectineal_line_colored_regions.json"],
+    "symphyseal_surface": ["symphyseal_surface_colored_regions.json"],
+    "pubic_tubercle": ["pubic_tubercle_colored_regions.json"]
+};
+
 // Initialize search cache at startup
 async function initializeSearchCache() {
     try {
@@ -224,32 +267,18 @@ app.get("/api/colored-regions", async (req, res) => {
         });
     }
 
-    // Define filename patterns to try on GitHub and local
-    const filenamesToTry = [
+    // Define filename patterns to try
+    // Primary: Use mapped filenames if available, otherwise try {boneId}_colored_regions.json pattern
+    const filenamesToTry = BONE_ID_TO_GITHUB_FILENAME[boneId] || [
         `${boneId}_colored_regions.json`,
-        `${boneId}_colored_regions_final.json`,
-        boneId + ".json",
+        `${boneId}_colored_regions_final.json`
     ];
 
     console.log(`[ColoredRegions API] Fetching colored regions for: ${boneId}`);
+    console.log(`[ColoredRegions API] Files to try:`, filenamesToTry);
 
-    // Try GitHub first
-    for (const filename of filenamesToTry) {
-        const githubUrl = `${GITHUB_COLORED_REGIONS_URL}${filename}`;
-        try {
-            console.log(`[ColoredRegions API] Trying GitHub: ${filename}`);
-            const response = await axios.get(githubUrl, { timeout: 5000 });
-            console.log(`[ColoredRegions API] Success from GitHub: ${filename}`);
-            return res.json(response.data);
-        } catch (error) {
-            if (error.response?.status !== 404) {
-                console.warn(`[ColoredRegions API] Error fetching ${filename} from GitHub:`, error.message);
-            }
-        }
-    }
-
-    // Try local fallback
-    console.log(`[ColoredRegions API] GitHub not found, trying local files...`);
+    // Try local first (working coordinate system)
+    console.log(`[ColoredRegions API] Trying local files first...`);
     for (const filename of filenamesToTry) {
         try {
             console.log(`[ColoredRegions API] Trying local: ${filename}`);
@@ -260,6 +289,26 @@ app.get("/api/colored-regions", async (req, res) => {
             }
         } catch (error) {
             console.debug(`[ColoredRegions API] Local file not found: ${filename}`);
+        }
+    }
+
+    // Try GitHub as fallback
+    console.log(`[ColoredRegions API] Local not found, trying GitHub...`);
+    for (const filename of filenamesToTry) {
+        const githubUrl = `${GITHUB_COLORED_REGIONS_URL}${filename}`;
+        try {
+            console.log(`[ColoredRegions API] Trying GitHub: ${filename}`);
+            const response = await axios.get(githubUrl, { timeout: 5000 });
+            console.log(`[ColoredRegions API] Success from GitHub: ${filename}`);
+            // Transform GitHub format to local format for compatibility
+            const localFormatData = transformGitHubDataToLocalFormat(response.data);
+            if (localFormatData) {
+                return res.json(localFormatData);
+            }
+        } catch (error) {
+            if (error.response?.status !== 404) {
+                console.warn(`[ColoredRegions API] Error fetching ${filename} from GitHub:`, error.message);
+            }
         }
     }
 
