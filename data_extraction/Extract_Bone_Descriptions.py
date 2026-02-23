@@ -122,104 +122,12 @@ def extract_descriptions_from_slide(xml_file): # Extract descriptions from a sin
         "description": descriptions
     }
     
-    return bone_data
+    with open(output_json_path, 'w') as f:
+        json.dump(bone_data, f, indent=4)
+    
+    print(f"Descriptions saved to {output_json_path}")
 
-def process_all_slides(output_path=output_filename):
-    # Discover all slides
-    try:
-        if not os.path.exists(slides_dir):
-            print(f"[ERROR] Slides directory not found: {slides_dir}")
-            print("Make sure the 'ppt/slides' folder exists in your current directory")
-            return False
-        
-        slide_files = [f for f in os.listdir(slides_dir) 
-                      if f.startswith('slide') and f.endswith('.xml')]
-        
-        # Extract slide numbers and sort them
-        slide_nums = sorted([int(f.replace('slide', '').replace('.xml', '')) 
-                           for f in slide_files if f[5:-4].isdigit()])
-        
-        # Skip slide 1 (title slide) and process remaining slides
-        slide_nums = [n for n in slide_nums if n >= 2]
-        
-        if not slide_nums:
-            print("[ERROR] No slides found (need at least slide 2)")
-            return False
-        
-        print("\n" + "="*70)
-        print("BONE DESCRIPTION EXTRACTION - ALL SLIDES")
-        print("="*70)
-        print(f"Mode: Batch processing all slides")
-        print(f"Found {len(slide_nums)} slides to process: {slide_nums}")
-        print("="*70 + "\n")
-        
-    except FileNotFoundError as e:
-        print(f"[ERROR] Could not access slides directory: {e}")
-        return False
-    
-    # Process each slide and collect results
-    all_descriptions = []
-    processed_count = 0
-    skipped_count = 0
-    
-    for slide_num in slide_nums:
-        slide_path = f"{slides_dir}/slide{slide_num}.xml"
-        
-        print(f"Processing slide {slide_num}... ", end="", flush=True)
-        
-        bone_data = extract_descriptions_from_slide(slide_path)
-        
-        if bone_data is None:
-            print("[SKIPPED - Parse Error]")
-            skipped_count += 1
-            continue
-        
-        if bone_data["name"] != "Unknown" and bone_data["description"]:
-            all_descriptions.append(bone_data)
-            print(f"✓ {bone_data['name']} ({len(bone_data['description'])} descriptions)")
-            processed_count += 1
-        else:
-            print("[SKIPPED - No descriptions found]")
-            skipped_count += 1
-    
-    # Write combined output
-    output_data = {
-        "metadata": {
-            "source": "Extract_Bone_Descriptions.py",
-            "total_slides_processed": len(slide_nums),
-            "total_bones_extracted": processed_count,
-            "total_slides_skipped": skipped_count
-        },
-        "bones": all_descriptions
-    }
-    
-    try:
-        with open(output_path, 'w') as f:
-            json.dump(output_data, f, indent=4)
-        print("\n" + "="*70)
-        print("EXTRACTION COMPLETE!")
-        print("="*70)
-        print(f"Output file: {output_path}")
-        print(f"Total slides processed: {processed_count}")
-        print(f"Total slides skipped: {skipped_count}")
-        print("="*70 + "\n")
-        return True
-    except IOError as e:
-        print(f"\n[ERROR] Could not write output file {output_path}: {e}")
-        return False
-
-
-def main():
-    output_file = output_filename
-    
-    # Check for custom output filename argument
-    if len(sys.argv) > 1:
-        output_file = sys.argv[1]
-        print(f"[INFO] Using custom output filename: {output_file}")
-    
-    success = process_all_slides(output_file)
-    sys.exit(0 if success else 1)
-
-
-if __name__ == "__main__":
-    main()
+# Example usage
+xml_file = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides/slide3.xml"
+output_json = "slide3_Descriptions.json"
+parse_slide_xml(xml_file, output_json)

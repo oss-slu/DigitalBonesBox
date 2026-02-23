@@ -17,8 +17,17 @@ app.use(express.json());
 const coloredRegionsPath = path.join(__dirname, "../data_extraction/annotations/color_regions");
 app.use("/colored-regions", express.static(coloredRegionsPath));
 
-const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
-const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
+// Default boneset (backward compatible)
+const DEFAULT_BONESET_ID = "bony_pelvis";
+
+// Helper function to construct GitHub URLs for a specific boneset
+function getGitHubBonesetUrl(bonesetId = DEFAULT_BONESET_ID) {
+    const baseUrl = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/${bonesetId}/`;
+    return baseUrl;
+}
+
+const GITHUB_REPO = getGitHubBonesetUrl();
+const BONESET_JSON_URL = `${GITHUB_REPO}boneset/${DEFAULT_BONESET_ID}.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 
 // Rate limiter for search endpoint
@@ -198,10 +207,10 @@ app.get("/combined-data", async (_req, res) => {
 
 /**
  * Gets description of boneset, bone, or subbone, formatted as HTML list items.
- * Expects a 'boneId' query parameter.
+ * Expects a 'boneId' query parameter and optional 'bonesetId' parameter.
  */
 app.get("/api/description/", async (req, res) => {
-    const { boneId } = req.query;
+    const { boneId, bonesetId = DEFAULT_BONESET_ID } = req.query;
     if (!boneId) {
         return res.send(" ");
     }
@@ -211,7 +220,7 @@ app.get("/api/description/", async (req, res) => {
         return res.send("<li>Invalid bone ID.</li>");
     }
     
-    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
+    const GITHUB_DESC_URL = `${getGitHubBonesetUrl(bonesetId)}descriptions/${boneId}_description.json`;
 
     try {
         const response = await axios.get(GITHUB_DESC_URL);
@@ -229,10 +238,10 @@ app.get("/api/description/", async (req, res) => {
 
 /**
  * Gets detailed bone data including plaintext description and image URLs.
- * Expects a 'boneId' query parameter.
+ * Expects a 'boneId' query parameter and optional 'bonesetId' parameter.
  */
 app.get("/api/bone-data/", async (req, res) => {
-    const { boneId } = req.query;
+    const { boneId, bonesetId = DEFAULT_BONESET_ID } = req.query;
     
     // Validate boneId parameter
     if (!boneId) {
@@ -250,9 +259,10 @@ app.get("/api/bone-data/", async (req, res) => {
         });
     }
     
-    // Build GitHub URL for the description JSON
-    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
-    const GITHUB_IMAGES_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/images/";
+    // Build GitHub URLs for the description JSON and images
+    const bonesetBaseUrl = getGitHubBonesetUrl(bonesetId);
+    const GITHUB_DESC_URL = `${bonesetBaseUrl}descriptions/${boneId}_description.json`;
+    const GITHUB_IMAGES_BASE_URL = `${bonesetBaseUrl}images/`;
 
     try {
         // Fetch the description JSON from GitHub
@@ -299,6 +309,7 @@ app.get("/api/bone-data/", async (req, res) => {
  */
 app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     const { boneId } = req.params;
+    const { bonesetId = DEFAULT_BONESET_ID } = req.query;
 
     // 1. Validation
     if (!isValidBoneId(boneId)) {
@@ -313,10 +324,11 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     const geometryView = "right"; 
 
     // Construct GitHub URLs for annotation data and template
+    const bonesetBaseUrl = getGitHubBonesetUrl(bonesetId);
     const annotationFilename = `${boneId}_text_annotations.json`;
-    const GITHUB_ANNOTATION_URL = `${GITHUB_REPO}annotations/text_label_annotations/${annotationFilename}`;
-    const templateFilename = "template_bony_pelvis.json";
-    const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
+    const GITHUB_ANNOTATION_URL = `${bonesetBaseUrl}annotations/text_label_annotations/${annotationFilename}`;
+    const templateFilename = `template_${bonesetId}.json`;
+    const GITHUB_TEMPLATE_URL = `${bonesetBaseUrl}annotations/rotations%20annotations/${templateFilename}`;
 
     try {
         // Fetch annotation data from GitHub
@@ -355,7 +367,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             ? templateData.normalized_geometry[geometryView] 
             : { normX: 0, normY: 0, normW: 1, normH: 1 }; 
         
-        // *** ALIGNMENT WORKAROUND (Leave this in) ***
+        // *** ALIGNMENT WORKAROUND (Specific to bony_pelvis - Keep this) ***
         if (boneId === "bony_pelvis" && normalizedGeometry) {
             normalizedGeometry.normX = normalizedGeometry.normX + 0.001; 
             console.log("ALIGNMENT WORKAROUND APPLIED: Bony Pelvis normX shifted by +0.001");

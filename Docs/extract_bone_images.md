@@ -10,19 +10,24 @@ This script extracts bone images from PowerPoint slides and renames them based o
 
 ## Usage
 
-### Step 1: Update Paths
-Open `extract_bone_images.py` and verify the paths at the top:
-```python
-slides_dir = "data_extraction/boneypelvis_ppt/slides"
-rels_dir = "data_extraction/boneypelvis_ppt/rels"
-media_dir = "data_extraction/boneypelvis_ppt/media"
-output_dir = "data_extraction/extracted_bone_images"
-```
+### Command Line Arguments
+The script now accepts the following command-line arguments:
 
-### Step 2: Run the Script
+- `--slides-dir`: Path to the directory containing slide XML files (required)
+- `--rels-dir`: Path to the directory containing relationships XML files (required)
+- `--media-dir`: Path to the directory containing media files (required)
+- `--output-dir`: Path to the output directory for extracted images (required)
+- `--slide-number`: Specific slide number to process (optional, processes all slides if not specified)
+
+### Example Usage
 ```bash
 cd data_extraction
-python extract_bone_images.py
+python extract_bone_images.py --slides-dir /path/to/slides --rels-dir /path/to/rels --media-dir /path/to/media --output-dir /path/to/output
+```
+
+To process a specific slide:
+```bash
+python extract_bone_images.py --slides-dir /path/to/slides --rels-dir /path/to/rels --media-dir /path/to/media --output-dir /path/to/output --slide-number 2
 ```
 
 ### Step 3: Check Output
@@ -96,6 +101,6 @@ Total slides processed: 18
 - Check slide XML to verify hyperlinks exist
 
 ### Path errors
-- Make sure you're running from the `data_extraction` folder
-- Verify all paths in the configuration section
+- Ensure all required arguments are provided
+- Verify that the specified directories exist and contain the expected files
 

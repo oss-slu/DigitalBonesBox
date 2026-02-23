@@ -1,5 +1,6 @@
 import os
 import xml.etree.ElementTree as ET
+import argparse
 
 def extract_images_from_slide_xml(slide_xml_path, rels_xml_path, media_folder, output_folder):
     """
@@ -112,13 +113,15 @@ def process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder
 if __name__ == "__main__":
     """
     Main execution block:
-    - Defines necessary folder paths.
+    - Parses command-line arguments for folder paths.
     - Calls process_pptx_folders() to extract images from all slides.
     """
-
-    slides_folder = "/Users/burhankhan/Desktop/ppt/slides"
-    rels_folder = "/Users/burhankhan/Desktop/ppt/slides/_rels"
-    media_folder = "/Users/burhankhan/Desktop/ppt/media"
-    output_folder = "/Users/burhankhan/Desktop/AutomatedScript"
-
-    process_pptx_folders(slides_folder, rels_folder, media_folder, output_folder)
+    parser = argparse.ArgumentParser(description="Extract images from PowerPoint slides.")
+    parser.add_argument("--slides-folder", required=True, help="Path to the folder containing slide XML files.")
+    parser.add_argument("--rels-folder", required=True, help="Path to the folder containing relationships XML files.")
+    parser.add_argument("--media-folder", required=True, help="Path to the media folder containing images.")
+    parser.add_argument("--output-folder", required=True, help="Path to store extracted images.")
+    
+    args = parser.parse_args()
+    
+    process_pptx_folders(args.slides_folder, args.rels_folder, args.media_folder, args.output_folder)
