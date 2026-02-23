@@ -1,6 +1,6 @@
 // quiz.js - Quiz functionality for Digital Bones Box
 
-import { fetchCombinedData } from "./api.js";
+import {fetchBoneData, fetchCombinedData} from "./api.js";
 
 class QuizManager {
     constructor() {
@@ -120,7 +120,6 @@ class QuizManager {
                 itemName: correctItem.name,
                 correctAnswer: correctItem.name,
                 allAnswers: this.shuffleArray([correctItem.name, ...wrongAnswers]),
-                imageUrl: this.getImageUrl(correctItem.id)
             };
 
             this.questions.push(question);
@@ -161,25 +160,11 @@ class QuizManager {
     }
 
     /**
-     * Get image URL for an item....
-     */
-    getImageUrl(itemId) {
-        // Use the API endpoint that serves bone images
-        return `http://127.0.0.1:8000/api/bone-data/?boneId=${encodeURIComponent(itemId)}`;
-    }
-
-    /**
  * Fetch and display bone image from API
  */
 async fetchBoneImage(itemId, container) {
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/bone-data/?boneId=${encodeURIComponent(itemId)}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
+        const data = fetchBoneData(itemId);
         
         console.log(`Bone data for ${itemId}:`, data); // DEBUG
         

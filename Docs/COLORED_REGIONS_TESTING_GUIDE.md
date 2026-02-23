@@ -1,7 +1,7 @@
 # Colored Regions Overlay - Testing Guide
 
 ## Overview
-This document provides guidance for testing the colored regions overlay feature that highlights specific anatomical regions on bone images.
+This document provides guidance for manually testing the colored regions overlay feature that highlights specific anatomical regions on bone images. Automatic tests can be run by navigating to `templates/diagnostic-colored-regions.html` in a browser.
 
 ## What Was Implemented
 

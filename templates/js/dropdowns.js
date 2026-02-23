@@ -2,6 +2,7 @@
 import { loadDescription } from "./description.js";
 import { displayBoneImages, clearImages, showPlaceholder } from "./imageDisplay.js";
 import { loadAndDrawAnnotations, clearAnnotations } from "./annotationOverlay.js";
+import {fetchBoneData} from "./api.js";
 
 // Show the placeholder ASAP
 document.addEventListener("DOMContentLoaded", () => {
@@ -40,14 +41,7 @@ async function loadBoneImages(boneId, options = {}) {
     return;
   }
   try {
-    const res = await fetch(`${API_BASE}/api/bone-data/?boneId=${encodeURIComponent(boneId)}`);
-    if (!res.ok) {
-      console.warn("bone-data API error:", res.status, boneId);
-      showPlaceholder();
-      if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
-      return;
-    }
-    const data = await res.json();
+    const data = await fetchBoneData(boneId);
     const images = Array.isArray(data.images) ? data.images : [];
     if (images.length === 0) {
       showPlaceholder();
