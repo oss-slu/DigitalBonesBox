@@ -80,25 +80,32 @@ async function fetchLocalColoredRegion(filename) {
 
 // Transform GitHub data format to local file format for compatibility
 function transformGitHubDataToLocalFormat(githubData) {
-    if (!githubData || !githubData.colored_regions) {
+    if (!githubData) {
         return null;
     }
 
-    // GitHub format has top-level image_dimensions and colored_regions
-    // Local format wraps colored_regions inside an images array
-    const localFormat = {
-        slide_number: githubData.slide_number || 0,
-        images: [
-            {
-                image_name: "github_data",
-                width: githubData.image_dimensions?.width || 12192000,
-                height: githubData.image_dimensions?.height || 6858000,
-                colored_regions: githubData.colored_regions
-            }
-        ]
-    };
+    // Check if data is already in local format (has images array with colored_regions)
+    if (githubData.images && Array.isArray(githubData.images)) {
+        return githubData;
+    }
 
-    return localFormat;
+    // If data has top-level colored_regions, transform it to local format
+    if (githubData.colored_regions) {
+        const localFormat = {
+            slide_number: githubData.slide_number || 0,
+            images: [
+                {
+                    image_name: "github_data",
+                    width: githubData.image_dimensions?.width || 12192000,
+                    height: githubData.image_dimensions?.height || 6858000,
+                    colored_regions: githubData.colored_regions
+                }
+            ]
+        };
+        return localFormat;
+    }
+
+    return null;
 }
 
 // Mapping from front-end bone IDs to GitHub data branch filenames
