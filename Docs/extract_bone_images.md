@@ -11,7 +11,7 @@ This script extracts bone images from PowerPoint slides and renames them based o
 ## Usage
 
 ### Command Line Arguments
-The script now accepts the following command-line arguments:
+The script accepts the following command-line arguments:
 
 - `--slides-dir`: Path to the directory containing slide XML files (required)
 - `--rels-dir`: Path to the directory containing relationships XML files (required)
@@ -30,7 +30,7 @@ To process a specific slide:
 python extract_bone_images.py --slides-dir /path/to/slides --rels-dir /path/to/rels --media-dir /path/to/media --output-dir /path/to/output --slide-number 2
 ```
 
-### Step 3: Check Output
+### Check Output After Running Script
 The script will:
 1. Process slides sequentially (starting from slide 2)
 2. Extract images from each slide
