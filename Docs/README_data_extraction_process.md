@@ -29,7 +29,7 @@ The extraction process involves multiple Python scripts that work together to ex
 
 - **Purpose**: Extract descriptive text and bullet points from slides
 - **Script**: `Extract_Bone_Descriptions.py`
-- **Output**: Per-slide description JSONs with bone names and anatomical descriptions
+- **Output**: JSON file with bone names and anatomical descriptions. The output filename is automatically generated based on the PowerPoint presentation title. This allows extraction from multiple PowerPoints without overwriting data.
 
 ### Colored Region Extraction
 
