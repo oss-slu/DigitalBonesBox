@@ -8,13 +8,7 @@ import sys
 import xml.etree.ElementTree as ET
 import shutil
 import re
-
-slides_dir = "ppt/slides"
-rels_dir = "ppt/slides/_rels"
-media_dir = "ppt/media"
-output_dir = "extracted_bone_images"
-
-os.makedirs(output_dir, exist_ok=True)
+import argparse
 
 def sanitize_filename(name):
     """Remove or replace characters that aren't safe for filenames."""
@@ -133,7 +127,7 @@ def get_image_rids_from_slide(slide_path):
     
     return image_rids
 
-def process_slide(slide_num):
+def process_slide(slide_num, slides_dir, rels_dir, media_dir, output_dir):
     """
     Process one slide: extract images and name based on the bone featured on that slide.
     Each slide shows a specific bone with lateral and medial views.
@@ -212,6 +206,22 @@ def process_slide(slide_num):
 
 def main():
     """Main function to process slides - allows single slide or all slides."""
+    parser = argparse.ArgumentParser(description="Extract bone images from PowerPoint slides.")
+    parser.add_argument("--slides-dir", required=True, help="Path to the slides directory.")
+    parser.add_argument("--rels-dir", required=True, help="Path to the relationships directory.")
+    parser.add_argument("--media-dir", required=True, help="Path to the media directory.")
+    parser.add_argument("--output-dir", required=True, help="Path to the output directory.")
+    parser.add_argument("--slide-number", type=int, help="Specific slide number to process (optional, processes all if not specified).")
+    
+    args = parser.parse_args()
+    
+    slides_dir = args.slides_dir
+    rels_dir = args.rels_dir
+    media_dir = args.media_dir
+    output_dir = args.output_dir
+    
+    os.makedirs(output_dir, exist_ok=True)
+    
     print("\n" + "="*60)
     print("BONE IMAGE EXTRACTION - Sprint 3")
     print("="*60)
@@ -220,20 +230,14 @@ def main():
     print("="*60 + "\n")
     
     # Allow user to specify which slide to process
-    if len(sys.argv) > 1:
-        try:
-            slide_num = int(sys.argv[1])
-            if slide_num < 2:
-                print("Error: Slide number must be 2 or greater (slide 1 is title slide)")
-                return
-            slide_nums = [slide_num]
-            print(f"Mode: Single slide processing")
-            print(f"Target: Slide {slide_num}\n")
-        except ValueError:
-            print("Error: Slide number must be an integer")
-            print("Usage: python extract_bone_images.py [slide_number]")
-            print("Example: python extract_bone_images.py 2")
+    if args.slide_number is not None:
+        slide_num = args.slide_number
+        if slide_num < 2:
+            print("Error: Slide number must be 2 or greater (slide 1 is title slide)")
             return
+        slide_nums = [slide_num]
+        print(f"Mode: Single slide processing")
+        print(f"Target: Slide {slide_num}\n")
     else:
         # Default: get all slide numbers (starting from slide 2)
         try:
@@ -249,12 +253,12 @@ def main():
             print(f"Found {len(slide_nums)} slides to process: {slide_nums}\n")
         except FileNotFoundError:
             print(f"Error: Slides directory not found: {slides_dir}")
-            print("Make sure the 'ppt/slides' folder exists in your current directory")
+            print("Make sure the slides directory exists")
             return
     
     # Process each slide sequentially
     for num in slide_nums:
-        process_slide(num)
+        process_slide(num, slides_dir, rels_dir, media_dir, output_dir)
     
     print("\n" + "="*60)
     print("EXTRACTION COMPLETE!")

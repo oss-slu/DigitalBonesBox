@@ -77,6 +77,7 @@ The extraction process involves multiple Python scripts that work together to ex
     g. **`calibrate_colored_regions.py`**  
     Apply offset corrections to region coordinates
    
+    Each of the extraction files takes several arguments to customize the input and output files. You can first run the files with `--help` to see the arguments taken.
 
 ## Output Structure
 

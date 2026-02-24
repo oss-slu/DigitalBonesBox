@@ -1,10 +1,8 @@
 import xml.etree.ElementTree as ET
 import json
 import os
+import argparse
 import sys
-
-slides_dir = "ppt/slides"
-output_filename = "all_bone_descriptions.json"
 
 def extract_descriptions_from_slide(xml_file): # Extract descriptions from a single slide XML file
     try:
@@ -124,12 +122,12 @@ def extract_descriptions_from_slide(xml_file): # Extract descriptions from a sin
     
     return bone_data
 
-def process_all_slides(output_path=output_filename):
+def process_all_slides(slides_dir, output_path):
     # Discover all slides
     try:
         if not os.path.exists(slides_dir):
             print(f"[ERROR] Slides directory not found: {slides_dir}")
-            print("Make sure the 'ppt/slides' folder exists in your current directory")
+            print("Make sure the slides directory exists")
             return False
         
         slide_files = [f for f in os.listdir(slides_dir) 
@@ -208,18 +206,12 @@ def process_all_slides(output_path=output_filename):
         print(f"\n[ERROR] Could not write output file {output_path}: {e}")
         return False
 
-
-def main():
-    output_file = output_filename
-    
-    # Check for custom output filename argument
-    if len(sys.argv) > 1:
-        output_file = sys.argv[1]
-        print(f"[INFO] Using custom output filename: {output_file}")
-    
-    success = process_all_slides(output_file)
-    sys.exit(0 if success else 1)
-
-
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Extract bone descriptions from slides.")
+    parser.add_argument("--slides-dir", required=True, help="Path to the slides directory.")
+    parser.add_argument("--output-json", required=True, help="Path to the output JSON file.")
+    
+    args = parser.parse_args()
+
+    success = process_all_slides(args.slides_dir, args.output_json)
+    sys.exit(0 if success else 1)
