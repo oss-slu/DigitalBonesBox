@@ -212,8 +212,6 @@ if __name__ == "__main__":
     parser.add_argument("--output-json", required=True, help="Path to the output JSON file.")
     
     args = parser.parse_args()
-    
-    parse_slide_xml(args.slides_dir, args.output_json)
-    
+
     success = process_all_slides(args.slides_dir, args.output_json)
     sys.exit(0 if success else 1)
