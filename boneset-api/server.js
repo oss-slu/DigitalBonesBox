@@ -237,16 +237,14 @@ app.get("/api/bone-data/", async (req, res) => {
     // Validate boneId parameter
     if (!boneId) {
         return res.status(400).json({ 
-            error: "Bad Request", 
-            message: "boneId query parameter is required" 
+            error: "boneId query parameter is required"
         });
     }
     
     // Validate boneId format to prevent SSRF attacks
     if (!isValidBoneId(boneId)) {
         return res.status(400).json({ 
-            error: "Bad Request", 
-            message: "Invalid boneId format. Only alphanumeric characters and underscores are allowed." 
+            error: "Invalid boneId format. Only alphanumeric characters and underscores are allowed."
         });
     }
     
@@ -277,19 +275,8 @@ app.get("/api/bone-data/", async (req, res) => {
         });
 
     } catch (error) {
-        // Handle 404 - bone not found
-        if (error.response && error.response.status === 404) {
-            return res.status(404).json({ 
-                error: "Not Found", 
-                message: `Bone with id '${boneId}' not found` 
-            });
-        }
-        
-        // Handle other server errors
-        console.error("Error fetching bone data for '%s': %s", boneId, error.message);
-        res.status(500).json({ 
-            error: "Internal Server Error", 
-            message: "Failed to fetch bone data" 
+        return res.status(error.response?.status || 500).json({
+            error: error.response?.error || "Failed to fetch bone data"
         });
     }
 });
@@ -303,8 +290,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     // 1. Validation
     if (!isValidBoneId(boneId)) {
         return res.status(400).json({ 
-            error: "Bad Request", 
-            message: "Invalid boneId format." 
+            error: "Invalid boneId format."
         });
     }
 
@@ -326,7 +312,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             const status = annotationResult.status;
             const errorMessage = `Failed to fetch annotation data (HTTP ${status})`;
             return res.status(status).json({ 
-                message: errorMessage
+                error: errorMessage
             });
         }
         
@@ -337,7 +323,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             const status = templateResult.status;
             const errorMessage = `Failed to fetch template data (HTTP ${status})`;
             return res.status(status).json({ 
-                message: errorMessage
+                error: errorMessage
             });
         }
 
