@@ -18,8 +18,6 @@ const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
 
-
-
 // Rate limiter for search endpoint
 const searchLimiter = rateLimit({
     windowMs: 60 * 1000,
@@ -65,12 +63,6 @@ async function fetchJSON(url) {
         return null;
     }
 }
-
-
-
-
-
-
 
 // Initialize search cache at startup
 async function initializeSearchCache() {
@@ -206,15 +198,13 @@ app.get("/api/colored-regions", async (req, res) => {
 
     if (!boneId) {
         return res.status(400).json({ 
-            error: "Bad Request", 
-            message: "boneId query parameter is required" 
+            error: "boneId query parameter is required"
         });
     }
 
     if (!isValidBoneId(boneId)) {
         return res.status(400).json({ 
-            error: "Bad Request", 
-            message: "Invalid boneId format" 
+            error: "Invalid boneId format"
         });
     }
 
@@ -228,15 +218,13 @@ app.get("/api/colored-regions", async (req, res) => {
         if (error.response?.status === 404) {
             console.log(`[ColoredRegions API] Not found: ${filename}`);
             return res.status(404).json({ 
-                error: "Not Found", 
-                message: `Colored region data not available for boneId: ${boneId}` 
+                error: `Colored region data not available for boneId: ${boneId}`
             });
         }
         
         console.error(`[ColoredRegions API] Error fetching ${filename}:`, error.message);
         return res.status(502).json({ 
-            error: "Bad Gateway", 
-            message: "Failed to fetch colored region data from GitHub" 
+            error: "Failed to fetch colored region data from GitHub"
         });
     }
 });
