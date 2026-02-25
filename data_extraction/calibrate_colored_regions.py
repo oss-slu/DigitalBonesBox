@@ -56,8 +56,8 @@ def add_offset_to_regions(input_file, output_file, offsets):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Calibrate colored region positioning.")
-    parser.add_argument("--input-file", required=True, help="Path to input JSON file.")
-    parser.add_argument("--output-file", required=True, help="Path to output JSON file.")
+    parser.add_argument("input_file", help="Path to input JSON file.")
+    parser.add_argument("output_file", help="Path to output JSON file.")
     
     args = parser.parse_args()
     

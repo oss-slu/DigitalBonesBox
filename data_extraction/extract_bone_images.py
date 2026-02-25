@@ -215,7 +215,7 @@ def process_slide(slide_num, ppt_dir, output_dir):
 def main():
     """Main function to process slides - allows single slide or all slides."""
     parser = argparse.ArgumentParser(description="Extract bone images from PowerPoint slides.")
-    parser.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint information.")
+    parser.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint data.")
     parser.add_argument("output_dir", help="Path to the output directory.")
     parser.add_argument("--slide-number", type=int, help="Specific slide number to process (optional, processes all if not specified).")
     
