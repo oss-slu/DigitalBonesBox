@@ -18,8 +18,7 @@ const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
 
-// Local colored regions path for fallback
-const coloredRegionsPath = path.join(__dirname, "../data_extraction/annotations/color_regions");
+
 
 // Rate limiter for search endpoint
 const searchLimiter = rateLimit({
@@ -67,66 +66,11 @@ async function fetchJSON(url) {
     }
 }
 
-// Helper to fetch colored regions from local filesystem
-async function fetchLocalColoredRegion(filename) {
-    try {
-        const filePath = path.join(coloredRegionsPath, filename);
-        const data = await fs.readFile(filePath, "utf8");
-        return JSON.parse(data);
-    } catch (error) {
-        return null;
-    }
-}
 
-// Transform GitHub data format to local file format for compatibility
-function transformGitHubDataToLocalFormat(githubData) {
-    if (!githubData) {
-        return null;
-    }
 
-    // Check if data is already in local format (has images array with colored_regions)
-    if (githubData.images && Array.isArray(githubData.images)) {
-        return githubData;
-    }
 
-    // If data has top-level colored_regions, transform it to local format
-    if (githubData.colored_regions) {
-        const localFormat = {
-            slide_number: githubData.slide_number || 0,
-            images: [
-                {
-                    image_name: "github_data",
-                    width: githubData.image_dimensions?.width || 12192000,
-                    height: githubData.image_dimensions?.height || 6858000,
-                    colored_regions: githubData.colored_regions
-                }
-            ]
-        };
-        return localFormat;
-    }
 
-    return null;
-}
 
-// Mapping from front-end bone IDs to GitHub data branch filenames
-// Simple pattern-based approach: {bone_id}_colored_regions.json
-const BONE_ID_TO_GITHUB_FILENAME = {
-    "bony_pelvis": ["bony_pelvis_colored_regions.json"],
-    "iliac_crest": ["iliac_crest_colored_regions.json"],
-    "anterior_iliac_spines": ["anterior_iliac_spines_colored_regions.json"],
-    "posterior_iliac_spines": ["posterior_iliac_spines_colored_regions.json"],
-    "posterior_superior_iliac_spines": ["posterior_superior_iliac_spines_colored_regions.json"],
-    "posterior_inferior_iliac_spines": ["posterior_inferior_iliac_spines_colored_regions.json"],
-    "auricular_surface": ["auricular_surface_colored_regions.json"],
-    "ischial_tuberosity": ["ischial_tuberosity_colored_regions.json"],
-    "ischial_spine": ["ischial_spine_colored_regions.json"],
-    "sciatic_notches": ["sciatic_notches_colored_regions.json"],
-    "ramus": ["ramus_colored_regions.json"],
-    "pubic_rami": ["pubic_rami_colored_regions.json"],
-    "pectineal_line": ["pectineal_line_colored_regions.json"],
-    "symphyseal_surface": ["symphyseal_surface_colored_regions.json"],
-    "pubic_tubercle": ["pubic_tubercle_colored_regions.json"]
-};
 
 // Initialize search cache at startup
 async function initializeSearchCache() {
@@ -254,7 +198,7 @@ app.get("/combined-data", async (_req, res) => {
 
 /**
  * Gets colored region data for a specific bone.
- * Tries GitHub data branch first, then falls back to local files.
+ * Dynamically constructs the GitHub filename from the boneId and fetches the data.
  * Expects a 'boneId' query parameter.
  */
 app.get("/api/colored-regions", async (req, res) => {
@@ -274,57 +218,27 @@ app.get("/api/colored-regions", async (req, res) => {
         });
     }
 
-    // Define filename patterns to try
-    // Primary: Use mapped filenames if available, otherwise try {boneId}_colored_regions.json pattern
-    const filenamesToTry = BONE_ID_TO_GITHUB_FILENAME[boneId] || [
-        `${boneId}_colored_regions.json`,
-        `${boneId}_colored_regions_final.json`
-    ];
+    const filename = `${boneId}_colored_regions.json`;
+    const githubUrl = `${GITHUB_COLORED_REGIONS_URL}${filename}`;
 
-    console.log(`[ColoredRegions API] Fetching colored regions for: ${boneId}`);
-    console.log("[ColoredRegions API] Files to try:", filenamesToTry);
-
-    // Try local first (working coordinate system)
-    console.log("[ColoredRegions API] Trying local files first...");
-    for (const filename of filenamesToTry) {
-        try {
-            console.log(`[ColoredRegions API] Trying local: ${filename}`);
-            const data = await fetchLocalColoredRegion(filename);
-            if (data) {
-                console.log(`[ColoredRegions API] Success from local: ${filename}`);
-                return res.json(data);
-            }
-        } catch (error) {
-            console.debug(`[ColoredRegions API] Local file not found: ${filename}`);
+    try {
+        const response = await axios.get(githubUrl, { timeout: 5000 });
+        return res.json(response.data);
+    } catch (error) {
+        if (error.response?.status === 404) {
+            console.log(`[ColoredRegions API] Not found: ${filename}`);
+            return res.status(404).json({ 
+                error: "Not Found", 
+                message: `Colored region data not available for boneId: ${boneId}` 
+            });
         }
+        
+        console.error(`[ColoredRegions API] Error fetching ${filename}:`, error.message);
+        return res.status(502).json({ 
+            error: "Bad Gateway", 
+            message: "Failed to fetch colored region data from GitHub" 
+        });
     }
-
-    // Try GitHub as fallback
-    console.log("[ColoredRegions API] Local not found, trying GitHub...");
-    for (const filename of filenamesToTry) {
-        const githubUrl = `${GITHUB_COLORED_REGIONS_URL}${filename}`;
-        try {
-            console.log(`[ColoredRegions API] Trying GitHub: ${filename}`);
-            const response = await axios.get(githubUrl, { timeout: 5000 });
-            console.log(`[ColoredRegions API] Success from GitHub: ${filename}`);
-            // Transform GitHub format to local format for compatibility
-            const localFormatData = transformGitHubDataToLocalFormat(response.data);
-            if (localFormatData) {
-                return res.json(localFormatData);
-            }
-        } catch (error) {
-            if (error.response?.status !== 404) {
-                console.warn(`[ColoredRegions API] Error fetching ${filename} from GitHub:`, error.message);
-            }
-        }
-    }
-
-    // Nothing found
-    console.log(`[ColoredRegions API] No colored region data found for: ${boneId}`);
-    return res.status(404).json({ 
-        error: "Not Found", 
-        message: `Colored region data not available for boneId: ${boneId}` 
-    });
 });
 
 /**
@@ -513,7 +427,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             });
     }
     
-    // 🛑 FIX FOR 404 ERROR: Use the single confirmed working template for all slides.
+    // FIX FOR 404 ERROR: Use the single confirmed working template for all slides.
     const templateFilename = "template_bony_pelvis.json";
 
     // Now that the filenames are set, attempt to serve the local file
@@ -529,7 +443,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         const templateData = templateResponse.data;
         const annotationData = JSON.parse(localAnnotationData); // Parse the local file
 
-        // 🛑 FIX: Define Full Slide Dimensions for Normalization 🛑
+        //  FIX: Define Full Slide Dimensions for Normalization 
         // Use standard PPT slide dimensions if 'full_slide_dimensions' is missing from the template.
         const fullDimensions = templateData.full_slide_dimensions || { 
             width: 9144000, 
@@ -550,7 +464,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         }
         // *** END ALIGNMENT WORKAROUND ***
         
-        // 🛑 FIX: Normalize Text Annotation Coordinates 🛑
+        //  FIX: Normalize Text Annotation Coordinates 
         const normalizedAnnotations = (annotationData.text_annotations || []).map(annotation => {
             if (annotation.text_box && slideWidth && slideHeight) {
                 // Normalize all coordinate values for the bounding box
@@ -576,7 +490,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             }
             return annotation;
         });
-        // 🛑 END FIX: Normalization
+        //  END FIX: Normalization
 
         const combinedData = {
             annotations: normalizedAnnotations, // Use the normalized array
@@ -661,7 +575,7 @@ app.get("/api/search", searchLimiter, (req, res) => {
     }
 });
 
-// 🛑 CORRECTED SERVER STARTUP LOGIC 🛑
+//  CORRECTED SERVER STARTUP LOGIC 
 // 1. Initialize cache first. 2. Start server only if run directly (for testability).
 async function startServer() {
     await initializeSearchCache(); // Wait for the cache to be built

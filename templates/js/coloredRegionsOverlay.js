@@ -110,7 +110,6 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     try {
         // Fetch from the API endpoint
         const url = `${COLORED_REGIONS_CONFIG.API_URL}?boneId=${encodeURIComponent(mappedBoneId)}`;
-        console.log(`[ColoredRegions] Fetching from API: ${url}`);
         
         const response = await fetch(url, {
             cache: "no-store",
