@@ -81,17 +81,26 @@ The extraction process involves multiple Python scripts that work together to ex
 
 4. Clean up data. Some of the extraction scripts may give incomplete data:
 
-   a. **`extract_bone_images.py`**  
-     Does not assign final image names. Images should be given a name of the format `<bone_id>_image` if it is the only image of that boneset/bone/subbone, or `<bone_id>_image<number>` if it is one of several images of that bone ID. See the `images/` directory in the database for an example of how names should be assigned.
+    a. **`extract_bone_images.py`**
 
-   b. **`xml_boneset_reader.py`**  
+    Does not assign final image names. Images should be given a name of the format `<bone_id>_image.jpg` if it is the only image of that boneset/bone/subbone, or `<bone_id>_image<number>.jpg` if it is one of several images of that bone ID. See the `images/` directory in the database for an example of how names should be assigned.
+
+    b. **`xml_boneset_reader.py`**  
+    
+    c. **`Extract_Bone_Descriptions.py`**
+        
+    The file may make some general errors in parsing out the descriptions. You should keep the PowerPoint open and verify that each bone object has the appropriate boneset/bone/subbone name,  ID (which should be the name in lowercase with spaces replaced by underscores—e.g. a bone with the name "Bone Name" has ID "bone_name"), and description, which should be a list of strings of each line of text in the description. That list should strictly only include text in the description of the boneset, bone, or subbone, not any extra information.
    
-   c. **`Extract_Bone_Descriptions.py`**  
-   
-   d. **`ColoredRegionsExtractor.py`**
-   
-   e. **`scripts/bony_pelvis_text_labels.py`**  
-   
-   f. **`scripts/bony_pelvis_rotation.py`**  
-   
-   g. **`calibrate_colored_regions.py`**  
+    Each object should then be split into its own JSON file with the title `<bone_id>_description.json`. Inside it should then be optionally added an "images" field that is a list of the filenames of the images associated with that bone as extracted by the image extraction script.
+            
+    See the `descriptions/` directory in the database for an example of how description JSON files should look.
+    
+    d. **`ColoredRegionsExtractor.py`**
+
+    Does not assign final image names. Files should be given a name of the format `<bone_id>_colored_regions.json`. See the `annotations/ColoredRegions/` directory in the database for an example of how names should be assigned.
+
+    e. **`scripts/bony_pelvis_text_labels.py`**  
+    
+    f. **`scripts/bony_pelvis_rotation.py`**  
+    
+    g. **`calibrate_colored_regions.py`**  
