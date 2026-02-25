@@ -87,18 +87,15 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
 
     console.log(`[ColoredRegions] Fetching colored region data for boneId: "${boneId}", isBonesetSelection: ${isBonesetSelection}`);
     
-    // Map ilium to bony_pelvis only for boneset selections
+    // Map ilium to bony_pelvis for boneset selections
     let mappedBoneId = boneId;
     if (boneId === "ilium" && isBonesetSelection) {
         console.log("[ColoredRegions] Mapping \"ilium\" to \"bony_pelvis\" for boneset selection");
         mappedBoneId = "bony_pelvis";
-    } else if (boneId === "ilium" && !isBonesetSelection) {
-        console.log("[ColoredRegions] Skipping colored regions for individual ilium bone selection");
-        return null;
     }
 
     // Available bones with colored region data
-    const bonesWithColoredRegions = ["bony_pelvis", "iliac_crest", "anterior_iliac_spines", "posterior_iliac_spines", "posterior_superior_iliac_spines", "posterior_inferior_iliac_spines", "auricular_surface", "ramus", "ischial_tuberosity", "ischial_spine", "sciatic_notches", "pubic_rami", "pectineal_line", "symphyseal_surface", "pubic_tubercle"];
+    const bonesWithColoredRegions = ["bony_pelvis", "ilium", "ischium", "pubis", "iliac_crest", "anterior_iliac_spines", "posterior_iliac_spines", "posterior_superior_iliac_spines", "posterior_inferior_iliac_spines", "auricular_surface", "ramus", "ischial_tuberosity", "ischial_spine", "sciatic_notches", "pubic_rami", "pectineal_line", "symphyseal_surface", "pubic_tubercle"];
     
     console.log(`[ColoredRegions] Checking if "${mappedBoneId}" is in available list:`, bonesWithColoredRegions);
     
