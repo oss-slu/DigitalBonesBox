@@ -14,9 +14,9 @@ import argparse
 class AnatomicalShapeParser:
     """Parser for extracting precise anatomical shape data with path coordinates"""
     
-    def __init__(self, xml_files_folder):
-        self.xml_files_folder = Path(xml_files_folder)
-        self.output_folder = Path("annotations/color_regions")
+    def __init__(self, ppt_dir, output_dir):
+        self.xml_files_folder = Path(f"{ppt_dir}/ppt/slides")
+        self.output_folder = Path(output_dir)
         self.output_folder.mkdir(parents=True, exist_ok=True)
         
         # XML namespaces
@@ -363,11 +363,12 @@ class AnatomicalShapeParser:
 def main():
     """Main execution function"""
     parser = argparse.ArgumentParser(description="Extract anatomical shapes from PowerPoint slides.")
-    parser.add_argument("--xml-folder", required=True, help="Path to the folder containing XML files.")
+    parser.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint data.")
+    parser.add_argument("output_dir", help="Path to the output directory.")
     
     args = parser.parse_args()
     
-    parser_instance = AnatomicalShapeParser(args.xml_folder)
+    parser_instance = AnatomicalShapeParser(args.ppt_dir, args.output_dir)
     
     print("Starting enhanced anatomical shape extraction...")
     print("=" * 60)

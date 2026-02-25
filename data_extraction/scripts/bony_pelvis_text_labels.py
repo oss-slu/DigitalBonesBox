@@ -198,16 +198,17 @@ def follow_from_label(text_box, adj, inv_nodes, deg, pad):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--slides-dir", required=True)
-    ap.add_argument("--rels-dir", required=True)
-    ap.add_argument("--slide", type=int, required=True)
-    ap.add_argument("--out")
+    ap.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint data.")
+    ap.add_argument("slide", type=int, help="Slide number to parse.")
+    ap.add_argument("--output-json", help="Path to the output JSON file.")
     ap.add_argument("--padding", type=float, default=4000.0, help="EMU padding around text box")
     ap.add_argument("--snap", type=float, default=8000.0, help="EMU snap size for junctions")
     args = ap.parse_args()
 
-    slide_xml = os.path.join(args.slides_dir, f"slide{args.slide}.xml")
-    rels_xml  = os.path.join(args.rels_dir,   f"slide{args.slide}.xml.rels")
+    slides_dir = os.path.join(args.ppt_dir, f"ppt/slides/")
+    slide_xml = os.path.join(slides_dir, f"slide{args.slide}.xml")
+    rels_dir = os.path.join(slides_dir, f"_rels/")
+    rels_xml  = os.path.join(rels_dir,   f"slide{args.slide}.xml.rels")
     root = ET.parse(slide_xml).getroot()
     rels_map = build_rels_map(rels_xml)
 
@@ -252,7 +253,7 @@ def main():
         "config": {"padding_emu": args.padding, "snap_emu": args.snap}
     }
 
-    out_path = args.out or f"data_extraction/annotations/slide{args.slide}_text_annotations.json"
+    out_path = args.output_json or f"annotations/slide{args.slide}_text_annotations.json"
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(payload, f, indent=2)

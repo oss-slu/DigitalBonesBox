@@ -122,7 +122,8 @@ def extract_descriptions_from_slide(xml_file): # Extract descriptions from a sin
     
     return bone_data
 
-def process_all_slides(slides_dir, output_path):
+def process_all_slides(ppt_dir, output_path):
+    slides_dir = f"{ppt_dir}/ppt/slides"
     # Discover all slides
     try:
         if not os.path.exists(slides_dir):
@@ -208,10 +209,10 @@ def process_all_slides(slides_dir, output_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Extract bone descriptions from slides.")
-    parser.add_argument("--slides-dir", required=True, help="Path to the slides directory.")
-    parser.add_argument("--output-json", required=True, help="Path to the output JSON file.")
+    parser.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint data.")
+    parser.add_argument("output_json", help="Path to the output JSON file.")
     
     args = parser.parse_args()
 
-    success = process_all_slides(args.slides_dir, args.output_json)
+    success = process_all_slides(args.ppt_dir, args.output_json)
     sys.exit(0 if success else 1)
