@@ -1,8 +1,0 @@
-{
-  "rust-analyzer.workspace.discoverConfig": null,
-  "files.associations": {
-    "*.xml.rels": "xml"
-  },
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true
-}
