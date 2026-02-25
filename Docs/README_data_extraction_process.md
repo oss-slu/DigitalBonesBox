@@ -78,12 +78,3 @@ The extraction process involves multiple Python scripts that work together to ex
     Apply offset corrections to region coordinates
    
     Each of the extraction files takes several arguments to customize the input and output files. You can first run the files with `--help` to see the arguments taken.
-
-## Outdated and Redundant Files
-
-Some of the data extraction files are to be ignored, as they are outdated and will be removed in the future. These include:
-
-* `extract_ppt_annotations.py` - Combined image and text annotation extraction. It is made redudant by `extract_bone_images.py` for image extraction and `scripts/bony_pelvis_text_labels.py` for text annotation extraction.
-* `AutomatedExtractionScript.py` - Basic image extraction by slide. It is made redundant by `extract_bone_images.py`, which has the advantage of giving images their final names.
-* `ExtractBonyPelvisRegions.py` - Slide 2 left/right regions. It is made redundant by `ColoredRegionsExtractor.py`, which provides generalized extraction for multiple slides for any PowerPoint.
-* `extract_posterior_iliac_spines.py` - Slide 7 posterior spine regions. It is made redundant by `ColoredRegionsExtractor.py`, which provides generalized extraction for multiple slides for any PowerPoint.
