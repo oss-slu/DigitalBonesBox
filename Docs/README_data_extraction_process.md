@@ -73,7 +73,7 @@ The extraction process involves multiple Python scripts that work together to ex
     
     e. **`scripts/bony_pelvis_text_labels.py`:** Extract annotation labels and pointer lines
     
-    f. **`scripts/bony_pelvis_rotation.py`:** Extract layout and rotation metadata
+    f. **`scripts/bony_pelvis_rotation.py`:** Extract data for adjusting rotation of images to match how they are rotated in the PowerPoints. **This file is probably not necessary to use. It appears to be built very inflexibly and specifically for certain images in the pelvis boneset.** Guidance on how to generate data about how images should be rotated will be coming soon, but for now you can skip this step. From what I can see in the PowerPoints, it seems like few images need to be rotated anyway, so we can get away with not having this data for now.
     
     g. **`calibrate_colored_regions.py`:** Apply offset corrections to region coordinates
    
@@ -104,7 +104,3 @@ The extraction process involves multiple Python scripts that work together to ex
     e. **`scripts/bony_pelvis_text_labels.py`**
 
     Does not assign final file names. Files should be given a name of the format `<bone_id>_text_labels.json`. See the `annotations/text_label_annotations/` directory in the database for an example of how names should be assigned.
-    
-    f. **`scripts/bony_pelvis_rotation.py`**  
-
-    
