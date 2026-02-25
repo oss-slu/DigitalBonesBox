@@ -5,6 +5,7 @@ Adds manual offset adjustments to align regions with web images
 """
 
 import json
+import argparse
 
 def add_offset_to_regions(input_file, output_file, offsets):
     """
@@ -54,26 +55,33 @@ def add_offset_to_regions(input_file, output_file, offsets):
 
 
 if __name__ == "__main__":
-    input_file = "/Users/jennioishee/Capstone/DigitalBonesBox/data_extraction/bony_pelvis_colored_regions.json"
-    output_file = input_file  # Overwrite the original file
+    parser = argparse.ArgumentParser(description="Calibrate colored region positioning.")
+    parser.add_argument("input_file", help="Path to input JSON file.")
+    parser.add_argument("output_file", help="Path to output JSON file.")
+    parser.add_argument("x_left", type=int, help="X value to adjust left image by. Positive moves right, negative moves left.")
+    parser.add_argument("y_left", type=int, help="Y value to adjust left image by. Positive moves down, negative moves up.")
+    parser.add_argument("x_right", type=int, help="X value to adjust right image by. Positive moves right, negative moves left.")
+    parser.add_argument("y_right", type=int, help="Y value to adjust right image by. Positive moves down, negative moves up.")
+    
+    args = parser.parse_args()
     
     # Calibration offsets (adjust these values by trial and error)
     # Positive x = move right, Negative x = move left
     # Positive y = move down, Negative y = move up
     offsets = {
-        0: (0, -400),    # Left image: move regions UP by 400 EMUs (was -200, doubling)
-        1: (0, -1200)    # Right image: move regions UP by 1200 EMUs (was -800, increasing more)
+        0: (args.x_left, args.y_left),    # Left image
+        1: (args.x_right, args.y_right)    # Right image
     }
     
     print("🎯 Colored Region Calibration Tool")
     print("=" * 50)
-    print(f"Input file: {input_file}")
-    print(f"Output file: {output_file}")
+    print(f"Input file: {args.input_file}")
+    print(f"Output file: {args.output_file}")
     print(f"\nOffsets to apply:")
     for idx, (x, y) in offsets.items():
         print(f"  Image {idx}: x={x:+d}, y={y:+d} EMUs")
     
-    add_offset_to_regions(input_file, output_file, offsets)
+    add_offset_to_regions(args.input_file, args.output_file, offsets)
     
     print("\n📋 Next steps:")
     print("1. Hard reload the browser (Cmd+Shift+R)")

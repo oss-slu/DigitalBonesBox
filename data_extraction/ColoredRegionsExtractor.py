@@ -8,14 +8,15 @@ import xml.etree.ElementTree as ET
 import json
 import os
 from pathlib import Path
+import argparse
 
 
 class AnatomicalShapeParser:
     """Parser for extracting precise anatomical shape data with path coordinates"""
     
-    def __init__(self, xml_files_folder):
-        self.xml_files_folder = Path(xml_files_folder)
-        self.output_folder = Path("annotations/color_regions")
+    def __init__(self, ppt_dir, output_dir):
+        self.xml_files_folder = Path(f"{ppt_dir}/ppt/slides")
+        self.output_folder = Path(output_dir)
         self.output_folder.mkdir(parents=True, exist_ok=True)
         
         # XML namespaces
@@ -361,19 +362,23 @@ class AnatomicalShapeParser:
 
 def main():
     """Main execution function"""
-    xml_folder = "/Users/jennioishee/Capstone/DigitalBonesBox/slides"
+    parser = argparse.ArgumentParser(description="Extract anatomical shapes from PowerPoint slides.")
+    parser.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint data.")
+    parser.add_argument("output_dir", help="Path to the output directory.")
     
-    parser = AnatomicalShapeParser(xml_folder)
+    args = parser.parse_args()
+    
+    parser_instance = AnatomicalShapeParser(args.ppt_dir, args.output_dir)
     
     print("Starting enhanced anatomical shape extraction...")
     print("=" * 60)
     
     # Parse all slides
-    results = parser.parse_all_slides()
+    results = parser_instance.parse_all_slides()
     
     print("=" * 60)
     print(f"✓ Extraction complete! Processed {len(results)} slides")
-    print(f"✓ Enhanced annotations saved to: {parser.output_folder}")
+    print(f"✓ Enhanced annotations saved to: {parser_instance.output_folder}")
     print("\nKey improvements:")
     print("• Precise curved/irregular shape boundaries (not rectangles)")
     print("• Specific anatomical names for each region") 

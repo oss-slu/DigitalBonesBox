@@ -8,13 +8,7 @@ import sys
 import xml.etree.ElementTree as ET
 import shutil
 import re
-
-slides_dir = "ppt/slides"
-rels_dir = "ppt/slides/_rels"
-media_dir = "ppt/media"
-output_dir = "extracted_bone_images"
-
-os.makedirs(output_dir, exist_ok=True)
+import argparse
 
 def sanitize_filename(name):
     """Remove or replace characters that aren't safe for filenames."""
@@ -133,7 +127,7 @@ def get_image_rids_from_slide(slide_path):
     
     return image_rids
 
-def process_slide(slide_num):
+def process_slide(slide_num, ppt_dir, output_dir):
     """
     Process one slide: extract images and name based on the bone featured on that slide.
     Each slide shows a specific bone with lateral and medial views.
@@ -141,6 +135,14 @@ def process_slide(slide_num):
     print(f"\n{'='*60}")
     print(f"Processing Slide {slide_num}...")
     print('='*60)
+
+    slides_dir = f"{ppt_dir}/ppt/slides"
+    rels_dir = f"{slides_dir}/_rels"
+    media_dir = f"{ppt_dir}/ppt/media"
+
+    print(slides_dir)
+    print(rels_dir)
+    print(media_dir)
     
     slide_path = f"{slides_dir}/slide{slide_num}.xml"
     rels_path = f"{rels_dir}/slide{slide_num}.xml.rels"
@@ -212,6 +214,18 @@ def process_slide(slide_num):
 
 def main():
     """Main function to process slides - allows single slide or all slides."""
+    parser = argparse.ArgumentParser(description="Extract bone images from PowerPoint slides.")
+    parser.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint data.")
+    parser.add_argument("output_dir", help="Path to the output directory.")
+    parser.add_argument("--slide-number", type=int, help="Specific slide number to process (optional, processes all if not specified).")
+    
+    args = parser.parse_args()
+    
+    ppt_dir = args.ppt_dir
+    output_dir = args.output_dir
+    
+    os.makedirs(output_dir, exist_ok=True)
+    
     print("\n" + "="*60)
     print("BONE IMAGE EXTRACTION - Sprint 3")
     print("="*60)
@@ -220,23 +234,18 @@ def main():
     print("="*60 + "\n")
     
     # Allow user to specify which slide to process
-    if len(sys.argv) > 1:
-        try:
-            slide_num = int(sys.argv[1])
-            if slide_num < 2:
-                print("Error: Slide number must be 2 or greater (slide 1 is title slide)")
-                return
-            slide_nums = [slide_num]
-            print(f"Mode: Single slide processing")
-            print(f"Target: Slide {slide_num}\n")
-        except ValueError:
-            print("Error: Slide number must be an integer")
-            print("Usage: python extract_bone_images.py [slide_number]")
-            print("Example: python extract_bone_images.py 2")
+    if args.slide_number is not None:
+        slide_num = args.slide_number
+        if slide_num < 2:
+            print("Error: Slide number must be 2 or greater (slide 1 is title slide)")
             return
+        slide_nums = [slide_num]
+        print(f"Mode: Single slide processing")
+        print(f"Target: Slide {slide_num}\n")
     else:
         # Default: get all slide numbers (starting from slide 2)
         try:
+            slides_dir = f"{ppt_dir}/ppt/slides"
             slide_files = [f for f in os.listdir(slides_dir) if f.startswith('slide') and f.endswith('.xml')]
             slide_nums = sorted([int(f.replace('slide', '').replace('.xml', '')) for f in slide_files if f[5:-4].isdigit()])
             slide_nums = [n for n in slide_nums if n >= 2]
@@ -248,13 +257,13 @@ def main():
             print(f"Mode: Batch processing")
             print(f"Found {len(slide_nums)} slides to process: {slide_nums}\n")
         except FileNotFoundError:
-            print(f"Error: Slides directory not found: {slides_dir}")
-            print("Make sure the 'ppt/slides' folder exists in your current directory")
+            print(f"Error: Slides directory not found: {ppt_dir}")
+            print("Make sure the slides directory exists")
             return
     
     # Process each slide sequentially
     for num in slide_nums:
-        process_slide(num)
+        process_slide(num, ppt_dir, output_dir)
     
     print("\n" + "="*60)
     print("EXTRACTION COMPLETE!")
