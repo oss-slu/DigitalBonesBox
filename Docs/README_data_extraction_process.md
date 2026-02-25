@@ -79,6 +79,24 @@ The extraction process involves multiple Python scripts that work together to ex
    
     Each of the extraction files takes several arguments to customize the input and output files. You can first run the files with `--help` to see the arguments taken.
 
+4. Clean up data. Some of the extraction scripts may give incomplete data:
+
+   a. **`extract_bone_images.py`**  
+     Does not assign final image names. Images should be given a name of the format `<bone_id>_image` if it is the only image of that boneset/bone/subbone, or `<bone_id>_image<number>` if it is one of several images of that bone ID. See the `images/` directory in the database for an example of how names should be assigned.
+
+   b. **`xml_boneset_reader.py`**  
+   
+   c. **`Extract_Bone_Descriptions.py`**  
+   
+   d. **`ColoredRegionsExtractor.py`**
+   
+   e. **`scripts/bony_pelvis_text_labels.py`**  
+   
+   f. **`scripts/bony_pelvis_rotation.py`**  
+   
+   g. **`calibrate_colored_regions.py`**  
+   
+
 ## Output Structure
 
 Extracted data is organized as follows:
