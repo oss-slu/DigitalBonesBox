@@ -78,20 +78,3 @@ The extraction process involves multiple Python scripts that work together to ex
     Apply offset corrections to region coordinates
    
     Each of the extraction files takes several arguments to customize the input and output files. You can first run the files with `--help` to see the arguments taken.
-
-## Output Structure
-
-Extracted data is organized as follows:
-
-```
-data_extraction/
-├── AutomatedScript/           # Extracted images by slide
-│   ├── slide2/
-│   ├── slide3/
-│   └── ...
-├── annotations/
-│   ├── color_regions/         # Colored region path data
-│   ├── slide*_text_annotations.json
-│   └── template_bony_pelvis.json
-└── output.json                # Bone hierarchy data
-```

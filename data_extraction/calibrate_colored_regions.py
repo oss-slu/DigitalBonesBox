@@ -56,8 +56,12 @@ def add_offset_to_regions(input_file, output_file, offsets):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Calibrate colored region positioning.")
-    parser.add_argument("--input-file", required=True, help="Path to input JSON file.")
-    parser.add_argument("--output-file", required=True, help="Path to output JSON file.")
+    parser.add_argument("input_file", help="Path to input JSON file.")
+    parser.add_argument("output_file", help="Path to output JSON file.")
+    parser.add_argument("x_left", type=int, help="X value to adjust left image by. Positive moves right, negative moves left.")
+    parser.add_argument("y_left", type=int, help="Y value to adjust left image by. Positive moves down, negative moves up.")
+    parser.add_argument("x_right", type=int, help="X value to adjust right image by. Positive moves right, negative moves left.")
+    parser.add_argument("y_right", type=int, help="Y value to adjust right image by. Positive moves down, negative moves up.")
     
     args = parser.parse_args()
     
@@ -65,8 +69,8 @@ if __name__ == "__main__":
     # Positive x = move right, Negative x = move left
     # Positive y = move down, Negative y = move up
     offsets = {
-        0: (0, -400),    # Left image: move regions UP by 400 EMUs (was -200, doubling)
-        1: (0, -1200)    # Right image: move regions UP by 1200 EMUs (was -800, increasing more)
+        0: (args.x_left, args.y_left),    # Left image
+        1: (args.x_right, args.y_right)    # Right image
     }
     
     print("🎯 Colored Region Calibration Tool")
