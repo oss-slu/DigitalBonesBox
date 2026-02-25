@@ -127,7 +127,7 @@ def get_image_rids_from_slide(slide_path):
     
     return image_rids
 
-def process_slide(slide_num, slides_dir, rels_dir, media_dir, output_dir):
+def process_slide(slide_num, ppt_dir, output_dir):
     """
     Process one slide: extract images and name based on the bone featured on that slide.
     Each slide shows a specific bone with lateral and medial views.
@@ -135,6 +135,14 @@ def process_slide(slide_num, slides_dir, rels_dir, media_dir, output_dir):
     print(f"\n{'='*60}")
     print(f"Processing Slide {slide_num}...")
     print('='*60)
+
+    slides_dir = f"{ppt_dir}/ppt/slides"
+    rels_dir = f"{slides_dir}/_rels"
+    media_dir = f"{ppt_dir}/ppt/media"
+
+    print(slides_dir)
+    print(rels_dir)
+    print(media_dir)
     
     slide_path = f"{slides_dir}/slide{slide_num}.xml"
     rels_path = f"{rels_dir}/slide{slide_num}.xml.rels"
@@ -207,17 +215,13 @@ def process_slide(slide_num, slides_dir, rels_dir, media_dir, output_dir):
 def main():
     """Main function to process slides - allows single slide or all slides."""
     parser = argparse.ArgumentParser(description="Extract bone images from PowerPoint slides.")
-    parser.add_argument("--slides-dir", required=True, help="Path to the slides directory.")
-    parser.add_argument("--rels-dir", required=True, help="Path to the relationships directory.")
-    parser.add_argument("--media-dir", required=True, help="Path to the media directory.")
-    parser.add_argument("--output-dir", required=True, help="Path to the output directory.")
+    parser.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint information.")
+    parser.add_argument("output_dir", help="Path to the output directory.")
     parser.add_argument("--slide-number", type=int, help="Specific slide number to process (optional, processes all if not specified).")
     
     args = parser.parse_args()
     
-    slides_dir = args.slides_dir
-    rels_dir = args.rels_dir
-    media_dir = args.media_dir
+    ppt_dir = args.ppt_dir
     output_dir = args.output_dir
     
     os.makedirs(output_dir, exist_ok=True)
@@ -241,6 +245,7 @@ def main():
     else:
         # Default: get all slide numbers (starting from slide 2)
         try:
+            slides_dir = f"{ppt_dir}/ppt/slides"
             slide_files = [f for f in os.listdir(slides_dir) if f.startswith('slide') and f.endswith('.xml')]
             slide_nums = sorted([int(f.replace('slide', '').replace('.xml', '')) for f in slide_files if f[5:-4].isdigit()])
             slide_nums = [n for n in slide_nums if n >= 2]
@@ -252,13 +257,13 @@ def main():
             print(f"Mode: Batch processing")
             print(f"Found {len(slide_nums)} slides to process: {slide_nums}\n")
         except FileNotFoundError:
-            print(f"Error: Slides directory not found: {slides_dir}")
+            print(f"Error: Slides directory not found: {ppt_dir}")
             print("Make sure the slides directory exists")
             return
     
     # Process each slide sequentially
     for num in slide_nums:
-        process_slide(num, slides_dir, rels_dir, media_dir, output_dir)
+        process_slide(num, ppt_dir, output_dir)
     
     print("\n" + "="*60)
     print("EXTRACTION COMPLETE!")
