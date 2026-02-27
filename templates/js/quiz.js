@@ -164,7 +164,7 @@ class QuizManager {
  */
 async fetchBoneImage(itemId, container) {
     try {
-        const data = fetchBoneData(itemId);
+        const data = await fetchBoneData(itemId);
         
         console.log(`Bone data for ${itemId}:`, data); // DEBUG
         
