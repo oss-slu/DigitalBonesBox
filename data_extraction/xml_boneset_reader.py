@@ -88,7 +88,7 @@ def generate_json_output(bonesets, output_json_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Extract bonesets from XML.")
-    parser.add_argument("xml_file", help="Path to the XML file.")
+    parser.add_argument("xml_file", help="Path to the XML file, located in the ppt/slides/ directory of the PowerPoint data folder.")
     parser.add_argument("json_file", help="Path to the output JSON file.")
     
     args = parser.parse_args()
