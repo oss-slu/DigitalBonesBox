@@ -103,4 +103,4 @@ The extraction process involves multiple Python scripts that work together to ex
 
     e. **`extract_text_labels.py`**
 
-    Does not assign final file names. Files should be given a name of the format `<bone_id>_text_labels.json` where `bone_id` is the ID of the boneset, bone, or subbone being described. See the `annotations/text_label_annotations/` directory in the database for an example of how names should be assigned.
+    Does not assign final file names. Files should be given a name of the format `<bone_id>_text_annotations.json` where `bone_id` is the ID of the boneset, bone, or subbone being described. See the `annotations/text_label_annotations/` directory in the database for an example of how names should be assigned.
