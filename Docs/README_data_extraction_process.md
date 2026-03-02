@@ -93,7 +93,7 @@ The extraction process involves multiple Python scripts that work together to ex
         
     The file may make some general errors in parsing out the descriptions. You should keep the PowerPoint open and verify that each bone object has the appropriate boneset/bone/subbone name,  ID (which should be the name in lowercase with spaces replaced by underscores—e.g. a bone with the name "Bone Name" has ID "bone_name"), and description, which should be a list of strings of each line of text in the description. That list should strictly only include text in the description of the boneset, bone, or subbone, not any extra information.
    
-    Each object should then be split into its own JSON file with the title `<bone_id>_description.json` where `bone_id` is the ID of the boneset, bone, or subbone being described. Inside it should then be optionally added an "images" field that is a list of the filenames of the images associated with that bone as extracted by the image extraction script.
+    The file also does not assign final file names. Files should be given a name of the format `<bone_id>_description.json` where `bone_id` is the ID of the boneset, bone, or subbone being described. Inside it should then be optionally added an "images" field that is a list of the filenames of the images associated with that bone as extracted by the image extraction script.
             
     See the `descriptions/` directory in the database for an example of how description JSON files should look.
     
