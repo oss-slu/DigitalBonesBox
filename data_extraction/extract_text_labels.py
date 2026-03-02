@@ -1,5 +1,6 @@
 import argparse, json, os, re, math
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 NS = {
     "p": "http://schemas.openxmlformats.org/presentationml/2006/main",
@@ -199,65 +200,67 @@ def follow_from_label(text_box, adj, inv_nodes, deg, pad):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint data.")
-    ap.add_argument("slide", type=int, help="Slide number to parse.")
-    ap.add_argument("--output-json", help="Path to the output JSON file.")
+    ap.add_argument("output_dir", help="Path to the output directory.")
     ap.add_argument("--padding", type=float, default=4000.0, help="EMU padding around text box")
     ap.add_argument("--snap", type=float, default=8000.0, help="EMU snap size for junctions")
     args = ap.parse_args()
 
     slides_dir = os.path.join(args.ppt_dir, f"ppt/slides/")
-    slide_xml = os.path.join(slides_dir, f"slide{args.slide}.xml")
     rels_dir = os.path.join(slides_dir, f"_rels/")
-    rels_xml  = os.path.join(rels_dir,   f"slide{args.slide}.xml.rels")
-    root = ET.parse(slide_xml).getroot()
-    rels_map = build_rels_map(rels_xml)
 
-    texts = extract_text_boxes(root, rels_map, bone_set="Bony Pelvis")
-    lines = extract_lines(root)
-    adj, inv_nodes, deg = build_graph(lines, snap=args.snap)
+    for slide_file in sorted(Path(slides_dir).glob("slide*.xml")):
+        slide_number = int(slide_file.stem.replace('slide', ''))
+        slide_xml = os.path.join(slides_dir, f"slide{slide_number}.xml")
+        rels_xml  = os.path.join(rels_dir,   f"slide{slide_number}.xml.rels")
+        root = ET.parse(slide_xml).getroot()
+        rels_map = build_rels_map(rels_xml)
 
-    # connection-based association
-    for t in texts:
-        terminals, used_edges = follow_from_label(t["text_box"], adj, inv_nodes, deg, pad=args.padding)
-        # dedupe nearly-identical terminals by snapped point
-        term_pts = []
-        seen = set()
-        for idx in terminals:
-            pt = inv_nodes[idx]
-            if pt not in seen:
-                seen.add(pt)
-                term_pts.append({"x": pt[0], "y": pt[1]})
-        # collect the actual line objects that were traversed
-        pointer_lines = []
-        used = set()
-        for u in adj:
-            for v, ln in adj[u]:
-                eid = id(ln)
-                if eid in used_edges and eid not in used:
-                    used.add(eid)
-                    pointer_lines.append(ln)
-        # keep outputs small & stable
-        pointer_lines.sort(key=lambda ln: (ln["shape_id"] or 0, ln["line_id"]))
-        # sort target points by distance from the label center
-        tcx = t["text_box"]["x"] + t["text_box"]["width"] / 2.0
-        tcy = t["text_box"]["y"] + t["text_box"]["height"] / 2.0
-        term_pts.sort(key=lambda p: (p["x"] - tcx)**2 + (p["y"] - tcy)**2)
-        
-        t["pointer_lines"] = pointer_lines
-        t["target_regions"] = term_pts
+        texts = extract_text_boxes(root, rels_map, bone_set="Bony Pelvis")
+        lines = extract_lines(root)
+        adj, inv_nodes, deg = build_graph(lines, snap=args.snap)
 
-    payload = {
-        "slide_number": args.slide,
-        "text_annotations": texts,
-        "total_text_annotations": len(texts),
-        "config": {"padding_emu": args.padding, "snap_emu": args.snap}
-    }
+        # connection-based association
+        for t in texts:
+            terminals, used_edges = follow_from_label(t["text_box"], adj, inv_nodes, deg, pad=args.padding)
+            # dedupe nearly-identical terminals by snapped point
+            term_pts = []
+            seen = set()
+            for idx in terminals:
+                pt = inv_nodes[idx]
+                if pt not in seen:
+                    seen.add(pt)
+                    term_pts.append({"x": pt[0], "y": pt[1]})
+            # collect the actual line objects that were traversed
+            pointer_lines = []
+            used = set()
+            for u in adj:
+                for v, ln in adj[u]:
+                    eid = id(ln)
+                    if eid in used_edges and eid not in used:
+                        used.add(eid)
+                        pointer_lines.append(ln)
+            # keep outputs small & stable
+            pointer_lines.sort(key=lambda ln: (ln["shape_id"] or 0, ln["line_id"]))
+            # sort target points by distance from the label center
+            tcx = t["text_box"]["x"] + t["text_box"]["width"] / 2.0
+            tcy = t["text_box"]["y"] + t["text_box"]["height"] / 2.0
+            term_pts.sort(key=lambda p: (p["x"] - tcx)**2 + (p["y"] - tcy)**2)
 
-    out_path = args.output_json or f"annotations/slide{args.slide}_text_annotations.json"
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    with open(out_path, "w") as f:
-        json.dump(payload, f, indent=2)
-    print(f"Wrote {out_path}")
+            t["pointer_lines"] = pointer_lines
+            t["target_regions"] = term_pts
+
+        if len(texts) > 0:
+            payload = {
+                "text_annotations": texts,
+                "total_text_annotations": len(texts),
+                "config": {"padding_emu": args.padding, "snap_emu": args.snap}
+            }
+
+            out_path = os.path.join(args.output_dir, f"slide{slide_number}.json")
+            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            with open(out_path, "w") as f:
+                json.dump(payload, f, indent=2)
+            print(f"Wrote {out_path}")
 
 if __name__ == "__main__":
     main()
