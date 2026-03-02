@@ -1,0 +1,15 @@
+{
+  "name": "Shaft",
+  "id": "shaft",
+  "description": [
+    "Has three surfaces separated by three borders",
+    "Anterior",
+    "Medial",
+    "Interosseous (lateral)",
+    "Triangular in cross section",
+    "Narrowest at junction of middle and distal thirds",
+    "Expands gradually at both ends",
+    "Labels"
+  ],
+  "images": []
+}
