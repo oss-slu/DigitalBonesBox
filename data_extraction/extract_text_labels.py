@@ -257,7 +257,7 @@ def main():
             }
 
             out_path = os.path.join(args.output_dir, f"slide{slide_number}.json")
-            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            os.makedirs(args.output_dir, exist_ok=True)
             with open(out_path, "w") as f:
                 json.dump(payload, f, indent=2)
             print(f"Wrote {out_path}")
