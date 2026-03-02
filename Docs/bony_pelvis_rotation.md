@@ -2,7 +2,7 @@
 
 ## Overview
 
-This file documents the behavior of `data_extraction/scripts/bony_pelvis_rotation.py`.
+This file documents the behavior of `data_extraction/bony_pelvis_rotation.py`.
 
 ## Purpose
 
@@ -50,7 +50,7 @@ When `--audit` is set: an "audit" block with tolerance, verified_slides, and fai
 1. Create template + metadata (no audit)
 
 ```bash
-python3 data_extraction/scripts/bony_pelvis_rotation.py \
+python3 data_extraction/bony_pelvis_rotation.py \
   --slides-dir data_extraction/fixtures/slides \
   --rels-dir  data_extraction/fixtures/rels \
   --slides 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 \
@@ -62,7 +62,7 @@ python3 data_extraction/scripts/bony_pelvis_rotation.py \
 2. With audit (recommended before committing)
 
 ```bash
-python3 data_extraction/scripts/bony_pelvis_rotation.py \
+python3 data_extraction/bony_pelvis_rotation.py \
   --slides-dir data_extraction/fixtures/slides \
   --rels-dir  data_extraction/fixtures/rels \
   --slides 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 \

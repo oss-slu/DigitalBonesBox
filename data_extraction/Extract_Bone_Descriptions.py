@@ -122,7 +122,7 @@ def extract_descriptions_from_slide(xml_file): # Extract descriptions from a sin
     
     return bone_data
 
-def process_all_slides(ppt_dir, output_path):
+def process_all_slides(ppt_dir, output_dir):
     slides_dir = f"{ppt_dir}/ppt/slides"
     # Discover all slides
     try:
@@ -157,7 +157,6 @@ def process_all_slides(ppt_dir, output_path):
         return False
     
     # Process each slide and collect results
-    all_descriptions = []
     processed_count = 0
     skipped_count = 0
     
@@ -174,45 +173,37 @@ def process_all_slides(ppt_dir, output_path):
             continue
         
         if bone_data["name"] != "Unknown" and bone_data["description"]:
-            all_descriptions.append(bone_data)
             print(f"✓ {bone_data['name']} ({len(bone_data['description'])} descriptions)")
             processed_count += 1
         else:
             print("[SKIPPED - No descriptions found]")
             skipped_count += 1
+            continue
     
-    # Write combined output
-    output_data = {
-        "metadata": {
-            "source": "Extract_Bone_Descriptions.py",
-            "total_slides_processed": len(slide_nums),
-            "total_bones_extracted": processed_count,
-            "total_slides_skipped": skipped_count
-        },
-        "bones": all_descriptions
-    }
-    
-    try:
-        with open(output_path, 'w') as f:
-            json.dump(output_data, f, indent=4)
-        print("\n" + "="*70)
-        print("EXTRACTION COMPLETE!")
-        print("="*70)
-        print(f"Output file: {output_path}")
-        print(f"Total slides processed: {processed_count}")
-        print(f"Total slides skipped: {skipped_count}")
-        print("="*70 + "\n")
-        return True
-    except IOError as e:
-        print(f"\n[ERROR] Could not write output file {output_path}: {e}")
-        return False
+        # Write output
+        out_path = os.path.join(output_dir, f"slide{slide_num}.json")
+        try:
+            with open(out_path, 'w') as f:
+                json.dump(bone_data, f, indent=4)
+        except IOError as e:
+            print(f"\n[ERROR] Could not write output file {out_path}: {e}")
+            return False
+
+    print("\n" + "="*70)
+    print("EXTRACTION COMPLETE!")
+    print("="*70)
+    print(f"Total slides processed: {processed_count}")
+    print(f"Total slides skipped: {skipped_count}")
+    print("="*70 + "\n")
+    return True
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Extract bone descriptions from slides.")
     parser.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint data.")
-    parser.add_argument("output_json", help="Path to the output JSON file.")
-    
+    parser.add_argument("output_dir", help="Path to the output directory.")
+
     args = parser.parse_args()
 
-    success = process_all_slides(args.ppt_dir, args.output_json)
+    os.makedirs(args.output_dir, exist_ok=True)
+    success = process_all_slides(args.ppt_dir, args.output_dir)
     sys.exit(0 if success else 1)
