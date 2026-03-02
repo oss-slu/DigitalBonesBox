@@ -145,18 +145,23 @@ def resolve_media_path(slides_dir, rels_dir, slide_num, rid):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--slides-dir", required=True)
-    ap.add_argument("--rels-dir", required=False, default=None, help="Directory of slideN.xml.rels (optional)")
-    ap.add_argument("--slides", type=int, nargs="+", default=[2,3])
-    ap.add_argument("--representative", type=int, default=2)
-    ap.add_argument("--out-template", default="data_extraction/annotations/template_bony_pelvis.json")
-    ap.add_argument("--out-metadata", default="data_extraction/annotations/bony_pelvis_metadata.json")
-    ap.add_argument("--audit", action="store_true")
-    ap.add_argument("--tolerance", type=float, default=0.02)
-    ap.add_argument("--min-area", type=float, default=0.05)
+    ap.add_argument("ppt_dir", help="Path to the folder containing the PowerPoint data.")
+    ap.add_argument("slides", type=int, nargs="+", help="Slide numbers to parse.")
+    ap.add_argument("representative", type=int, help="Slide number used as the representative example for computing the normalized template (must contain the two main pictures).")
+    ap.add_argument("--out-template", default="annotations/template_rotation.json",
+                    help="Output path for the JSON template with normalized geometry (will be created if needed). Default: `annotations/template_rotation.json`.")
+    ap.add_argument("--out-metadata", default="annotations/rotation_metadata.json",
+                    help="Output path for the extracted slide metadata JSON (will be created if needed). Default: `annotations/rotation_metadata.json`.")
+    ap.add_argument("--audit", action="store_true",
+                    help="Enable audit mode: compare each slide's geometry against the representative template and include audit results in the metadata output.")
+    ap.add_argument("--tolerance", type=float, default=0.02,
+                    help="Tolerance used when comparing normalized geometry (fractional units). Smaller values require closer matches. Default: 0.02.")
+    ap.add_argument("--min-area", type=float, default=0.05,
+                help="Minimum area fraction (relative to the largest picture) used to consider an image a \"main\" picture when selecting the representative pair. Default: 0.05.")
     args = ap.parse_args()
 
-    rep_path = os.path.join(args.slides_dir, f"slide{args.representative}.xml")
+    slides_dir = os.path.join(args.ppt_dir, f"ppt/slides/")
+    rep_path = os.path.join(slides_dir, f"slide{args.representative}.xml")
     if not os.path.exists(rep_path):
         raise SystemExit(f"Missing representative slide: {rep_path}")
 
@@ -175,19 +180,19 @@ def main():
 
     metadata, verified, failures = [], [], []
     for n in args.slides:
-        path = os.path.join(args.slides_dir, f"slide{n}.xml")
+        path = os.path.join(slides_dir, f"slide{n}.xml")
         if not os.path.exists(path):
             continue
         md = extract_slide_metadata(path, "Bony Pelvis", args.min_area)
         if md:
-            # enrich with media targets/paths if rels-dir provided
-            if args.rels_dir:
-                left  = resolve_media_path(args.slides_dir, args.rels_dir, n, md["left_media"])
-                right = resolve_media_path(args.slides_dir, args.rels_dir, n, md["right_media"])
-                md["left_media_target"]  = left["target"]
-                md["right_media_target"] = right["target"]
-                md["left_media_path"]    = left["path"]
-                md["right_media_path"]   = right["path"]
+            # enrich with media targets/paths
+            rels_dir = os.path.join(slides_dir, f"_rels/")
+            left  = resolve_media_path(slides_dir, rels_dir, n, md["left_media"])
+            right = resolve_media_path(slides_dir, rels_dir, n, md["right_media"])
+            md["left_media_target"]  = left["target"]
+            md["right_media_target"] = right["target"]
+            md["left_media_path"]    = left["path"]
+            md["right_media_path"]   = right["path"]
             metadata.append(md)
             if args.audit:
                 res = audit_slide(path, template, args.tolerance, args.min_area)

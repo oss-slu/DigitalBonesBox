@@ -13,13 +13,10 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
-// Serve colored regions JSON files
-const coloredRegionsPath = path.join(__dirname, "../data_extraction/annotations/color_regions");
-app.use("/colored-regions", express.static(coloredRegionsPath));
-
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
+const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
 
 // Rate limiter for search endpoint
 const searchLimiter = rateLimit({
@@ -197,6 +194,47 @@ app.get("/combined-data", async (_req, res) => {
 });
 
 /**
+ * Gets colored region data for a specific bone.
+ * Dynamically constructs the GitHub filename from the boneId and fetches the data.
+ * Expects a 'boneId' query parameter.
+ */
+app.get("/api/colored-regions", async (req, res) => {
+    const { boneId } = req.query;
+
+    if (!boneId) {
+        return res.status(400).json({ 
+            error: "boneId query parameter is required"
+        });
+    }
+
+    if (!isValidBoneId(boneId)) {
+        return res.status(400).json({ 
+            error: "Invalid boneId format"
+        });
+    }
+
+    const filename = `${boneId}_colored_regions.json`;
+    const githubUrl = `${GITHUB_COLORED_REGIONS_URL}${filename}`;
+
+    try {
+        const response = await axios.get(githubUrl, { timeout: 5000 });
+        return res.json(response.data);
+    } catch (error) {
+        if (error.response?.status === 404) {
+            console.log(`[ColoredRegions API] Not found: ${filename}`);
+            return res.status(404).json({ 
+                error: `Colored region data not available for boneId: ${boneId}`
+            });
+        }
+        
+        console.error(`[ColoredRegions API] Error fetching ${filename}:`, error.message);
+        return res.status(502).json({ 
+            error: "Failed to fetch colored region data from GitHub"
+        });
+    }
+});
+
+/**
  * Gets description of boneset, bone, or subbone, formatted as HTML list items.
  * Expects a 'boneId' query parameter.
  */
@@ -237,16 +275,14 @@ app.get("/api/bone-data/", async (req, res) => {
     // Validate boneId parameter
     if (!boneId) {
         return res.status(400).json({ 
-            error: "Bad Request", 
-            message: "boneId query parameter is required" 
+            error: "boneId query parameter is required"
         });
     }
     
     // Validate boneId format to prevent SSRF attacks
     if (!isValidBoneId(boneId)) {
         return res.status(400).json({ 
-            error: "Bad Request", 
-            message: "Invalid boneId format. Only alphanumeric characters and underscores are allowed." 
+            error: "Invalid boneId format. Only alphanumeric characters and underscores are allowed."
         });
     }
     
@@ -277,19 +313,8 @@ app.get("/api/bone-data/", async (req, res) => {
         });
 
     } catch (error) {
-        // Handle 404 - bone not found
-        if (error.response && error.response.status === 404) {
-            return res.status(404).json({ 
-                error: "Not Found", 
-                message: `Bone with id '${boneId}' not found` 
-            });
-        }
-        
-        // Handle other server errors
-        console.error("Error fetching bone data for '%s': %s", boneId, error.message);
-        res.status(500).json({ 
-            error: "Internal Server Error", 
-            message: "Failed to fetch bone data" 
+        return res.status(error.response?.status || 500).json({
+            error: error.response?.error || "Failed to fetch bone data"
         });
     }
 });
@@ -303,8 +328,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     // 1. Validation
     if (!isValidBoneId(boneId)) {
         return res.status(400).json({ 
-            error: "Bad Request", 
-            message: "Invalid boneId format." 
+            error: "Invalid boneId format."
         });
     }
 
@@ -326,7 +350,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             const status = annotationResult.status;
             const errorMessage = `Failed to fetch annotation data (HTTP ${status})`;
             return res.status(status).json({ 
-                message: errorMessage
+                error: errorMessage
             });
         }
         
@@ -337,7 +361,7 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             const status = templateResult.status;
             const errorMessage = `Failed to fetch template data (HTTP ${status})`;
             return res.status(status).json({ 
-                message: errorMessage
+                error: errorMessage
             });
         }
 
