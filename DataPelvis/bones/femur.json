@@ -1,0 +1,19 @@
+{
+    "name": "Femur",
+    "id": "femur",
+    "subBones": [
+        "head",
+        "neck",
+        "greater_trochanter",
+        "lesser_trochanter",
+        "intertrochanteric_line",
+        "gluteal_tuberosity",
+        "pectineal_line",
+        "shaft",
+        "linea_aspera",
+        "condyles",
+        "adductor_tubercle",
+        "intercondylar_fossa",
+        "patellar_surface"
+    ]
+}
