@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Skull",
+    "id": "skull",
+    "bones": [
+      "cranial_base",
+      "ethmoid_bone",
+      "frontal_bone",
+      "lacrimal_bone",
+      "maxilla",
+      "middle_cranial_fossa",
+      "nasal_bone",
+      "palatine_bone",
+      "parietal_bone",
+      "sphenoid_bone",
+      "vomer",
+      "zygomatic_bone"
+    ]
+  }
+]
