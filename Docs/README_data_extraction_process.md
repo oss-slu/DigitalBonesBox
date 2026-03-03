@@ -79,11 +79,13 @@ The extraction process involves multiple Python scripts that work together to ex
    
     Each of the extraction files takes several arguments to customize the input and output files. You can first run the files with `--help` to see the arguments taken.
 
-4. Clean up data. Some of the extraction scripts may give incomplete data:
+4. Clean up data by manually editing while referencing the PowerPoint to see what information should be associated with each boneset, bone, or subbone according to the slides. Some of the extraction scripts may give incomplete data:
 
     a. **`extract_bone_images.py`**
 
     Does not assign final image names. Images should be given a name of the format `<bone_id>_image.jpg` if it is the only image of that boneset/bone/subbone, or `<bone_id>_image<number>.jpg` if it is one of several images of that ID, where `bone_id` is the ID of the boneset, bone, or subbone being described. See the `images/` directory in the database for an example of how names should be assigned.
+
+    Duplicate images can be removed entirely. If more than one bone or subbone needs to reference an image, that can be done in the description JSON; see the instructions for cleaning the output of `Extract_Bone_Descriptions.py`.
 
     b. **`xml_boneset_reader.py`**
 
@@ -93,7 +95,9 @@ The extraction process involves multiple Python scripts that work together to ex
         
     The file may make some general errors in parsing out the descriptions. You should keep the PowerPoint open and verify that each bone object has the appropriate boneset/bone/subbone name,  ID (which should be the name in lowercase with spaces replaced by underscores—e.g. a bone with the name "Bone Name" has ID "bone_name"), and description, which should be a list of strings of each line of text in the description. That list should strictly only include text in the description of the boneset, bone, or subbone, not any extra information.
    
-    The file also does not assign final file names. Files should be given a name of the format `<bone_id>_description.json` where `bone_id` is the ID of the boneset, bone, or subbone being described. Inside it should then be optionally added an "images" field that is a list of the filenames of the images associated with that bone as extracted by the image extraction script.
+    The file also does not assign final file names. Files should be given a name of the format `<bone_id>_description.json` where `bone_id` is the ID of the boneset, bone, or subbone being described.
+
+    Inside the description should then be optionally added an "images" field that is a list of the filenames of the images associated with that bone as extracted by the image extraction script. The "images" field is necessary if a boneset, bone, or subbone has one or more images associated with it.
             
     See the `descriptions/` directory in the database for an example of how description JSON files should look.
     
