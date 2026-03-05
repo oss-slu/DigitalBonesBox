@@ -1,6 +1,7 @@
 // quiz.js - Quiz functionality for Digital Bones Box
 
 import {fetchBoneData, fetchCombinedData} from "./api.js";
+import {displayColoredRegions} from "./coloredRegionsOverlay.js";
 
 class QuizManager {
     constructor() {
@@ -170,29 +171,8 @@ async fetchBoneImage(itemId, container) {
         
         // Check if image exists in the response
         if (data.images && data.images.length > 0) {
-            // SMART LOGIC: Prefer annotated images over plain images
-            let imageUrl;
-            
-            // Try to find an annotated image (colored regions)
-            const annotatedImage = data.images.find(img => 
-                img.filename && (
-                    img.filename.toLowerCase().includes("annotated") ||
-                    img.filename.toLowerCase().includes("annotation") ||
-                    img.filename.toLowerCase().includes("colored")
-                )
-            );
-            
-            if (annotatedImage) {
-                // Use annotated image if available
-                imageUrl = annotatedImage.url;
-                console.log(`✓ Using ANNOTATED image for ${itemId}:`, imageUrl);
-            } else {
-                // Fall back to first image if no annotated version exists yet
-                imageUrl = data.images[0].url;
-                console.log(`Using plain image for ${itemId} (annotated not available yet):`, imageUrl);
-            }
-            
             // Create image element with error handling
+            let imageUrl = data.images[0].url;
             const img = document.createElement("img");
             img.src = imageUrl;
             img.alt = itemId;
@@ -213,6 +193,9 @@ async fetchBoneImage(itemId, container) {
             };
             
             img.onload = () => {
+                displayColoredRegions(img, itemId, 0).catch(err => {
+                    console.warn(`Could not display colored regions for ${itemId}:`, err);
+                });
                 console.log(`Image loaded successfully for ${itemId}`);
             };
             
