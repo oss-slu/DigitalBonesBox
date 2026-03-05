@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install backend dependencies
+        run: npm install --prefix boneset-api
+
       - name: Run ESLint
         run: npm run lint
 
