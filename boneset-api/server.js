@@ -118,7 +118,7 @@ async function initializeSearchCache() {
             }
         }
 
-        searchCache = searchData;
+        searchCache =  searchData;
         console.log(`Search cache initialized with ${searchData.length} items`);
     } catch (error) {
         console.error("Error initializing search cache:", error);
