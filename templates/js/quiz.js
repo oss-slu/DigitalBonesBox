@@ -199,6 +199,7 @@ async fetchBoneImage(itemId, container) {
                 console.log(`Image loaded successfully for ${itemId}`);
             };
             
+            container.classList.add("single-image-wrapper");
             container.innerHTML = "";
             container.appendChild(img);
         } else {
