@@ -40,7 +40,7 @@ const OVERLAY_ADJUSTMENTS = {
         1: { x: 5, y: 5, scale: 1.0, rotation: 0 }
     },
     "symphyseal_surface": {
-        0: { x: 17, y: 245, scale: 1.0, rotation: 0 },
+        0: { x: 20, y: 297, scale: 1.0, rotation: 0 },
         1: { x: 0, y: 0, scale: 1.0, rotation: 0 }
     },
     "pubic_tubercle": {
@@ -257,7 +257,7 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
         const transforms = [];
         
         if (adjustments.x !== 0 || adjustments.y !== 0) {
-            transforms.push(`translate(${adjustments.x}px, ${adjustments.y}px)`);
+            // transforms.push(`translate(${adjustments.x}px, ${adjustments.y}px)`);
         }
         
         if (adjustments.scale !== 1.0) {
@@ -307,16 +307,19 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
                     // Create path element
                     const path = document.createElementNS(svgNS, "path");
                     path.setAttribute("d", pathData);
-                    
-                    // Apply offset if present (for shapes that need to be positioned relative to image)
-                    if (region.offset_x !== undefined && region.offset_y !== undefined) {
-                        // Convert EMU offsets to pixels
-                        const offsetXPixels = emuToPixels(region.offset_x, dimensions.slideWidth, dimensions.imageWidth);
-                        const offsetYPixels = emuToPixels(region.offset_y, dimensions.slideHeight, dimensions.imageHeight);
-                        path.setAttribute("transform", `translate(${offsetXPixels}, ${offsetYPixels})`);
-                        console.debug(`Applied offset transform: translate(${offsetXPixels}, ${offsetYPixels})`);
-                    }
-                    
+
+                    // Apply offsets from region data (convert from EMU to pixels) and add any additional adjustments
+                    let offsetXPixels = emuToPixels(region.offset_x || 0, dimensions.slideWidth, dimensions.imageWidth);
+                    offsetXPixels += OVERLAY_ADJUSTMENTS[boneId]?.[imageIndex]?.x || 0; // Add any additional x adjustment
+                    let offsetYPixels = emuToPixels(region.offset_y || 0, dimensions.slideHeight, dimensions.imageHeight);
+                    offsetYPixels += OVERLAY_ADJUSTMENTS[boneId]?.[imageIndex]?.y || 0; // Add any additional y adjustment
+                    let scale = OVERLAY_ADJUSTMENTS[boneId]?.[imageIndex]?.scale || 1.0;
+                    scale = 1;
+                    let rotation = OVERLAY_ADJUSTMENTS[boneId]?.[imageIndex]?.rotation || 0;
+                    rotation = 0;
+                    path.setAttribute("transform", `translate(${offsetXPixels}, ${offsetYPixels}) scale(${scale}) rotate(${rotation})`);
+                    console.debug(`Applied offset transform: translate(${offsetXPixels}, ${offsetYPixels}) scale(${scale}) rotate(${rotation}) for region ${region.anatomical_name} path ${pathIndex}`);
+
                     // Apply color (add # to hex code from JSON)
                     const color = region.color.startsWith("#") ? region.color : `#${region.color}`;
                     
