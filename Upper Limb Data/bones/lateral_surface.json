@@ -1,0 +1,11 @@
+{
+  "name": "Lateral surface",
+  "id": "lateral_surface",
+  "description": [
+    "Lies between anterior and interosseous borders",
+    "Tibialis anterior muscle attaches to proximal two-thirds",
+    "Distal third has no attachments",
+    "Labels"
+  ],
+  "subbones": []
+}
