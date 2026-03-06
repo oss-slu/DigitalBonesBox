@@ -1,12 +1,12 @@
 {
-  "name": "No labels",
-  "id": "no_labels",
+  "name": "Lateral view",
+  "id": "lateral_view",
   "description": [
     "Lateral view",
     "The lateral view can be divided into 3 sections:",
-    "Facial \u2013 anterior",
-    "Temporal \u2013 middle",
-    "Occipital \u2013 posterior",
+    "Facial - anterior",
+    "Temporal - middle",
+    "Occipital - posterior",
     "The temporal section is separated by the zygomatic arch into into a",
     "temporal fossa",
     "superiorly and an infratemporal fossa inferiorly.",
