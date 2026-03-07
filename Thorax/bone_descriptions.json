@@ -1,0 +1,509 @@
+{
+    "metadata": {
+        "source": "Extract_Bone_Descriptions.py",
+        "total_slides_processed": 27,
+        "total_bones_extracted": 27,
+        "total_slides_skipped": 0
+    },
+    "bones": [
+        {
+            "name": "Clavicle",
+            "id": "clavicle",
+            "description": [
+                "Thorax",
+                "Sternum",
+                "First rib",
+                "Typical rib",
+                "Scapula",
+                "The bony structure of the thoracic wall includes the thoracic vertebrae, the sternum, and the ribs.",
+                "There are 12 pairs of ribs.",
+                "Ribs 1-7 (",
+                "true ribs",
+                ") articulate with the sternum by individual costal cartilages.",
+                "The remaining 5 pairs are called ",
+                "false ribs.",
+                "The cartilages of ribs 8-10 articulate with the cartilages of the rib above.",
+                "Ribs 11 and 12 are called ",
+                "floating ribs ",
+                "because they do not attach to the sternum at all.",
+                "The ",
+                "pectoral girdle ",
+                "consists of the clavicle and scapula and connects the upper limb to the trunk."
+            ]
+        },
+        {
+            "name": "No labels",
+            "id": "no_labels",
+            "description": [
+                "Thorax",
+                "Sternum",
+                "Clavicle",
+                "First rib",
+                "Typical rib",
+                "Scapula",
+                "Manubrium",
+                "Body",
+                "Xiphoid Process",
+                "Sternum ",
+                "Also known as the breast bone.",
+                "Consists of a superior manubrium, intermediate body, and inferior xiphoid process.",
+                "It is convex on its anterior surface and concave on its posterior surface.",
+                "It articulates with the clavicles superiorly and the cartilages of the upper 7 ribs inferiorly.",
+                "The sternal fibers of pectoralis major  muscle originate from the anterior surface of the manubrium and body.",
+                "The sternothyroid and sternohyoid muscles originate from the posterior surface of the manubrium.",
+                "Transversus thoracis muscle attaches to the posterior surface of the body and xiphoid process.",
+                "The medial fibers of rectus abdominus attach to the anterior surface of the xiphoid process.",
+                "The linea alba attaches to the inferior border of the xiphoid process.",
+                "Sternum ",
+                "(anterior aspect)",
+                "Sternum ",
+                "(Posterior aspect)"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Thorax",
+                "Sternum",
+                "Clavicle",
+                "First rib",
+                "Typical rib",
+                "Scapula",
+                "Manubrium",
+                "Body",
+                "Xiphoid Process",
+                "Sternum ",
+                "(anterior aspect)",
+                "Sternum ",
+                "(Posterior aspect)"
+            ]
+        },
+        {
+            "name": "Manubrium",
+            "id": "manubrium",
+            "description": [
+                "The",
+                "jugular (suprasternal) notch",
+                "is a shallow depression in the superior border and is found at the level between the 2",
+                "nd",
+                "and 3",
+                "rd",
+                "thoracic vertebrae.",
+                "The",
+                "clavicular notches",
+                "indicate where the clavicles articulate with the manubrium at the sternoclavicular joints.",
+                "The cartilages of the 1",
+                "st",
+                "and part of the  2",
+                "nd",
+                "ribs attach to the lateral borders.",
+                "The",
+                "sternal angle",
+                "marks the junction of the manubrium and body",
+                "It is found at the level between the 4",
+                "th",
+                "and 5",
+                "th",
+                "thoracic vertebrae.",
+                "It attaches to the second ribs",
+                "It is an important surface landmark.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Body",
+            "id": "body",
+            "description": [
+                "The body extends from the 5",
+                "th",
+                "through 9",
+                "th",
+                "thoracic vertebrae levels.",
+                "It articulates with the costal cartilages of ribs 2-7 on is lateral borders.",
+                "It articulates with the manubrium superiorly and the xiphoid process inferiorly.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Xiphoid process",
+            "id": "xiphoid_process",
+            "description": [
+                "Articulates with the body superiorly and the inferior part of the 7",
+                "th",
+                "costal cartilage on its upper lateral border.",
+                "It is slightly recessed and may be perforated.",
+                "It remains cartilaginous longer than the rest of the sternum.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Clavicle",
+            "id": "clavicle",
+            "description": [
+                "Also known as the collar bone.",
+                "It is the most frequently broken bone in the body.",
+                "It is convex medially and concave laterally on its anterior surface.",
+                "It articulates medially with the manubrium of the sternum and laterally with the acromion process of the scapula.",
+                "Acts as a brace or strut for the shoulder and allows the upper limb to move freely on the trunk.",
+                "No labels"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Thorax",
+                "Sternum",
+                "Clavicle",
+                "First rib",
+                "Typical rib",
+                "Scapula",
+                "Shaft",
+                "Acromial end",
+                "Sternal end",
+                "Clavicle ",
+                "(superior aspect)",
+                "Clavicle ",
+                "(inferior aspect)"
+            ]
+        },
+        {
+            "name": "Shaft",
+            "id": "shaft",
+            "description": [
+                "Mostly cylindrical in shape.",
+                "Provides proximal attachment for the pectoralis major muscle on its anterior surface.",
+                "The subclavius muscle originates on and lies in a groove on the posterior surface.",
+                "The",
+                "trapezoid line",
+                "provides attachment for the trapezoid part of the coracoclavicular ligament*.",
+                "The",
+                "conoid tubercle",
+                "provides attachment for the conoid part of the coracoclavicular ligament*.",
+                "The",
+                "costoclavicular ligament",
+                "connects the clavicle to the upper surface of the first rib and its cartilage.",
+                "* The coracoclavicular ligament connects the clavicle to the coracoid process of the scapula.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Acromial end",
+            "id": "acromial_end",
+            "description": [
+                "The lateral end that articulates with the acromion process of the scapula.",
+                "Provides distal attachment for the trapezius muscle on the superior and posterior surface.",
+                "Provides proximal attachment for the deltoid muscle on the superior and anterior surface.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Sternal end",
+            "id": "sternal_end",
+            "description": [
+                "The medial end that articulates with the manubrium of the sternum.",
+                "Provides attachment for the lateral fibers of the sternohyoid muscle on the posterior surface.",
+                "Provides proximal attachment for the clavicular head of the sternocleidomastoid muscle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "First Rib",
+            "id": "first_rib",
+            "description": [
+                "The first rib is the shortest, broadest and most curved.",
+                "It attaches to the manubrium of the sternum just inferior to the sternoclavicular joint.",
+                "No labels",
+                "Tubercle"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Thorax",
+                "Sternum",
+                "Clavicle",
+                "First rib",
+                "Typical rib",
+                "Scapula",
+                "Head and Neck",
+                "Tubercles",
+                "Grooves for subclavian vessels",
+                "1",
+                "st",
+                " Right rib ",
+                "(superior aspect)",
+                "1",
+                "st",
+                " Right rib ",
+                "(inferior aspect)"
+            ]
+        },
+        {
+            "name": "Head and Neck",
+            "id": "head_and_neck",
+            "description": [
+                "The",
+                "head",
+                "is small and round and articulates with the body of the first thoracic vertebra.",
+                "The",
+                "neck",
+                "is a constricted portion situated between the head and the tubercle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Tubercles",
+            "id": "tubercles",
+            "description": [
+                "The",
+                "tubercle",
+                "articulates with the transverse process of the first thoracic vertebra.",
+                "The",
+                "scalene tubercle",
+                "is a small pointed projection on the superior surface.",
+                "It provides distal attachment for the anterior scalene muscle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Grooves for subclavian vessels",
+            "id": "grooves_for_subclavian_vessels",
+            "description": [
+                "The",
+                "subclavian vein",
+                "lies in a shallow groove just anterior to the scalene tubercle.",
+                "The",
+                "subclavian artery",
+                "lies in a shallow groove just posterior to the scalene tubercle.",
+                "The lower trunk of the brachial plexus also passes posterior to the scalene tubercle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Typical rib",
+            "id": "typical_rib",
+            "description": [
+                "Ribs 2-12 are similarly shaped.",
+                "They are longer and narrower than the 1",
+                "st",
+                "rib.",
+                "Each rib contains a head that articulates with at least one thoracic vertebrae.",
+                "No labels"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Thorax",
+                "Sternum",
+                "Clavicle",
+                "First rib",
+                "Typical rib",
+                "Scapula",
+                "Head and Neck",
+                "Tubercle",
+                "Body",
+                "Typical rib ",
+                "(superior aspect)",
+                "Typical rib ",
+                "(inferior aspect)"
+            ]
+        },
+        {
+            "name": "Head and Neck",
+            "id": "head_and_neck",
+            "description": [
+                "The",
+                "head",
+                "of each rib will articulate with the bodies of 2 vertebrae and an intervertebral disc.",
+                "It contains a pair of articular facets (superior and inferior).",
+                "The superior facet will articulate with the body of the superior vertebra.",
+                "The inferior facet will articulate with the body of the inferior vertebra.",
+                "The heads of ribs 10-12 have a single facet and articulate with their own vertebrae.",
+                "The",
+                "neck",
+                "is a constricted portion just lateral to the head.",
+                "The 11",
+                "th",
+                "and 12",
+                "th",
+                "pair of ribs have no necks.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Tubercle",
+            "id": "tubercle",
+            "description": [
+                "The tubercle of each typical rib is a knob like structure on the posterior surface where the neck joins the body.",
+                "It articulates with the transverse process of the corresponding vertebra.",
+                "Ribs 11 and 12 have no tubercles",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Body",
+            "id": "body",
+            "description": [
+                "The body (shaft) is the main part of the rib.",
+                "The angle is an abrupt change in curvature that occurs laterally to the tubercle.",
+                "The costal groove is a shallow depression on the internal surface of the inferior border of the body.",
+                "It contains the neurovascular bundle for each intercostal space*.",
+                "*This is important to know when performing a chest tube procedure.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Scapula",
+            "id": "scapula",
+            "description": [
+                "The scapula is sometimes referred to as the \u201cshoulder blade.\u201d",
+                "It is a large, triangular, flat bone situated in the superior part of the posterior thoracic wall.",
+                "It lies between the levels of the second and seventh ribs.",
+                "No labels",
+                "Glenoid fossa"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Thorax",
+                "Sternum",
+                "Clavicle",
+                "First rib",
+                "Typical rib",
+                "Scapula",
+                "Right scapula ",
+                "(anterior aspect)",
+                "Right scapula ",
+                "(Posterior aspect)",
+                "Body",
+                "Spine",
+                "Fossae",
+                "Acromion and Coracoid process"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Thorax",
+                "Sternum",
+                "Clavicle",
+                "First rib",
+                "Typical rib",
+                "Scapula",
+                "Right scapula ",
+                "(Posterior aspect)",
+                "Body",
+                "Spine",
+                "Fossae",
+                "Acromion and Coracoid process",
+                "Body ",
+                "The body of the scapula contains 3 borders.",
+                "The ",
+                "axillary border ",
+                "is lateral and provides proximal attachment for the teres minor and part of the teres major muscles.",
+                "The ",
+                "vertebral border ",
+                "is medial and provides distal attachment for the rhomboideus major (below the spine), rhomboideus minor (at the spine), and levator scapulae (above the spine), and serratus anterior muscles.",
+                "The ",
+                "superior border ",
+                "provides  proximal attachment for the inferior belly of the omohyoid muscle.",
+                "The superior border also contains the ",
+                "suprascapular notch",
+                ".",
+                "The notch is bridged by the superior transverse scapular ligament.",
+                "The ligament and notch create a foramen that transmits the suprascapular nerve.",
+                "The body also contains 3 angles.",
+                "The ",
+                "inferior angle ",
+                "provides proximal attachment for part of the teres major and latissumus dorsi muscles.",
+                "The ",
+                "superior angle ",
+                "is between the superior and vertebral borders.",
+                "The ",
+                "lateral angle ",
+                "presents the glenoid fossa."
+            ]
+        },
+        {
+            "name": "Spine",
+            "id": "spine",
+            "description": [
+                "The spine of the scapula is a prominent ridge on the posterior surface and is triangular in shape.",
+                "It separates the posterior surface into 2 fossae.",
+                "The supraspinous fossa above and the infraspinous fossa below.",
+                "It broadens laterally as the acromion process.",
+                "It provides proximal attachment for part of the deltoid muscle.",
+                "The uppermost fibers of the trapezius muscle partially insert on the spine.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Thorax",
+                "Sternum",
+                "Clavicle",
+                "First rib",
+                "Typical rib",
+                "Scapula",
+                "Right scapula ",
+                "(anterior aspect)",
+                "Right scapula ",
+                "(Posterior aspect)",
+                "Body",
+                "Spine",
+                "Fossae",
+                "Acromion and Coracoid process",
+                "Fossae",
+                "The anterior (costal) surface is known as the ",
+                "subscapular fossa ",
+                "and provides attachment for the subscapularis muscle.",
+                "The posterior (dorsal) surface is divided into the supraspinous and infraspinous fossa by the spine of the scapula.",
+                "The ",
+                "supraspinous fossa ",
+                "provides the origin of the supraspinatus muscle.",
+                "The ",
+                "infraspinous fossa ",
+                "provides the origin of the infraspinatus muscle.",
+                "The lateral angle presents the glenoid fossa.",
+                "The ",
+                "glenoid fossa ",
+                "is a shallow depression that articulates with the head of the humerus to create a ball-and-socket type synovial joint.",
+                "The ",
+                "supraglenoid tubercle ",
+                "sits above the glenoid fossa and provides the origin for the long head of the biceps brachii muscle.",
+                "The ",
+                "infraglenoid tubercle ",
+                "sits below the glenoid fossa and provides the origin for the long head of the triceps brachii muscle.",
+                "Right scapula ",
+                "(lateral aspect)"
+            ]
+        },
+        {
+            "name": "Acromion and Coracoid process",
+            "id": "acromion_and_coracoid_process",
+            "description": [
+                "The",
+                "acromion process",
+                "is a broad projection from the lateral end of the spine.",
+                "It curves anteriorly to articulate with the clavicle to form the acromioclavicular joint.",
+                "It provides part of the origin for the deltoid muscle and part of the insertion for the trapezius muscle.",
+                "The",
+                "coracoid process",
+                "is a hook-like projection from the superior border between the scapular notch and the glenoid fossa.",
+                "The coracobrachialis muscle and short head of the biceps brachii muscle arise from the coracoid process",
+                "The pectoralis minor inserts on the coracoid process.",
+                "Labels"
+            ]
+        }
+    ]
+}
