@@ -1,6 +1,6 @@
 {
   "name": "Mandible",
-  "id": "Mandible",
+  "id": "mandible",
   "description": [
     "Mandible",
     "The single bone that forms the lower jaw and contains the lower teeth.",
@@ -28,5 +28,5 @@
     "Slightly projects anteriorly from the mandible.",
     "Represents the most anterior and inferior projection of the lower face."
   ],
-  "images": []
+  "images": ["Anterior_Mandible_image.jpg"]
 }

@@ -1,6 +1,6 @@
 {
   "name": "Occipital bone",
-  "id": "Occipital bone",
+  "id": "occipital_bone",
   "description": [
     "Occipital bone",
     "Jugular foramen",
@@ -13,5 +13,5 @@
     "An opening just medial and inferior to the jugular foramen and superior to the margins of the foramen magnum.",
     "Transmits the hypoglossal nerve (CN XII)."
   ],
-  "images": []
+  "images": ["Superior_Occipital_bone_image.jpg"]
 }

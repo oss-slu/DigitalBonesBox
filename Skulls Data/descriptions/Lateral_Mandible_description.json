@@ -1,6 +1,6 @@
 {
   "name": "Mandible",
-  "id": "Mandible",
+  "id": "mandible",
   "description": [
     "Mandible",
     "Ramus",
@@ -14,5 +14,5 @@
     "Angle",
     "The part of the bone where the ramus and inferior borders meet."
   ],
-  "images": []
+  "images": ["Lateral_Mandible_bone_image.jpg"]
 }

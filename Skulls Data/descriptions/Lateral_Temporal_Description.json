@@ -1,6 +1,6 @@
 {
   "name": "Temporal Bone ",
-  "id": "Temporal Bone",
+  "id": "temporal_bone",
   "description": [
     "Temporal bone",
     "Squamous part",
@@ -14,5 +14,5 @@
     "Mandibular fossa",
     "A shallow depression that receives the head of the condylar process of the mandible to form the temporomandibular joint."
   ],
-  "images": []
+  "images": ["Lateral_Temporal_bone_image.jpg"]
 }

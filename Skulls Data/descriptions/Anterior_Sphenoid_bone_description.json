@@ -1,6 +1,6 @@
 {
   "name": "Sphenoid bone",
-  "id": "Sphenoid bone",
+  "id": "sphenoid_bone",
   "description": [
     "Anterior view",
     "The front view of the skull showing multiple facial and cranial bones.",
@@ -13,5 +13,5 @@
     "Located in the sphenoid bone.",
     "Transmits the optic nerve and the ophthalmic artery."
   ],
-  "images": []
+  "images": ["Anterior_Sphenoid_bone_image.jpg"]
 }

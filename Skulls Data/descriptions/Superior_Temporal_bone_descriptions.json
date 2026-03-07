@@ -1,6 +1,6 @@
 {
-  "name": "Labels",
-  "id": "slide31",
+  "name": "Temporal bone",
+  "id": "temporal_bone",
   "description": [
     "Temporal bone",
     "Petrous part",
@@ -16,5 +16,5 @@
     "A rounded elevation on the superior aspect of the petrous part.",
     "Indicates the position of the underlying anterior semicircular canal of inner ear."
   ],
-  "images": []
+  "images": ["Superior_Temporal_bone_image.jpg"]
 }
