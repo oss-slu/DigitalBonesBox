@@ -3,11 +3,11 @@
         "name": "Thorax",
         "id": "thorax",
         "bones": [
-            "Sternum",
-            "Clavicle",
-            "First rib",
-            "Typical rib",
-            "Scapula"
+            "sternum",
+            "clavicle",
+            "first_rib",
+            "typical_rib",
+            "scapula"
         ]
     }
 ]
