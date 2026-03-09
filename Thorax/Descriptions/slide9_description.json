@@ -1,0 +1,21 @@
+{
+  "slide": 9,
+  "name": "Labels",
+  "id": "labels",
+  "description": [
+    "Thorax",
+    "Sternum",
+    "Clavicle",
+    "First rib",
+    "Typical rib",
+    "Scapula",
+    "Shaft",
+    "Acromial end",
+    "Sternal end",
+    "Clavicle ",
+    "(superior aspect)",
+    "Clavicle ",
+    "(inferior aspect)"
+  ],
+  "images": []
+}

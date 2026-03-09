@@ -1,0 +1,21 @@
+{
+  "slide": 4,
+  "name": "Labels",
+  "id": "labels",
+  "description": [
+    "Thorax",
+    "Sternum",
+    "Clavicle",
+    "First rib",
+    "Typical rib",
+    "Scapula",
+    "Manubrium",
+    "Body",
+    "Xiphoid Process",
+    "Sternum ",
+    "(anterior aspect)",
+    "Sternum ",
+    "(Posterior aspect)"
+  ],
+  "images": []
+}
