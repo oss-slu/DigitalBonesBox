@@ -1,5 +1,12 @@
-{
+[
+  {
     "name": "Skull",
     "id": "skull",
-    "bones": ["anterior", "lateral", "inferior(base)","superior(cavity)"]
-}
+    "bones": [
+      "anterior",
+      "lateral",
+      "inferior",
+      "superior"
+    ]
+  }
+]
