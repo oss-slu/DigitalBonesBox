@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Vertebrae",
+        "id": "vertebrae",
+        "bones": [
+            "Atlas",
+            "Axis",
+            "Cervical",
+            "Thoracic",
+            "Lumbar",
+            "Sacrum/coccyx"
+        ]
+    },
+    {
+        "name": "Atlas",
+        "id": "atlas",
+        "bones": [
+            "Anterior/posterior tubercles",
+            "Transverse process",
+            "Anterior/posterior arches",
+            "Groove for vertebral artery",
+            "Articular facet for dens",
+            "Lateral mass",
+            "Articular surfaces"
+        ]
+    }
+]

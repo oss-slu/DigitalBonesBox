@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Vertebrae",
+        "id": "vertebrae",
+        "bones": [
+            "Atlas",
+            "Axis",
+            "Cervical",
+            "Thoracic",
+            "Lumbar",
+            "Sacrum/coccyx"
+        ]
+    },
+    {
+        "name": "Axis",
+        "id": "axis",
+        "bones": [
+            "Body (dens)",
+            "Transverse process",
+            "Transverse foramen",
+            "Pedicle",
+            "Lamina",
+            "Spinous process",
+            "Articular surfaces"
+        ]
+    }
+]
