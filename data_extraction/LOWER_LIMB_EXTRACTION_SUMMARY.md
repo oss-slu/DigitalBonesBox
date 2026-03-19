@@ -1,0 +1,126 @@
+# Lower Limb PowerPoint Data Extraction Summary
+
+## Extraction Date
+March 2, 2026
+
+## Data Source
+- File: Bone Box (Lower Limb).pptx
+- Slides: 57 content slides (plus title slide)
+- Extracted from: `c:\Users\breha\Downloads\Digital Bone Box\Digital Bone Box\Bone Box (Lower Limb)`
+
+## Extraction Scripts Run
+✅ All scripts successfully executed in order:
+
+1. **extract_bone_images.py**
+   - Output: 150+ bone images extracted
+   - Naming format: `slide{N}_{bone_name}_{view}.{png|jpeg}`
+   - Covers all views and aspects of lower limb bones
+
+2. **xml_boneset_reader.py**
+   - Output: `bonesets.json`
+   - Extracted boneset hierarchy: Lower Limb
+   - Bones identified: Femur, Patella, Tibia, Fibula, Foot
+
+3. **Extract_Bone_Descriptions.py**
+   - Output: `bone_descriptions.json`
+   - 57 bone/subbone descriptions extracted
+   - Includes 360+ descriptive text elements
+   - Examples: Head, Neck, Greater trochanter, Shaft, Condyles, etc.
+
+4. **ColoredRegionsExtractor.py**
+   - Output: 46 `slide{N}_precise_paths.json` files
+   - Extracted anatomical region overlays with precise SVG path data
+   - Regions include bones and anatomical landmarks with color mapping
+
+5. **bony_pelvis_text_labels.py**
+   - Output: 4 `slide{N}_text_labels.json` files
+   - Slides with labels: 4, 19, 23, 33
+   - Includes text positions and pointer line data
+
+## Extracted Data Files Location
+All extracted files are stored in: `data_extraction/Bone_Box_Lower_Limb_extracted/`
+
+### File Categories:
+- **Images**: `slide{N}_*.png`, `slide{N}_*.jpeg` (150+ files)
+- **Hierarchy**: `bonesets.json`
+- **Descriptions**: `bone_descriptions.json`
+- **Colored Regions**: `slide{N}_precise_paths.json` (46 files)
+- **Text Labels**: `slide{N}_text_labels.json` (4 files)
+- **Summary**: `extraction_summary.json`
+
+## Data to be Organized (Pending Final Instructions)
+
+### Directory Structure Template (based on DataPelvis format):
+```
+DataPelvis/
+├── boneset/
+│   └── lower_limb.json
+├── bones/
+│   ├── femur.json
+│   ├── patella.json
+│   ├── tibia.json
+│   ├── fibula.json
+│   └── foot.json
+├── subbones/
+│   ├── head.json
+│   ├── neck.json
+│   ├── greater_trochanter.json
+│   ├── lesser_trochanter.json
+│   ├── shaft.json
+│   ├── condyles.json
+│   └── ... (other subbones)
+├── descriptions/
+│   ├── lower_limb_description.json
+│   ├── femur_description.json
+│   ├── patella_description.json
+│   ├── tibia_description.json
+│   ├── fibula_description.json
+│   ├── foot_description.json
+│   └── ... (description files for each subbone)
+├── images/
+│   ├── femur_image1.jpg
+│   ├── femur_image2.jpg
+│   ├── patella_image.jpg
+│   ├── tibia_image1.jpg
+│   └── ... (properly renamed images)
+└── annotations/
+    ├── ColoredRegions/
+    │   ├── femur_colored_regions.json
+    │   ├── patella_colored_regions.json
+    │   └── ... (one file per bone)
+    └── text_label_annotations/
+        ├── femur_text_labels.json
+        └── ... (text label files)
+```
+
+## Cleanup Tasks Remaining
+As per Docs/README_data_extraction_process.md section 4:
+
+- [ ] **Images**: Rename with bone-specific naming (`{bone_id}_image.jpg` format)
+- [ ] **Boneset JSON**: Create `lower_limb.json` with proper hierarchy
+- [ ] **Bones JSON**: Create individual JSON files for each bone with subbone relationships
+- [ ] **Descriptions JSON**: Split `bone_descriptions.json` into individual bone description files
+- [ ] **Colored Regions**: Rename `slide{N}_precise_paths.json` to `{bone_id}_colored_regions.json`
+- [ ] **Text Labels**: Rename `slide{N}_text_labels.json` to `{bone_id}_text_labels.json`
+
+## Bones Identified in Lower Limb
+1. **Femur** (with subbones: Head, Neck, Greater trochanter, Lesser trochanter, Intertrochanteric line, Gluteal tuberosity, Pectineal line, Shaft, Linea aspera, Condyles, Adductor tubercle, Intercondylar fossa, Patellar surface)
+2. **Patella**
+3. **Tibia** (with subbones: Proximal end, Tibial tuberosity, Gerdy's tubercle, Shaft, Medial surface, Lateral surface, Posterior surface, Distal end)
+4. **Fibula** (with subbones: Head, Shaft, Interosseous border, Posterior border, Anterior border, Lateral surface, Lateral malleolus)
+5. **Foot** (Calcaneus, Talus, Navicular, Cuboid, Cuneiforms, Metatarsals, Phalanges, and their respective parts)
+
+## Git Status
+- **Current Branch**: `lower-limb-data`
+- **Base Branch**: `data`
+- **Extracted Data Location**: `data_extraction/Bone_Box_Lower_Limb_extracted/`
+
+## Next Steps
+⏳ Awaiting detailed cleanup and organization instructions to:
+1. Transform extracted data into final DataPelvis format
+2. Complete all JSON file organization
+3. Commit organized data to `lower-limb-data` branch
+4. Create pull request to `data` branch
+
+---
+*Generated by automated extraction process*
