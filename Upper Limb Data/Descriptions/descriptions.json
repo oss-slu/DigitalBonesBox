@@ -1,0 +1,558 @@
+{
+    "metadata": {
+        "source": "Extract_Bone_Descriptions.py",
+        "total_slides_processed": 43,
+        "total_bones_extracted": 43,
+        "total_slides_skipped": 0
+    },
+    "bones": [
+        {
+            "name": "Humerus",
+            "id": "humerus",
+            "description": [
+                "Upper limb",
+                "Ulna",
+                "Radius",
+                "Hand",
+                "Right upper limb ",
+                "(posterior aspect)",
+                "Right upper limb ",
+                "(anterior aspect)"
+            ]
+        },
+        {
+            "name": "Humerus",
+            "id": "humerus",
+            "description": [
+                "Longest bone in upper limb",
+                "Articulates at proximal end with scapula through shoulder joint",
+                "Articulates at distal end with radius and ulna at elbow joint",
+                "No labels"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Upper limb",
+                "Humerus",
+                "Ulna",
+                "Radius",
+                "Hand",
+                "Right Humerus ",
+                "(posterior aspect)",
+                "Right Humerus ",
+                "(anterior aspect)",
+                "Head",
+                "Greater tubercle",
+                "Lesser tubercle",
+                "Intertubercular sulcus",
+                "Anatomical neck",
+                "Shaft",
+                "Deltoid tuberosity",
+                "Radial sulcus",
+                "Condyles",
+                "Radial and Coronoid fossae",
+                "Olecranon fossa",
+                "Capitulum and Trochlea "
+            ]
+        },
+        {
+            "name": "Head",
+            "id": "head",
+            "description": [
+                "Smooth articular surface covered with hyaline cartilage.",
+                "Articulates with Glenoid fossa of scapula.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Greater tubercle",
+            "id": "greater_tubercle",
+            "description": [
+                "A large, raised protrusion on the lateral surface of proximal end.",
+                "The posterior surface provides attachment for the supraspinatus, infraspinatus, and teres minor muscles from superior to inferior respectively.",
+                "Inferior portion forms the crest of the greater tubercle and provides attachment for the pectoralis major muscle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Lesser tubercle",
+            "id": "lesser_tubercle",
+            "description": [
+                "A protrusion that lies on anterior surface of proximal end.",
+                "Insertion site for the subscapularis muscle.",
+                "Inferior portion forms the crest of the lesser tubercle and is insertion site for the teres major muscle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Intertubercular sulcus",
+            "id": "intertubercular_sulcus",
+            "description": [
+                "A narrow depression that lies between the greater and lesser tubercles.",
+                "Insertion site for the latissumus dorsi muscle.",
+                "The long head of the biceps brachii tendon passes through this sulcus.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Anatomical neck",
+            "id": "anatomical_neck",
+            "description": [
+                "is constriction located just inferior and lateral to the head.",
+                "It indicates the line of circumference for capsule of shoulder joint.",
+                "Surgical neck",
+                "indicates the most proximal portion of the shaft.",
+                "Site of frequent fracture",
+                "Fractures here may damage the axillary nerve and the posterior circumflex humoral artery.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Shaft",
+            "id": "shaft",
+            "description": [
+                "Mostly cylindrical in the proximal half but is triangular in cross section in the distal portion.",
+                "Contains",
+                "Deltoid tuberosity",
+                "and",
+                "Radial sulcus",
+                ".",
+                "The posterior surface provides origins of the lateral and medial heads of triceps brachii muscle.",
+                "The anterior surface provides insertion of the coracobrachialis muscle as well as the origin of the brachialis and brachioradialis muscles.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Deltoid tuberosity",
+            "id": "deltoid_tuberosity",
+            "description": [
+                "A roughened process on the lateral surface.",
+                "Provides insertion for the deltoid muscle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Radial sulcus",
+            "id": "radial_sulcus",
+            "description": [
+                "A spiraled groove on the posterior surface of the",
+                "shaft",
+                ".",
+                "The radial nerve and the deep brachial vessels travel in this depression.",
+                "Fractures of the shaft can damage these structures.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Condyles",
+            "id": "condyles",
+            "description": [
+                "Begin as widening of the shaft on medial and lateral surfaces.",
+                "Lateral epicondyle lies proximal to the",
+                "capitulum",
+                "and provides origin for the anconeus and superficial head of the supinator muscles as well as the common extensor tendon*.",
+                "Medial epicondyle lies proximal to the",
+                "trochlea",
+                "and provides origin for the pronator teres muscle as well as the common flexor tendon**.",
+                "*Common extensor tendon: Extensor carpi radialis brevis, extensor digitorum, extensor digiti minimi, and extensor carpi ulnaris.",
+                "**Common flexor tendon: flexor carpi radialis, palmaris longus, flexor carpi ulnaris, and flexor digitorum superficialis.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Radial and Coronoid fossae",
+            "id": "radial_and_coronoid_fossae",
+            "description": [
+                "Radial fossa",
+                "is a shallow depression on the medial side of the anterior surface just superior to the",
+                "capitulum",
+                ".",
+                "Accommodates the",
+                "head",
+                "of the radius when the forearm is flexed at the elbow.",
+                "Coronoid fossa",
+                "is a shallow depression on the lateral side of the anterior surface just superior to the",
+                "trochlea",
+                ".",
+                "Accommodates the",
+                "coronoid process",
+                "of the ulna when the forearm is flexed at the elbow.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Olecranon fossa",
+            "id": "olecranon_fossa",
+            "description": [
+                "A deep depression on posterior surface.",
+                "Lies just distal to the trochlea.",
+                "Accommodates the",
+                "olecranon process",
+                "of the ulna when the forearm is extended at the elbow.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Capitulum and Trochlea",
+            "id": "capitulum_and_trochlea",
+            "description": [
+                "Capitulum",
+                "is a rounded projection on the anterior and inferior surface of distal end of the humerus.",
+                "Articulates with the proximal surface of the",
+                "head",
+                "of the radius.",
+                "Trochlea",
+                "is a saddle-like process at distal end of the humerus and extends onto the posterior surface of the bone.",
+                "Articulates with the trochlear notch of the ulna.",
+                "* The ulnar nerve travels in a small sulcus between the trochlea and medial condyle",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Ulna",
+            "id": "ulna",
+            "description": [
+                "Bone on medial side of forearm.",
+                "Articulates with radius at proximal and distal ends.",
+                "Articulates with",
+                "trochlea",
+                "of humerus at proximal end.",
+                "Articulates with carpal bones of hand at distal end through the articular disc.",
+                "No labels"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Upper limb",
+                "Humerus",
+                "Ulna",
+                "Radius",
+                "Hand",
+                "Right Ulna ",
+                "(posterior aspect)",
+                "Right Ulna ",
+                "(anterior aspect)",
+                "Olecranon process",
+                "Trochlear notch",
+                "Coronoid process",
+                "Ulnar tuberosity",
+                "Radial notch",
+                "Styloid process"
+            ]
+        },
+        {
+            "name": "Olecranon process",
+            "id": "olecranon_process",
+            "description": [
+                "A projection at the proximal end of the ulna that curves anteriorly.",
+                "The anterior surface has a tip that is shaped like a beak and enters the",
+                "olecranon fossa",
+                "of humerus when forearm is extended at the elbow.",
+                "Posterior surface provides attachment for the insertions of triceps brachii and anconeus muscles.",
+                "Can be palpated as the \u201cpoint of the elbow\u201d on its proximal and posterior surface.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Trochlear notch",
+            "id": "trochlear_notch",
+            "description": [
+                "A curved articular surface that lies between anterior part of olecranon process proximally and coronoid process distally.",
+                "Articulates with",
+                "trochlea",
+                "of humerus.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Coronoid process",
+            "id": "coronoid_process",
+            "description": [
+                "A beak-like projection that is located anteriorly at the proximal end.",
+                "Enters",
+                "coronoid fossa",
+                "of the humerus when the forearm is flexed at the elbow.",
+                "Ulnar head of the pronator teres muscle originates from medial surface of the process.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Ulnar tuberosity",
+            "id": "ulnar_tuberosity",
+            "description": [
+                "A rough protrusion on anterior surface just distal to the coronoid process.",
+                "Provides the insertion for the brachialis muscle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Radial notch",
+            "id": "radial_notch",
+            "description": [
+                "A concave depression that is located just lateral to the coronoid process on the anterior surface of ulna.",
+                "Articulates with the discoid surface of the",
+                "head",
+                "of the radius.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Styloid process",
+            "id": "styloid_process",
+            "description": [
+                "A protrusion that extends distally from the posteromedial aspect of the ulna.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Radius",
+            "id": "radius",
+            "description": [
+                "Bone on lateral side of forearm",
+                "Articulates with ulna at proximal and distal ends",
+                "Articulates with the",
+                "capitulum",
+                "of the humerus at proximal end.",
+                "Articulates with the carpal bones of the hand at the distal end.",
+                "During pronation, the radius will pivot on its long axis and cross the ulna.",
+                "No labels"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Right Radius ",
+                "(posterior aspect)",
+                "Right Radius ",
+                "(anterior aspect)",
+                "Head",
+                "Neck",
+                "Radial tuberosity",
+                "Ulnar notch",
+                "Styloid process",
+                "Dorsal tubercle",
+                "Upper limb",
+                "Humerus",
+                "Ulna",
+                "Radius",
+                "Hand"
+            ]
+        },
+        {
+            "name": "Head",
+            "id": "head",
+            "description": [
+                "The most proximal end of the radius is smooth and discoid in shape.",
+                "The proximal surface is concaved and articulates with the",
+                "capitulum",
+                "of the humerus.",
+                "The smooth circumference of the disc articulates with the ulna at the",
+                "radial notch",
+                "and is covered by the annular ligament.",
+                "Both articular surfaces are covered by hyaline cartilage.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Neck",
+            "id": "neck",
+            "description": [
+                "A constriction that is located just distal to the head.",
+                "Round in cross-section.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Radial tuberosity",
+            "id": "radial_tuberosity",
+            "description": [
+                "A rough protrusion on the medial surface and is located just below the neck.",
+                "Provides the insertion for the biceps brachii muscle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Ulnar notch",
+            "id": "ulnar_notch",
+            "description": [
+                "A concave depression on medial surface of the distal end.",
+                "Articulates with the head of the ulna.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Styloid process",
+            "id": "styloid_process",
+            "description": [
+                "A rough protrusion on the lateral surface that projects distally past the end of the radius.",
+                "The brachioradialis muscle inserts on the proximal part of the process.",
+                "It can be palpated when the tendons around it are slack.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Dorsal tubercle",
+            "id": "dorsal_tubercle",
+            "description": [
+                "A rough protuberance located on the posterior surface of the distal end of the radius.",
+                "Acts as a fulcrum for the tendon of the extensor pollicis longus tendon.",
+                "Also known as Lister\u2019s tubercle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Hand",
+            "id": "hand",
+            "description": [
+                "The hand is composed of 27 bones",
+                "8 carpal bones",
+                "5 metacarpal bones",
+                "14 phalanges",
+                "The carpal bones are arranged in two rows.",
+                "The proximal row includes the scaphoid, lunate, triquetrum, and pisiform.",
+                "The distal row includes the trapezium, trapezoid, capitate, and hamate.",
+                "The scaphoid, lunate, and triquetrum bones articulate with the radius and articular disc of the radio-ulnar joint.",
+                "* A mnemonic for remembering the carpal bones is \u201cScary Lunatics Try Poisons That They Can\u2019t Handle.",
+                "The first letter of each word is the first letter of each of the bones from lateral to medial, proximal row first.",
+                "No labels",
+                "I"
+            ]
+        },
+        {
+            "name": "Labels",
+            "id": "labels",
+            "description": [
+                "Right Hand ",
+                "(dorsal aspect)",
+                "Right Hand ",
+                "(palmar aspect)",
+                "Scaphoid",
+                "Lunate",
+                "Triquetrum",
+                "Pisiform",
+                "Trapezium",
+                "Trapezoid",
+                "Capitate",
+                "Hamate",
+                "Metacarpals",
+                "Phalanges",
+                "Upper limb",
+                "Humerus",
+                "Ulna",
+                "Radius",
+                "Hand"
+            ]
+        },
+        {
+            "name": "Scaphoid",
+            "id": "scaphoid",
+            "description": [
+                "The largest bone in the proximal row.",
+                "Its is the most frequently fractured carpal bone \u2013 usually as result of a fall onto an outstretched (hyperextended) hand.",
+                "Scaphoid means boat-shaped.",
+                "Has a prominent tubercle on its lateral palmar surface.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Lunate",
+            "id": "lunate",
+            "description": [
+                "A semilunar-shaped bone located between the scaphoid and triquetrum bones in the proximal row.",
+                "Distally, it articulates with the capitate and hamate.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Triquetrum",
+            "id": "triquetrum",
+            "description": [
+                "A pyramidal-shaped bone.",
+                "Articulates with the hamate and the lunate bones.",
+                "Is the only bone that articulates with the pisiform bone.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Pisiform",
+            "id": "pisiform",
+            "description": [
+                "A small bone in the proximal row shaped like a pea.",
+                "Acts as a sesamoid bone for the tendon of the flexor carpi ulnaris muscle.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Trapezium",
+            "id": "trapezium",
+            "description": [
+                "The most lateral carpal bone of the distal row.",
+                "Forms a saddle joint with the first metacarpal bone (thumb).",
+                "Palmar surface has a tubercle that attaches to the flexor retinaculum.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Trapezoid",
+            "id": "trapezoid",
+            "description": [
+                "A small, irregular bone named for its trapezoid shape.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Capitate",
+            "id": "capitate",
+            "description": [
+                "The largest carpal bone.",
+                "Articulates with the second, third and fourth metacarpal bones distally and the scaphoid and lunate bones proximally.",
+                "Articulates with the hamate medially and the trapezoid laterally.",
+                "Part of the oblique head of the adductor pollicis muscle originates on the palmar surface.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Hamate",
+            "id": "hamate",
+            "description": [
+                "An irregular shaped bone with a hamulus (hook) on its palmar surface.",
+                "Hamulus is attached to flexor retinaculum.",
+                "Labels"
+            ]
+        },
+        {
+            "name": "Metacarpals",
+            "id": "metacarpals",
+            "description": [
+                "Numbered from one to five from lateral to medial.",
+                "Each has a base, shaft, and head from proximal to distal.",
+                "First metacarpal (thumb) is convex on its proximal surface and articulates with trapezium to form a saddle joint.",
+                "Labels",
+                "I"
+            ]
+        },
+        {
+            "name": "Text",
+            "id": "text",
+            "description": [
+                "text",
+                "Labels",
+                "I",
+                "Head",
+                "Base",
+                "Shaft",
+                "Phalanges",
+                "There are 14 phalanges.",
+                "Each finger has a proximal, middle, and distal phalanx except",
+                "the thumb.",
+                "The thumb only has a proximal and distal phalanx.",
+                "Each phalanx has a base, shaft, and head from proximal to distal."
+            ]
+        }
+    ]
+}
