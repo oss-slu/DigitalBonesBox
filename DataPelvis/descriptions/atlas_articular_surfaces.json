@@ -1,0 +1,28 @@
+{
+    "name": "Labels",
+    "id": "labels",
+    "description": [
+        "Vertebrae",
+        "Atlas",
+        "Axis",
+        "Cervical",
+        "Thoracic",
+        "Lumbar",
+        "Sacrum/coccyx",
+        "Anterior/posterior tubercles",
+        "Transverse process",
+        "Anterior/posterior arches",
+        "Groove for vertebral artery",
+        "Articular facet for dens",
+        "Lateral mass",
+        "Articular surfaces",
+        "Articular surfaces",
+        "Superior articular surface",
+        "Articulates with the condyles of the occipital bone of the skull.",
+        "Supports the weight of the head.",
+        "Mostly ovoid in shape, and can be partially subdivided into two separate surfaces.",
+        "Inferior articular surface",
+        "Mostly circular in shape.",
+        "Articulates with the superior articular surface of CV2 (Axis)."
+    ]
+}

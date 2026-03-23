@@ -1,0 +1,25 @@
+{
+    "name": "Labels",
+    "id": "labels",
+    "description": [
+        "Vertebrae",
+        "Atlas",
+        "Axis",
+        "Cervical",
+        "Thoracic",
+        "Lumbar",
+        "Sacrum/coccyx",
+        "Anterior/posterior tubercles",
+        "Transverse process",
+        "Anterior/posterior arches",
+        "Groove for vertebral artery",
+        "Articular facet for dens",
+        "Lateral mass",
+        "Articular surfaces",
+        "Groove for vertebral artery",
+        "A shallow groove on the superior surface of the posterior arch.",
+        "Situated just posterior to the lateral mass.",
+        "* The dorsal primary ramus of C1 (suboccipital nerve) passes between the vertebral artery and the vertebra.",
+        "** The ventral primary ramus of C1 passes posterior to the vertebral artery."
+    ]
+}

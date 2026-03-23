@@ -1,0 +1,22 @@
+{
+    "name": "Labels",
+    "id": "labels",
+    "description": [
+        "Vertebrae",
+        "Atlas",
+        "Axis",
+        "Cervical",
+        "Thoracic",
+        "Lumbar",
+        "Sacrum/coccyx",
+        "Body",
+        "Transverse process",
+        "Costal facets",
+        "Vertebral notch",
+        "Spinous process",
+        "Articular surfaces",
+        "Transverse process ",
+        "A lateral projection from the junction of the lamina and pedicle.",
+        "Contains a costal facet that articulates with the tubercle of a rib."
+    ]
+}

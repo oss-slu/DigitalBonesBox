@@ -1,0 +1,22 @@
+{
+    "name": "No labels",
+    "id": "no_labels",
+    "description": [
+        "Vertebrae",
+        "Atlas",
+        "Axis",
+        "Cervical",
+        "Thoracic",
+        "Lumbar",
+        "Sacrum/coccyx",
+        "Body",
+        "Transverse process",
+        "Costal facets",
+        "Vertebral notch",
+        "Spinous process",
+        "Articular surfaces",
+        "Thoracic vertebrae",
+        "Larger than cervical vertebrae.",
+        "Each articulates with a rib."
+    ]
+}

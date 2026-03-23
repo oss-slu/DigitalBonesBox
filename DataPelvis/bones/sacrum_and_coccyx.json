@@ -1,0 +1,13 @@
+[
+    {
+        "name": "Vertebrae",
+        "id": "vertebrae",
+        "bones": [
+            "Atlas",
+            "Axis",
+            "Cervical",
+            "Thoracic",
+            "Lumbar"
+        ]
+    }
+]

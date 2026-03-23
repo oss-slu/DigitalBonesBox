@@ -1,0 +1,24 @@
+{
+    "name": "Labels",
+    "id": "labels",
+    "description": [
+        "Vertebrae",
+        "Atlas",
+        "Axis",
+        "Cervical",
+        "Thoracic",
+        "Lumbar",
+        "Sacrum/coccyx",
+        "Anterior/posterior tubercles",
+        "Transverse process",
+        "Anterior/posterior arches",
+        "Groove for vertebral artery",
+        "Articular facet for dens",
+        "Lateral mass",
+        "Articular surfaces",
+        "Lateral mass",
+        "The largest and most solid part of the vertebra.",
+        "Connects the arches with the transverse processes.",
+        "Contains the superior and inferior articular surfaces."
+    ]
+}

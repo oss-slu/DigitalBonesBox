@@ -1,0 +1,27 @@
+{
+    "name": "Labels",
+    "id": "labels",
+    "description": [
+        "Vertebrae",
+        "Atlas",
+        "Axis",
+        "Cervical",
+        "Thoracic",
+        "Lumbar",
+        "Sacrum/coccyx",
+        "Anterior/posterior tubercles",
+        "Transverse process",
+        "Anterior/posterior arches",
+        "Groove for vertebral artery",
+        "Articular facet for dens",
+        "Lateral mass",
+        "Articular surfaces",
+        "Anterior and posterior tubercles",
+        "Anterior tubercle",
+        "A roughened protrusion on anterior arch.",
+        "Provides attachment for the anterior longitudinal ligament.",
+        "Posterior tubercle",
+        "A rudimentary spinous process.",
+        "A roughened attachment for the ligamentum nuchae."
+    ]
+}
