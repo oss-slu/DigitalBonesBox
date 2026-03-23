@@ -9,5 +9,6 @@
         "Inferior articular surface",
         "Mostly circular in shape.",
         "Articulates with the superior articular surface of CV2 (Axis)."
-    ]
+    ],
+    "images": ["atlas_(superior_aspect)_image.png", "atlas_(inferior_aspect)_image.png"]
 }

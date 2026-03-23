@@ -13,5 +13,6 @@
         "**Each spinal nerve is named for the vertebra above it.",
         "Exception: the cervical spinal nerves are numbered for the vertebra below it except C8. ",
         "C8 exits the column between CV7 and TV1."
-    ]
+    ],
+    "images": ["thoracic_(lateral_aspect)_image.png"]
 }

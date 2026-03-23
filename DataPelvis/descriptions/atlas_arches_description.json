@@ -11,5 +11,6 @@
         "The superior surface contains a groove for the vertebral artery.",
         "The superior border provides attachment for the posterior atlanto-occipital membrane.",
         "Contains the posterior tubercle."
-    ]
+    ],
+    "images": ["atlas_(superior_aspect)_image.png", "atlas_(inferior_aspect)_image.png"]
 }

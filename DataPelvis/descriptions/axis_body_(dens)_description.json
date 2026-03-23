@@ -1,6 +1,6 @@
 {
     "name": "Body (Dens)",
-    "id": "atlas_body_(dens)",
+    "id": "axis_body_(dens)",
     "description": [
         "Superior part",
         "Consists of an odontoid process (dens).",
@@ -8,5 +8,6 @@
         "It is held in place by the transverse ligament of the atlas.",
         "Inferior part",
         "Projects downward and overlaps part of CV3."
-    ]
+    ],
+    "images": ["axis_(superior_aspect)_image.png", "axis_(lateral_aspect)_image.png"]
 }

@@ -18,5 +18,6 @@
         "develop after birth.",
         "Cervical",
         "Lumbar"
-    ]
+    ],
+    "images": ["vertebrae_image.png"]
 }

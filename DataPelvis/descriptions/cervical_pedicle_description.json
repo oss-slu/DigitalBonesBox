@@ -3,5 +3,6 @@
     "id": "cervical_pedicle",
     "description": [
         "Connects the transverse process to the body."
-    ]
+    ],
+    "images": ["cervical_(superior_aspect)_image.png", "cervical_(inferior_aspect)_image.png"]
 }
