@@ -1,8 +1,8 @@
-# bony_pelvis_text_labels
+# extract_text_labels
 
 ## Overview
 
-This file documents the behavior of `data_extraction/scripts/bony_pelvis_text_labels.py`.
+This file documents the behavior of `data_extraction/extract_text_labels.py`.
 
 ## Purpose
 
@@ -22,35 +22,28 @@ Uses a small graph walk from any line endpoints that touch the label’s text bo
 
 ## Expected inputs
 
-- `--slides-dir`: directory containing slideN.xml
-
-- `--rels-dir`: directory containing slideN.xml.rels
-
-- `--slide`: the slide number to process
+Run the script with the flag `--help` to view expected inputs.
 
 ## Outputs
-
-`--out`: path to write JSON. If not provided, writes
-`data_extraction/annotations/slide{N}_text_annotations.json`.
 
 Each JSON contains:
 
 ```json
 {
-  "slide_number": 9,
+  "slide_number": ...,
   "text_annotations": [
     {
       "annotation_id": "annot_1",
-      "bone_name": "Bony Pelvis",
-      "subbone_name": "Ischial spine",
+      "bone_name": "...",
+      "subbone_name": "...",
       "text_box": { "x": ..., "y": ..., "width": ..., "height": ..., "rotation_emu": ... },
       "has_hyperlink": true,
-      "hyperlink": { "rId": "rId8", "target": "/ppt/slides/slide10.xml", "target_slide": 10 },
+      "hyperlink": { "rId": "rId8", "target": "/ppt/slides/....xml", "target_slide": ... },
       "pointer_lines": [ { "kind": "connector", "start_point": {...}, "end_point": {...}, ... } ],
       "target_regions": [ { "x": ..., "y": ... }, ... ]
     }
   ],
-  "total_text_annotations": 3,
+  "total_text_annotations": ...,
   "config": { "padding_emu": 4000.0, "snap_emu": 8000.0 }
 }
 ```
@@ -71,23 +64,12 @@ Graph follow: Build a snapped endpoint graph, start from nodes that lie within t
 
 ## Quickstart
 
-### Example: dump slide 9 labels/lines to default path
+### Example: dump slide labels/lines
 
 ```bash
-python3 data_extraction/scripts/bony_pelvis_text_labels.py \
-  --slides-dir data_extraction/fixtures/slides \
-  --rels-dir   data_extraction/fixtures/rels \
-  --slide 9
-```
-
-### Write to a custom file (e.g., renamed convention)
-
-```bash
-python3 data_extraction/scripts/bony_pelvis_text_labels.py \
-  --slides-dir data_extraction/fixtures/slides \
-  --rels-dir   data_extraction/fixtures/rels \
-  --slide 9 \
-  --out DataPelvis/annotations/slide09_ischium_text_labels.json
+python3 data_extraction/extract_text_labels.py \
+  data_extraction/presentation \
+  ./text_label_outputs
 ```
 
 ## Notes & tips:

@@ -8,7 +8,7 @@
     "test": "jest",
     "start": "concurrently \"npm run start:api\" \"npm run start:web\"",
     "start:api": "npm start --prefix boneset-api",
-    "start:web": "http-server -o /templates/boneset.html",
+    "start:web": "http-server -c-1 -o /templates/boneset.html",
     "dev": "concurrently \"npm run dev:api\" \"npm run start:web\"",
     "dev:api": "npm run dev --prefix boneset-api",
     "lint": "eslint . --ext .js",
@@ -22,7 +22,7 @@
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "simple-git": "^3.27.0"
+    "simple-git": "^3.32.3"
   },
   "devDependencies": {
     "@babel/core": "^7.28.5",
@@ -30,10 +30,9 @@
     "babel-jest": "^29.7.0",
     "concurrently": "^9.2.1",
     "eslint": "^9.24.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
     "http-server": "^14.1.1",
-    "supertest": "^7.1.4"
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.2.0"
   },
   "directories": {
     "test": "tests"
