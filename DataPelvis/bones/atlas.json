@@ -1,27 +1,15 @@
 [
     {
-        "name": "Vertebrae",
-        "id": "vertebrae",
-        "bones": [
-            "Atlas",
-            "Axis",
-            "Cervical",
-            "Thoracic",
-            "Lumbar",
-            "Sacrum/coccyx"
-        ]
-    },
-    {
         "name": "Atlas",
         "id": "atlas",
-        "bones": [
-            "Anterior/posterior tubercles",
-            "Transverse process",
-            "Anterior/posterior arches",
-            "Groove for vertebral artery",
-            "Articular facet for dens",
-            "Lateral mass",
-            "Articular surfaces"
+        "subBones": [
+            "atlas_anterior_and_posterior_tubercles",
+            "atlas_transverse_process",
+            "atlas_arches",
+            "atlas_groove_for_vertebral_artery",
+            "atlas_articular_facet_for_dens",
+            "atlas_lateral_mass",
+            "atlas_articular_surfaces"
         ]
     }
 ]

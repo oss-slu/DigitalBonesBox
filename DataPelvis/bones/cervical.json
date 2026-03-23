@@ -1,27 +1,15 @@
 [
     {
-        "name": "Vertebrae",
-        "id": "vertebrae",
-        "bones": [
-            "Atlas",
-            "Axis",
-            "Cervical",
-            "Thoracic",
-            "Lumbar",
-            "Sacrum/coccyx"
-        ]
-    },
-    {
         "name": "Cervical",
         "id": "cervical",
-        "bones": [
-            "Body",
-            "Pedicle",
-            "Transverse process",
-            "Lamina",
-            "Spinous process",
-            "Vertebral arch",
-            "Vertebral foramen"
+        "subBones": [
+            "cervical_body",
+            "cervical_pedicle",
+            "cervical_transverse_process",
+            "cervical_lamina",
+            "cervical_spinous_process",
+            "cervical_vertebral_arch",
+            "cervical_vertebral_foramen"
         ]
     }
 ]

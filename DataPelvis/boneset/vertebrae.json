@@ -3,12 +3,12 @@
         "name": "Vertebrae",
         "id": "vertebrae",
         "bones": [
-            "Atlas",
-            "Axis",
-            "Cervical",
-            "Thoracic",
-            "Lumbar",
-            "Sacrum/coccyx"
+            "atlas",
+            "axis",
+            "cervical",
+            "thoracic",
+            "lumbar",
+            "sacrum_and_coccyx"
         ]
     }
 ]

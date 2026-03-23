@@ -1,26 +1,14 @@
 [
     {
-        "name": "Vertebrae",
-        "id": "vertebrae",
-        "bones": [
-            "Atlas",
-            "Axis",
-            "Cervical",
-            "Thoracic",
-            "Lumbar",
-            "Sacrum/coccyx"
-        ]
-    },
-    {
         "name": "Thoracic",
         "id": "thoracic",
-        "bones": [
-            "Body",
-            "Transverse process",
-            "Costal facets",
-            "Vertebral notch",
-            "Spinous process",
-            "Articular surfaces"
+        "subBones": [
+            "thoracic_body",
+            "thoracic_transverse_process",
+            "thoracic_costal_facets",
+            "thoracic_vertebral_notch",
+            "thoracic_spinous_process",
+            "thoracic_articular_surfaces"
         ]
     }
 ]

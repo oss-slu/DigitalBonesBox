@@ -1,26 +1,14 @@
 [
     {
-        "name": "Vertebrae",
-        "id": "vertebrae",
-        "bones": [
-            "Atlas",
-            "Axis",
-            "Cervical",
-            "Thoracic",
-            "Lumbar",
-            "Sacrum/coccyx"
-        ]
-    },
-    {
         "name": "Lumbar",
         "id": "lumbar",
-        "bones": [
-            "Body",
-            "Transverse process",
-            "Spinous process",
-            "Accessory process",
-            "Mammillary process",
-            "Articular surfaces"
+        "subBones": [
+            "lumbar_body",
+            "lumbar_transverse_process",
+            "lumbar_spinous_process",
+            "lumbar_accessory_process",
+            "lumbar_mammillary_process",
+            "lumbar_articular_surfaces"
         ]
     }
 ]
