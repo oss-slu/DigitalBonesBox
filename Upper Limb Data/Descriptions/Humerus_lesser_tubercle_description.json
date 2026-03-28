@@ -1,0 +1,11 @@
+{
+    "name": "Lesser tubercle",
+    "id": "lesser_tubercle",
+    "description": [
+        "A protrusion that lies on anterior surface of proximal end.",
+        "Insertion site for the subscapularis muscle.",
+        "Inferior portion forms the crest of the lesser tubercle and is insertion site for the teres major muscle."
+    ],
+    "images": ["Humerus_Head_Left_Image.jpg"]
+
+}
