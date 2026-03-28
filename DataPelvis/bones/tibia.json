@@ -1,0 +1,14 @@
+{
+    "name": "Tibia",
+    "id": "tibia",
+    "subBones": [
+        "proximal_end",
+        "tibial_tuberosity",
+        "gerdy_tubercle",
+        "shaft",
+        "medial_surface",
+        "lateral_surface",
+        "posterior_surface",
+        "distal_end"
+    ]
+}
