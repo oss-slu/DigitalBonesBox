@@ -1,0 +1,8 @@
+{
+    "name": "Trapezoid",
+    "id": "trapezoid",
+    "description": [
+        "A small, irregular bone named for its trapezoid shape."
+    ],
+    "images": ["Hand_Bones_Left_Image.jpg", "Hand_Bones_Right_Image.jpg"]
+}

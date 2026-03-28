@@ -1,0 +1,9 @@
+{
+    "name": "Radius Neck",
+    "id": "radius_neck",
+    "description": [
+        "A constriction that is located just distal to the head.",
+        "Round in cross-section."
+    ],
+    "images": ["Radius_Head_Left_Image.jpg", "Radius_Head_Right_Image.jpg"]
+}
