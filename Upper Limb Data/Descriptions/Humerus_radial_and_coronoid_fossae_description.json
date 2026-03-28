@@ -1,5 +1,4 @@
 {
-    "slide_number": 14,
     "name": "Radial and Coronoid fossae",
     "id": "radial_and_coronoid_fossae",
     "description": [
@@ -16,7 +15,8 @@
         ".",
         "Accommodates the",
         "coronoid process",
-        "of the ulna when the forearm is flexed at the elbow.",
-        "Labels"
-    ]
+        "of the ulna when the forearm is flexed at the elbow."
+    ],
+    "images": ["Humerus_Condyles_Right_Image.jpg"]
+
 }

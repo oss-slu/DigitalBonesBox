@@ -1,0 +1,15 @@
+{
+  "name": "Hand",
+  "id": "hand",
+  "subbones": [
+    "scaphoid",
+    "lunate",
+    "triquetrum",
+    "pisiform",
+    "trapezium",
+    "trapezoid",
+    "capitate",
+    "hamate",
+    "metacarpals"
+  ]
+}
