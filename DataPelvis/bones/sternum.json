@@ -1,0 +1,9 @@
+{
+  "name": "Sternum",
+  "id": "sternum",
+  "subbones": [
+    "sternum_manubrium",
+    "sternum_body",
+    "sternum_xiphoid_process"
+  ]
+}
