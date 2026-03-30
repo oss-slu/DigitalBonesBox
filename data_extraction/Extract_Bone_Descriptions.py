@@ -1,8 +1,10 @@
 import xml.etree.ElementTree as ET
 import json
 import os
-import argparse
 import sys
+
+slides_dir = "ppt/slides"
+output_filename = "all_bone_descriptions.json"
 
 def extract_descriptions_from_slide(xml_file): # Extract descriptions from a single slide XML file
     try:
@@ -207,3 +209,12 @@ if __name__ == "__main__":
     os.makedirs(args.output_dir, exist_ok=True)
     success = process_all_slides(args.ppt_dir, args.output_dir)
     sys.exit(0 if success else 1)
+    with open(output_json_path, 'w') as f:
+        json.dump(bone_data, f, indent=4)
+    
+    print(f"Descriptions saved to {output_json_path}")
+
+# Example usage
+xml_file = "/Users/joshbudzynski/Downloads/example_folder/ppt/slides/slide3.xml"
+output_json = "slide3_Descriptions.json"
+parse_slide_xml(xml_file, output_json)
