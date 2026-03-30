@@ -1,43 +1,110 @@
-<span 
-    id="text-button-Help" 
-    role="button"
-    tabindex="0"
-    aria-haspopup="dialog"
-    aria-controls="help-modal"
+<style>
+  #help-modal-content {
+    max-height: 85vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+  .help-content {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
+    display: block !important;
+  }
+  #close-help-modal {
+    flex-shrink: 0 !important;
+  }
+</style>
+
+<span
+  id="text-button-Help"
+  role="button"
+  tabindex="0"
+  aria-haspopup="dialog"
+  aria-controls="help-modal"
 >
-    Help
+  Help
 </span>
 
-<div 
-    id="help-modal" 
-    class="help-modal" 
-    role="dialog"
-    aria-labelledby="help-modal-title"
-    aria-modal="true"
-    aria-hidden="true"
+<div
+  id="help-modal"
+  class="help-modal"
+  role="dialog"
+  aria-labelledby="help-modal-title"
+  aria-modal="true"
+  aria-hidden="true"
+  style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+  "
 >
-    <div 
-        id="help-modal-content" 
-        class="help-modal-content"
-        role="document"
+  <div
+    id="help-modal-content"
+    class="help-modal-content"
+    role="document"
+    style="
+      background: white;
+      width: 95%;
+      max-width: 800px;
+      padding: 20px;
+      border-radius: 16px;
+      box-sizing: border-box;
+    "
+  >
+    <h2
+      id="help-modal-title"
+      style="
+        flex-shrink: 0;
+        text-align: center;
+        border-bottom: 2px solid #eab308;
+        padding-bottom: 10px;
+        margin-top: 0;
+      "
     >
-        <h2 id="help-modal-title">How to Use the Bone Set Viewer</h2>
-        <div class="help-content">
-            <ul>
-                <li>Use the dropdown menus to navigate through the bone sets</li>
-                <li>Select a boneset first, then choose specific bones</li>
-                <li>View detailed images and descriptions for each selection</li>
-                <li>Use the Previous/Next buttons to browse through items</li>
-                <li>Press ESC key or click Close to dismiss this help window</li>
-            </ul>
-            <button 
-                id="close-help-modal" 
-                type="button" 
-                class="btn"
-                aria-label="Close help modal"
-            >
-                Close Guide
-            </button>
-        </div>
+      How to Use the Bone Set Viewer
+    </h2>
+
+    <div class="help-content" style="padding-right: 10px; margin-bottom: 15px">
+      <ul>
+        <li>Use the dropdown menus to navigate through the bone sets</li>
+        <li>Select a boneset first, then choose specific bones</li>
+        <li>View detailed images and descriptions for each selection</li>
+        <li>Use the Previous/Next buttons to browse through items</li>
+        <li>Press ESC key or click Close to dismiss this help window</li>
+        <br />
+        <li><i>Scroll test 1...</i></li>
+        <li><i>Scroll test 2...</i></li>
+        <li><i>Scroll test 3...</i></li>
+        <li><i>Scroll test 4...</i></li>
+        <li><i>Scroll test 5...</i></li>
+      </ul>
     </div>
+
+    <button
+      id="close-help-modal"
+      type="button"
+      class="btn"
+      aria-label="Close help modal"
+      style="
+        padding: 15px;
+        background: #1e40af;
+        color: white;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        width: 100%;
+      "
+    >
+      Close Guide
+    </button>
+  </div>
 </div>
