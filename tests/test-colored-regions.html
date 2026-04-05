@@ -87,12 +87,24 @@
 
         function addLog(type, ...args) {
             const timestamp = new Date().toLocaleTimeString();
-            const message = args.map(arg => 
+            const message = args.map(arg =>
                 typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
             ).join(' ');
             const className = type === 'error' ? 'error' : type === 'warn' ? 'warning' : 'success';
-            logs.push(`<span class="${className}">[${timestamp}] ${type.toUpperCase()}: ${message}</span>`);
-            consoleDiv.innerHTML = logs.slice(-50).join('\n');
+            const span = document.createElement('span');
+            span.className = className;
+            span.textContent = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+            logs.push(span);
+
+            // Render last 50 log entries safely without using innerHTML for tainted content
+            const recentLogs = logs.slice(-50);
+            consoleDiv.textContent = '';
+            recentLogs.forEach((entry, index) => {
+                if (index > 0) {
+                    consoleDiv.appendChild(document.createTextNode('\n'));
+                }
+                consoleDiv.appendChild(entry);
+            });
             consoleDiv.scrollTop = consoleDiv.scrollHeight;
         }
 
