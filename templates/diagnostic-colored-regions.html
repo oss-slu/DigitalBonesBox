@@ -110,6 +110,18 @@
 
         window.diagnosticLog = [];
 
+        function escapeHtml(str) {
+            if (str === null || str === undefined) {
+                return '';
+            }
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function addLog(type, message, data = null) {
             const timestamp = new Date().toLocaleTimeString();
             const logEntry = { timestamp, type, message, data };
@@ -118,9 +130,11 @@
             const output = document.getElementById('diagnosticOutput');
             const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
             
-            let html = `<div class="status ${className}"><strong>[${timestamp}] ${type.toUpperCase()}:</strong> ${message}`;
+            const safeMessage = escapeHtml(message);
+            let html = `<div class="status ${className}"><strong>[${timestamp}] ${type.toUpperCase()}:</strong> ${safeMessage}`;
             if (data) {
-                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                const safeData = escapeHtml(JSON.stringify(data, null, 2));
+                html += `<pre>${safeData}</pre>`;
             }
             html += '</div>';
             
@@ -260,7 +274,7 @@
                 resultsDiv.innerHTML = `
                     <div class="status error">
                         <strong>❌ Error Creating SVG</strong><br>
-                        ${error.message}
+                        ${escapeHtml(error.message)}
                     </div>
                 `;
             }
