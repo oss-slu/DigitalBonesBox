@@ -1,6 +1,6 @@
-# Contributing to Digital Bones Box
+# Contributing to Digital Bone Box
 
-Thank you for checking out **Digital Bones Box**! We are so happy you are here. If you are intrested in contributing to the project below are some guidelines that help us make most out of your contribution. For more detailed documentation, see the `Docs/` folder.
+Thank you for checking out **Digital Bone Box**! We are so happy you are here. If you are intrested in contributing to the project below are some guidelines that help us make most out of your contribution. For more detailed documentation, see the `Docs/` folder.
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ Thank you for checking out **Digital Bones Box**! We are so happy you are here. 
 
 ### 1. **Fork the Repository**
 
-- Navigate to the Digital Bones Box repository on GitHub
+- Navigate to the Digital Bone Box repository on GitHub
 - Click the "Fork" button on the top right of the repository page to create your own copy.
 
 ### 2. **Clone Your Fork**

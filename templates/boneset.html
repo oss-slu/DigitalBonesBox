@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Digital Bones Box - Bone Set Viewer</title>
+    <title>Digital Bone Box - Bone Set Viewer</title>
     
     <!-- Favicon -->
     <link rel="icon" href="data:,">
@@ -52,14 +52,14 @@
     <main id="editor-view" role="main">
         <div class="container">
             <header class="page-header">
-                <h1>Digital Bones Box</h1>
+                <h1>Digital Bone Box</h1>
                 <p class="subtitle">Interactive Anatomical Learning Platform</p>
             </header>
             
             <!-- Search Section -->
             <section class="search-section">
                 <div class="form-group">
-                    <label for="search-bar">Search Bones and Sub-bones</label>
+                    <label for="search-bar">Search Bones and Bone Parts</label>
                     <div class="search-container">
                         <input type="text" 
                                id="search-bar" 
@@ -101,14 +101,14 @@
                         </div>
                         
                         <div class="select-group">
-                            <label for="subbone-select">Sub-bone</label>
+                            <label for="subbone-select">Bone Part</label>
                             <select id="subbone-select"
                                     name="boneId"
                                     hx-get="http://127.0.0.1:8000/api/description/" 
                                     hx-target="#description-Container"
                                     hx-trigger="change"
                                     disabled>
-                                <option value="">Select a sub-bone</option>
+                                <option value="">Select a bone part</option>
                             </select>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
                     <div class="description-content">
                         <ul id="description-Container" role="list" aria-live="polite"></ul>
                         <div class="description-placeholder">
-                            <p>Select a bone or sub-bone above to view detailed anatomical descriptions.</p>
+                            <p>Select a bone or bone part above to view detailed anatomical descriptions.</p>
                         </div>
                     </div>
                 </section>
@@ -195,10 +195,10 @@
     <!-- NEW Help Modal - Clean Version -->
     <div id="new-help-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 99999; align-items: center; justify-content: center;">
         <div style="background: white; padding: 40px; border-radius: 16px; max-width: 650px; margin: 20px; border: 3px solid #FFD700; box-shadow: 0 25px 60px rgba(0,0,0,0.4);">
-            <h2 style="color: #003366; text-align: center; margin-bottom: 25px; border-bottom: 3px solid #FFD700; padding-bottom: 15px; font-size: 1.6rem; font-weight: bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">How to Use the Digital Bones Box</h2>
+            <h2 style="color: #003366; text-align: center; margin-bottom: 25px; border-bottom: 3px solid #FFD700; padding-bottom: 15px; font-size: 1.6rem; font-weight: bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">How to Use the Digital Bone Box</h2>
             <div style="margin: 25px 0;">
                 <div style="color: #2d3748; font-size: 1.1rem; line-height: 1.8; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 30px; border-radius: 12px; border-left: 5px solid #0369a1; margin-bottom: 25px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                    <p style="margin: 0 0 20px 0; font-weight: 500; color: #1a365d;">Welcome to the <strong>Digital Bones Box</strong>, your interactive anatomical learning platform.</p>
+                    <p style="margin: 0 0 20px 0; font-weight: 500; color: #1a365d;">Welcome to the <strong>Digital Bone Box</strong>, your interactive anatomical learning platform.</p>
                     
                     <p style="margin: 0 0 15px 0;">Getting started is simple:</p>
                     
@@ -217,7 +217,7 @@
                         </li>
                         <li style="margin: 8px 0; position: relative; padding-left: 25px;">
                             <span style="position: absolute; left: 0; color: #0369a1; font-weight: bold;">•</span>
-                            Select sub-bones for more specific anatomical details
+                            Select bone parts for more specific anatomical details
                         </li>
                         <li style="margin: 8px 0; position: relative; padding-left: 25px;">
                             <span style="position: absolute; left: 0; color: #0369a1; font-weight: bold;">•</span>

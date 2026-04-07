@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the automated data extraction pipeline for processing PowerPoint anatomy presentations and converting them into structured JSON data for the Digital Bones Box web application.
+This document describes the automated data extraction pipeline for processing PowerPoint anatomy presentations and converting them into structured JSON data for the Digital Bone Box web application.
 
 The extraction process involves multiple Python scripts that work together to extract different types of data from PowerPoint XML files:
 
