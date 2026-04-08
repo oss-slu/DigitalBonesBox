@@ -103,6 +103,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    const toggleLabelsButton = document.getElementById("toggle-labels-button");
+    if (toggleLabelsButton) {
+        toggleLabelsButton.addEventListener("click", () => {
+            const imageContainer = document.getElementById("bone-image-container");
+            if (!imageContainer) return;
+
+            imageContainer.classList.toggle("labels-hidden");
+            const isHidden = imageContainer.classList.contains("labels-hidden");
+            toggleLabelsButton.textContent = isHidden ? "Show Labels" : "Hide Labels";
+        });
+    }
+
     // (No auto-select) The UI shows the boneset placeholder and waits for user selection
 
     // 8. Initialize display

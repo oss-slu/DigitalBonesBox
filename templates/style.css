@@ -1800,6 +1800,10 @@ button:disabled {
     height: 100%;
 }
 
+#bone-image-container.labels-hidden .annotation-labels {
+    visibility: hidden !important;
+}
+
 /* In templates/style.css */
 
 /* Lines: Use a dark color and a thin stroke */
