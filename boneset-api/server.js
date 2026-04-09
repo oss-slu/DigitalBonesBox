@@ -343,15 +343,28 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
 
     try {
-        // Fetch annotation data from GitHub
-        const annotationResult = await fetchJSON(GITHUB_ANNOTATION_URL);
-        const annotationData = annotationResult.data;
-        if (!annotationData) {
-            const status = annotationResult.status;
-            const errorMessage = `Failed to fetch annotation data (HTTP ${status})`;
-            return res.status(status).json({ 
-                error: errorMessage
-            });
+        // Try to fetch annotation data from local file first (for testing)
+        // Fall back to GitHub if local file doesn't exist
+        let annotationData = null;
+        const localAnnotationPath = path.join(__dirname, `../DataPelvis/annotations/text_label_annotations/${annotationFilename}`);
+        
+        try {
+            const localContent = await fs.readFile(localAnnotationPath, 'utf-8');
+            annotationData = JSON.parse(localContent);
+            console.log(`Loaded annotation data from local file: ${annotationFilename}`);
+        } catch (localErr) {
+            // Local file not found or parse error, fetch from GitHub
+            // const annotationResult = await fetchJSON(GITHUB_ANNOTATION_URL);
+            // const annotationData = annotationResult.data;
+            const annotationResult = await fetchJSON(GITHUB_ANNOTATION_URL);
+            annotationData = annotationResult.data;
+            if (!annotationData) {
+                const status = annotationResult.status;
+                const errorMessage = `Failed to fetch annotation data (HTTP ${status})`;
+                return res.status(status).json({ 
+                    error: errorMessage
+                });
+            }
         }
         
         // Fetch the rotation/scaling template data from GitHub
