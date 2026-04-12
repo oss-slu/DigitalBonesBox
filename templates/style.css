@@ -1804,6 +1804,10 @@ button:disabled {
     visibility: hidden !important;
 }
 
+#bone-image-container.labels-hidden .annotation-svg {
+    visibility: hidden !important;
+}
+
 /* In templates/style.css */
 
 /* Lines: Use a dark color and a thin stroke */

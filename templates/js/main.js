@@ -110,8 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!imageContainer) return;
 
             imageContainer.classList.toggle("labels-hidden");
-            const isHidden = imageContainer.classList.contains("labels-hidden");
-            toggleLabelsButton.textContent = isHidden ? "Show Labels" : "Hide Labels";
+            // Button text remains "Toggle Labels"
         });
     }
 
