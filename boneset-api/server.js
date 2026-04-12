@@ -14,7 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
-const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
+const BONESET_JSON_URL = `${GITHUB_REPO}boneset/`;
+const BONESET_NAMES_URL = ["bony_pelvis", "skull", "thorax", "vertebrae", "upper_limb", "lower_limb"]; // List of boneset JSON files to load 
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
 
@@ -65,18 +66,21 @@ async function fetchJSON(url) {
     }
 }
 
+
 // Initialize search cache at startup
 async function initializeSearchCache() {
     try {
         console.log("Initializing search cache...");
-        const bonesetResult = await fetchJSON(BONESET_JSON_URL);
-        const bonesetData = bonesetResult.data;
-        if (!bonesetData) {
-            console.error("Failed to load boneset data for search cache");
-            return;
-        }
+        for (const bonesetUrl of BONESET_NAMES_URL) {
+            const bonesetUrl = await fetchJSON(bonesetUrl);
+            const bonesetData = bonesetUrl.data;
 
-        const searchData = [];
+            if (!bonesetData) {
+                console.warn(`Failed to load boneset data from ${bonesetUrl}`);
+                return;
+            }
+
+             const searchData = [];
 
         // Add boneset to search data
         searchData.push({
@@ -120,6 +124,9 @@ async function initializeSearchCache() {
 
         searchCache =  searchData;
         console.log(`Search cache initialized with ${searchData.length} items`);
+        
+        }
+
     } catch (error) {
         console.error("Error initializing search cache:", error);
     }
@@ -165,29 +172,33 @@ app.get("/", (_req, res) => {
  */
 app.get("/combined-data", async (_req, res) => {
     try {
-        const bonesetResult = await fetchJSON(BONESET_JSON_URL);
-        const bonesetData = bonesetResult.data;
-        if (!bonesetData) {
-            return res.status(bonesetResult.status).json({ error: "Failed to load boneset data" });
-        }
-
-        const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
-        const bones = [];
-        const subbones = [];
-
-        for (const boneId of bonesetData.bones || []) {
-            const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
-            const boneData = boneResult.data;
-            if (boneData) {
-                bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
-                (boneData.subBones || []).forEach((subBoneId) => {
-                    subbones.push({ id: subBoneId, name: subBoneId.replace(/_/g, " "), bone: boneData.id });
-                });
+        for (const bonesetUrl of BONESET_NAMES_URL) {
+            const bonesetJsonResult = `${BONESET_JSON_URL}${bonesetUrl}.json`;
+            const bonesetResult = await fetchJSON(bonesetJsonResult);
+            const bonesetData = bonesetResult.data;
+            if (!bonesetData) {
+                return res.status(bonesetResult.status).json({ error: "Failed to load boneset data" });
             }
-        }
+            
+            const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
+            const bones = [];
+            const subbones = [];
 
-        res.json({ bonesets, bones, subbones });
-    } catch (error) {
+            for (const boneId of bonesetData.bones || []) {
+                const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+                const boneData = boneResult.data;
+                if (boneData) {
+                    bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
+                    (boneData.subBones || []).forEach((subBoneId) => {
+                        subbones.push({ id: subBoneId, name: subBoneId.replace(/_/g, " "), bone: boneData.id });
+                    });
+                }
+            }
+
+            res.json({ bonesets, bones, subbones });
+        }
+        
+    }catch (error) {
         console.error("Error fetching combined data:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
     }
