@@ -1,3 +1,10 @@
+[![Lint and Test JavaScript](https://github.com/oss-slu/DigitalBonesBox/actions/workflows/lint.yml/badge.svg)](https://github.com/oss-slu/DigitalBonesBox/actions/workflows/lint.yml)
+![GitHub License](https://img.shields.io/github/license/oss-slu/DigitalBonesBox)
+
+[![Learn About Us at OSS](https://img.shields.io/badge/Learn_About_Us_at-OSS-003AA6)](https://oss-slu.github.io/projects/digital_bone_box/about)
+[![Chat on Slack](https://img.shields.io/badge/Chat_on-Slack-4A154B?logo=slack)](https://join.slack.com/t/oswslu/shared_invite/zt-24f0qhjbo-NkSfQ4LOg5wXxBdxP4vzfA)
+[![Donate to OSS](https://img.shields.io/badge/Donate_to-OSS-003AA6)](https://oss-slu.github.io/connect_with/donate)
+
 # DigitalBoneBox : A Web-Based Study Tool for Human Anatomy
 
 This project is a Web App project aims to convert an existing PowerPoint-based educational tool into an interactive, mobile-friendly web application.
@@ -20,10 +27,10 @@ presentations created by Prof. Brian Elliott.
 
 This project was developed using the following technologies:
 
-Node.js: Used for server-side development to handle requests and serve the application.
-HTML: For structuring the content of the web pages.
-HTMX: A lightweight JavaScript library for enhancing interactivity by allowing partial page updates without a full page reload.
-CSS: For styling and layout of the web pages to ensure a clean and responsive design for users across devices.
+* Node.js: Used for server-side development to handle requests and serve the application.
+* HTML: For structuring the content of the web pages.
+* HTMX: A lightweight JavaScript library for enhancing interactivity by allowing partial page updates without a full page reload.
+* CSS: For styling and layout of the web pages to ensure a clean and responsive design for users across devices.
 
 ## Features
 
