@@ -175,7 +175,7 @@ async fetchBoneImage(itemId, container) {
             let imageUrl = data.images[0].url;
             const img = document.createElement("img");
             img.src = imageUrl;
-            img.alt = itemId;
+            img.alt = "Bone image for quiz question";
             img.style.maxWidth = "100%";
             img.style.maxHeight = "400px";
             img.style.objectFit = "contain";
