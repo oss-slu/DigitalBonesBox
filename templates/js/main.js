@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (subboneSelectEl) {
         subboneSelectEl.disabled = true;
         // Ensure the placeholder is present and selected
-        subboneSelectEl.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
+        subboneSelectEl.innerHTML = "<option value=\"\">--Please choose a Bone Part--</option>";
         subboneSelectEl.selectedIndex = 0;
     }
 
@@ -114,7 +114,7 @@ function populateSubboneDropdown(dropdown, subbones) {
     dropdown.innerHTML = "";
     const placeholder = document.createElement("option");
     placeholder.value = "";
-    placeholder.textContent = "--Please choose a Sub-Bone--";
+    placeholder.textContent = "--Please choose a Bone Part--";
     dropdown.appendChild(placeholder);
 
     if (!subbones || subbones.length === 0) {

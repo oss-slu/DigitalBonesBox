@@ -93,7 +93,7 @@ bonesetSelect.addEventListener("change", (e) => {
   const selectedBonesetId = e.target.value;
 
   boneSelect.innerHTML    = "<option value=\"\">--Please choose a Bone--</option>";
-  subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
+  subboneSelect.innerHTML = "<option value=\"\">--Please choose a Bone Part--</option>";
   subboneSelect.disabled  = true;
 
   const relatedBones = combinedData.bones.filter(b => b.boneset === selectedBonesetId);
@@ -139,7 +139,7 @@ bonesetSelect.addEventListener("change", (e) => {
 boneSelect.addEventListener("change", (e) => {
   const selectedBoneId = e.target.value;
 
-  subboneSelect.innerHTML = "<option value=\"\">--Please choose a Sub-Bone--</option>";
+  subboneSelect.innerHTML = "<option value=\"\">--Please choose a Bone Part--</option>";
 
   const relatedSubbones = combinedData.subbones.filter(sb => sb.bone === selectedBoneId);
   relatedSubbones.forEach(sb => {

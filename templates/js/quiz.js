@@ -1,4 +1,4 @@
-// quiz.js - Quiz functionality for Digital Bones Box
+// quiz.js - Quiz functionality for Digital Bone Box
 
 import {fetchBoneData, fetchCombinedData} from "./api.js";
 import {displayColoredRegions} from "./coloredRegionsOverlay.js";
@@ -262,7 +262,7 @@ startQuiz() {
             </div>
             
             <div class="quiz-content">
-                <h2 id="quiz-question-text">What bone or sub-bone is this?</h2>
+                <h2 id="quiz-question-text">What bone or bone part is this?</h2>
                 <div id="quiz-bone-image"></div>
                 <div id="quiz-choices"></div>
             </div>
@@ -318,7 +318,7 @@ startQuiz() {
         // Update question text
         const questionText = document.getElementById("quiz-question-text");
         if (questionText) {
-            questionText.textContent = "What bone or sub-bone is this?";
+            questionText.textContent = "What bone or bone part is this?";
         }
 
         // Update bone image - fetch from API
