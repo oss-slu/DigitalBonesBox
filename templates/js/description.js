@@ -1,5 +1,5 @@
 // js/description.js
-const GITHUB_RAW_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/";
+const GITHUB_RAW_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/descriptions/";
 
 export async function loadDescription(id) {
     const container = document.getElementById("description-Container");

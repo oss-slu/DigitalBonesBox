@@ -228,7 +228,7 @@ DEFAULT_OPACITY: 0.4  // Change this value (0.0 to 1.0)
 If colored region files move to a different location:
 In `coloredRegionsOverlay.js`, line 13:
 ```javascript
-BASE_URL: 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/annotations/ColoredRegions'
+BASE_URL: 'https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/annotations/ColoredRegions'
 ```
 
 ## Troubleshooting

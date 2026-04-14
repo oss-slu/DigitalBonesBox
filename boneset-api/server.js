@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
-const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/";
+const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
@@ -249,7 +249,7 @@ app.get("/api/description/", async (req, res) => {
         return res.send("<li>Invalid bone ID.</li>");
     }
     
-    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
+    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/descriptions/${boneId}_description.json`;
 
     try {
         const response = await axios.get(GITHUB_DESC_URL);
@@ -287,8 +287,8 @@ app.get("/api/bone-data/", async (req, res) => {
     }
     
     // Build GitHub URL for the description JSON
-    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/descriptions/${boneId}_description.json`;
-    const GITHUB_IMAGES_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/DataPelvis/images/";
+    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/descriptions/${boneId}_description.json`;
+    const GITHUB_IMAGES_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/images/";
 
     try {
         // Fetch the description JSON from GitHub
