@@ -15,7 +15,7 @@ app.use(express.json());
 
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/";
 const BONESET_JSON_URL = `${GITHUB_REPO}boneset/`;
-const BONESET_NAMES = ["bony_pelvis", "skull", "thorax", "vertebrae", "upper_limb", "lower_limb"];
+const BONESET_NAMES = ["bony_pelvis", "skull", "thorax", "vertebrae"];
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
 
@@ -169,6 +169,9 @@ app.get("/", (_req, res) => {
  */
 app.get("/combined-data", async (_req, res) => {
     try {
+        const bonesets = [];
+        const bones = [];
+        const subbones = [];
         for (const bonesetName of BONESET_NAMES) {
             const bonesetJsonUrl = `${BONESET_JSON_URL}${bonesetName}.json`;
             const bonesetResult = await fetchJSON(bonesetJsonUrl);
@@ -176,10 +179,8 @@ app.get("/combined-data", async (_req, res) => {
             if (!bonesetData) {
                 return res.status(bonesetResult.status).json({ error: "Failed to load boneset data" });
             }
-            
-            const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
-            const bones = [];
-            const subbones = [];
+
+            bonesets.push({id: bonesetData.id, name: bonesetData.name});
 
             for (const boneId of bonesetData.bones || []) {
                 const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
@@ -191,8 +192,8 @@ app.get("/combined-data", async (_req, res) => {
                     });
                 }
             }
-            res.json({ bonesets, bones, subbones });
         }
+        res.json({bonesets, bones, subbones});
     } catch (error) {
         console.error("Error fetching combined data:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
