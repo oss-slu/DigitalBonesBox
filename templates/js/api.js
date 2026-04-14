@@ -41,7 +41,7 @@ export async function fetchMockBoneData() {
 
 /**
  * Fetch full bone data (description + images) for a single bone from the backend API.
- * The backend pulls these files from the DataPelvis GitHub branch.
+ * The backend pulls these files from the data GitHub branch.
  * @param {string} boneId
  * @returns {Object|null} bone data or null on error
  */
