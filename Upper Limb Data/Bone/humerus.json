@@ -1,0 +1,18 @@
+{
+  "name": "Humerus",
+  "id": "humerus",
+  "subBones": [
+    "head",
+    "greater_tubercle",
+    "lesser_tubercle",
+    "intertubercular_sulcus",
+    "anatomical_neck",
+    "shaft",
+    "deltoid_tuberosity",
+    "radial_sulcus",
+    "condyles",
+    "radial_and_coronoid_fossae",
+    "olecranon_fossa",
+    "capitulum_and_trochlea"
+  ]
+}
