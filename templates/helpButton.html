@@ -1,43 +1,227 @@
-<span 
-    id="text-button-Help" 
-    role="button"
-    tabindex="0"
-    aria-haspopup="dialog"
-    aria-controls="help-modal"
->
-    Help
-</span>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digital Bones Box - Bone Set Viewer</title>
 
-<div 
-    id="help-modal" 
-    class="help-modal" 
-    role="dialog"
-    aria-labelledby="help-modal-title"
-    aria-modal="true"
-    aria-hidden="true"
->
-    <div 
-        id="help-modal-content" 
-        class="help-modal-content"
-        role="document"
-    >
-        <h2 id="help-modal-title">How to Use the Bone Set Viewer</h2>
-        <div class="help-content">
-            <ul>
-                <li>Use the dropdown menus to navigate through the bone sets</li>
-                <li>Select a boneset first, then choose specific bones</li>
-                <li>View detailed images and descriptions for each selection</li>
-                <li>Use the Previous/Next buttons to browse through items</li>
-                <li>Press ESC key or click Close to dismiss this help window</li>
-            </ul>
-            <button 
-                id="close-help-modal" 
-                type="button" 
-                class="btn"
-                aria-label="Close help modal"
-            >
-                Close Guide
-            </button>
+    <link rel="icon" href="data:," />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  </head>
+
+  <body>
+    <header id="badge" role="banner">
+      <div class="header-left">
+        <button
+          id="toggle-sidebar"
+          type="button"
+          aria-label="Toggle navigation menu"
+        >
+          ☰
+        </button>
+        <nav class="main-navigation" role="navigation">
+          <button id="text-button-Home" type="button">Home</button>
+          <button id="text-button-Tutor" type="button">Tutor</button>
+          <button id="text-button-Study" type="button">Study</button>
+          <button
+            id="start-quiz-btn"
+            type="button"
+            aria-haspopup="dialog"
+            aria-controls="quiz-modal"
+          >
+            Quiz Me
+          </button>
+          <button
+            id="text-button-Help"
+            type="button"
+            aria-haspopup="dialog"
+            aria-controls="new-help-modal"
+            onclick="
+              document.getElementById('new-help-modal').style.display = 'flex'
+            "
+          >
+            Help
+          </button>
+        </nav>
+      </div>
+
+      <div class="header-right">
+        <div id="innerbadge">
+          <span id="text-button-Login" role="button" tabindex="0">Login</span>
+          <span id="text-button-SignUp" role="button" tabindex="0"
+            >Sign Up</span
+          >
         </div>
+      </div>
+    </header>
+
+    <aside id="sidebar-container" role="complementary"></aside>
+
+    <main id="editor-view" role="main">
+      <div class="container">
+        <header class="page-header">
+          <h1>Digital Bones Box</h1>
+          <p class="subtitle">Interactive Anatomical Learning Platform</p>
+        </header>
+
+        <section class="selection-section">
+          <div class="form-group">
+            <label>Select Anatomical Structure</label>
+            <div class="form-row">
+              <div class="select-group">
+                <label for="boneset-select">Boneset</label>
+                <select id="boneset-select" name="boneId">
+                  <option value="">Select a boneset</option>
+                </select>
+              </div>
+
+              <div class="select-group">
+                <label for="bone-select">Bone</label>
+                <select id="bone-select" name="boneId" disabled>
+                  <option value="">Select a bone</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="content-grid">
+          <section id="bone-Description-Container" class="description-panel">
+            <div class="panel-header"><h2>Anatomical Description</h2></div>
+            <div class="description-content">
+              <ul id="description-Container"></ul>
+            </div>
+          </section>
+
+          <section id="bone-images-section" class="images-panel">
+            <div class="panel-header"><h2>Visual Reference</h2></div>
+            <div id="bone-image-container"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <div
+      id="new-help-modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+      "
+    >
+      <div
+        style="
+          background: white;
+          padding: 30px;
+          border-radius: 16px;
+          width: 100%;
+          max-width: 650px;
+          border: 3px solid #ffd700;
+          box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+          max-height: 90vh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          box-sizing: border-box;
+        "
+      >
+        <h2
+          style="
+            flex-shrink: 0;
+            color: #003366;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #ffd700;
+            padding-bottom: 15px;
+            font-weight: bold;
+          "
+        >
+          How to Use the Digital Bones Box
+        </h2>
+
+        <div
+          style="
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+            padding-right: 10px;
+            margin-bottom: 20px;
+          "
+        >
+          <div
+            style="
+              color: #2d3748;
+              font-size: 1.1rem;
+              line-height: 1.8;
+              background: #f7fafc;
+              padding: 25px;
+              border-radius: 12px;
+              border-left: 5px solid #0369a1;
+            "
+          >
+            <p style="margin-bottom: 15px">
+              Welcome! Getting started is simple:
+            </p>
+            <ul style="padding-left: 20px">
+              <li>Use dropdowns to navigate bone sets.</li>
+              <li>Select a boneset first to enable bone selection.</li>
+              <li>View detailed images and descriptions.</li>
+              <li>Click <strong>"Quiz Me"</strong> to test your knowledge!</li>
+            </ul>
+            <p style="margin-top: 15px; font-style: italic; color: #718096">
+              Press ESC to close.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onclick="
+            document.getElementById('new-help-modal').style.display = 'none'
+          "
+          type="button"
+          style="
+            flex-shrink: 0;
+            background: #003366;
+            color: white;
+            border: 2px solid #ffd700;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+          "
+        >
+          Close Guide
+        </button>
+      </div>
     </div>
-</div>
+
+    <script type="module" src="js/main.js"></script>
+    <script>
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape")
+          document.getElementById("new-help-modal").style.display = "none";
+      });
+    </script>
+  </body>
+</html>
