@@ -2,14 +2,14 @@
   "name": "Hand",
   "id": "hand",
   "subBones": [
-    "scaphoid",
-    "lunate",
-    "triquetrum",
-    "pisiform",
-    "trapezium",
-    "trapezoid",
-    "capitate",
-    "hamate",
-    "metacarpals"
+    "hand_scaphoid",
+    "hand_lunate",
+    "hand_triquetrum",
+    "hand_pisiform",
+    "hand_trapezium",
+    "hand_trapezoid",
+    "hand_capitate",
+    "hand_hamate",
+    "hand_metacarpals"
   ]
 }

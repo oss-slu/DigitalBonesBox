@@ -2,17 +2,17 @@
   "name": "Humerus",
   "id": "humerus",
   "subBones": [
-    "head",
-    "greater_tubercle",
-    "lesser_tubercle",
-    "intertubercular_sulcus",
-    "anatomical_neck",
-    "shaft",
-    "deltoid_tuberosity",
-    "radial_sulcus",
-    "condyles",
-    "radial_and_coronoid_fossae",
-    "olecranon_fossa",
-    "capitulum_and_trochlea"
+    "humerus_head",
+    "humerus_greater_tubercle",
+    "humerus_lesser_tubercle",
+    "humerus_intertubercular_sulcus",
+    "humerus_anatomical_neck",
+    "humerus_shaft",
+    "humerus_deltoid_tuberosity",
+    "humerus_radial_sulcus",
+    "humerus_condyles",
+    "humerus_radial_and_coronoid_fossae",
+    "humerus_olecranon_fossa",
+    "humerus_capitulum_and_trochlea"
   ]
 }

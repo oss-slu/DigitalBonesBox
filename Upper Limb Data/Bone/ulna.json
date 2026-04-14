@@ -2,11 +2,11 @@
   "name": "Ulna",
   "id": "ulna",
   "subBones": [
-    "olecranon_process",
-    "trochlear_notch",
-    "coronoid_process",
-    "ulnar_tuberosity",
-    "radial_notch",
-    "styloid_process"
+    "ulna_olecranon_process",
+    "ulna_trochlear_notch",
+    "ulna_coronoid_process",
+    "ulna_ulnar_tuberosity",
+    "ulna_radial_notch",
+    "ulna_styloid_process"
   ]
 }
