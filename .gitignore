@@ -22,6 +22,3 @@ Thumbs.db
 # Cache files
 __pycache__/
 *.pyc
-
-# XML files
-*.xml
