@@ -10,6 +10,7 @@
     "hand_trapezoid",
     "hand_capitate",
     "hand_hamate",
-    "hand_metacarpals"
+    "hand_metacarpals",
+    "hand_phalanges"
   ]
 }
