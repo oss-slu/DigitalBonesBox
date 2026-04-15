@@ -7,5 +7,5 @@
         "Articulates at distal end with radius and ulna at elbow joint",
         "No labels"
     ],
-  "images": ["Humerus_Left_Image.jpg","Humerus_Right_Image.jpg"]
+  "images": ["humerus_left_image.jpg","humerus_right_image.jpg"]
 }

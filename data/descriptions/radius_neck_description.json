@@ -5,5 +5,5 @@
         "A constriction that is located just distal to the head.",
         "Round in cross-section."
     ],
-    "images": ["Radius_Head_Left_Image.jpg", "Radius_Head_Right_Image.jpg"]
+    "images": ["radius_head_left_image.jpg", "radius_head_right_image.jpg"]
 }

@@ -6,6 +6,5 @@
         "Articulates with the hamate and the lunate bones.",
         "Is the only bone that articulates with the pisiform bone."
     ],
-    "images": ["Hand_Bones_Left_Image.jpg", "Hand_Bones_Right_Image.jpg"]
-
+    "images": ["hand_left_image.jpg", "hand_right_image.jpg"]
 }

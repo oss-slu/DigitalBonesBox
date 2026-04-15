@@ -15,5 +15,5 @@
         "The thumb only has a proximal and distal phalanx.",
         "Each phalanx has a base, shaft, and head from proximal to distal."
     ],
-    "images": ["Hand_Bones_Left_Image.jpg", "Hand_Bones_Right_Image.jpg"]
+    "images": ["hand_left_image.jpg", "hand_right_image.jpg"]
 }

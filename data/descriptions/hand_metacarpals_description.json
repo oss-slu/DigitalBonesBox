@@ -6,6 +6,5 @@
         "Each has a base, shaft, and head from proximal to distal.",
         "First metacarpal (thumb) is convex on its proximal surface and articulates with trapezium to form a saddle joint."
     ],
-    "images": ["Hand_Bones_Left_Image.jpg", "Hand_Bones_Right_Image.jpg"]
-
+    "images": ["hand_left_image.jpg", "hand_right_image.jpg"]
 }

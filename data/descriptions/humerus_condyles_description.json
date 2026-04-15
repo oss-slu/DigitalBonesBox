@@ -12,5 +12,5 @@
         "*Common extensor tendon: Extensor carpi radialis brevis, extensor digitorum, extensor digiti minimi, and extensor carpi ulnaris.",
         "**Common flexor tendon: flexor carpi radialis, palmaris longus, flexor carpi ulnaris, and flexor digitorum superficialis."
     ],
-    "images": ["Humerus_Condyles_Left_Image.jpg", "Humerus_Condyles_Right_Image.jpg"]
+    "images": ["humerus_condyles_left_image.jpg", "humerus_condyles_right_image.jpg"]
 }

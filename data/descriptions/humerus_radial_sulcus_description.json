@@ -1,6 +1,6 @@
 {
     "name": "Radial sulcus",
-    "id": "radial_sulcus",
+    "id": "humerus_radial_sulcus",
     "description": [
         "A spiraled groove on the posterior surface of the",
         "shaft",
@@ -9,5 +9,5 @@
         "Fractures of the shaft can damage these structures."
     
     ],
-    "images": ["Humerus_Radial_sulcus_Image.jpg"]
+    "images": ["humerus_radial_sulcus_image.jpg"]
 }

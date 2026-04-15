@@ -6,5 +6,5 @@
         "Forms a saddle joint with the first metacarpal bone (thumb).",
         "Palmar surface has a tubercle that attaches to the flexor retinaculum."
     ],
-    "images": ["Hand_Bones_Left_Image.jpg", "Hand_Bones_Right_Image.jpg"]
+    "images": ["hand_left_image.jpg", "hand_right_image.jpg"]
 }

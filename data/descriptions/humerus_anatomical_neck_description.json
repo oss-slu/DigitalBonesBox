@@ -7,8 +7,7 @@
         "Surgical neck",
         "indicates the most proximal portion of the shaft.",
         "Site of frequent fracture",
-        "Fractures here may damage the axillary nerve and the posterior circumflex humoral artery."
+        "Fractures here may damage the axillary nerve and the posterior circumflex humeral artery."
     ],
-    "images": ["Humerus_Head_Left_Image.jpg","Humerus_Head_Right_Image.jpg"]
-
+    "images": ["humerus_head_left_image.jpg","humerus_head_right_image.jpg"]
 }
