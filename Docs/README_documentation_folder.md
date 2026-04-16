@@ -14,6 +14,8 @@ This document provides a comprehensive security analysis of the application. It 
 * **Critical Vulnerabilities:** Risks associated with the unprotected `data` branch.
 * **Mitigation Strategy:** The roadmap for securing the supply chain.
 
+Much of the threat model document describes the old model for the app, which we are moving away from, which involves storing the app data in a separate branch in the repository and fetching it from GitHub while running the app. The new model involves storing the data directly in the server.
+
 ---
 
 ### 2. Visual Design Artifacts
@@ -22,9 +24,11 @@ This document provides a comprehensive security analysis of the application. It 
 
 This document contains visual diagrams illustrating:
 
-* **[Overall Data Flow](./overall_data_flow.png):** How data flows from the original PowerPoint files, through data extraction and uploading to the database, through the web app.
-* **[Backend Data Flow](./backend_data_flow.png):** How the app backend caches and serves data.
+* **[Old](./overall_data_flow_old.png) and [New Overall Data Flow](./overall_data_flow_new.png):** How data flows from the original PowerPoint files, through data extraction and uploading to the database, through the web app.
+* **[Old](./backend_data_flow_old.png) and [New Backend Data Flow](./backend_data_flow_new.png):** How the app backend caches and serves data.
 * **[Database Structure](./database_structure.png):** How the data in the database is structured.
+
+The old model for the app, which we are moving away from, involves storing the app data in a separate branch in the repository and fetching it from GitHub while running the app. This is reflected in the old diagrams. The new model, reflected in the new diagrams, involves storing the data directly in the server.
 
 ---
 
