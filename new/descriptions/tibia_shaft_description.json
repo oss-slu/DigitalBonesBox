@@ -2,9 +2,12 @@
     "name": "Shaft",
     "id": "tibia_shaft",
     "description": [
-        "Body of the tibia between the proximal and distal ends",
-        "Triangular in cross-section with medial, lateral, and posterior surfaces",
-        "Provides broad attachment areas for leg muscles and interosseous membrane",
-        "Labels"
+        "Has three surfaces separated by three borders",
+        "Anterior",
+        "Medial",
+        "Interosseous (lateral)",
+        "Triangular in cross section",
+        "Narrowest at junction of middle and distal thirds",
+        "Expands gradually at both ends"
     ]
 }

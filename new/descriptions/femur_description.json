@@ -2,14 +2,9 @@
     "name": "Femur",
     "id": "femur",
     "description": [
-        "Lower Limb",
-        "Patella",
-        "Tibia",
-        "Fibula",
-        "Foot",
-        "Right lower limb",
-        "(anterior aspect)",
-        "Right lower limb",
-        "(posterior aspect)"
+        "Longest bone in the human body.",
+        "Proximal head articulates with acetabulum of the pelvis to form hip joint.",
+        "Distal end articulates with the tibia to form the knee joint.",
+        "Shaft is long, mostly cylindrical, and has a slight anterior curve."
     ]
 }

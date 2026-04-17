@@ -2,11 +2,9 @@
     "name": "1st Metatarsal",
     "id": "1st_metatarsal",
     "description": [
-        "1st",
-        "metatarsal",
+        "1st metatarsal",
         "Tendon of tibialis anterior muscle attaches to the plantar surface at the base medially",
         "Tendon of fibularis longus muscle attaches to plantar surface at the base laterally",
-        "Gives origin to medial head of 1st",
-        "dorsal interosseous on lateral side"
+        "Gives origin to medial head of 1st dorsal interosseous on lateral side"
     ]
 }

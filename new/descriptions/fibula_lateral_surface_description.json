@@ -2,8 +2,9 @@
     "name": "Lateral surface",
     "id": "fibula_lateral_surface",
     "description": [
-        "Lies between anterior and posterior borders",
-        "Provides attachment surfaces for fibularis longus and fibularis brevis muscles",
-        "Labels"
+        "Proximal three quarters faces laterally",
+        "Distal quarter curves posterolaterally",
+        "Fibularis longus muscle attaches to proximal two-thirds",
+        "Fibularis brevis muscle attaches to distal two-thirds"
     ]
 }

@@ -2,9 +2,9 @@
     "name": "Shaft",
     "id": "fibula_shaft",
     "description": [
-        "Body of the fibula between the head and the lateral malleolus",
-        "Triangular in cross-section with anterior, posterior, and interosseous borders",
-        "Provides attachment surfaces for muscles of the leg",
-        "Labels"
+        "Has three surfaces and three borders",
+        "Each surface is associated with a particular group of muscles",
+        "Connected to neck proximally",
+        "Connected to lateral malleolus distally"
     ]
 }

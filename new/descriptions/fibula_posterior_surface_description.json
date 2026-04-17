@@ -2,8 +2,10 @@
     "name": "Posterior surface",
     "id": "fibula_posterior_surface",
     "description": [
-        "Lies between posterior and interosseous borders",
-        "Provides attachment area for soleus and flexor hallucis longus muscles",
-        "Labels"
+        "Largest surface",
+        "Proximal two-thirds divided longitudinally by a medial crest",
+        "Distal third curves towards medial aspect",
+        "Soleus muscle inserts on proximal portion",
+        "Flexor hallucis longus muscle originates on distal two-thirds"
     ]
 }

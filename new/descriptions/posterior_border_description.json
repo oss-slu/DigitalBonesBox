@@ -2,7 +2,6 @@
     "name": "Posterior border",
     "id": "posterior_border",
     "description": [
-        "Separates posterior surface from lateral surface",
-        "Labels"
+        "Separates posterior surface from lateral surface"
     ]
 }
