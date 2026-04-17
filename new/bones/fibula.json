@@ -2,13 +2,13 @@
     "name": "Fibula",
     "id": "fibula",
     "subBones": [
-        "head",
-        "shaft",
+        "fibula_head",
+        "fibula_shaft",
         "interosseous_border",
         "posterior_border",
         "anterior_border",
-        "lateral_surface",
-        "posterior_surface",
+        "fibula_lateral_surface",
+        "fibula_posterior_surface",
         "lateral_malleolus"
     ]
 }

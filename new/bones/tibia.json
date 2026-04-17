@@ -5,10 +5,10 @@
         "proximal_end",
         "tibial_tuberosity",
         "gerdy_tubercle",
-        "shaft",
+        "tibia_shaft",
         "medial_surface",
-        "lateral_surface",
-        "posterior_surface",
+        "tibia_lateral_surface",
+        "tibia_posterior_surface",
         "distal_end"
     ]
 }
