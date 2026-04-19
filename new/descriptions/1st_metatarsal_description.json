@@ -6,5 +6,9 @@
         "Tendon of tibialis anterior muscle attaches to the plantar surface at the base medially",
         "Tendon of fibularis longus muscle attaches to plantar surface at the base laterally",
         "Gives origin to medial head of 1st dorsal interosseous on lateral side"
+    ],
+    "images": [
+        "foot_image.png",
+        "foot_image2.png"
     ]
 }

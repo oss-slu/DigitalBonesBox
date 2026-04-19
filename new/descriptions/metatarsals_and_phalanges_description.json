@@ -6,5 +6,8 @@
         "Each has a base, shaft, and a head from proximal to distal",
         "First toe only has a proximal and distal phalanx",
         "Toes I-IV have proximal, middle, and distal phalanges"
+    ],
+    "images": [
+        "foot_image.png"
     ]
 }

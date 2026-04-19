@@ -7,5 +7,9 @@
         "Supported by calcaneus",
         "Articulates with calcaneus and navicular",
         "No muscle attachments"
+    ],
+    "images": [
+        "foot_image.png",
+        "foot_image2.png"
     ]
 }
