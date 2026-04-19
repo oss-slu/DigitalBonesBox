@@ -472,7 +472,7 @@ app.get("/api/search", searchLimiter, (req, res) => {
                         data-subbone="${escapeHtml(result.subbone || "")}"
                         tabindex="0"
                         role="option">
-                        ${escapedName} <small>(${escapedType})</small>
+                        ${escapedName} <small>(${escapedType === "subbone" ? "bone part" : escapedType})</small>
                      </li>`;
         }
 
