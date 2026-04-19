@@ -9,5 +9,10 @@
         "Completely enclosed by the joint capsule",
         "Fovea is a shallow pit on posteromedial surface of head",
         "Serves as attachment for round ligament of the femur"
+    ],
+    "images": [
+        "femur_top_image2.png",
+        "femur_medial_aspect_image.png",
+        "femur_top_image3.png"
     ]
 }

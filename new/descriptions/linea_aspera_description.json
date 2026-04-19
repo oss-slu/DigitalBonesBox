@@ -7,5 +7,9 @@
         "Adductors brevis and longus muscles attach to the intermediate line",
         "Vastus medialis muscle and the intermuscular septum attach to medial ridge",
         "Adductor magnus muscle attaches to medial supracondylar line distally to adductor tubercle"
+    ],
+    "images": [
+        "femur_top_image2.png",
+        "femur_bottom_image.png"
     ]
 }
