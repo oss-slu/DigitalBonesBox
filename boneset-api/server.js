@@ -463,6 +463,14 @@ app.get("/api/search", searchLimiter, (req, res) => {
         for (const result of results) {
             const escapedName = escapeHtml(result.name);
             const escapedType = escapeHtml(result.type);
+            let displayType;
+            switch (escapedType) {
+                case "subbone":
+                    displayType = escapeHtml("bone part");
+                    break;
+                default:
+                    displayType = escapedType;
+            }
             
             html += `<li class="search-result" 
                         data-type="${escapedType}" 
@@ -472,7 +480,7 @@ app.get("/api/search", searchLimiter, (req, res) => {
                         data-subbone="${escapeHtml(result.subbone || "")}"
                         tabindex="0"
                         role="option">
-                        ${escapedName} <small>(${escapedType === "subbone" ? "bone part" : escapedType})</small>
+                        ${escapedName} <small>(${displayType})</small>
                      </li>`;
         }
 
