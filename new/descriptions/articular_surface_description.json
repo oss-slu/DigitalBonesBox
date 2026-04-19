@@ -7,5 +7,8 @@
         "Ridge fits into intercondylar groove on patellar surface of femur",
         "The lateral facet is usually larger than medial facet",
         "Distal surface is rough and covered by a infrapatellar pad of fat"
+    ],
+    "images": [
+        "patella_image2.png"
     ]
 }
