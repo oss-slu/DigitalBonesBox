@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/";
-const BONESET_JSON_URL = `${GITHUB_REPO}boneset/`;
+const BONESET_DIR_URL = `${GITHUB_REPO}boneset/`;
 const BONESET_NAMES = ["bony_pelvis", "skull", "thorax", "vertebrae"];
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
@@ -69,17 +69,16 @@ async function fetchJSON(url) {
 // Initialize search cache at startup
 async function initializeSearchCache() {
     try {
+        const searchData = [];
         console.log("Initializing search cache...");
         for (const bonesetName of BONESET_NAMES) {
-            const bonesetJsonUrl = `${BONESET_JSON_URL}${bonesetName}.json`;
-            const bonesetResult = await fetchJSON(bonesetName);
+            const bonesetJsonUrl = `${BONESET_DIR_URL}${bonesetName}.json`;
+            const bonesetResult = await fetchJSON(bonesetJsonUrl);
             const bonesetData = bonesetResult.data;
             if (!bonesetData) {
                 console.warn(`Failed to load boneset data from ${bonesetName}`);
-                return;
+                continue;
             }
-
-            const searchData = [];
 
             // Add boneset to search data
             searchData.push({
@@ -120,10 +119,9 @@ async function initializeSearchCache() {
                     }
                 }
             }
-
-            searchCache =  searchData;
-            console.log(`Search cache initialized with ${searchData.length} items`);
         }
+        searchCache = searchData;
+        console.log(`Search cache initialized with ${searchData.length} items`);
     } catch (error) {
         console.error("Error initializing search cache:", error);
     }
@@ -173,7 +171,7 @@ app.get("/combined-data", async (_req, res) => {
         const bones = [];
         const subbones = [];
         for (const bonesetName of BONESET_NAMES) {
-            const bonesetJsonUrl = `${BONESET_JSON_URL}${bonesetName}.json`;
+            const bonesetJsonUrl = `${BONESET_DIR_URL}${bonesetName}.json`;
             const bonesetResult = await fetchJSON(bonesetJsonUrl);
             const bonesetData = bonesetResult.data;
             if (!bonesetData) {
