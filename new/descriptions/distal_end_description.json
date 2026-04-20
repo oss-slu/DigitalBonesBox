@@ -7,5 +7,9 @@
         "Medial surface projects distally to form medial malleolus",
         "Posterior surface contains a groove for tendon of tibialis posterior muscle",
         "Distal surface articulates with talus"
+    ],
+    "images": [
+        "tibia_image.png",
+        "tibia_image2.png"
     ]
 }

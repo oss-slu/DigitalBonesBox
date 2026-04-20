@@ -5,5 +5,9 @@
         "Lies between anterior and interosseous borders",
         "Tibialis anterior muscle attaches to proximal two-thirds",
         "Distal third has no attachments"
+    ],
+    "images": [
+        "tibia_image.png",
+        "tibia_image2.png"
     ]
 }

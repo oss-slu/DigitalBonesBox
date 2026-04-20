@@ -5,5 +5,9 @@
         "Raised portion of inferior part of  intercondylar area that protrudes anteriorly",
         "Attached to patellar tendon",
         "Distal portion is palpable below anterior aspect of knee"
+    ],
+    "images": [
+        "tibia_image.png",
+        "tibia_top_image.png"
     ]
 }

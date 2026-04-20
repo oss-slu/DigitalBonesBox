@@ -7,5 +7,9 @@
         "Narrow shaft that is triangular in cross section",
         "Distal end articulates with talus and fibula to form ankle joint",
         "Anterior border is sharp and curves medially to form medial malleolus"
+    ],
+    "images": [
+        "tibia_image.png",
+        "tibia_image2.png"
     ]
 }
