@@ -386,39 +386,16 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
         }
         // *** END ALIGNMENT WORKAROUND ***
         
-        // Normalize Text Annotation Coordinates
-        const normalizedAnnotations = (annotationData.text_annotations || []).map(annotation => {
-            if (annotation.text_box && slideWidth && slideHeight) {
-                // Normalize all coordinate values for the bounding box
-                annotation.text_box.x = annotation.text_box.x / slideWidth;
-                annotation.text_box.y = annotation.text_box.y / slideHeight;
-                annotation.text_box.width = annotation.text_box.width / slideWidth;
-                annotation.text_box.height = annotation.text_box.height / slideHeight;
-
-                // Normalize pointer lines (start and end points)
-                (annotation.pointer_lines || []).forEach(line => {
-                    if (line.start_point) {
-                        line.start_point.x = line.start_point.x / slideWidth;
-                        line.start_point.y = line.start_point.y / slideHeight;
-                    }
-                    if (line.end_point) {
-                        line.end_point.x = line.end_point.x / slideWidth;
-                        line.end_point.y = line.end_point.y / slideHeight;
-                    }
-                });
-                
-                // Note: Other coordinates like target_regions might also need normalization 
-                // depending on your frontend implementation, but we start with text_box and pointer_lines.
-            }
-            return annotation;
-        });
-
+        // Send raw annotation coordinates (in EMU units from PowerPoint).
+        // Frontend handles all coordinate transformation based on actual displayed dimensions.
         const combinedData = {
-            annotations: normalizedAnnotations,
-            normalized_geometry: normalizedGeometry
+            annotations: annotationData.text_annotations || [],
+            normalized_geometry: normalizedGeometry,
+            slide_width: slideWidth,
+            slide_height: slideHeight
         };
 
-        console.log(`SUCCESS: Serving annotation data for ${boneId} from GitHub combined with template (Coordinates Normalized).`);
+        console.log(`SUCCESS: Serving annotation data for ${boneId} from GitHub combined with template.`);
         return res.json(combinedData);
         
     } catch (error) {
