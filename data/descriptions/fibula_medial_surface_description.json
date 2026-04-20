@@ -1,6 +1,6 @@
 {
-    "name": "Lateral surface",
-    "id": "fibula_lateral_surface",
+    "name": "Medial surface",
+    "id": "fibula_medial_surface",
     "description": [
         "Sometimes called anterior or anteromedial surface",
         "Wide distally, narrows to ridge proximally",
@@ -9,7 +9,7 @@
         "Fibularis tertius muscle attaches to distal third"
     ],
     "images": [
-        "fibula_image.png",
+        "fibula_image.jpeg",
         "fibula_image2.png"
     ]
 }
