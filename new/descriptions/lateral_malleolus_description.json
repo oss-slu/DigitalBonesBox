@@ -7,5 +7,9 @@
         "Posterior aspect has a broad groove for the fibular tendons",
         "Medial aspect has an articular facet fro talus",
         "Projects farther distally than medial malleolus"
+    ],
+    "images": [
+        "fibula_image.png",
+        "fibula_image2.png"
     ]
 }

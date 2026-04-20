@@ -6,5 +6,9 @@
         "Each surface is associated with a particular group of muscles",
         "Connected to neck proximally",
         "Connected to lateral malleolus distally"
+    ],
+    "images": [
+        "fibula_image.png",
+        "fibula_image2.png"
     ]
 }

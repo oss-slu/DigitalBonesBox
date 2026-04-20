@@ -7,5 +7,9 @@
         "Distal third curves towards medial aspect",
         "Soleus muscle inserts on proximal portion",
         "Flexor hallucis longus muscle originates on distal two-thirds"
+    ],
+    "images": [
+        "fibula_image.png",
+        "fibula_image2.png"
     ]
 }

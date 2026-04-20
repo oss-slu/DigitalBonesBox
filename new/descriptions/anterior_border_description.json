@@ -3,5 +3,9 @@
     "id": "anterior_border",
     "description": [
         "Separates lateral surface from medial surface"
+    ],
+    "images": [
+        "fibula_image.png",
+        "fibula_image2.png"
     ]
 }

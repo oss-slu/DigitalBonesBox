@@ -4,5 +4,9 @@
     "description": [
         "Separates medial surface from posterior surface",
         "Attached to lateral portion of interosseous membrane"
+    ],
+    "images": [
+        "fibula_image.png",
+        "fibula_image2.png"
     ]
 }
