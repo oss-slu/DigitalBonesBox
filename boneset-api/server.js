@@ -163,7 +163,7 @@ app.get("/", (_req, res) => {
 });
 
 /**
- * Gets combined data for a boneset, its bones, and their subbones.
+ * Gets combined data for all bonesets, bones, and subbones.
  */
 app.get("/combined-data", async (_req, res) => {
     try {
