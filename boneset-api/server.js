@@ -14,7 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/";
-const BONESET_JSON_URL = `${GITHUB_REPO}boneset/bony_pelvis.json`;
+const BONESET_DIR_URL = `${GITHUB_REPO}boneset/`;
+const BONESET_NAMES = ["bony_pelvis", "skull", "thorax", "vertebrae"];
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
 
@@ -68,57 +69,58 @@ async function fetchJSON(url) {
 // Initialize search cache at startup
 async function initializeSearchCache() {
     try {
-        console.log("Initializing search cache...");
-        const bonesetResult = await fetchJSON(BONESET_JSON_URL);
-        const bonesetData = bonesetResult.data;
-        if (!bonesetData) {
-            console.error("Failed to load boneset data for search cache");
-            return;
-        }
-
         const searchData = [];
+        console.log("Initializing search cache...");
+        for (const bonesetName of BONESET_NAMES) {
+            const bonesetJsonUrl = `${BONESET_DIR_URL}${bonesetName}.json`;
+            const bonesetResult = await fetchJSON(bonesetJsonUrl);
+            const bonesetData = bonesetResult.data;
+            if (!bonesetData) {
+                console.warn(`Failed to load boneset data from ${bonesetName}`);
+                continue;
+            }
 
-        // Add boneset to search data
-        searchData.push({
-            id: bonesetData.id,
-            name: bonesetData.name,
-            type: "boneset",
-            boneset: bonesetData.id,
-            bone: null,
-            subbone: null
-        });
+            // Add boneset to search data
+            searchData.push({
+                id: bonesetData.id,
+                name: bonesetData.name,
+                type: "boneset",
+                boneset: bonesetData.id,
+                bone: null,
+                subbone: null
+            });
 
-        // Load all bones and sub-bones
-        for (const boneId of bonesetData.bones || []) {
-            const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
-            const boneData = boneResult.data;
-            if (boneData) {
-                // Add bone to search data
-                searchData.push({
-                    id: boneData.id,
-                    name: boneData.name,
-                    type: "bone",
-                    boneset: bonesetData.id,
-                    bone: boneData.id,
-                    subbone: null
-                });
-
-                // Add sub-bones to search data
-                for (const subBoneId of boneData.subBones || []) {
-                    const subBoneName = subBoneId.replace(/_/g, " ");
+            // Load all bones and sub-bones
+            for (const boneId of bonesetData.bones || []) {
+                const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+                const boneData = boneResult.data;
+                if (boneData) {
+                    // Add bone to search data
                     searchData.push({
-                        id: subBoneId,
-                        name: subBoneName,
-                        type: "subbone",
+                        id: boneData.id,
+                        name: boneData.name,
+                        type: "bone",
                         boneset: bonesetData.id,
                         bone: boneData.id,
-                        subbone: subBoneId
+                        subbone: null
                     });
+
+                    // Add sub-bones to search data
+                    for (const subBoneId of boneData.subBones || []) {
+                        const subBoneName = subBoneId.replace(/_/g, " ");
+                        searchData.push({
+                            id: subBoneId,
+                            name: subBoneName,
+                            type: "subbone",
+                            boneset: bonesetData.id,
+                            bone: boneData.id,
+                            subbone: subBoneId
+                        });
+                    }
                 }
             }
         }
-
-        searchCache =  searchData;
+        searchCache = searchData;
         console.log(`Search cache initialized with ${searchData.length} items`);
     } catch (error) {
         console.error("Error initializing search cache:", error);
@@ -161,32 +163,35 @@ app.get("/", (_req, res) => {
 });
 
 /**
- * Gets combined data for a boneset, its bones, and their subbones.
+ * Gets combined data for all bonesets, bones, and subbones.
  */
 app.get("/combined-data", async (_req, res) => {
     try {
-        const bonesetResult = await fetchJSON(BONESET_JSON_URL);
-        const bonesetData = bonesetResult.data;
-        if (!bonesetData) {
-            return res.status(bonesetResult.status).json({ error: "Failed to load boneset data" });
-        }
-
-        const bonesets = [{ id: bonesetData.id, name: bonesetData.name }];
+        const bonesets = [];
         const bones = [];
         const subbones = [];
+        for (const bonesetName of BONESET_NAMES) {
+            const bonesetJsonUrl = `${BONESET_DIR_URL}${bonesetName}.json`;
+            const bonesetResult = await fetchJSON(bonesetJsonUrl);
+            const bonesetData = bonesetResult.data;
+            if (!bonesetData) {
+                return res.status(bonesetResult.status).json({ error: "Failed to load boneset data" });
+            }
 
-        for (const boneId of bonesetData.bones || []) {
-            const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
-            const boneData = boneResult.data;
-            if (boneData) {
-                bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
-                (boneData.subBones || []).forEach((subBoneId) => {
-                    subbones.push({ id: subBoneId, name: subBoneId.replace(/_/g, " "), bone: boneData.id });
-                });
+            bonesets.push({id: bonesetData.id, name: bonesetData.name});
+
+            for (const boneId of bonesetData.bones || []) {
+                const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+                const boneData = boneResult.data;
+                if (boneData) {
+                    bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
+                    (boneData.subBones || []).forEach((subBoneId) => {
+                        subbones.push({ id: subBoneId, name: subBoneId.replace(/_/g, " "), bone: boneData.id });
+                    });
+                }
             }
         }
-
-        res.json({ bonesets, bones, subbones });
+        res.json({bonesets, bones, subbones});
     } catch (error) {
         console.error("Error fetching combined data:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
