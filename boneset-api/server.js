@@ -15,7 +15,7 @@ app.use(express.json());
 
 const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/";
 const BONESET_DIR_URL = `${GITHUB_REPO}boneset/`;
-const BONESET_NAMES = ["bony_pelvis", "skull", "thorax", "vertebrae"];
+const BONESET_NAMES = ["bony_pelvis", "skull", "thorax", "vertebrae", "upper_limb", "lower_limb"];
 const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
 const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
 
