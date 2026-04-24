@@ -109,6 +109,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     clearViewer();
 });
 
+/**
+ * Populates the subbone `<select>` element with options for the given subbone IDs.
+ * Inserts a placeholder option and disables the dropdown if no subbones are provided.
+/**
+ * Populates the subbone `<select>` element with options for the given subbone IDs.
+ * Inserts a placeholder option and disables the dropdown if no subbones are provided.
+ * @param {HTMLSelectElement} dropdown - The subbone select element to populate.
+ * @param {string[]} subbones - Array of subbone ID strings.
+ * @returns {void}
+ */
 function populateSubboneDropdown(dropdown, subbones) {
     // Leave a placeholder option so the user must explicitly select a subbone
     dropdown.innerHTML = "";

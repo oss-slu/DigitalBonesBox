@@ -9,13 +9,20 @@ import { imageCaptions } from "./imageCaptions.js";
 let currentBoneId = null;
 let currentIsBonesetSelection = false; // Track if this is a boneset selection
 
+/**
+ * Returns the `#bone-image-container` DOM element.
+ * @returns {HTMLElement|null} The image container element, or null if not found.
+ */
 function getImageContainer() {
   return /** @type {HTMLElement|null} */ (
     document.getElementById("bone-image-container")
   );
 }
 
-/** Helper function to get captions for a boneId */
+/** Helper function to get captions for a boneId
+ * @param {string|null} boneId - The bone or subbone ID.
+ * @returns {{image1: string|null, image2: string|null}} Caption strings for the two images, or nulls if not found.
+ */
 function getCaptionsForBone(boneId) {
   if (!boneId || !imageCaptions[boneId]) {
     return { image1: null, image2: null };
@@ -23,7 +30,9 @@ function getCaptionsForBone(boneId) {
   return imageCaptions[boneId];
 }
 
-/** Helper to clear existing caption container */
+/** Removes the `#caption-container` element from the DOM if it exists.
+ * @returns {void}
+ */
 function clearCaptionContainer() {
   const existingCaptions = document.getElementById("caption-container");
   if (existingCaptions) {
@@ -31,7 +40,11 @@ function clearCaptionContainer() {
   }
 }
 
-/** ---- Empty-state / clearing ------------------------------------------- */
+/**
+ * Renders the empty-state placeholder message inside the image container
+ * and clears all annotations, colored regions, and captions.
+ * @returns {void}
+ */
 export function showPlaceholder() {
   const c = getImageContainer();
   if (!c) return;
@@ -53,6 +66,10 @@ export function showPlaceholder() {
   if (imagesContent) imagesContent.classList.remove("has-images");
 }
 
+/**
+ * Clears all images, annotations, colored regions, and captions from the image container.
+ * @returns {void}
+ */
 export function clearImages() {
   const c = getImageContainer();
   if (c) {
@@ -72,8 +89,16 @@ export function clearImages() {
   if (imagesContent) imagesContent.classList.remove("has-images");
 }
 
-/** ---- Public entry: render images array --------------------------------
- * Optionally pass { annotationsUrl: 'templates/data/annotations/xyz.json', boneId: 'bone_name' }
+/**
+ * Renders one or more bone images into the image container, applying the appropriate
+ * layout (single, two-up, or grid) based on the number of images provided.
+ * Also loads colored region overlays and text annotation overlays if applicable.
+ * @param {Array<{url?: string, src?: string, alt?: string, filename?: string}>} images - Array of image objects to display.
+ * @param {Object} [options={}] - Optional display configuration:
+ *   @param {string} [options.annotationsUrl] - API URL for text annotation JSON.
+ *   @param {string} [options.boneId] - Bone ID used for colored region overlays.
+ *   @param {boolean} [options.isBonesetSelection] - True when displaying the full boneset view.
+ * @returns {void}
  */
 export function displayBoneImages(images, options = {}) {
   const container = getImageContainer();
@@ -114,6 +139,13 @@ export function displayBoneImages(images, options = {}) {
 }
 
 //** ---- Single image ------------------------------------------------------ */
+/**
+ * Renders a single bone image with its colored region overlay and text annotations.
+ * @param {{url?: string, src?: string, alt?: string, filename?: string}} image - The image object to display.
+ * @param {HTMLElement} container - The image container element.
+ * @param {Object} [options={}] - Options forwarded from `displayBoneImages`.
+ * @returns {void}
+ */
 function displaySingleImage(image, container, options = {}) {
   // Get captions for this bone
   const captions = getCaptionsForBone(currentBoneId);
@@ -197,6 +229,15 @@ const TWO_IMAGE_ROTATION = {
   right: { rot_deg: 0, flipH: false },
 };
 
+/**
+ * Applies a CSS rotation (and optional horizontal flip) to an image element
+ * based on the PowerPoint rotation template for the given view.
+ * @param {HTMLImageElement} imgEl - The image element to transform.
+ * @param {Object} [options={}] - Rotation parameters.
+ * @param {number} [options.rot_deg=0] - Rotation angle in degrees.
+ * @param {boolean} [options.flipH=false] - Whether to flip the image horizontally.
+ * @returns {void}
+ */
 function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
   const parts = [];
   if (flipH) parts.push("scaleX(-1)");
@@ -206,6 +247,14 @@ function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
   imgEl.style.willChange = "transform";
 }
 
+/**
+ * Renders two bone images side by side, each with its own colored region overlay.
+ * Appends a two-column caption bar beneath the images if captions are available.
+ * @param {Array<{url?: string, src?: string, alt?: string, filename?: string}>} images - Array of exactly two image objects.
+ * @param {HTMLElement} container - The image container element.
+ * @param {Object} [options={}] - Options forwarded from `displayBoneImages`.
+ * @returns {void}
+ */
 function displayTwoImages(images, container, options = {}) {
   // Get captions for this bone
   const captions = getCaptionsForBone(currentBoneId);
@@ -299,6 +348,13 @@ function displayTwoImages(images, container, options = {}) {
 }
 
 /** ---- 3+ images grid ---------------------------------------------------- */
+/**
+ * Renders three or more bone images in a wrapping grid layout.
+ * Does not load colored regions or annotations (used for supplementary views).
+ * @param {Array<{url?: string, src?: string, alt?: string, filename?: string}>} images - Array of image objects.
+ * @param {HTMLElement} container - The image container element.
+ * @returns {void}
+ */
 function displayMultipleImages(images, container) {
   const wrapper = document.createElement("div");
   wrapper.className = "multiple-image-wrapper";

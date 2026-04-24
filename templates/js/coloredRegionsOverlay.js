@@ -517,6 +517,7 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
 /**
  * Clear all colored region overlays from a container
  * @param {HTMLElement} container - The container element
+ * @returns {void}
  */
 export function clearColoredRegions(container) {
     if (!container) return;
@@ -527,6 +528,7 @@ export function clearColoredRegions(container) {
 
 /**
  * Clear all colored region overlays in the entire image container
+ * @returns {void}
  */
 export function clearAllColoredRegions() {
     const container = document.getElementById("bone-image-container");

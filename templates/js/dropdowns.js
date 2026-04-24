@@ -12,10 +12,22 @@ document.addEventListener("DOMContentLoaded", () => {
 // ---- Map/lookup you can extend later -----------------
 let _boneById = {}; // filled in setupDropdownListeners
 
+/**
+ * Returns the `#bone-image-container` element, which serves as the host for
+ * displayed bone images and their annotation overlays.
+ * @returns {HTMLElement|null} The image container element, or null if not found.
+ */
 function getImageStage() {
   return /** @type {HTMLElement|null} */ (document.getElementById("bone-image-container"));
 }
 
+/**
+ * Clears any existing annotation overlay from the image stage.
+ * Annotation loading is now handled directly in the dropdown change listeners
+ * via the `opts.annotationsUrl` option passed to `loadBoneImages`.
+ * @param {string} boneId - The bone ID (unused; retained for future use).
+ * @returns {Promise<void>}
+ */
 // Function maybeLoadAnnotations: Logic removed. Annotation URL construction is now in the listeners.
 async function maybeLoadAnnotations(boneId) {
   const stage = getImageStage();
@@ -32,7 +44,12 @@ async function maybeLoadAnnotations(boneId) {
 // Backend API base (runs on 8000)
 const API_BASE = "http://127.0.0.1:8000";
 
-/** Helper: fetch images for a bone/sub-bone and render them */
+/** Helper: fetch images for a bone/sub-bone and render them
+ * @param {string} boneId - The bone or subbone ID to load images for.
+ * @param {Object} [options={}] - Options forwarded to `displayBoneImages`, e.g.
+ *   `{ annotationsUrl: string, boneId: string, isBonesetSelection: boolean }`.
+ * @returns {Promise<void>}
+ */
 async function loadBoneImages(boneId, options = {}) {
   const stage = getImageStage();
   if (!boneId) {
@@ -57,6 +74,12 @@ async function loadBoneImages(boneId, options = {}) {
   }
 }
 
+/**
+ * Populates the boneset `<select>` element with options from the provided array.
+ * Disables the dropdown if no bonesets are available.
+ * @param {Array<{id: string, name: string}>} bonesets - Array of boneset objects.
+ * @returns {void}
+ */
 export function populateBonesetDropdown(bonesets) {
   const bonesetSelect = document.getElementById("boneset-select");
   if (!bonesetSelect) {
@@ -78,6 +101,13 @@ export function populateBonesetDropdown(bonesets) {
   bonesetSelect.disabled = false;
 }
 
+/**
+ * Wires up change event listeners on the boneset, bone, and subbone `<select>` elements.
+ * Each listener loads images, descriptions, and annotations appropriate to the selection.
+ * @param {Object} combinedData - The full application data set containing:
+ *   `bonesets` {Array}, `bones` {Array}, and `subbones` {Array}.
+ * @returns {void}
+ */
 export function setupDropdownListeners(combinedData) {
   const bonesetSelect  = document.getElementById("boneset-select");
   const boneSelect     = document.getElementById("bone-select");

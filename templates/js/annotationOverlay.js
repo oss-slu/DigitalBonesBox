@@ -3,6 +3,12 @@
 
 const PPT_EMU = { W: 9_144_000, H: 6_858_000 }; // PowerPoint slide size in EMUs
 
+/**
+ * Ensures the annotation stage (overlay container) exists inside the given container,
+ * creating it if necessary. The stage holds both the SVG line layer and the label div.
+ * @param {HTMLElement} container - The parent element to attach the stage to.
+ * @returns {HTMLElement} The existing or newly created annotation stage element.
+ */
 function ensureStage(container) {
   let stage = container.querySelector(".annotation-stage");
   if (!stage) {
@@ -17,6 +23,11 @@ function ensureStage(container) {
   return stage;
 }
 
+/**
+ * Removes the annotation stage and all its contents from the given container.
+ * @param {HTMLElement} container - The container whose annotation stage should be removed.
+ * @returns {void}
+ */
 export function clearAnnotations(container) {
   if (!container) return;
   const stage = container.querySelector(".annotation-stage");
@@ -67,8 +78,14 @@ function normalizedPointToPx(pt, box, norm) { // <--- RENAMED to reflect change
 }
 
 /**
- * Draw labels + lines from a JSON object:
- * { annotations: [...], normalized_geometry: { normX, normY, normW, normH } }
+ * Draws text annotation labels and pointer lines onto the given container.
+ * Reads normalized geometry and slide dimensions from the JSON to map PowerPoint
+ * EMU coordinates onto the displayed pixel size of the container.
+ * @param {HTMLElement} container - The element to draw annotations into.
+ * @param {Object} annotationsJson - Annotation data from the API, containing:
+ *   `annotations` {Array}, `normalized_geometry` {Object}, `slide_width` {number},
+ *   and `slide_height` {number}.
+ * @returns {void}
  */
 export function drawAnnotations(container, annotationsJson) {
   if (!container || !annotationsJson) return;
@@ -143,7 +160,13 @@ export function drawAnnotations(container, annotationsJson) {
   stage.__lastJson = annotationsJson;
 }
 
-/** Load JSON from a URL and draw it. Returns a promise. */
+/**
+ * Fetches annotation JSON from a URL, draws it onto the container,
+ * and attaches a ResizeObserver so annotations redraw when the container resizes.
+ * @param {HTMLElement} container - The element to draw annotations into.
+ * @param {string} jsonUrl - URL of the annotation JSON file.
+ * @returns {Promise<void>}
+ */
 export async function loadAndDrawAnnotations(container, jsonUrl) {
   if (!container || !jsonUrl) return;
   const res = await fetch(jsonUrl);
@@ -155,7 +178,12 @@ export async function loadAndDrawAnnotations(container, jsonUrl) {
   attachAutoscale(container); // keep aligned on resize
 }
 
-/** Re-draw on container resize using the last JSON used. */
+/**
+ * Attaches a ResizeObserver to the container that redraws annotations whenever
+ * the container's dimensions change. Does nothing if an observer is already attached.
+ * @param {HTMLElement} container - The container to watch for size changes.
+ * @returns {void}
+ */
 function attachAutoscale(container) {
   const stage = ensureStage(container);
   if (stage.__resizeObs) return; // already attached

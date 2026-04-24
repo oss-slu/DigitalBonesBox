@@ -3,6 +3,12 @@
 import {fetchBoneData, fetchCombinedData} from "./api.js";
 import {displayColoredRegions} from "./coloredRegionsOverlay.js";
 
+/**
+ * Manages the interactive bone-identification quiz.
+ * Fetches bones and subbones from the API, generates randomised questions,
+ * handles answer scoring, and controls quiz UI visibility.
+ * @class
+ */
 class QuizManager {
     constructor() {
         this.questions = [];
@@ -17,7 +23,10 @@ class QuizManager {
     }
 
     /**
-     * Initialize the quiz system
+     * Loads bone data from the API, builds the master question pool, and
+     * attaches UI event listeners. Must be called before starting a quiz.
+     * @returns {Promise<boolean>} Resolves to `true` if initialisation succeeded,
+     *   `false` if there was an error or too few items to form a quiz.
      */
     async initialize() {
         try {
@@ -44,7 +53,9 @@ class QuizManager {
     }
 
     /**
-     * Create a master pool of all bones and subbones
+     * Populates {@link QuizManager#masterQuestionPool} by combining all bones
+     * and subbones fetched during initialisation.
+     * @returns {void}
      */
     createMasterQuestionPool() {
         this.masterQuestionPool = [];
@@ -71,7 +82,9 @@ class QuizManager {
     }
 
     /**
-     * Setup event listeners for quiz UI
+     * Attaches click handlers to the start-quiz, exit-quiz, and next-question
+     * buttons in the DOM.
+     * @returns {void}
      */
     setupEventListeners() {
         const quizButton = document.getElementById("start-quiz-btn");
@@ -92,7 +105,10 @@ class QuizManager {
     }
 
     /**
-     * Generate quiz questions using the master pool
+     * Randomly selects items from the master pool to build
+     * {@link QuizManager#questions}, each with one correct answer and three
+     * distractors.
+     * @returns {void}
      */
     generateQuestions() {
         this.questions = [];
@@ -130,7 +146,11 @@ class QuizManager {
     }
 
     /**
-     * Generate wrong answer choices from the master pool
+     * Picks `count` distractor names from the master pool, excluding the
+     * correct item.
+     * @param {string} correctItemId - The ID of the correct answer item to exclude.
+     * @param {number} count - Number of wrong answers to generate.
+     * @returns {string[]} Array of distractor name strings.
      */
     generateWrongAnswers(correctItemId, count) {
         const wrongAnswers = [];
@@ -149,7 +169,11 @@ class QuizManager {
     }
 
     /**
-     * Shuffle array using Fisher-Yates algorithm
+     * Returns a new array with the same elements in a random order using the
+     * Fisher-Yates algorithm.
+     * @template T
+     * @param {T[]} array - The array to shuffle.
+     * @returns {T[]} A new shuffled array (the original is not mutated).
      */
     shuffleArray(array) {
         const shuffled = [...array];
@@ -161,9 +185,14 @@ class QuizManager {
     }
 
     /**
- * Fetch and display bone image from API
- */
-async fetchBoneImage(itemId, container) {
+     * Fetches bone data from the API and renders the primary image into
+     * `container`. Falls back to a placeholder on missing or failed images.
+     * Also attempts to overlay coloured regions once the image loads.
+     * @param {string} itemId - The bone or subbone ID whose image to display.
+     * @param {HTMLElement} container - The DOM element to render the image into.
+     * @returns {Promise<void>}
+     */
+    async fetchBoneImage(itemId, container) {
     try {
         const data = await fetchBoneData(itemId);
         
@@ -226,12 +255,11 @@ async fetchBoneImage(itemId, container) {
 }
 
     /**
-     * Start the quiz
+     * Generates a fresh set of questions, resets state, switches the UI to
+     * quiz mode, and displays the first question.
+     * @returns {void}
      */
-    /**
- * Start the quiz
- */
-startQuiz() {
+    startQuiz() {
     // Generate questions
     this.generateQuestions();
 
@@ -292,7 +320,10 @@ startQuiz() {
 }
 
     /**
-     * Display current question
+     * Renders the current question (image, answer choices, progress) in the
+     * quiz UI. Calls {@link QuizManager#showResults} when all questions are
+     * exhausted.
+     * @returns {void}
      */
     displayQuestion() {
         if (this.currentQuestionIndex >= this.questions.length) {
@@ -351,7 +382,10 @@ startQuiz() {
     }
 
     /**
-     * Display answer choice buttons
+     * Renders the answer choice buttons for the given question.
+     * @param {{allAnswers: string[], correctAnswer: string}} question - The
+     *   current question object.
+     * @returns {void}
      */
     displayAnswerChoices(question) {
         const choicesContainer = document.getElementById("quiz-choices");
@@ -370,7 +404,12 @@ startQuiz() {
     }
 
     /**
-     * Handle answer selection
+     * Processes a user's answer selection: updates the score, highlights
+     * correct/incorrect buttons, shows feedback, and reveals the next-question
+     * button.
+     * @param {string} selectedAnswer - The answer text the user clicked.
+     * @param {string} correctAnswer - The correct answer text for this question.
+     * @returns {void}
      */
     handleAnswerClick(selectedAnswer, correctAnswer) {
         if (this.answered) return; // Prevent multiple answers
@@ -413,7 +452,11 @@ startQuiz() {
     }
 
     /**
-     * Show feedback after answer
+     * Displays a correct/incorrect feedback banner below the answer choices.
+     * @param {boolean} isCorrect - Whether the selected answer was correct.
+     * @param {string} correctAnswer - The correct answer text, shown on
+     *   incorrect responses.
+     * @returns {void}
      */
     showFeedback(isCorrect, correctAnswer) {
         const feedback = document.getElementById("quiz-feedback");
@@ -437,7 +480,8 @@ startQuiz() {
     }
 
     /**
-     * Move to next question
+     * Advances to the next question in the sequence.
+     * @returns {void}
      */
     nextQuestion() {
         this.currentQuestionIndex++;
@@ -446,12 +490,11 @@ startQuiz() {
 
   
     /**
-     * Show quiz results
+     * Replaces the quiz container with a results summary showing the final
+     * score and a contextual message. Attaches retry and exit handlers.
+     * @returns {void}
      */
-/**
- * Show quiz results
- */
-showResults() {
+    showResults() {
     const percentage = Math.round((this.score / this.questions.length) * 100);
     
     let message = "";
@@ -519,7 +562,8 @@ showResults() {
 }
 
     /**
-     * Show quiz mode (hide main content)
+     * Hides the main page content and shows the quiz modal overlay.
+     * @returns {void}
      */
     showQuizMode() {
         const mainContent = document.querySelector(".container");
@@ -530,7 +574,8 @@ showResults() {
     }
 
     /**
-     * Exit quiz and return to main view
+     * Ends the active quiz, restores the main view, and resets all quiz state.
+     * @returns {void}
      */
     exitQuiz() {
         this.isQuizActive = false;
