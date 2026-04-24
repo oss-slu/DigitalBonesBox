@@ -9,6 +9,6 @@ RUN npm ci --omit=dev
 # Copy API source code
 COPY boneset-api/ ./
 
-EXPOSE 3000
+EXPOSE 8000
 
 CMD ["node", "server.js"]
