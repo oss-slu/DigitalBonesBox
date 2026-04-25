@@ -157,9 +157,8 @@ function displaySingleImage(image, container, options = {}) {
     container.insertAdjacentElement("afterend", captionContainer);
   }
 
-  // 3. Get reference to the image element and wrapper for annotations
+  // 3. Get reference to the image element for colored regions and event handlers
   const img = container.querySelector("img");
-  const imageWrapper = container.querySelector(".single-image-wrapper");
   if (img) {
     const loadColoredRegions = () => {
       img.classList.add("loaded");
@@ -170,9 +169,8 @@ function displaySingleImage(image, container, options = {}) {
         });
       }
       // Load text annotations if provided
-      // This ensures the annotation-stage fills the actual image area, not the padded/centered container
       if (options.annotationsUrl) {
-        loadAndDrawAnnotations(imageWrapper || container, options.annotationsUrl).catch(err => {
+        loadAndDrawAnnotations(container, options.annotationsUrl).catch(err => {
           console.warn("Failed to load text annotations:", err);
         });
       }

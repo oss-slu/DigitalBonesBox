@@ -9,7 +9,7 @@ function ensureStage(container) {
     stage = document.createElement("div");
     stage.className = "annotation-stage";
     stage.innerHTML = `
-      <svg class="annotation-svg" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"></svg>
+      <svg class="annotation-svg" width="100%" height="100%" preserveAspectRatio="none"></svg>
       <div class="annotation-labels"></div>
     `;
     container.appendChild(stage);
@@ -24,62 +24,51 @@ export function clearAnnotations(container) {
 }
 
 /**
- * Calculates pixel dimensions from RAW EMU coordinates (from PowerPoint).
- * Backend sends raw coordinates along with slide dimensions and normalized_geometry.
- * @param {Object} rect - The RAW rectangle {x, y, width, height} in EMU units.
+ * Calculates pixel dimensions from NORMALIZED coordinates (0.0 to 1.0).
+ * Backend now sends coordinates normalized against the full PPT size.
+ * @param {Object} rect - The NORMALIZED rectangle {x, y, width, height}. <--- CHANGED INPUT MEANING
  * @param {Object} box - The current container pixel size {w, h}.
  * @param {Object} norm - The normalized geometry {normX, normY, normW, normH}.
- * @param {number} slideWidth - Full slide width in EMU units.
- * @param {number} slideHeight - Full slide height in EMU units.
  * @returns {Object} Pixel coordinates {left, top, width, height}.
  */
-function rawRectToPx(rect, box, norm, slideWidth, slideHeight) {
-  // Convert raw EMU coordinates to normalized (0-1) position on full slide
-  const normalizedX = rect.x / slideWidth;
-  const normalizedY = rect.y / slideHeight;
-  const normalizedWidth = rect.width / slideWidth;
-  const normalizedHeight = rect.height / slideHeight;
+function normalizedRectToPx(rect, box, norm) { // <--- RENAMED to reflect change
+  // 🛑 FIX: Input coordinates (rect.x, rect.y, etc.) are now normalized decimals (0.0 to 1.0).
 
-  // Subtract the crop offset to get position within visible region
+  // Normalized Offset (normX, normY are also 0.0 to 1.0)
   const normalizedOffsetX = norm.normX;
   const normalizedOffsetY = norm.normY;
 
-  // Calculate pixel coordinates
+  // We now calculate pixel coordinates by: (Normalized Coord - Normalized Offset) * Effective Pixel Size (box.w/h)
   return {
-    left: (normalizedX - normalizedOffsetX) * box.w,
-    top: (normalizedY - normalizedOffsetY) * box.h,
-    width: normalizedWidth * box.w,
-    height: normalizedHeight * box.h,
+    left: (rect.x - normalizedOffsetX) * box.w,
+    top: (rect.y - normalizedOffsetY) * box.h,
+    width: rect.width * box.w,
+    height: rect.height * box.h,
   };
 }
 
 /**
- * Calculates pixel point from RAW EMU coordinates (from PowerPoint).
- * @param {Object} pt - The RAW point {x, y} in EMU units.
+ * Calculates pixel point from NORMALIZED coordinates (0.0 to 1.0).
+ * @param {Object} pt - The NORMALIZED point {x, y}. <--- CHANGED INPUT MEANING
  * @param {Object} box - The current container pixel size {w, h}.
  * @param {Object} norm - The normalized geometry {normX, normY, normW, normH}.
- * @param {number} slideWidth - Full slide width in EMU units.
- * @param {number} slideHeight - Full slide height in EMU units.
  * @returns {Object} Pixel coordinates {x, y}.
  */
-function rawPointToPx(pt, box, norm, slideWidth, slideHeight) {
-  // Convert raw EMU coordinates to normalized (0-1) position on full slide
-  const normalizedX = pt.x / slideWidth;
-  const normalizedY = pt.y / slideHeight;
+function normalizedPointToPx(pt, box, norm) { // <--- RENAMED to reflect change
+  // 🛑 FIX: Input coordinates (pt.x, pt.y) are now normalized decimals (0.0 to 1.0).
 
-  // Subtract the crop offset to get position within visible region
   const normalizedOffsetX = norm.normX;
   const normalizedOffsetY = norm.normY;
 
   return {
-    x: (normalizedX - normalizedOffsetX) * box.w,
-    y: (normalizedY - normalizedOffsetY) * box.h
+    x: (pt.x - normalizedOffsetX) * box.w,
+    y: (pt.y - normalizedOffsetY) * box.h
   };
 }
 
 /**
  * Draw labels + lines from a JSON object:
- * { annotations: [...], normalized_geometry: { normX, normY, normW, normH }, slide_width, slide_height }
+ * { annotations: [...], normalized_geometry: { normX, normY, normW, normH } }
  */
 export function drawAnnotations(container, annotationsJson) {
   if (!container || !annotationsJson) return;
@@ -92,34 +81,28 @@ export function drawAnnotations(container, annotationsJson) {
   svg.innerHTML = "";
   labels.innerHTML = "";
 
-  // 1. Get current pixel dimensions of the container.
+  // 1. Get current pixel dimensions of the image container.
   const rect = container.getBoundingClientRect();
-  const displayedWidth = rect.width;
-  const displayedHeight = rect.height;
 
-  // 2. Extract slide dimensions and normalization factors from the JSON.
-  const slideWidth = annotationsJson.slide_width || 9144000;
-  const slideHeight = annotationsJson.slide_height || 5143500;
+  // 2. Extract the normalization factors from the JSON (provided by backend).
   const norm = annotationsJson.normalized_geometry || { normX: 0, normY: 0, normW: 1, normH: 1 };
 
   // 3. Define the *effective* coordinate box for scaling.
-  // Scale the displayed size by the crop ratios to get effective full-slide equivalent.
+  // We scale the container size (rect.width/height) by the crop ratios (normW/normH).
+  // This calculates the effective pixel dimensions relative to the full PPT slide size.
   const box = {
-    w: displayedWidth / norm.normW,
-    h: displayedHeight / norm.normH
+    w: rect.width / norm.normW,
+    h: rect.height / norm.normH
   };
 
-  // 4. Setup SVG with viewBox and proper aspect ratio preservation.
-  svg.setAttribute("viewBox", `0 0 ${displayedWidth} ${displayedHeight}`);
-
-  // 5. Get the list of annotations.
+  // 4. Get the list of annotations.
   const list = annotationsJson.annotations || annotationsJson.text_annotations || [];
 
   list.forEach((a) => {
     if (!a || !a.text_box) return;
 
-    // Text label - convert raw EMU coordinates to pixels
-    const px = rawRectToPx(a.text_box, box, norm, slideWidth, slideHeight);
+    // Text label
+    const px = normalizedRectToPx(a.text_box, box, norm);
     const el = document.createElement("div");
     el.className = "annotation-label";
 
@@ -144,8 +127,8 @@ export function drawAnnotations(container, annotationsJson) {
     // Pointer lines
     (a.pointer_lines || []).forEach((line) => {
       if (!line?.start_point || !line?.end_point) return;
-      const p1 = rawPointToPx(line.start_point, box, norm, slideWidth, slideHeight);
-      const p2 = rawPointToPx(line.end_point, box, norm, slideWidth, slideHeight);
+      const p1 = normalizedPointToPx(line.start_point, box, norm); // <--- CALLING NEW FUNCTION
+      const p2 = normalizedPointToPx(line.end_point, box, norm);   // <--- CALLING NEW FUNCTION
       const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
       l.setAttribute("x1", p1.x);
       l.setAttribute("y1", p1.y);

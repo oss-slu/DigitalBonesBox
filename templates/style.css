@@ -1348,7 +1348,9 @@ button:disabled {
     max-width: 100%;
     transform: none !important;
     position: relative;
-    /* aspect-ratio drives height so annotations always scale with width */
+    /* --- MODIFIED FOR 4:3 ASPECT RATIO --- */
+    min-height: 400px;
+    /* Minimum height to ensure visibility */
     aspect-ratio: 3 / 4;
     /* Modern CSS aspect ratio */
 }
