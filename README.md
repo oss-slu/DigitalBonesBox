@@ -43,7 +43,7 @@ Designed for use on iPads, laptops, or other devices commonly used by students.
   - Includes **placeholder options** such as **Search**, **Contact**, **Recent**, and **Help**, which are non-functional and reserved for future implementation.
   - Users can open and close the sidebar using the ☰ button on the top-left corner of the page.
 
-## Setup:
+## Setup
 
 To run this project locally, you will need to have Node.js installed. The application consists of a backend API and a frontend client, which can be run together with a single command.
 
