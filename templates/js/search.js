@@ -88,7 +88,7 @@ async function performSearch(query) {
         
     } catch (error) {
         console.error("Search error:", error);
-        searchResultsContainer.innerHTML = "<li class=\"search-error\">Search failed. Make sure the server is running.</li>";
+        searchResultsContainer.innerHTML = "<li class=\"search-error\">Search failed. Please try again.</li>";
         searchLoading.style.display = "none";
     }
 }
