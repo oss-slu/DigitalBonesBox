@@ -1,6 +1,5 @@
 // boneset-api/server.js
 const express = require("express");
-const axios = require("axios");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 
@@ -13,11 +12,18 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
-const GITHUB_REPO = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/";
-const BONESET_DIR_URL = `${GITHUB_REPO}boneset/`;
+const LOCAL_DATA_DIR = path.join(__dirname, "data");
+const BONESET_DIR = path.join(LOCAL_DATA_DIR, "boneset");
+const BONES_DIR = path.join(LOCAL_DATA_DIR, "bones");
+const COLORED_REGIONS_DIR = path.join(LOCAL_DATA_DIR, "annotations", "ColoredRegions");
+const TEXT_LABEL_ANNOTATIONS_DIR = path.join(LOCAL_DATA_DIR, "annotations", "text_label_annotations");
+const ROTATIONS_TEMPLATE_DIR = path.join(LOCAL_DATA_DIR, "annotations", "rotations annotations");
+const DESCRIPTIONS_DIR = path.join(LOCAL_DATA_DIR, "descriptions");
+const IMAGES_DIR = path.join(LOCAL_DATA_DIR, "images");
+
 const BONESET_NAMES = ["bony_pelvis", "skull", "thorax", "vertebrae", "upper_limb", "lower_limb"];
-const BONES_DIR_URL = `${GITHUB_REPO}bones/`;
-const GITHUB_COLORED_REGIONS_URL = `${GITHUB_REPO}annotations/ColoredRegions/`;
+
+app.use("/api/images", express.static(IMAGES_DIR));
 
 // Rate limiter for search endpoint
 const searchLimiter = rateLimit({
@@ -36,90 +42,84 @@ function escapeHtml(str = "") {
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
-        "\"": "&quot;",
+        '"': "&quot;",
         "'": "&#39;",
     })[c]);
 }
 
 // Input validation helper for boneId
 function isValidBoneId(boneId) {
-    // Ensure boneId is a string (not an array or other type)
     if (typeof boneId !== "string") {
         return false;
     }
-    
-    // Only allow alphanumeric characters and underscores
-    // This prevents path traversal and URL injection attacks
     const validBoneIdPattern = /^[a-z0-9_]+$/i;
     return validBoneIdPattern.test(boneId) && boneId.length > 0 && boneId.length <= 100;
 }
 
-// GitHub JSON fetcher
-async function fetchJSON(url) {
+async function readJSON(filePath) {
     try {
-        const response = await axios.get(url, { timeout: 10_000 });
-        return { data: response.data, status: response.status };
+        const raw = await fs.readFile(filePath, "utf8");
+        return { data: JSON.parse(raw), status: 200 };
     } catch (error) {
-        console.error(`Failed to fetch ${url}:`, error.message);
-        const status = error.response?.status || 500;
-        return { data: null, status };
+        if (error.code === "ENOENT") {
+            return { data: null, status: 404 };
+        }
+        console.error(`Failed to read JSON ${filePath}:`, error.message);
+        return { data: null, status: 500 };
     }
 }
 
-// Initialize search cache at startup
 async function initializeSearchCache() {
     try {
         const searchData = [];
         console.log("Initializing search cache...");
+
         for (const bonesetName of BONESET_NAMES) {
-            const bonesetJsonUrl = `${BONESET_DIR_URL}${bonesetName}.json`;
-            const bonesetResult = await fetchJSON(bonesetJsonUrl);
+            const bonesetPath = path.join(BONESET_DIR, `${bonesetName}.json`);
+            const bonesetResult = await readJSON(bonesetPath);
             const bonesetData = bonesetResult.data;
             if (!bonesetData) {
                 console.warn(`Failed to load boneset data from ${bonesetName}`);
                 continue;
             }
 
-            // Add boneset to search data
             searchData.push({
                 id: bonesetData.id,
                 name: bonesetData.name,
                 type: "boneset",
                 boneset: bonesetData.id,
                 bone: null,
-                subbone: null
+                subbone: null,
             });
 
-            // Load all bones and sub-bones
             for (const boneId of bonesetData.bones || []) {
-                const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+                const bonePath = path.join(BONES_DIR, `${boneId}.json`);
+                const boneResult = await readJSON(bonePath);
                 const boneData = boneResult.data;
                 if (boneData) {
-                    // Add bone to search data
                     searchData.push({
                         id: boneData.id,
                         name: boneData.name,
                         type: "bone",
                         boneset: bonesetData.id,
                         bone: boneData.id,
-                        subbone: null
+                        subbone: null,
                     });
 
-                    // Add sub-bones to search data
                     for (const subBoneId of boneData.subBones || []) {
-                        const subBoneName = subBoneId.replace(/_/g, " ");
                         searchData.push({
                             id: subBoneId,
-                            name: subBoneName,
+                            name: subBoneId.replace(/_/g, " "),
                             type: "subbone",
                             boneset: bonesetData.id,
                             bone: boneData.id,
-                            subbone: subBoneId
+                            subbone: subBoneId,
                         });
                     }
                 }
             }
         }
+
         searchCache = searchData;
         console.log(`Search cache initialized with ${searchData.length} items`);
     } catch (error) {
@@ -127,33 +127,29 @@ async function initializeSearchCache() {
     }
 }
 
-// Search function with ranking
 function searchItems(query, limit = 20) {
     if (!searchCache) return [];
-    
+
     const q = query.toLowerCase().trim();
     const results = [];
-    
-    // First pass: prefix matches (higher priority)
+
     for (const item of searchCache) {
         if (item.name.toLowerCase().startsWith(q)) {
             results.push({ ...item, priority: 1 });
         }
     }
-    
-    // Second pass: substring matches (lower priority)
+
     for (const item of searchCache) {
         if (!item.name.toLowerCase().startsWith(q) && item.name.toLowerCase().includes(q)) {
             results.push({ ...item, priority: 2 });
         }
     }
-    
-    // Sort by priority, then by name
+
     results.sort((a, b) => {
         if (a.priority !== b.priority) return a.priority - b.priority;
         return a.name.localeCompare(b.name);
     });
-    
+
     return results.slice(0, limit);
 }
 
@@ -170,18 +166,20 @@ app.get("/combined-data", async (_req, res) => {
         const bonesets = [];
         const bones = [];
         const subbones = [];
+
         for (const bonesetName of BONESET_NAMES) {
-            const bonesetJsonUrl = `${BONESET_DIR_URL}${bonesetName}.json`;
-            const bonesetResult = await fetchJSON(bonesetJsonUrl);
+            const bonesetPath = path.join(BONESET_DIR, `${bonesetName}.json`);
+            const bonesetResult = await readJSON(bonesetPath);
             const bonesetData = bonesetResult.data;
             if (!bonesetData) {
                 return res.status(bonesetResult.status).json({ error: "Failed to load boneset data" });
             }
 
-            bonesets.push({id: bonesetData.id, name: bonesetData.name});
+            bonesets.push({ id: bonesetData.id, name: bonesetData.name });
 
             for (const boneId of bonesetData.bones || []) {
-                const boneResult = await fetchJSON(`${BONES_DIR_URL}${boneId}.json`);
+                const bonePath = path.join(BONES_DIR, `${boneId}.json`);
+                const boneResult = await readJSON(bonePath);
                 const boneData = boneResult.data;
                 if (boneData) {
                     bones.push({ id: boneData.id, name: boneData.name, boneset: bonesetData.id });
@@ -191,7 +189,8 @@ app.get("/combined-data", async (_req, res) => {
                 }
             }
         }
-        res.json({bonesets, bones, subbones});
+
+        res.json({ bonesets, bones, subbones });
     } catch (error) {
         console.error("Error fetching combined data:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
@@ -200,43 +199,31 @@ app.get("/combined-data", async (_req, res) => {
 
 /**
  * Gets colored region data for a specific bone.
- * Dynamically constructs the GitHub filename from the boneId and fetches the data.
  * Expects a 'boneId' query parameter.
  */
 app.get("/api/colored-regions", async (req, res) => {
     const { boneId } = req.query;
 
     if (!boneId) {
-        return res.status(400).json({ 
-            error: "boneId query parameter is required"
-        });
+        return res.status(400).json({ error: "boneId query parameter is required" });
     }
 
     if (!isValidBoneId(boneId)) {
-        return res.status(400).json({ 
-            error: "Invalid boneId format"
-        });
+        return res.status(400).json({ error: "Invalid boneId format" });
     }
 
     const filename = `${boneId}_colored_regions.json`;
-    const githubUrl = `${GITHUB_COLORED_REGIONS_URL}${filename}`;
+    const filePath = path.join(COLORED_REGIONS_DIR, filename);
+    const result = await readJSON(filePath);
 
-    try {
-        const response = await axios.get(githubUrl, { timeout: 5000 });
-        return res.json(response.data);
-    } catch (error) {
-        if (error.response?.status === 404) {
-            console.log(`[ColoredRegions API] Not found: ${filename}`);
-            return res.status(404).json({ 
-                error: `Colored region data not available for boneId: ${boneId}`
-            });
+    if (!result.data) {
+        if (result.status === 404) {
+            return res.status(404).json({ error: `Colored region data not available for boneId: ${boneId}` });
         }
-        
-        console.error(`[ColoredRegions API] Error fetching ${filename}:`, error.message);
-        return res.status(502).json({ 
-            error: "Failed to fetch colored region data from GitHub"
-        });
+        return res.status(500).json({ error: "Failed to load colored region data" });
     }
+
+    res.json(result.data);
 });
 
 /**
@@ -248,26 +235,23 @@ app.get("/api/description/", async (req, res) => {
     if (!boneId) {
         return res.send(" ");
     }
-    
-    // Validate boneId to prevent SSRF attacks
+
     if (!isValidBoneId(boneId)) {
         return res.send("<li>Invalid bone ID.</li>");
     }
-    
-    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/descriptions/${boneId}_description.json`;
 
-    try {
-        const response = await axios.get(GITHUB_DESC_URL);
-        const descriptionData = response.data;
-
-        let html = `<li><strong>${escapeHtml(descriptionData.name)}</strong></li>`;
-        descriptionData.description.forEach(point => {
-            html += `<li>${escapeHtml(point)}</li>`;
-        });
-        res.send(html);
-    } catch (error) {
-        res.send("<li>Description not available.</li>");
+    const descriptionPath = path.join(DESCRIPTIONS_DIR, `${boneId}_description.json`);
+    const descriptionResult = await readJSON(descriptionPath);
+    if (!descriptionResult.data) {
+        return res.send("<li>Description not available.</li>");
     }
+
+    const descriptionData = descriptionResult.data;
+    let html = `<li><strong>${escapeHtml(descriptionData.name)}</strong></li>`;
+    (descriptionData.description || []).forEach((point) => {
+        html += `<li>${escapeHtml(point)}</li>`;
+    });
+    res.send(html);
 });
 
 /**
@@ -276,52 +260,34 @@ app.get("/api/description/", async (req, res) => {
  */
 app.get("/api/bone-data/", async (req, res) => {
     const { boneId } = req.query;
-    
-    // Validate boneId parameter
+
     if (!boneId) {
-        return res.status(400).json({ 
-            error: "boneId query parameter is required"
-        });
+        return res.status(400).json({ error: "boneId query parameter is required" });
     }
-    
-    // Validate boneId format to prevent SSRF attacks
+
     if (!isValidBoneId(boneId)) {
-        return res.status(400).json({ 
-            error: "Invalid boneId format. Only alphanumeric characters and underscores are allowed."
-        });
+        return res.status(400).json({ error: "Invalid boneId format. Only alphanumeric characters and underscores are allowed." });
     }
-    
-    // Build GitHub URL for the description JSON
-    const GITHUB_DESC_URL = `https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/descriptions/${boneId}_description.json`;
-    const GITHUB_IMAGES_BASE_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/images/";
 
-    try {
-        // Fetch the description JSON from GitHub
-        const response = await axios.get(GITHUB_DESC_URL, { timeout: 10000 });
-        const descriptionData = response.data;
-
-        // Extract the images array from the JSON
-        const imagesArray = descriptionData.images || [];
-        
-        // Build image objects with filename and full URL
-        const images = imagesArray.map(filename => ({
-            filename: filename,
-            url: `${GITHUB_IMAGES_BASE_URL}${filename}`
-        }));
-
-        // Return the complete bone data as JSON
-        res.json({
-            name: descriptionData.name,
-            id: descriptionData.id,
-            description: descriptionData.description,
-            images: images
-        });
-
-    } catch (error) {
-        return res.status(error.response?.status || 500).json({
-            error: error.response?.error || "Failed to fetch bone data"
-        });
+    const descriptionPath = path.join(DESCRIPTIONS_DIR, `${boneId}_description.json`);
+    const descriptionResult = await readJSON(descriptionPath);
+    if (!descriptionResult.data) {
+        return res.status(descriptionResult.status === 404 ? 404 : 500).json({ error: "Failed to fetch bone data" });
     }
+
+    const descriptionData = descriptionResult.data;
+    const imagesArray = descriptionData.images || [];
+    const images = imagesArray.map((filename) => ({
+        filename,
+        url: `/api/images/${encodeURIComponent(filename)}`,
+    }));
+
+    res.json({
+        name: descriptionData.name,
+        id: descriptionData.id,
+        description: descriptionData.description,
+        images,
+    });
 });
 
 /**
@@ -330,109 +296,69 @@ app.get("/api/bone-data/", async (req, res) => {
 app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
     const { boneId } = req.params;
 
-    // 1. Validation
     if (!isValidBoneId(boneId)) {
-        return res.status(400).json({ 
-            error: "Invalid boneId format."
-        });
+        return res.status(400).json({ error: "Invalid boneId format." });
     }
 
-    // Define the view/rotation to select from the template geometry
-    // This assumes all current bone views use the 'right' view coordinates for scaling.
-    const geometryView = "right"; 
-
-    // Construct GitHub URLs for annotation data and template
+    const geometryView = "right";
     const annotationFilename = `${boneId}_text_annotations.json`;
-    const GITHUB_ANNOTATION_URL = `${GITHUB_REPO}annotations/text_label_annotations/${annotationFilename}`;
+    const annotationPath = path.join(TEXT_LABEL_ANNOTATIONS_DIR, annotationFilename);
     const templateFilename = "template_bony_pelvis.json";
-    const GITHUB_TEMPLATE_URL = `${GITHUB_REPO}annotations/rotations%20annotations/${templateFilename}`;
+    const templatePath = path.join(ROTATIONS_TEMPLATE_DIR, templateFilename);
 
-    try {
-        // Fetch annotation data from GitHub
-        const annotationResult = await fetchJSON(GITHUB_ANNOTATION_URL);
-        const annotationData = annotationResult.data;
-        if (!annotationData) {
-            const status = annotationResult.status;
-            const errorMessage = `Failed to fetch annotation data (HTTP ${status})`;
-            return res.status(status).json({ 
-                error: errorMessage
-            });
-        }
-        
-        // Fetch the rotation/scaling template data from GitHub
-        const templateResult = await fetchJSON(GITHUB_TEMPLATE_URL);
-        const templateData = templateResult.data;
-        if (!templateData) {
-            const status = templateResult.status;
-            const errorMessage = `Failed to fetch template data (HTTP ${status})`;
-            return res.status(status).json({ 
-                error: errorMessage
-            });
-        }
-
-        // Define Full Slide Dimensions for Normalization
-        // Use standard PPT slide dimensions if 'full_slide_dimensions' is missing from the template.
-        const fullDimensions = templateData.full_slide_dimensions || { 
-            width: 9144000, 
-            height: 5143500 
-        };
-        const slideWidth = fullDimensions.width;
-        const slideHeight = fullDimensions.height;
-        
-        // Combine required data for the frontend
-        let normalizedGeometry = templateData.normalized_geometry
-            ? templateData.normalized_geometry[geometryView] 
-            : { normX: 0, normY: 0, normW: 1, normH: 1 }; 
-        
-        // *** ALIGNMENT WORKAROUND (Leave this in) ***
-        if (boneId === "bony_pelvis" && normalizedGeometry) {
-            normalizedGeometry.normX = normalizedGeometry.normX + 0.001; 
-            console.log("ALIGNMENT WORKAROUND APPLIED: Bony Pelvis normX shifted by +0.001");
-        }
-        // *** END ALIGNMENT WORKAROUND ***
-        
-        // Normalize Text Annotation Coordinates
-        const normalizedAnnotations = (annotationData.text_annotations || []).map(annotation => {
-            if (annotation.text_box && slideWidth && slideHeight) {
-                // Normalize all coordinate values for the bounding box
-                annotation.text_box.x = annotation.text_box.x / slideWidth;
-                annotation.text_box.y = annotation.text_box.y / slideHeight;
-                annotation.text_box.width = annotation.text_box.width / slideWidth;
-                annotation.text_box.height = annotation.text_box.height / slideHeight;
-
-                // Normalize pointer lines (start and end points)
-                (annotation.pointer_lines || []).forEach(line => {
-                    if (line.start_point) {
-                        line.start_point.x = line.start_point.x / slideWidth;
-                        line.start_point.y = line.start_point.y / slideHeight;
-                    }
-                    if (line.end_point) {
-                        line.end_point.x = line.end_point.x / slideWidth;
-                        line.end_point.y = line.end_point.y / slideHeight;
-                    }
-                });
-                
-                // Note: Other coordinates like target_regions might also need normalization 
-                // depending on your frontend implementation, but we start with text_box and pointer_lines.
-            }
-            return annotation;
-        });
-
-        const combinedData = {
-            annotations: normalizedAnnotations,
-            normalized_geometry: normalizedGeometry
-        };
-
-        console.log(`SUCCESS: Serving annotation data for ${boneId} from GitHub combined with template (Coordinates Normalized).`);
-        return res.json(combinedData);
-        
-    } catch (error) {
-        console.error("Error fetching annotation/template data:", error.message);
-        res.status(500).json({ 
-            error: "Internal Server Error", 
-            message: `Failed to fetch annotation data for boneId: ${boneId}` 
-        });
+    const annotationResult = await readJSON(annotationPath);
+    if (!annotationResult.data) {
+        return res.status(annotationResult.status).json({ error: `Failed to load annotation data (HTTP ${annotationResult.status})` });
     }
+
+    const templateResult = await readJSON(templatePath);
+    if (!templateResult.data) {
+        return res.status(templateResult.status).json({ error: `Failed to load template data (HTTP ${templateResult.status})` });
+    }
+
+    const annotationData = annotationResult.data;
+    const templateData = templateResult.data;
+    const fullDimensions = templateData.full_slide_dimensions || { width: 9144000, height: 5143500 };
+    const slideWidth = fullDimensions.width;
+    const slideHeight = fullDimensions.height;
+
+    let normalizedGeometry = templateData.normalized_geometry
+        ? templateData.normalized_geometry[geometryView]
+        : { normX: 0, normY: 0, normW: 1, normH: 1 };
+
+    if (boneId === "bony_pelvis" && normalizedGeometry) {
+        normalizedGeometry.normX = normalizedGeometry.normX + 0.001;
+        console.log("ALIGNMENT WORKAROUND APPLIED: Bony Pelvis normX shifted by +0.001");
+    }
+
+    const normalizedAnnotations = (annotationData.text_annotations || []).map((annotation) => {
+        if (annotation.text_box && slideWidth && slideHeight) {
+            annotation.text_box.x = annotation.text_box.x / slideWidth;
+            annotation.text_box.y = annotation.text_box.y / slideHeight;
+            annotation.text_box.width = annotation.text_box.width / slideWidth;
+            annotation.text_box.height = annotation.text_box.height / slideHeight;
+
+            (annotation.pointer_lines || []).forEach((line) => {
+                if (line.start_point) {
+                    line.start_point.x = line.start_point.x / slideWidth;
+                    line.start_point.y = line.start_point.y / slideHeight;
+                }
+                if (line.end_point) {
+                    line.end_point.x = line.end_point.x / slideWidth;
+                    line.end_point.y = line.end_point.y / slideHeight;
+                }
+            });
+        }
+        return annotation;
+    });
+
+    const combinedData = {
+        annotations: normalizedAnnotations,
+        normalized_geometry: normalizedGeometry,
+    };
+
+    console.log(`SUCCESS: Serving annotation data for ${boneId} from local data combined with template (Coordinates Normalized).`);
+    return res.json(combinedData);
 });
 
 /**

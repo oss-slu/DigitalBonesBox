@@ -1,14 +1,15 @@
 // js/description.js
-const GITHUB_RAW_URL = "https://raw.githubusercontent.com/oss-slu/DigitalBonesBox/data/data/descriptions/";
+const DESCRIPTION_API = "/api/description/";
 
 export async function loadDescription(id) {
     const container = document.getElementById("description-Container");
     container.innerHTML = "";
-    const descUrl = `${GITHUB_RAW_URL}${id}_description.json`;
+    const descUrl = `${DESCRIPTION_API}?boneId=${encodeURIComponent(id)}`;
 
     try {
         const response = await fetch(descUrl);
-        const data = await response.json();
+        const data = await response.text();
+        container.innerHTML = data;
 
         const nameItem = document.createElement("li");
         nameItem.innerHTML = `<strong>${data.name}</strong>`;
