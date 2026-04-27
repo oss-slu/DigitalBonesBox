@@ -1,3 +1,5 @@
+import { fetchSearch } from "./api.js";
+
 let selectedIndex = -1;
 let searchTimeout;
 
@@ -70,15 +72,11 @@ async function performSearch(query) {
     
     try {
         console.log("Performing search for:", query);
-        const response = await fetch(`http://127.0.0.1:8000/api/search?q=${encodeURIComponent(query)}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const html = await response.text();
-        console.log("Search response received");
-        
+            const html = await fetchSearch(query);
+            
+            if (html === null) {
+                throw new Error("Search request failed");
+            }
         searchResultsContainer.innerHTML = html;
         searchLoading.style.display = "none";
         selectedIndex = -1;

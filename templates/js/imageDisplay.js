@@ -1,9 +1,10 @@
 // js/imageDisplay.js
 // Rendering helpers for the image area (no dropdown wiring).
 
-import { clearAnnotations, loadAndDrawAnnotations } from "./annotationOverlay.js";
+import { clearAnnotations, loadAndDrawAnnotations, drawAnnotations } from "./annotationOverlay.js";
 import { displayColoredRegions, clearAllColoredRegions } from "./coloredRegionsOverlay.js";
 import { imageCaptions } from "./imageCaptions.js";
+import { fetchAnnotations } from "./api.js";
 
 // Track the current boneId for colored regions
 let currentBoneId = null;
@@ -105,8 +106,15 @@ export function displayBoneImages(images, options = {}) {
   const imagesContent = document.querySelector(".images-content");
   if (imagesContent) imagesContent.classList.add("has-images");
 
-  // Draw annotations if provided
-  if (options.annotationsUrl) {
+  if (options.boneId) {
+    fetchAnnotations(options.boneId)
+      .then(annotationData => {
+        if (annotationData) {
+          drawAnnotations(container, annotationData);
+        }
+      })
+      .catch(err => console.warn("Failed to load annotations:", err));
+  } else if (options.annotationsUrl) {
     loadAndDrawAnnotations(container, options.annotationsUrl).catch(err =>
       console.warn("Failed to load annotations:", err)
     );

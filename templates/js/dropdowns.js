@@ -29,9 +29,6 @@ async function maybeLoadAnnotations(boneId) {
   // refactored into the dropdown listeners (using the 'opts' object) to use the API endpoint.
 }
 
-// Backend API base (runs on 8000)
-const API_BASE = "http://127.0.0.1:8000";
-
 /** Helper: fetch images for a bone/sub-bone and render them */
 async function loadBoneImages(boneId, options = {}) {
   const stage = getImageStage();
@@ -118,19 +115,17 @@ bonesetSelect.addEventListener("change", (e) => {
 
   let targetId = selectedBonesetId; // Use the Boneset ID (e.g., 'bony_pelvis')
 
-  // Set annotation URL using the Boneset ID.
-  const opts = (bonesetName === "bony pelvis")
-    ? { 
-        annotationsUrl: `${API_BASE}/api/annotations/${targetId}`,
-        isBonesetSelection: true // Flag to indicate boneset selection
-      }
-    : {};
+  // Pass boneId and boneset selection flag to the image loader
+  const opts = {
+    boneId: targetId,
+    isBonesetSelection: bonesetName === "bony pelvis"
+  };
 
   // Load the Boneset description (which shows the overall Boneset text)
   loadDescription(targetId);
 
   // Load the boneset image using the Boneset ID (e.g., 'bony_pelvis')
-  loadBoneImages(targetId, opts); 
+  loadBoneImages(targetId, opts);
   // --- END FIX ---
 });
 
@@ -154,10 +149,7 @@ boneSelect.addEventListener("change", (e) => {
     loadDescription(selectedBoneId);
     
     // --- FIX for Bone Selection (Ensures all Bone annotations load) ---
-    // Always build the annotation URL using the selectedBoneId
-    const opts = { 
-      annotationsUrl: `${API_BASE}/api/annotations/${selectedBoneId}` 
-    };    
+    const opts = { boneId: selectedBoneId };
     
     loadBoneImages(selectedBoneId, opts);
   } else {
@@ -183,11 +175,8 @@ subboneSelect.addEventListener("change", (e) => {
     // Load the text description for this sub-bone
     loadDescription(selectedSubboneId);
 
-    // 🔑 IMPORTANT:
-    // For sub-bones, load the sub-bone–specific annotation JSON,
-    // e.g. /api/annotations/pubic_tubercle  (mapped to slide20 JSON on the server)
     const opts = {
-      annotationsUrl: `${API_BASE}/api/annotations/${selectedSubboneId}`,
+      boneId: selectedSubboneId,
     };
 
     // This will draw the sub-bone image AND its own labels
