@@ -9,28 +9,12 @@ document.addEventListener("DOMContentLoaded", () => {
   showPlaceholder();
 });
 
-// ---- Map/lookup you can extend later -----------------
+// ---- Map/lookup and helpers -----------------
 let _boneById = {}; // filled in setupDropdownListeners
 
 function getImageStage() {
   return /** @type {HTMLElement|null} */ (document.getElementById("bone-image-container"));
 }
-
-// Function maybeLoadAnnotations: Logic removed. Annotation URL construction is now in the listeners.
-async function maybeLoadAnnotations(boneId) {
-  const stage = getImageStage();
-  if (!stage) return;
-
-  // remove any previous overlay
-  clearAnnotations(stage);
-  stage.classList.remove("with-annotations");
-  
-  // Note: The logic for loading the annotation file used to be here, but has been 
-  // refactored into the dropdown listeners (using the 'opts' object) to use the API endpoint.
-}
-
-// Backend API base (runs on 8000)
-const API_BASE = "http://127.0.0.1:8000";
 
 /** Helper: fetch images for a bone/sub-bone and render them */
 async function loadBoneImages(boneId, options = {}) {
@@ -47,7 +31,7 @@ async function loadBoneImages(boneId, options = {}) {
       showPlaceholder();
       if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
     } else {
-      // Pass both boneId (for colored regions) and options (for text annotations)
+      // Pass both boneId (for colored regions) and options (for annotations)
       displayBoneImages(images, { ...options, boneId });
     }
   } catch (err) {
@@ -85,9 +69,6 @@ export function setupDropdownListeners(combinedData) {
 
   if (!combinedData) return;
 
-  // Build quick lookup
-  _boneById = Object.fromEntries((combinedData.bones || []).map(b => [b.id, b]));
-
 // Boneset change
 bonesetSelect.addEventListener("change", (e) => {
   const selectedBonesetId = e.target.value;
@@ -118,13 +99,13 @@ bonesetSelect.addEventListener("change", (e) => {
 
   let targetId = selectedBonesetId; // Use the Boneset ID (e.g., 'bony_pelvis')
 
-  // Set annotation URL using the Boneset ID.
+  // Set options with boneId and isBonesetSelection flag
   const opts = (bonesetName === "bony pelvis")
     ? { 
-        annotationsUrl: `${API_BASE}/api/annotations/${targetId}`,
+        boneId: targetId,
         isBonesetSelection: true // Flag to indicate boneset selection
       }
-    : {};
+    : { boneId: targetId };
 
   // Load the Boneset description (which shows the overall Boneset text)
   loadDescription(targetId);
@@ -154,10 +135,8 @@ boneSelect.addEventListener("change", (e) => {
     loadDescription(selectedBoneId);
     
     // --- FIX for Bone Selection (Ensures all Bone annotations load) ---
-    // Always build the annotation URL using the selectedBoneId
-    const opts = { 
-      annotationsUrl: `${API_BASE}/api/annotations/${selectedBoneId}` 
-    };    
+    // Pass boneId in options for annotation loading
+    const opts = { boneId: selectedBoneId };    
     
     loadBoneImages(selectedBoneId, opts);
   } else {
@@ -184,10 +163,9 @@ subboneSelect.addEventListener("change", (e) => {
     loadDescription(selectedSubboneId);
 
     // 🔑 IMPORTANT:
-    // For sub-bones, load the sub-bone–specific annotation JSON,
-    // e.g. /api/annotations/pubic_tubercle  (mapped to slide20 JSON on the server)
+    // For sub-bones, pass the boneId in options for annotation loading
     const opts = {
-      annotationsUrl: `${API_BASE}/api/annotations/${selectedSubboneId}`,
+      boneId: selectedSubboneId,
     };
 
     // This will draw the sub-bone image AND its own labels

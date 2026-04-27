@@ -1,6 +1,9 @@
 let selectedIndex = -1;
 let searchTimeout;
 
+// Import the API function
+import { fetchSearch } from "./api.js";
+
 // Handle search result clicks and keyboard navigation
 export function initializeSearch() {
     const searchBar = document.getElementById("search-bar");
@@ -70,13 +73,7 @@ async function performSearch(query) {
     
     try {
         console.log("Performing search for:", query);
-        const response = await fetch(`http://127.0.0.1:8000/api/search?q=${encodeURIComponent(query)}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const html = await response.text();
+        const html = await fetchSearch(query);
         console.log("Search response received");
         
         searchResultsContainer.innerHTML = html;
