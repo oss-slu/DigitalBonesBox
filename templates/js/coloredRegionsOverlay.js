@@ -1,6 +1,6 @@
+import { fetchColoredRegionsData } from "./api.js";
+
 const COLORED_REGIONS_CONFIG = {
-    // API endpoint for fetching colored regions data by bone ID
-    API_URL: "http://127.0.0.1:8000/api/colored-regions",
     // Default opacity for colored overlays (0.3 = 30% transparent)
     DEFAULT_OPACITY: 0.4
 };
@@ -105,24 +105,10 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
     }
 
     try {
-        // Fetch from the API endpoint
-        const url = `${COLORED_REGIONS_CONFIG.API_URL}?boneId=${encodeURIComponent(mappedBoneId)}`;
-        
-        const response = await fetch(url, {
-            cache: "no-store",
-            headers: {
-                "Cache-Control": "no-cache",
-                "Pragma": "no-cache"
-            }
-        });
-
-        if (!response.ok) {
-            console.warn(`[ColoredRegions] API returned status ${response.status}: ${response.statusText}`);
-            return null;
+        const data = await fetchColoredRegionsData(mappedBoneId);
+        if (data) {
+            console.log(`[ColoredRegions] Successfully fetched colored regions for ${mappedBoneId}`);
         }
-
-        const data = await response.json();
-        console.log(`[ColoredRegions] Successfully fetched colored regions for ${mappedBoneId}`);
         return data;
     } catch (error) {
         console.error(`[ColoredRegions] Error fetching colored regions for ${boneId}:`, error);
