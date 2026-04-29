@@ -9,24 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
   showPlaceholder();
 });
 
-// ---- Map/lookup you can extend later -----------------
+// ---- Map/lookup and helpers -----------------
 let _boneById = {}; // filled in setupDropdownListeners
 
 function getImageStage() {
   return /** @type {HTMLElement|null} */ (document.getElementById("bone-image-container"));
-}
-
-// Function maybeLoadAnnotations: Logic removed. Annotation URL construction is now in the listeners.
-async function maybeLoadAnnotations(boneId) {
-  const stage = getImageStage();
-  if (!stage) return;
-
-  // remove any previous overlay
-  clearAnnotations(stage);
-  stage.classList.remove("with-annotations");
-  
-  // Note: The logic for loading the annotation file used to be here, but has been 
-  // refactored into the dropdown listeners (using the 'opts' object) to use the API endpoint.
 }
 
 /** Helper: fetch images for a bone/sub-bone and render them */
@@ -81,9 +68,6 @@ export function setupDropdownListeners(combinedData) {
   const subboneSelect  = document.getElementById("subbone-select");
 
   if (!combinedData) return;
-
-  // Build quick lookup
-  _boneById = Object.fromEntries((combinedData.bones || []).map(b => [b.id, b]));
 
 // Boneset change
 bonesetSelect.addEventListener("change", (e) => {
@@ -149,6 +133,7 @@ boneSelect.addEventListener("change", (e) => {
     loadDescription(selectedBoneId);
     
     // --- FIX for Bone Selection (Ensures all Bone annotations load) ---
+    // Pass boneId in options for annotation loading
     const opts = { boneId: selectedBoneId };
     
     loadBoneImages(selectedBoneId, opts);
@@ -175,6 +160,8 @@ subboneSelect.addEventListener("change", (e) => {
     // Load the text description for this sub-bone
     loadDescription(selectedSubboneId);
 
+    // 🔑 IMPORTANT:
+    // For sub-bones, pass the boneId in options for annotation loading
     const opts = {
       boneId: selectedSubboneId,
     };

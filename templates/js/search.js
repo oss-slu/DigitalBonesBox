@@ -73,7 +73,7 @@ async function performSearch(query) {
     try {
         console.log("Performing search for:", query);
             const html = await fetchSearch(query);
-            
+
             if (html === null) {
                 throw new Error("Search request failed");
             }
