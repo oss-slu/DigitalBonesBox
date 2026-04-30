@@ -106,7 +106,7 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             }
         });
 
-        if (!response.ok) {
+        if (!response.ok && response.status !== 404) {
             console.warn(`[ColoredRegions] API returned status ${response.status}: ${response.statusText}`);
             return null;
         }
@@ -115,7 +115,6 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
         console.log(`[ColoredRegions] Successfully fetched colored regions for ${mappedBoneId}`);
         return data;
     } catch (error) {
-        console.error(`[ColoredRegions] Error fetching colored regions for ${boneId}:`, error);
         return null;
     }
 }
