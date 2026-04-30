@@ -1,6 +1,6 @@
 # Contributing to Digital Bone Box
 
-Thank you for checking out **Digital Bone Box**! We are so happy you are here. If you are intrested in contributing to the project below are some guidelines that help us make most out of your contribution. For more detailed documentation, [see the wiki](https://github.com/oss-slu/DigitalBoneBox/wiki).
+Thank you for checking out **Digital Bone Box**! We are so happy you are here. If you are intrested in contributing to the project below are some guidelines that help us make the most out of your contribution. For more detailed documentation, [see the wiki](https://github.com/oss-slu/DigitalBoneBox/wiki).
 
 ## Getting Started
 
