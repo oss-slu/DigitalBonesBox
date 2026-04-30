@@ -80,7 +80,7 @@ git push origin feature-branch
 
 ### 1. Documentation
 
-- Update documentation as necessary. If your change impacts functionality, be sure to update the corresponding documentation in the **README** or in any documentation in our wiki.
+- Update documentation as necessary. If your change impacts functionality, be sure to update the corresponding documentation in the **README** or in the wiki.
 
 ---
 
