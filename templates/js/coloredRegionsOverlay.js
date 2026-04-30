@@ -94,16 +94,6 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
         mappedBoneId = "bony_pelvis";
     }
 
-    // Available bones with colored region data
-    const bonesWithColoredRegions = ["bony_pelvis", "ilium", "ischium", "pubis", "iliac_crest", "anterior_iliac_spines", "posterior_iliac_spines", "posterior_superior_iliac_spines", "posterior_inferior_iliac_spines", "auricular_surface", "ramus", "ischial_tuberosity", "ischial_spine", "sciatic_notches", "pubic_rami", "pectineal_line", "symphyseal_surface", "pubic_tubercle"];
-    
-    console.log(`[ColoredRegions] Checking if "${mappedBoneId}" is in available list:`, bonesWithColoredRegions);
-    
-    if (!bonesWithColoredRegions.includes(mappedBoneId)) {
-        console.log(`[ColoredRegions] No colored regions available for: ${boneId}`);
-        return null;
-    }
-
     try {
         // Fetch from the API endpoint
         const url = `${COLORED_REGIONS_CONFIG.API_URL}?boneId=${encodeURIComponent(mappedBoneId)}`;
@@ -116,7 +106,7 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
             }
         });
 
-        if (!response.ok) {
+        if (!response.ok && response.status !== 404) {
             console.warn(`[ColoredRegions] API returned status ${response.status}: ${response.statusText}`);
             return null;
         }
@@ -125,7 +115,6 @@ async function fetchColoredRegionData(boneId, isBonesetSelection = false) {
         console.log(`[ColoredRegions] Successfully fetched colored regions for ${mappedBoneId}`);
         return data;
     } catch (error) {
-        console.error(`[ColoredRegions] Error fetching colored regions for ${boneId}:`, error);
         return null;
     }
 }
