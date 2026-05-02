@@ -136,6 +136,8 @@ function searchItems(query, limit = 20) {
     
     // First pass: prefix matches (higher priority)
     for (const item of searchCache) {
+        if (!item.name) continue;
+        
         if (item.name.toLowerCase().startsWith(q)) {
             results.push({ ...item, priority: 1 });
         }
@@ -143,6 +145,8 @@ function searchItems(query, limit = 20) {
     
     // Second pass: substring matches (lower priority)
     for (const item of searchCache) {
+        if (!item.name) continue;
+        
         if (!item.name.toLowerCase().startsWith(q) && item.name.toLowerCase().includes(q)) {
             results.push({ ...item, priority: 2 });
         }
