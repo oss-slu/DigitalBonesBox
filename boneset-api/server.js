@@ -374,14 +374,10 @@ app.get("/api/annotations/:boneId", searchLimiter, async (req, res) => {
             });
         }
 
-        // Define Full Slide Dimensions for Normalization
-        // Use standard PPT slide dimensions if 'full_slide_dimensions' is missing from the template.
-        const fullDimensions = templateData.full_slide_dimensions || { 
-            width: 9144000, 
-            height: 5143500 
-        };
-        const slideWidth = fullDimensions.width;
-        const slideHeight = fullDimensions.height;
+        // Define Full Slide Dimensions for Normalization. We normalize the text annotation dimentions to the slide
+        //  widths so that the values used by the frontend are decoupled from the slide dimensions.
+        const slideWidth = 9144000;
+        const slideHeight = 5143500;
         
         // Combine required data for the frontend
         let normalizedGeometry = templateData.normalized_geometry

@@ -268,8 +268,8 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
     // New format: coordinates are relative to the image and scaled to pixel size
     // Old format: coordinates are in EMUs relative to slide and require full conversion
     const dimensions = {
-        slideWidth: imageData.width || imageData.width,
-        slideHeight: imageData.height || imageData.height,
+        slideWidth: imageData.width,
+        slideHeight: imageData.height,
         imageWidth: imageWidth,
         imageHeight: imageHeight
     };
