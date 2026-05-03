@@ -411,7 +411,8 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
     let regionsToDisplay = [];
     
     if (regionData.images && Array.isArray(regionData.images)) {
-        console.log(`[ColoredRegions] Using multi-image structure with ${regionData.images.length} images`);
+        // One possible structure: data organized by image
+        console.log(`[ColoredRegions] Using organized-by-image structure with ${regionData.images.length} images`);
         
         if (imageIndex >= 0 && imageIndex < regionData.images.length) {
             imageData = regionData.images[imageIndex];
@@ -420,6 +421,14 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
             console.warn(`[ColoredRegions] Invalid imageIndex ${imageIndex}, expected 0-${regionData.images.length - 1}`);
             return;
         }
+    } else if (regionData.colored_regions) {
+        // Alternate structure: single set of regions for all images
+        console.log("[ColoredRegions] Using alternate structure");
+        regionsToDisplay = regionData.colored_regions;
+        imageData = {
+            width: regionData.image_dimensions?.width,
+            height: regionData.image_dimensions?.height
+        };
     }
     
     if (!regionsToDisplay || regionsToDisplay.length === 0) {
