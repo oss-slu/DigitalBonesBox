@@ -10,6 +10,12 @@ const API_CONFIG = {
     }
 };
 
+/**
+ * Fetches the combined boneset/bone/subbone data from the backend API.
+ * This is the primary data source used to populate all dropdowns on page load.
+ * @returns {Promise<Object>} Combined data object containing `bonesets`, `bones`, and `subbones` arrays.
+ * @throws {Error} If the network request fails or the server returns a non-OK response.
+ */
 export async function fetchCombinedData() {
     const API_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.COMBINED_DATA}`;
 
@@ -25,6 +31,11 @@ export async function fetchCombinedData() {
     }
 }
 
+/**
+ * Fetches mock bone data from a local JSON file. Used for development and testing
+ * without a running backend server.
+ * @returns {Promise<Object|null>} The mock bone data object, or null if the fetch fails.
+ */
 export async function fetchMockBoneData() {
     try {
         const response = await fetch(API_CONFIG.ENDPOINTS.MOCK_BONE_DATA);

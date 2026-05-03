@@ -1,4 +1,9 @@
 // js/sidebar.js
+/**
+ * Wires up the sidebar toggle button to lazily load `sidebar.html` and
+ * slide the sidebar panel in and out.
+ * @returns {Promise<void>}
+ */
 export async function initializeSidebar() {
     const toggleButton = document.getElementById("toggle-sidebar");
     const sidebarContainer = document.getElementById("sidebar-container");
@@ -32,6 +37,11 @@ export async function initializeSidebar() {
     }
 }
 
+/**
+ * Fetches `helpButton.html`, injects it into the help-button container, and
+ * attaches click/keyboard handlers to open and close the help modal.
+ * @returns {Promise<void>}
+ */
 export async function loadHelpButton() {
     const helpButtonContainer = document.getElementById("help-button-container");
     if (helpButtonContainer) {
