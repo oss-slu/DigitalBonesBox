@@ -265,8 +265,7 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
     }
 
     // Set up dimension conversion parameters
-    // New format: coordinates are relative to the image and scaled to pixel size
-    // Old format: coordinates are in EMUs relative to slide and require full conversion
+    // Coordinates are relative to the image and scaled to pixel size
     const dimensions = {
         slideWidth: imageData.width || imageData.width,
         slideHeight: imageData.height || imageData.height,
@@ -357,7 +356,6 @@ function createColoredRegionsSVG(coloredRegions, imageWidth, imageHeight, imageD
                         path.setAttribute("data-region-type", "fill");
                     }
                     
-                    // Add to SVG
                     svg.appendChild(path);
                     
                     console.debug(`Created colored region path ${pathIndex + 1}/${pathDataArray.length}: ${region.anatomical_name} (${region.color_name})`);
@@ -413,8 +411,7 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
     let regionsToDisplay = [];
     
     if (regionData.images && Array.isArray(regionData.images)) {
-        // New structure: data organized by image
-        console.log(`[ColoredRegions] Using new multi-image structure with ${regionData.images.length} images`);
+        console.log(`[ColoredRegions] Using multi-image structure with ${regionData.images.length} images`);
         
         if (imageIndex >= 0 && imageIndex < regionData.images.length) {
             imageData = regionData.images[imageIndex];
@@ -424,7 +421,6 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
             return;
         }
     } else if (regionData.colored_regions) {
-        // Old structure: single set of regions for all images
         console.log("[ColoredRegions] Using old single-image structure");
         regionsToDisplay = regionData.colored_regions;
         imageData = {

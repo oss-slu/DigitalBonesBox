@@ -1,5 +1,3 @@
-// quiz.js - Quiz functionality for Digital Bone Box
-
 import {fetchBoneData, fetchCombinedData} from "./api.js";
 import {displayColoredRegions} from "./coloredRegionsOverlay.js";
 
@@ -21,12 +19,10 @@ class QuizManager {
      */
     async initialize() {
         try {
-            // Fetch bone data
             const data = await fetchCombinedData();
             this.allBones = data.bones || [];
             this.allSubbones = data.subbones || [];
 
-            // Create master question pool from bones + subbones
             this.createMasterQuestionPool();
 
             if (this.masterQuestionPool.length < 4) {
@@ -34,7 +30,6 @@ class QuizManager {
                 return false;
             }
 
-            // Setup event listeners
             this.setupEventListeners();
             return true;
         } catch (error) {
@@ -249,7 +244,7 @@ startQuiz() {
     // Show quiz container, hide main content
     this.showQuizMode();
 
-    // CRITICAL: Restore the quiz structure (in case we're coming from results screen)
+        // Restore the quiz structure (in case we're coming from results screen)
     const quizContainer = document.getElementById("quiz-container");
     if (quizContainer) {
         quizContainer.innerHTML = `
@@ -494,7 +489,7 @@ showResults() {
         </div>
     `;
 
-    // CRITICAL: Wait for DOM to be ready, then add event listeners with arrow functions
+    // Wait for DOM to be ready, then add event listeners with arrow functions
     requestAnimationFrame(() => {
         const retryBtn = document.getElementById("retry-quiz-btn");
         const exitBtn = document.getElementById("exit-results-btn");
@@ -548,6 +543,5 @@ showResults() {
     }
 }
 
-// Create and export singleton instance
 const quizManager = new QuizManager();
 export default quizManager;

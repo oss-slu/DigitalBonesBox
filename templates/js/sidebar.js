@@ -1,4 +1,3 @@
-// js/sidebar.js
 export async function initializeSidebar() {
     const toggleButton = document.getElementById("toggle-sidebar");
     const sidebarContainer = document.getElementById("sidebar-container");
@@ -17,13 +16,13 @@ export async function initializeSidebar() {
 
     if (toggleButton) {
         toggleButton.addEventListener("click", async () => {
-            await loadSidebar(); // Ensure the sidebar is loaded
+            await loadSidebar();
             const sidebarElement = document.getElementById("sidebar");
 
             if (sidebarElement) {
                 const currentLeft = window.getComputedStyle(sidebarElement).left;
                 if (currentLeft === "0px") {
-                    sidebarElement.style.left = "-300px"; // Close sidebar - updated to match CSS
+                    sidebarElement.style.left = "-300px"; // Close sidebar
                 } else {
                     sidebarElement.style.left = "0px"; // Open sidebar
                 }
@@ -74,7 +73,3 @@ export async function loadHelpButton() {
         }
     }
 }
-
-// Note: initialization is performed by the app's entrypoint (`main.js`).
-// This file uses ES module exports so it can be imported with `type="module"` scripts.
-

@@ -1,5 +1,3 @@
-// viewer.js - Dedicated module for managing viewer state and display
-
 /**
  * Displays bone image with error handling for broken URLs
  * @param {Object} boneData - The bone object from mock data
@@ -79,8 +77,6 @@ export function displayBoneData(boneData) {
         return;
     }
 
-    // NOTE: Images are now displayed by imageDisplay.js via dropdowns.js
-    // displayBoneImage(boneData); // DISABLED - handled by imageDisplay.js
     displayAnnotations(boneData.annotations);
 }
 
@@ -88,7 +84,7 @@ export function displayBoneData(boneData) {
  * Clears the viewer display (annotations only - images handled by imageDisplay.js)
  */
 export function clearViewer() {
-    // NOTE: Images are now cleared by imageDisplay.js
+    // Images are cleared by imageDisplay.js
     // Only clear annotations here
     const annotationsOverlay = document.getElementById("annotations-overlay");
     
