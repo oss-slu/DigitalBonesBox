@@ -153,8 +153,8 @@ class QuizManager {
 async fetchBoneImage(itemId, container) {
     try {
         const data = await fetchBoneData(itemId);
-        
-        console.log(`Bone data for ${itemId}:`, data); // DEBUG
+
+        console.debug(`Bone data for ${itemId}:`, data);
         
         // Check if image exists in the response
         if (data.images && data.images.length > 0) {
@@ -484,13 +484,13 @@ showResults() {
     requestAnimationFrame(() => {
         const retryBtn = document.getElementById("retry-quiz-btn");
         const exitBtn = document.getElementById("exit-results-btn");
-        
-        console.log("Retry button found:", retryBtn); // Debug
-        console.log("Exit button found:", exitBtn); // Debug
+
+        console.debug("Retry button found:", retryBtn);
+        console.debug("Exit button found:", exitBtn);
         
         if (retryBtn) {
             retryBtn.onclick = () => {
-                console.log("TRY AGAIN CLICKED!"); // Debug
+                console.debug("TRY AGAIN CLICKED!");
                 this.startQuiz();
             };
         }
