@@ -1,4 +1,4 @@
-import {fetchBoneData, fetchCombinedData} from "./api.js";
+import {fetchBoneData} from "./api.js";
 import {displayColoredRegions} from "./coloredRegionsOverlay.js";
 
 class QuizManager {
@@ -6,7 +6,6 @@ class QuizManager {
         this.questions = [];
         this.currentQuestionIndex = 0;
         this.score = 0;
-        this.isQuizActive = false;
         this.totalQuestions = 10;
         this.allBones = [];
         this.allSubbones = [];
@@ -17,25 +16,18 @@ class QuizManager {
     /**
      * Initialize the quiz system
      */
-    async initialize() {
-        try {
-            const data = await fetchCombinedData();
-            this.allBones = data.bones || [];
-            this.allSubbones = data.subbones || [];
+    async initialize(data) {
+        this.allBones = data.bones || [];
+        this.allSubbones = data.subbones || [];
 
-            this.createMasterQuestionPool();
+        this.createMasterQuestionPool();
 
-            if (this.masterQuestionPool.length < 4) {
-                console.error("Not enough items to create a quiz. Need at least 4 items.");
-                return false;
-            }
-
-            this.setupEventListeners();
-            return true;
-        } catch (error) {
-            console.error("Error initializing quiz:", error);
-            return false;
+        if (this.masterQuestionPool.length < 4) {
+            throw new Error(`Not enough items to create a quiz. Need at least 4 items. (Quiz pool length: ${this.masterQuestionPool.length})`);
         }
+
+        this.setupEventListeners();
+        return true;
     }
 
     /**
@@ -238,7 +230,6 @@ startQuiz() {
     // Reset quiz state
     this.currentQuestionIndex = 0;
     this.score = 0;
-    this.isQuizActive = true;
     this.answered = false;
 
     // Show quiz container, hide main content
@@ -354,7 +345,7 @@ startQuiz() {
 
         choicesContainer.innerHTML = "";
 
-        question.allAnswers.forEach((answer, index) => {
+        question.allAnswers.forEach(answer => {
             const button = document.createElement("button");
             button.className = "quiz-choice-btn";
             button.textContent = answer;

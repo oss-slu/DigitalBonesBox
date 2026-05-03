@@ -1,6 +1,6 @@
 import { fetchCombinedData, fetchBoneData } from "./api.js";
 import { populateBonesetDropdown, setupDropdownListeners } from "./dropdowns.js";
-import { initializeSidebar } from "./sidebar.js";
+import {initializeSidebar} from "./sidebar.js";
 import { setupNavigation, setBoneAndSubbones, disableButtons } from "./navigation.js";
 import { loadDescription } from "./description.js";
 import { displayBoneData, clearViewer } from "./viewer.js";
@@ -24,15 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupDropdownListeners(combinedData);
 
     try {
-        quizManager.allBones = combinedData.bones || [];
-        quizManager.allSubbones = combinedData.subbones || [];
-        quizManager.createMasterQuestionPool();
-        if (quizManager.masterQuestionPool.length >= 4) {
-            quizManager.setupEventListeners();
-            console.log("Quiz system initialized successfully with", quizManager.masterQuestionPool.length, "items");
-        } else {
-            console.warn("Not enough items for quiz:", quizManager.masterQuestionPool.length);
-        }
+        await quizManager.initialize(combinedData);
     } catch (error) {
         console.error("Error initializing quiz:", error);
     }

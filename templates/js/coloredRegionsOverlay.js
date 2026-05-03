@@ -420,13 +420,6 @@ export async function displayColoredRegions(imageElement, boneId, imageIndex = 0
             console.warn(`[ColoredRegions] Invalid imageIndex ${imageIndex}, expected 0-${regionData.images.length - 1}`);
             return;
         }
-    } else if (regionData.colored_regions) {
-        console.log("[ColoredRegions] Using old single-image structure");
-        regionsToDisplay = regionData.colored_regions;
-        imageData = {
-            width: regionData.image_dimensions?.width,
-            height: regionData.image_dimensions?.height
-        };
     }
     
     if (!regionsToDisplay || regionsToDisplay.length === 0) {

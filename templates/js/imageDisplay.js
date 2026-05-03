@@ -178,21 +178,6 @@ function displaySingleImage(image, container, options = {}) {
   }
 }
 
-/* Two images (with rotation template) */
-const TWO_IMAGE_ROTATION = {
-  left: { rot_deg: -16.999, flipH: false },
-  right: { rot_deg: 0, flipH: false },
-};
-
-function applyRotation(imgEl, { rot_deg = 0, flipH = false } = {}) {
-  const parts = [];
-  if (flipH) parts.push("scaleX(-1)");
-  if (rot_deg && Math.abs(rot_deg) > 0.001) parts.push(`rotate(${rot_deg}deg)`);
-  imgEl.style.transform = parts.join(" ") || "none";
-  imgEl.style.transformOrigin = "50% 50%";
-  imgEl.style.willChange = "transform";
-}
-
 function displayTwoImages(images, container, options = {}) {
   const captions = getCaptionsForBone(currentBoneId);
 

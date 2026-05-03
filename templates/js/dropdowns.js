@@ -1,29 +1,14 @@
 import { loadDescription } from "./description.js";
-import { displayBoneImages, clearImages, showPlaceholder } from "./imageDisplay.js";
-import { loadAndDrawAnnotations, clearAnnotations } from "./annotationOverlay.js";
+import {displayBoneImages, showPlaceholder} from "./imageDisplay.js";
+import {clearAnnotations} from "./annotationOverlay.js";
 import {fetchBoneData} from "./api.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   showPlaceholder();
 });
 
-let _boneById = {}; // filled in setupDropdownListeners
-
 function getImageStage() {
   return (document.getElementById("bone-image-container"));
-}
-
-// Function maybeLoadAnnotations: Logic removed. Annotation URL construction is now in the listeners.
-async function maybeLoadAnnotations(boneId) {
-  const stage = getImageStage();
-  if (!stage) return;
-
-  // remove any previous overlay
-  clearAnnotations(stage);
-  stage.classList.remove("with-annotations");
-  
-  // Note: The logic for loading the annotation file used to be here, but has been 
-  // refactored into the dropdown listeners (using the 'opts' object) to use the API endpoint.
 }
 
 // Backend API base (runs on 8000)
@@ -81,8 +66,6 @@ export function setupDropdownListeners(combinedData) {
   const subboneSelect  = document.getElementById("subbone-select");
 
   if (!combinedData) return;
-
-  _boneById = Object.fromEntries((combinedData.bones || []).map(b => [b.id, b]));
 
 // Boneset change
 bonesetSelect.addEventListener("change", (e) => {

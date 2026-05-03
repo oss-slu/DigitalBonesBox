@@ -1,5 +1,3 @@
-const PPT_EMU = { W: 9_144_000, H: 6_858_000 }; // PowerPoint slide size in EMUs
-
 function ensureStage(container) {
   let stage = container.querySelector(".annotation-stage");
   if (!stage) {
@@ -163,6 +161,3 @@ function attachAutoscale(container) {
   ro.observe(container);
   stage.__resizeObs = ro;
 }
-
-// Optional global for non-module usage
-window.AnnotationOverlay = { clearAnnotations, drawAnnotations, loadAndDrawAnnotations };

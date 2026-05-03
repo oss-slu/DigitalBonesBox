@@ -22,20 +22,6 @@ export async function fetchCombinedData() {
     }
 }
 
-export async function fetchMockBoneData() {
-    try {
-        const response = await fetch(API_CONFIG.ENDPOINTS.MOCK_BONE_DATA);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("Error fetching mock bone data:", error);
-        return null;
-    }
-}
-
 /**
  * Fetch full bone data (description + images) for a single bone from the backend API.
  * The backend pulls these files from the data GitHub branch.
