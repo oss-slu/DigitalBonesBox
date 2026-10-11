@@ -12,7 +12,9 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(cors());
-app.use(express.json());
+// Default 100kb is too small for a base64-encoded imported scene image (Issue #412);
+// the scenes route independently caps image size well under this ceiling too.
+app.use(express.json({ limit: "6mb" }));
 
 const LOCAL_DATA_DIR = path.join(__dirname, "data");
 const BONESET_DIR = path.join(LOCAL_DATA_DIR, "boneset");

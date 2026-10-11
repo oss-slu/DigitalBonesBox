@@ -21,7 +21,6 @@ describe("Initial configuration tests 263", () => {
         expect(response.text).toContain("Digital Bone Box");
     });
 });
-
 // Unit tests for Issue 267: GET /api/annotations/:boneId
 describe("GET /api/annotations/:boneId - Issue 267", () => {
 

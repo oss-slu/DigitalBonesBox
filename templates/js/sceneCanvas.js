@@ -10,13 +10,33 @@
 //   polygon:          { type: "polygon", points: [[x, y], ...] or [{ x, y }, ...] },
 //                     plus fill?, stroke?, strokeWidth?, opacity?
 // Objects that don't match are skipped and reported as unsupported.
+//
+// Linked annotations (PR #493 review): an annotation imported with a bone's
+// images carries `sourceImageId` and `sourceImageFrame` ({ x, y, width,
+// height }: its image's box when the annotation was created). Its stored
+// coordinates are scene pixels relative to that frame and are never rewritten;
+// it is drawn mapped onto its image's *current* box, flip and rotation, in
+// the same order renderImage applies them to the image, so it follows the
+// image when it is moved, resized, flipped, or rotated. Text is moved and
+// scaled but kept upright so it stays readable. On a cropped image, colored
+// regions (painted on the bone) are clipped to the visible crop area; labels
+// and pointer lines are kept, unclipped, because they usually sit beside the
+// image. If the source image is no longer in the scene, the annotation is
+// drawn unchanged and counted in `unlinked`.
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const MIN_WIDTH = 960;
 const MIN_HEIGHT = 600;
 const PADDING = 40;
 const DEFAULT_STROKE = "#003366";
-const SAFE_IMAGE_SRC = /^(\/|\.\/|https?:\/\/|data:image\/)/i;
+// `blob:` is included alongside the existing schemes because Issue #411's image
+// import flow previews a freshly chosen file via `URL.createObjectURL(file)` -
+// the browser mints that URL itself from a real File/Blob, so it's exactly as
+// safe as the already-allowed `data:image/` scheme, never attacker-controllable.
+const SAFE_IMAGE_SRC = /^(\/|\.\/|https?:\/\/|data:image\/|blob:)/i;
+// Order matches renderImage's own `corners` array: [TL, TR, BR, BL].
+const RESIZE_HANDLE_CORNERS = ["nw", "ne", "se", "sw"];
+const RESIZE_HANDLE_SIZE = 10;
 
 let markerCount = 0;
 
@@ -55,7 +75,28 @@ function el(name, attrs = {}) {
     return node;
 }
 
-function renderImage(image) {
+/**
+ * The visible sub-rectangle of an image's own local box (0,0 to width,height)
+ * - Issue #417. Defaults to the full box when no crop fields are set, so an
+ * uncropped image behaves exactly as before.
+ */
+function cropRectFor(image) {
+    const hasCrop = [image.cropX, image.cropY, image.cropWidth, image.cropHeight].every(isNumber);
+    return hasCrop
+        ? { x: image.cropX, y: image.cropY, width: image.cropWidth, height: image.cropHeight }
+        : { x: 0, y: 0, width: image.width, height: image.height };
+}
+
+/**
+ * @param {object} image
+ * @param {number} index
+ * @param {SVGDefsElement} defs
+ * @param {{ skipClip?: boolean }} [options] - skipClip shows the full,
+ *   unclipped image regardless of any saved crop - used only while actively
+ *   editing the crop (Issue #417), so the user can see the whole source to
+ *   choose a region from.
+ */
+function renderImage(image, index, defs, { skipClip = false } = {}) {
     if (typeof image.src !== "string" || !SAFE_IMAGE_SRC.test(image.src)) return null;
     if (![image.x, image.y, image.width, image.height].every(isNumber)) return null;
     if (image.width <= 0 || image.height <= 0) return null;
@@ -72,7 +113,29 @@ function renderImage(image) {
         transforms.push(`translate(${cx} ${cy}) scale(${sx} ${sy}) translate(${-cx} ${-cy})`);
     }
 
-    const node = el("image", {
+    const crop = cropRectFor(image);
+    const isCropped =
+        !skipClip && (crop.x !== 0 || crop.y !== 0 || crop.width !== image.width || crop.height !== image.height);
+
+    let clipId;
+    if (isCropped) {
+        markerCount += 1;
+        clipId = `scene-image-clip-${markerCount}`;
+        const clipPath = el("clipPath", { id: clipId });
+        // In the SAME pre-rotation, absolute coordinates as the image's own
+        // x/y/width/height below - both live inside the same transformed <g>
+        // when rotated/flipped, so the crop window rotates/flips WITH the
+        // image as one rigid unit, not independently of it.
+        clipPath.appendChild(el("rect", {
+            x: image.x + crop.x,
+            y: image.y + crop.y,
+            width: crop.width,
+            height: crop.height,
+        }));
+        defs.appendChild(clipPath);
+    }
+
+    const imageNode = el("image", {
         href: image.src,
         x: image.x,
         y: image.y,
@@ -80,15 +143,49 @@ function renderImage(image) {
         height: image.height,
         preserveAspectRatio: "none",
         opacity: isNumber(image.opacity) ? image.opacity : undefined,
-        transform: transforms.length ? transforms.join(" ") : undefined,
+        "clip-path": clipId ? `url(#${clipId})` : undefined,
+        class: "scene-image-object",
+        "data-scene-image-index": index,
     });
-    const corners = [
+
+    // The transform only moves to a wrapping <g> when a clip-path is also in
+    // play (so the clip rotates/flips with the image, see above) - otherwise
+    // it stays directly on the <image>, unchanged from before #417.
+    let node = imageNode;
+    if (transforms.length) {
+        if (clipId) {
+            const group = el("g", { transform: transforms.join(" ") });
+            group.appendChild(imageNode);
+            node = group;
+        } else {
+            imageNode.setAttribute("transform", transforms.join(" "));
+        }
+    }
+
+    const fullCorners = [
         [image.x, image.y],
         [image.x + image.width, image.y],
         [image.x + image.width, image.y + image.height],
         [image.x, image.y + image.height],
     ];
-    return { node, bounds: isNumber(image.rotation) ? rotatePoints(corners, image.rotation, cx, cy) : corners };
+    const cropCorners = [
+        [image.x + crop.x, image.y + crop.y],
+        [image.x + crop.x + crop.width, image.y + crop.y],
+        [image.x + crop.x + crop.width, image.y + crop.y + crop.height],
+        [image.x + crop.x, image.y + crop.y + crop.height],
+    ];
+    const visibleCorners = isCropped ? cropCorners : fullCorners;
+    const rotation = image.rotation;
+
+    return {
+        node,
+        // The visible (cropped, if applicable) region - used for the normal
+        // selection outline and the canvas's auto-sizing.
+        bounds: isNumber(rotation) ? rotatePoints(visibleCorners, rotation, cx, cy) : visibleCorners,
+        // The current crop rect regardless of skipClip - used only while
+        // actively editing the crop, to draw its own handles/outline.
+        cropBounds: isNumber(rotation) ? rotatePoints(cropCorners, rotation, cx, cy) : cropCorners,
+    };
 }
 
 function rotatePoints(points, degrees, cx, cy) {
@@ -99,6 +196,76 @@ function rotatePoints(points, degrees, cx, cy) {
         cx + (x - cx) * cos - (y - cy) * sin,
         cy + (x - cx) * sin + (y - cy) * cos,
     ]);
+}
+
+function isValidBox(box) {
+    return Boolean(box) && [box.x, box.y, box.width, box.height].every(isNumber) && box.width > 0 && box.height > 0;
+}
+
+/**
+ * The transform from an annotation's sourceImageFrame to where its image is
+ * drawn now: `toBox` moves/resizes into the image's current box, and
+ * `toScreen` then flips and rotates about the box center exactly as
+ * renderImage's SVG transform does (flip first, then rotate).
+ */
+function imageTransform(image, frame) {
+    const sx = image.width / frame.width;
+    const sy = image.height / frame.height;
+    const cx = image.x + image.width / 2;
+    const cy = image.y + image.height / 2;
+    const rotation = isNumber(image.rotation) ? image.rotation : 0;
+    const toBox = ([x, y]) => [image.x + (x - frame.x) * sx, image.y + (y - frame.y) * sy];
+    const toScreen = ([x, y]) => {
+        const flipped = [image.flipX ? 2 * cx - x : x, image.flipY ? 2 * cy - y : y];
+        return rotation ? rotatePoints([flipped], rotation, cx, cy)[0] : flipped;
+    };
+    return { map: (point) => toScreen(toBox(point)), toScreen, scale: (sx + sy) / 2 };
+}
+
+/** A copy of a linked annotation with its coordinates mapped onto its image. */
+function mapLinkedAnnotation(annotation, transform) {
+    const scaled = (value) => (isNumber(value) ? value * transform.scale : value);
+    switch (annotation.type) {
+        case "text": {
+            if (typeof annotation.text !== "string" || !isNumber(annotation.x) || !isNumber(annotation.y)) return annotation;
+            const fontSize = isNumber(annotation.fontSize) ? annotation.fontSize : 18;
+            const width = annotation.text.length * fontSize * 0.6;
+            const [centerX, centerY] = transform.map([annotation.x + width / 2, annotation.y + fontSize / 2]);
+            const newFontSize = fontSize * transform.scale;
+            const newWidth = annotation.text.length * newFontSize * 0.6;
+            return { ...annotation, x: centerX - newWidth / 2, y: centerY - newFontSize / 2, fontSize: newFontSize };
+        }
+        case "line":
+        case "arrow": {
+            const points = linePoints(annotation);
+            if (!points) return annotation;
+            const { x1: _x1, y1: _y1, x2: _x2, y2: _y2, ...rest } = annotation;
+            return { ...rest, points: points.map(transform.map), strokeWidth: scaled(annotation.strokeWidth) };
+        }
+        case "polygon": {
+            const points = toPoints(annotation.points);
+            if (!points) return annotation;
+            return { ...annotation, points: points.map(transform.map), strokeWidth: scaled(annotation.strokeWidth) };
+        }
+        default:
+            return annotation;
+    }
+}
+
+function clipsToCrop(annotation) {
+    return Boolean(annotation.source) && annotation.source.type === "legacy-colored-region";
+}
+
+/** The visible crop area of an image as a screen polygon, or null if uncropped. */
+function visibleCropPolygon(image, transform) {
+    const crop = cropRectFor(image);
+    if (crop.x === 0 && crop.y === 0 && crop.width === image.width && crop.height === image.height) return null;
+    return [
+        [image.x + crop.x, image.y + crop.y],
+        [image.x + crop.x + crop.width, image.y + crop.y],
+        [image.x + crop.x + crop.width, image.y + crop.y + crop.height],
+        [image.x + crop.x, image.y + crop.y + crop.height],
+    ].map(transform.toScreen);
 }
 
 function renderText(annotation) {
@@ -178,16 +345,26 @@ function renderAnnotation(annotation, defs) {
 }
 
 /**
- * Renders a scene's images and annotations into an SVG element.
+ * Renders a scene's images and annotations into an SVG element. Optionally draws a
+ * non-interactive selection outline around one image, identified by its index in
+ * `scene.images` - the same index each rendered `<image>` carries as its
+ * `data-scene-image-index` attribute, letting a caller wire up click-to-select
+ * without this renderer owning any selection state itself.
  * @param {{ images: object[], annotations: object[] }} scene
- * @returns {{ svg: SVGSVGElement, rendered: number, unsupported: number, width: number, height: number }}
+ * @param {{ selectedIndex?: number, cropMode?: boolean }} [options] - cropMode
+ *   shows the selected image uncropped with handles on its *draft* crop rect
+ *   instead of the normal selection outline/resize handles (Issue #417).
+ * @returns {{ svg: SVGSVGElement, rendered: number, unsupported: number, unlinked: number,
+ *   width: number, height: number }} `unlinked` counts linked annotations whose
+ *   source image is missing (drawn unchanged).
  */
-export function renderScene(scene) {
+export function renderScene(scene, { selectedIndex, cropMode = false } = {}) {
     const svg = el("svg", { class: "scene-svg", role: "img" });
     const defs = el("defs");
     const imageLayer = el("g", { class: "scene-layer-images" });
     const annotationLayer = el("g", { class: "scene-layer-annotations" });
-    svg.append(defs, imageLayer, annotationLayer);
+    const selectionLayer = el("g", { class: "scene-layer-selection" });
+    svg.append(defs, imageLayer, annotationLayer, selectionLayer);
 
     let minX = 0;
     let minY = 0;
@@ -195,11 +372,12 @@ export function renderScene(scene) {
     let maxY = MIN_HEIGHT;
     let rendered = 0;
     let unsupported = 0;
+    let unlinked = 0;
 
     const place = (result, layer) => {
         if (!result) {
             unsupported += 1;
-            return;
+            return null;
         }
         layer.appendChild(result.node);
         rendered += 1;
@@ -209,10 +387,69 @@ export function renderScene(scene) {
             maxX = Math.max(maxX, x);
             maxY = Math.max(maxY, y);
         }
+        return result;
     };
 
-    for (const image of scene.images || []) place(renderImage(image), imageLayer);
-    for (const annotation of scene.annotations || []) place(renderAnnotation(annotation, defs), annotationLayer);
+    (scene.images || []).forEach((image, index) => {
+        const isEditingCrop = cropMode && index === selectedIndex;
+        const result = place(renderImage(image, index, defs, { skipClip: isEditingCrop }), imageLayer);
+        if (result && index === selectedIndex) {
+            // While actively editing the crop, the outline/handles track the
+            // *draft* crop rect instead of the image's visible bounds, so
+            // they can be dragged inward from the full (now unclipped) image.
+            const handleBounds = isEditingCrop ? result.cropBounds : result.bounds;
+            selectionLayer.appendChild(el("polygon", {
+                class: isEditingCrop ? "scene-crop-outline" : "scene-selection-outline",
+                points: handleBounds.map((p) => p.join(",")).join(" "),
+                "pointer-events": "none",
+            }));
+            // One square handle per corner (Issues #413/#414/#417), at the
+            // same already-rotated bounds the outline above uses -
+            // axis-aligned regardless of the image's own rotation.
+            handleBounds.forEach(([x, y], cornerIndex) => {
+                selectionLayer.appendChild(el("rect", {
+                    class: "scene-resize-handle",
+                    x: x - RESIZE_HANDLE_SIZE / 2,
+                    y: y - RESIZE_HANDLE_SIZE / 2,
+                    width: RESIZE_HANDLE_SIZE,
+                    height: RESIZE_HANDLE_SIZE,
+                    "data-corner": RESIZE_HANDLE_CORNERS[cornerIndex],
+                }));
+            });
+        }
+    });
+    const imagesById = new Map();
+    (scene.images || []).forEach((image, index) => {
+        if (image && typeof image.id === "string") imagesById.set(image.id, { image, index });
+    });
+
+    for (const annotation of scene.annotations || []) {
+        let toRender = annotation;
+        let clipPoints = null;
+        if (annotation && annotation.sourceImageId !== undefined) {
+            const entry = imagesById.get(annotation.sourceImageId);
+            if (entry && isValidBox(entry.image) && isValidBox(annotation.sourceImageFrame)) {
+                const transform = imageTransform(entry.image, annotation.sourceImageFrame);
+                toRender = mapLinkedAnnotation(annotation, transform);
+                const isEditingCrop = cropMode && entry.index === selectedIndex;
+                if (clipsToCrop(annotation) && !isEditingCrop) clipPoints = visibleCropPolygon(entry.image, transform);
+            } else {
+                unlinked += 1;
+            }
+        }
+        const result = annotation ? renderAnnotation(toRender, defs) : null;
+        if (result && clipPoints) {
+            markerCount += 1;
+            const clipId = `scene-annotation-clip-${markerCount}`;
+            const clipPath = el("clipPath", { id: clipId });
+            clipPath.appendChild(el("polygon", { points: clipPoints.map((p) => p.join(",")).join(" ") }));
+            defs.appendChild(clipPath);
+            const group = el("g", { "clip-path": `url(#${clipId})` });
+            group.appendChild(result.node);
+            result.node = group;
+        }
+        place(result, annotationLayer);
+    }
 
     const x = minX < 0 ? minX - PADDING : 0;
     const y = minY < 0 ? minY - PADDING : 0;
@@ -220,5 +457,5 @@ export function renderScene(scene) {
     const height = maxY - y + (maxY > MIN_HEIGHT ? PADDING : 0);
     svg.setAttribute("viewBox", `${x} ${y} ${width} ${height}`);
 
-    return { svg, rendered, unsupported, width, height };
+    return { svg, rendered, unsupported, unlinked, width, height };
 }

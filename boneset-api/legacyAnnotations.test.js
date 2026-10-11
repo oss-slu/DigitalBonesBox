@@ -107,6 +107,57 @@ describe("buildLegacyAnnotations - Issue 467", () => {
         });
     });
 
+    describe("source image links - PR #493 review", () => {
+        let images;
+        let annotations;
+        beforeAll(async () => {
+            ({ images, annotations } = await importBone("ilium"));
+        });
+
+        it("links every imported annotation to one of the imported images, recording its box", () => {
+            expect(annotations.length).toBeGreaterThan(0);
+            for (const annotation of annotations) {
+                const image = images.find((candidate) => candidate.id === annotation.sourceImageId);
+                expect(image).toBeDefined();
+                expect(annotation.sourceImageFrame).toEqual({ x: image.x, y: image.y, width: image.width, height: image.height });
+            }
+        });
+
+        it("links colored regions to the image they were drawn on", () => {
+            const regions = annotations.filter((a) => a.source.type === "legacy-colored-region");
+            expect(regions.length).toBeGreaterThan(0);
+            for (const region of regions) expect(region.sourceImageId).toBe(region.source.imageId);
+        });
+
+        it("links a label and its pointer lines to the same image, the one the lines point into", () => {
+            const labels = annotations.filter((a) => a.source.type === "legacy-label");
+            const distance = (image, [x, y]) => Math.hypot(
+                Math.max(image.x - x, 0, x - (image.x + image.width)),
+                Math.max(image.y - y, 0, y - (image.y + image.height))
+            );
+            let checkedLines = 0;
+            for (const label of labels) {
+                const lines = annotations.filter((a) => a.source.type === "legacy-pointer-line"
+                    && a.source.annotationId === label.source.annotationId);
+                for (const line of lines) {
+                    expect(line.sourceImageId).toBe(label.sourceImageId);
+                    checkedLines += 1;
+                }
+                if (lines.length === 1) {
+                    // With one line, its far end (on the bone) lies on the linked image.
+                    const [line] = lines;
+                    const center = [label.x + (label.text.length * label.fontSize * 0.6) / 2, label.y + label.fontSize / 2];
+                    const ends = [[line.x1, line.y1], [line.x2, line.y2]];
+                    const target = Math.hypot(ends[0][0] - center[0], ends[0][1] - center[1])
+                        > Math.hypot(ends[1][0] - center[0], ends[1][1] - center[1]) ? ends[0] : ends[1];
+                    const linked = images.find((image) => image.id === label.sourceImageId);
+                    for (const other of images) expect(distance(linked, target)).toBeLessThanOrEqual(distance(other, target));
+                }
+            }
+            expect(checkedLines).toBeGreaterThan(0);
+        });
+    });
+
     it("places newer-format colored regions on each image", async () => {
         const { images, annotations } = await importBone("femur_head", { regions: true });
         const regions = annotations.filter((a) => a.source.type === "legacy-colored-region");
@@ -262,6 +313,28 @@ describe("POST /api/scenes/:sceneId/import-legacy with annotations - Issue 467",
         expect(body.importLog[0]).toMatchObject({ boneId: "ilium", images: 2 });
         expect(body.importLog[0].warnings).toContainEqual(expect.objectContaining({ item: "colored regions" }));
         expect(body.importLog[1]).toMatchObject({ boneId: "femur_head", annotations: { labels: 0, lines: 0, regions: 0 } });
+    });
+
+    // PR #493 review: imported annotations keep a stable link to their image.
+    it("keeps each annotation's source image link through an image edit and a reload", async () => {
+        const scene = await createScene("Linked Annotations");
+        const imported = (await importInto(scene.id, { boneId: "ilium", annotations: BOTH })).body.scene;
+        const [image] = imported.images;
+
+        const moved = await request(app).patch(`/api/scenes/${scene.id}`).send({
+            updateImage: { id: image.id, x: image.x + 120, y: image.y + 60, rotation: 90 },
+        });
+        expect(moved.statusCode).toBe(200);
+
+        const { body: reopened } = await request(app).get(`/api/scenes/${scene.id}`);
+        expect(reopened.images[0]).toMatchObject({ id: image.id, x: image.x + 120, y: image.y + 60, rotation: 90 });
+        // The annotations themselves are untouched: the canvas maps them from
+        // sourceImageFrame onto the image's current position when drawing.
+        expect(reopened.annotations).toEqual(imported.annotations);
+        const imageIds = new Set(reopened.images.map((img) => img.id));
+        for (const annotation of reopened.annotations) {
+            expect(imageIds.has(annotation.sourceImageId)).toBe(true);
+        }
     });
 
     it("imports no annotations unless they are requested", async () => {

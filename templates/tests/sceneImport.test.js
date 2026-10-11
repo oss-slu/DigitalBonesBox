@@ -254,3 +254,157 @@ describe("Scene editor: import labels, pointer lines, and colored regions - Issu
         await waitFor(() => expect($("scene-editor-status").textContent).toBe("Imported 2 images from Ilium."));
     });
 });
+
+// Merging main (Issue #466) into PR #493 (Issues #411/#412): the bone-image
+// import and the direct image import now share the open scene.
+describe("Scene editor: bone import alongside direct image import", () => {
+    let originalImage;
+    let originalFileReader;
+
+    beforeEach(() => {
+        // jsdom can't read files or load images, so both are stubbed the same
+        // way templates/tests/scenes.test.js does for the direct-import tests.
+        originalFileReader = window.FileReader;
+        window.FileReader = class {
+            readAsDataURL(_file) {
+                setTimeout(() => {
+                    this.result = "data:image/png;base64,AAAA";
+                    if (this.onload) this.onload();
+                }, 0);
+            }
+        };
+        originalImage = window.Image;
+        window.Image = class {
+            constructor() {
+                this.naturalWidth = 800;
+                this.naturalHeight = 400;
+            }
+            set src(_value) {
+                setTimeout(() => this.onload && this.onload(), 0);
+            }
+        };
+    });
+
+    afterEach(() => {
+        window.Image = originalImage;
+        window.FileReader = originalFileReader;
+    });
+
+    async function submitIliumImport() {
+        await openImportForm();
+        await chooseBone("ilium");
+        await waitFor(() => expect(imageChoices()).toHaveLength(2));
+        $("scene-import-form").requestSubmit();
+    }
+
+    it("keeps a directly imported image whose save failed when a bone import replaces the scene", async () => {
+        // The fake backend has no PATCH route, so the direct image's save fails
+        // and the image only exists locally, waiting for a retry.
+        const input = $("scene-import-input");
+        Object.defineProperty(input, "files", { value: [{ name: "photo.png", type: "image/png" }], configurable: true });
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+        await waitFor(() => expect($("scene-workspace-error").hidden).toBe(false));
+        expect($("scene-meta").textContent).toContain("1 image");
+
+        await submitIliumImport();
+        await waitFor(() => expect($("scene-editor-status").textContent).toMatch(/^Imported 2 images/));
+
+        expect($("scene-meta").textContent).toContain("3 images");
+        const sources = [...document.querySelectorAll(".scene-image-object")]
+            .map((node) => node.getAttribute("href") || node.querySelector("[href]")?.getAttribute("href"));
+        expect(sources).toContain("data:image/png;base64,AAAA");
+        expect(backend.scene.images).toHaveLength(2);
+    });
+
+    it("does not replace a different scene the user opened while a bone import was running", async () => {
+        const otherScene = {
+            id: "scene-2",
+            name: "Other Scene",
+            images: [],
+            annotations: [],
+            createdAt: "2026-10-02T00:00:00.000Z",
+            updatedAt: "2026-10-02T00:00:00.000Z",
+        };
+        const baseFetch = backend.fetch;
+        let releaseImport;
+        global.fetch = jest.fn(async (url, options = {}) => {
+            const method = (options.method || "GET").toUpperCase();
+            if (url === "/api/scenes" && method === "GET") {
+                const response = await baseFetch(url, options);
+                const body = await response.json();
+                body.scenes.push({ id: otherScene.id, name: otherScene.name, imageCount: 0, annotationCount: 0, updatedAt: otherScene.updatedAt });
+                return { ok: true, status: 200, json: async () => body };
+            }
+            if (url === "/api/scenes/scene-2" && method === "GET") {
+                return { ok: true, status: 200, json: async () => JSON.parse(JSON.stringify(otherScene)) };
+            }
+            if (url.endsWith("/import-legacy")) {
+                await new Promise((resolve) => {
+                    releaseImport = resolve;
+                });
+            }
+            return baseFetch(url, options);
+        });
+        $("scene-library-retry").click();
+        await waitFor(() => expect(document.querySelectorAll(".scene-list-item")).toHaveLength(2));
+
+        await submitIliumImport();
+        await waitFor(() => expect(typeof releaseImport).toBe("function"));
+
+        document.querySelector(".scene-list-item[data-scene-id=\"scene-2\"]").click();
+        await waitFor(() => expect($("scene-title").textContent).toBe("Other Scene"));
+
+        releaseImport();
+        await waitFor(() => expect($("scene-editor-status").textContent).toMatch(/^Imported 2 images/));
+
+        expect($("scene-title").textContent).toBe("Other Scene");
+        expect($("scene-meta").textContent).toContain("0 images");
+        expect(require("../js/scenes.js").getActiveScene().id).toBe("scene-2");
+        expect(backend.scene.images).toHaveLength(2);
+    });
+});
+
+describe("Scene editor: failed direct-upload save followed by a bone import", () => {
+    it("keeps the unsaved image and its retry prompt after the import", async () => {
+        const originalFileReader = window.FileReader;
+        const originalImage = window.Image;
+        window.FileReader = class {
+            readAsDataURL(_file) {
+                setTimeout(() => {
+                    this.result = "data:image/png;base64,AAAA";
+                    if (this.onload) this.onload();
+                }, 0);
+            }
+        };
+        window.Image = class {
+            constructor() {
+                this.naturalWidth = 800;
+                this.naturalHeight = 400;
+            }
+            set src(_value) {
+                setTimeout(() => this.onload && this.onload(), 0);
+            }
+        };
+        try {
+            // The fake backend has no PATCH route, so the direct image's save fails.
+            const input = $("scene-import-input");
+            Object.defineProperty(input, "files", { value: [{ name: "photo.png", type: "image/png" }], configurable: true });
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+            await waitFor(() => expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/));
+
+            await openImportForm();
+            await chooseBone("ilium");
+            await waitFor(() => expect(imageChoices()).toHaveLength(2));
+            $("scene-import-form").requestSubmit();
+            await waitFor(() => expect($("scene-editor-status").textContent).toMatch(/^Imported 2 images/));
+
+            expect($("scene-workspace-error").hidden).toBe(false);
+            expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/);
+            expect($("scene-workspace-retry").hidden).toBe(false);
+            expect($("scene-meta").textContent).toContain("3 images");
+        } finally {
+            window.FileReader = originalFileReader;
+            window.Image = originalImage;
+        }
+    });
+});

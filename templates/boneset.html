@@ -240,16 +240,36 @@
                             
                             <div class="scene-actions">
                                 <button id="scene-import-toggle" type="button" class="scene-btn scene-btn-primary" aria-expanded="false" aria-controls="scene-import-form">Import bone images</button>
+                                <button id="scene-import-image" type="button" class="scene-btn scene-btn-secondary">Import image…</button>
+                                <input id="scene-import-input" type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml" multiple hidden />
                                 <button id="scene-fit-toggle" type="button" class="scene-btn scene-btn-secondary">Show actual size</button>
                                 <button id="scene-rename" type="button" class="scene-btn scene-btn-secondary">Rename</button>
                                 <button id="scene-delete" type="button" class="scene-btn scene-btn-danger">Delete</button>
+                            </div>
+                            <p id="scene-image-import-error" class="scene-field-error" hidden></p>
+
+                            <div id="scene-image-toolbar" class="scene-image-toolbar" hidden>
+                                <span class="scene-image-toolbar-label">Selected image:</span>
+                                <button id="scene-image-backward" type="button" class="scene-btn scene-btn-secondary">Send backward</button>
+                                <button id="scene-image-forward" type="button" class="scene-btn scene-btn-secondary">Bring forward</button>
+                                <button id="scene-image-rotate-left-90" type="button" class="scene-btn scene-btn-secondary">Rotate -90°</button>
+                                <button id="scene-image-rotate-left-15" type="button" class="scene-btn scene-btn-secondary">Rotate -15°</button>
+                                <button id="scene-image-rotate-right-15" type="button" class="scene-btn scene-btn-secondary">Rotate +15°</button>
+                                <button id="scene-image-rotate-right-90" type="button" class="scene-btn scene-btn-secondary">Rotate +90°</button>
+                                <button id="scene-image-flip-horizontal" type="button" class="scene-btn scene-btn-secondary">Flip horizontal</button>
+                                <button id="scene-image-flip-vertical" type="button" class="scene-btn scene-btn-secondary">Flip vertical</button>
+                                <button id="scene-image-crop-start" type="button" class="scene-btn scene-btn-secondary">Crop…</button>
+                                <button id="scene-image-crop-done" type="button" class="scene-btn scene-btn-primary" hidden>Done cropping</button>
+                                <button id="scene-image-crop-reset" type="button" class="scene-btn scene-btn-secondary" hidden>Reset crop</button>
+                                <button id="scene-image-remove" type="button" class="scene-btn scene-btn-danger">Remove image</button>
                             </div>
                         </div>
 
                         <div class="scene-canvas-frame">
                             <div id="scene-canvas-empty" class="scene-empty scene-canvas-empty">
                                 <p><strong>This scene is blank.</strong></p>
-                                <p>Images and annotations added to this scene will appear here. Use <strong>Import bone images</strong> to start from an existing bone.</p>
+                                <p>Images and annotations added to this scene will appear here. Use <strong>Import bone images</strong> to start from an existing bone, or import an image from your computer.</p>
+                                <button id="scene-canvas-empty-import" type="button" class="scene-btn scene-btn-primary">Import image…</button>
                             </div>
                             <div id="scene-canvas" class="scene-canvas" role="region" aria-label="Scene canvas" tabindex="0" hidden></div>
                         </div>
