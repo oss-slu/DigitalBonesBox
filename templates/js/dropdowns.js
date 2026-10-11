@@ -3,6 +3,7 @@ import {displayBoneImages, showPlaceholder} from "./imageDisplay.js";
 import {clearAnnotations} from "./annotationOverlay.js";
 import {fetchBoneData} from "./api.js";
 import { imageAnnotationToDropdownMap } from "./imageAnnotationToDropdownMap.js";
+import { showSceneLinks, SHOW_IN_VIEWER_EVENT } from "./sceneLinks.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   showPlaceholder();
@@ -18,6 +19,24 @@ function getImageStage() {
 }
 
 
+// Counts image requests so a slow answer for an item the user already left
+// can't replace the item they're looking at now (Issue #469).
+let latestImageRequest = 0;
+
+/**
+ * Shows a message in the image area when the selected item has no images yet,
+ * instead of the "please select a bone" prompt (Issue #469). Some items in the
+ * dropdowns (like the Skull views) don't have migrated content yet.
+ * @returns {void}
+ */
+function showNoImagesMessage() {
+  showPlaceholder();
+  const message = document.querySelector("#bone-image-container .images-placeholder p");
+  if (message) {
+    message.textContent = "There are no images for this item yet. Try one of the bones or bone parts under it.";
+  }
+}
+
 /** Helper: fetch images for a bone/sub-bone and render them.
  * @param {string} boneId - The bone or subbone ID to load images for.
  * @param {Object} [options={}] - Options forwarded to `displayBoneImages`.
@@ -25,11 +44,15 @@ function getImageStage() {
  */
 async function loadBoneImages(boneId, options = {}) {
   const stage = getImageStage();
+  const requestId = ++latestImageRequest;
 
   if (stage) {
     clearAnnotations(stage);
     stage.classList.remove("with-annotations");
   }
+
+  // Links to any scenes made from this item (hidden when there are none).
+  showSceneLinks(boneId || null);
 
   if (!boneId) {
     showPlaceholder();
@@ -38,17 +61,19 @@ async function loadBoneImages(boneId, options = {}) {
   }
   try {
     const data = await fetchBoneData(boneId);
-    const images = Array.isArray(data.images) ? data.images : [];
+    if (requestId !== latestImageRequest) return;
+    const images = data && Array.isArray(data.images) ? data.images : [];
     if (images.length === 0) {
-      showPlaceholder();
+      showNoImagesMessage();
       if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
     } else {
       // Pass both boneId (for colored regions) and options (for text annotations)
       displayBoneImages(images, { ...options, boneId });
     }
   } catch (err) {
+    if (requestId !== latestImageRequest) return;
     console.error("Failed to load bone images:", err);
-    showPlaceholder();
+    showNoImagesMessage();
     if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
   }
 }
@@ -96,6 +121,13 @@ export function setupDropdownListeners(combinedData) {
 
   if (!combinedData) return;
 
+  // The Scene Editor asks the viewer to show the item a scene came from (Issue #469).
+  document.addEventListener(SHOW_IN_VIEWER_EVENT, (e) => {
+    // Skip if this page was re-rendered and these dropdowns are no longer on it.
+    if (!bonesetSelect || !bonesetSelect.isConnected) return;
+    showItemInViewer(combinedData, e.detail && e.detail.boneId);
+  });
+
 // Boneset change
 bonesetSelect.addEventListener("change", (e) => {
   const selectedBonesetId = e.target.value;
@@ -116,7 +148,7 @@ bonesetSelect.addEventListener("change", (e) => {
   if (!selectedBonesetId || relatedBones.length === 0) {
     const stage = getImageStage();
     if (stage) { clearAnnotations(stage); stage.classList.remove("with-annotations"); }
-    showPlaceholder();
+    loadBoneImages(null);
     return;
   }
 
@@ -168,7 +200,7 @@ boneSelect.addEventListener("change", (e) => {
       loadDescription(selectedBonesetId);
       loadBoneImages(selectedBonesetId, { boneId: selectedBonesetId });
     } else {
-      showPlaceholder();
+      loadBoneImages(null);
     }
   }
 });
@@ -200,7 +232,7 @@ subboneSelect.addEventListener("change", (e) => {
       loadDescription(selectedBoneId);
       loadBoneImages(selectedBoneId, { boneId: selectedBoneId });
     } else {
-      showPlaceholder();
+      loadBoneImages(null);
     }
   }
 });
@@ -266,4 +298,38 @@ subboneSelect.addEventListener("change", (e) => {
     }
 
   });
+}
+
+/**
+ * Selects an item in the boneset, bone, and bone part dropdowns, the same as
+ * if the user picked it, so its description and images load (Issue #469).
+ * @param {Object} combinedData - The full application data set.
+ * @param {string} itemId - A boneset, bone, or bone part id.
+ * @returns {boolean} false if the item isn't in the dropdowns.
+ */
+export function showItemInViewer(combinedData, itemId) {
+  const bonesetSelect = document.getElementById("boneset-select");
+  const boneSelect = document.getElementById("bone-select");
+  const subboneSelect = document.getElementById("subbone-select");
+  if (!combinedData || !itemId || !bonesetSelect || !boneSelect || !subboneSelect) return false;
+
+  const subbone = combinedData.subbones.find((sb) => sb.id === itemId);
+  const bone = combinedData.bones.find((b) => b.id === (subbone ? subbone.bone : itemId));
+  let bonesetId = null;
+  if (bone) {
+    bonesetId = bone.boneset;
+  } else if (combinedData.bonesets.some((set) => set.id === itemId)) {
+    bonesetId = itemId;
+  }
+  if (!bonesetId) return false;
+
+  const choose = (select, value) => {
+    select.disabled = false;
+    select.value = value;
+    select.dispatchEvent(new Event("change"));
+  };
+  choose(bonesetSelect, bonesetId);
+  if (bone) choose(boneSelect, bone.id);
+  if (subbone) choose(subboneSelect, subbone.id);
+  return true;
 }
