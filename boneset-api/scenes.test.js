@@ -10,6 +10,8 @@ const {
     createFileSceneStore,
     createRedisSceneStore,
     resolveSceneStore,
+    RELEASE_LOCK_SCRIPT,
+    SCENE_LOCK_TTL_MS,
     MAX_IMAGE_SRC_LENGTH,
 } = require("./scenes");
 
@@ -44,23 +46,47 @@ function withArtificialDelay(store, ms) {
 
 // In-memory stand-in for the subset of the @upstash/redis client the store uses.
 // Values round-trip through JSON like the real client's automatic serialization.
-function createFakeRedis() {
+// `px` expiry is honored against `now()`, which tests can replace with a fake
+// clock to expire a lock without waiting. `eval` runs only the store's own
+// lock-release script, and runs it in one synchronous step - the same
+// atomicity guarantee Redis gives a Lua script.
+function createFakeRedis({ now = () => Date.now() } = {}) {
     const strings = new Map();
+    const expiries = new Map();
     const sets = new Map();
+    const has = (key) => {
+        if (expiries.has(key) && expiries.get(key) <= now()) {
+            strings.delete(key);
+            expiries.delete(key);
+        }
+        return strings.has(key);
+    };
+    const read = (key) => (has(key) ? JSON.parse(strings.get(key)) : null);
     return {
         async get(key) {
-            return strings.has(key) ? JSON.parse(strings.get(key)) : null;
+            return read(key);
         },
         async mget(...keys) {
-            return keys.map((key) => (strings.has(key) ? JSON.parse(strings.get(key)) : null));
+            return keys.map(read);
         },
         async set(key, value, options = {}) {
-            if (options.nx && strings.has(key)) return null;
+            if (options.nx && has(key)) return null;
             strings.set(key, JSON.stringify(value));
+            if (options.px) expiries.set(key, now() + options.px);
+            else expiries.delete(key);
             return "OK";
         },
         async del(key) {
-            return strings.delete(key) ? 1 : 0;
+            expiries.delete(key);
+            return has(key) && strings.delete(key) ? 1 : 0;
+        },
+        async eval(script, keys, args) {
+            if (script !== RELEASE_LOCK_SCRIPT) throw new Error("Unexpected script");
+            const [key] = keys;
+            if (read(key) !== args[0]) return 0;
+            strings.delete(key);
+            expiries.delete(key);
+            return 1;
         },
         async sadd(key, member) {
             if (!sets.has(key)) sets.set(key, new Set());
@@ -712,6 +738,97 @@ describe.each(backends)("Scenes API ($name)", (backend) => {
 // data: this proves it now re-validates the id itself rather than trusting a
 // caller, even though the route-level `router.param` check already blocks
 // malformed ids from ever reaching the store in normal operation.
+// Subomiadekunle's PR #493 review: releasing the lock with a separate GET and
+// DEL could delete another request's lock if ours expired in between. Release
+// is now one atomic compare-and-delete (RELEASE_LOCK_SCRIPT).
+describe("createRedisSceneStore lock", () => {
+    const SCENE_ID = "11111111-1111-4111-8111-111111111111";
+    const LOCK_KEY = `bonebox:lock:${SCENE_ID}`;
+    let clock;
+    let redis;
+    let store;
+
+    beforeEach(() => {
+        clock = 1_000_000;
+        redis = createFakeRedis({ now: () => clock });
+        store = createRedisSceneStore(redis);
+    });
+
+    it("releases the lock with a single atomic compare-and-delete, not GET then DEL", async () => {
+        const evalSpy = jest.spyOn(redis, "eval");
+        const getSpy = jest.spyOn(redis, "get");
+        const delSpy = jest.spyOn(redis, "del");
+        const token = await store.acquireLock(SCENE_ID);
+
+        await store.releaseLock(SCENE_ID, token);
+
+        expect(evalSpy).toHaveBeenCalledWith(RELEASE_LOCK_SCRIPT, [LOCK_KEY], [token]);
+        expect(getSpy).not.toHaveBeenCalled();
+        expect(delSpy).not.toHaveBeenCalled();
+    });
+
+    it("lets the owner release its own lock", async () => {
+        const token = await store.acquireLock(SCENE_ID);
+        expect(await redis.get(LOCK_KEY)).toBe(token);
+
+        expect(await store.releaseLock(SCENE_ID, token)).toBe(true);
+        expect(await redis.get(LOCK_KEY)).toBeNull();
+    });
+
+    it("does not release a lock held by a different token", async () => {
+        const token = await store.acquireLock(SCENE_ID);
+
+        expect(await store.releaseLock(SCENE_ID, "not-the-owner")).toBe(false);
+        expect(await redis.get(LOCK_KEY)).toBe(token);
+    });
+
+    it("keeps the TTL so an expired lock can be acquired by another request", async () => {
+        const first = await store.acquireLock(SCENE_ID);
+        clock += SCENE_LOCK_TTL_MS + 1;
+
+        const second = await store.acquireLock(SCENE_ID);
+
+        expect(second).not.toBe(first);
+        expect(await redis.get(LOCK_KEY)).toBe(second);
+    });
+
+    it("does not let the previous owner delete the replacement owner's lock", async () => {
+        const first = await store.acquireLock(SCENE_ID);
+        clock += SCENE_LOCK_TTL_MS + 1;
+        const second = await store.acquireLock(SCENE_ID);
+
+        expect(await store.releaseLock(SCENE_ID, first)).toBe(false);
+        expect(await redis.get(LOCK_KEY)).toBe(second);
+        expect(await store.releaseLock(SCENE_ID, second)).toBe(true);
+        expect(await redis.get(LOCK_KEY)).toBeNull();
+    });
+
+    it("leaves a replacement owner's lock in place when a slow withLock finishes", async () => {
+        let replacement = null;
+        await store.withLock(SCENE_ID, async () => {
+            // This holder runs past its TTL, and another request takes over.
+            clock += SCENE_LOCK_TTL_MS + 1;
+            replacement = await store.acquireLock(SCENE_ID);
+        });
+
+        expect(await redis.get(LOCK_KEY)).toBe(replacement);
+    });
+
+    it("still serializes concurrent withLock calls on the same scene", async () => {
+        const order = [];
+        const slow = (name) => async () => {
+            order.push(`${name}:start`);
+            await new Promise((resolve) => setTimeout(resolve, 20));
+            order.push(`${name}:end`);
+        };
+
+        await Promise.all([store.withLock(SCENE_ID, slow("a")), store.withLock(SCENE_ID, slow("b"))]);
+
+        expect(order).toEqual(["a:start", "a:end", "b:start", "b:end"]);
+        expect(await redis.get(LOCK_KEY)).toBeNull();
+    });
+});
+
 describe("createFileSceneStore path safety", () => {
     let dir;
     let store;

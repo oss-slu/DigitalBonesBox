@@ -265,6 +265,14 @@ const SCENE_LOCK_WAIT_MS = 3000;
 const SCENE_LOCK_POLL_MS = 50;
 const SCENE_LOCK_TTL_MS = 5000;
 
+// Releases a scene lock only if it still holds the caller's token, as one
+// atomic step on the Redis server. A separate GET then DEL is not safe: the
+// lock can expire between the two calls and be acquired by another request,
+// and the DEL would then delete that request's lock. Returns 1 if this caller's
+// lock was deleted, 0 if the lock had already expired or belongs to someone else.
+const RELEASE_LOCK_SCRIPT =
+    "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+
 // Durable shared storage for deployments. Each scene is stored under its own key,
 // and a set tracks every scene id so the list route doesn't need to scan keys.
 function createRedisSceneStore(redis, prefix = "bonebox") {
@@ -296,26 +304,19 @@ function createRedisSceneStore(redis, prefix = "bonebox") {
     }
 
     /**
-     * Distributed per-scene lock (PR #493 review fix) so a rename and an image
-     * save racing each other across serverless invocations can't clobber one
-     * another the way two unserialized read-modify-writes otherwise would. The
-     * TTL is a safety net if a holder crashes; the token check on release
-     * avoids deleting a lock we no longer own after it already expired.
+     * Acquires the distributed per-scene lock, waiting up to
+     * SCENE_LOCK_WAIT_MS. The lock expires after SCENE_LOCK_TTL_MS so a holder
+     * that crashes can't block the scene forever.
+     * @param {string} sceneId
+     * @returns {Promise<string>} the token that identifies this holder
      */
-    async function withLock(sceneId, fn) {
+    async function acquireLock(sceneId) {
         const key = lockKey(sceneId);
         const token = crypto.randomUUID();
         const deadline = Date.now() + SCENE_LOCK_WAIT_MS;
         for (;;) {
             const acquired = await redis.set(key, token, { nx: true, px: SCENE_LOCK_TTL_MS });
-            if (acquired) {
-                try {
-                    return await fn();
-                } finally {
-                    const current = await redis.get(key);
-                    if (current === token) await redis.del(key);
-                }
-            }
+            if (acquired) return token;
             if (Date.now() >= deadline) {
                 throw new SceneLockTimeoutError("Scene is busy, try again");
             }
@@ -323,7 +324,35 @@ function createRedisSceneStore(redis, prefix = "bonebox") {
         }
     }
 
-    return { list, get, save, remove, withLock };
+    /**
+     * Releases the lock only if `token` still owns it (atomic compare-and-delete,
+     * see RELEASE_LOCK_SCRIPT). If the lock expired and another request now
+     * holds it, that request's lock is left alone.
+     * @param {string} sceneId
+     * @param {string} token
+     * @returns {Promise<boolean>} true if this holder's lock was released
+     */
+    async function releaseLock(sceneId, token) {
+        const deleted = await redis.eval(RELEASE_LOCK_SCRIPT, [lockKey(sceneId)], [token]);
+        return Number(deleted) === 1;
+    }
+
+    /**
+     * Runs `fn` while holding the per-scene lock (PR #493 review fix) so a
+     * rename and an image save racing each other across serverless
+     * invocations can't clobber one another the way two unserialized
+     * read-modify-writes otherwise would.
+     */
+    async function withLock(sceneId, fn) {
+        const token = await acquireLock(sceneId);
+        try {
+            return await fn();
+        } finally {
+            await releaseLock(sceneId, token);
+        }
+    }
+
+    return { list, get, save, remove, withLock, acquireLock, releaseLock };
 }
 
 function createUnavailableSceneStore(reason) {
@@ -725,6 +754,8 @@ module.exports = {
     normalizeImage,
     applyImagePatch,
     DEFAULT_SCENE_NAME,
+    RELEASE_LOCK_SCRIPT,
+    SCENE_LOCK_TTL_MS,
     MAX_IMAGE_SRC_LENGTH,
     MAX_SCENE_IMAGES_TOTAL_LENGTH,
 };
