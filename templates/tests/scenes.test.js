@@ -1127,3 +1127,73 @@ describe("Scene editor: crop an image", () => {
         expect(document.querySelectorAll(".scene-crop-outline")).toHaveLength(0);
     });
 });
+
+// PR #493 review: an imported label follows its image through an edit made in
+// the editor, and still lines up after the scene is reloaded from the server.
+describe("Scene editor: imported annotations follow their image", () => {
+    function labelCenter() {
+        const node = document.querySelector(".scene-layer-annotations text");
+        const fontSize = Number(node.getAttribute("font-size"));
+        return [
+            Number(node.getAttribute("x")) + (node.textContent.length * fontSize * 0.6) / 2,
+            Number(node.getAttribute("y")) + fontSize / 2,
+        ];
+    }
+
+    it("rotates a linked label with its image and keeps it there after reopening the scene", async () => {
+        const frame = { x: 100, y: 100, width: 200, height: 100 };
+        backend.seed({ name: "Other" });
+        backend.seed({
+            name: "Linked",
+            images: [{ id: "img-a", src: "/api/images/ilium.png", ...frame }],
+            annotations: [{
+                id: "label-1",
+                type: "text",
+                text: "Ilium",
+                x: 150,
+                y: 110,
+                fontSize: 10,
+                sourceImageId: "img-a",
+                sourceImageFrame: frame,
+                source: { type: "legacy-label" },
+            }],
+        });
+        await enterEditor();
+        await openByName("Linked");
+        const [x0, y0] = labelCenter();
+        expect(x0).toBeCloseTo(165);
+        expect(y0).toBeCloseTo(115);
+
+        document.querySelector(".scene-image-object").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        await waitFor(() => expect($("scene-image-toolbar").hidden).toBe(false));
+        click("scene-image-rotate-right-90");
+        await waitFor(() => expect(backend.calls.some((c) => c.method === "PATCH" && c.body && c.body.updateImage)).toBe(true));
+
+        // 90° about the image center (200, 150).
+        let [x, y] = labelCenter();
+        expect(x).toBeCloseTo(235);
+        expect(y).toBeCloseTo(115);
+
+        await openByName("Other");
+        await openByName("Linked");
+        [x, y] = labelCenter();
+        expect(x).toBeCloseTo(235);
+        expect(y).toBeCloseTo(115);
+        const stored = [...backend.scenes.values()].find((s) => s.name === "Linked");
+        expect(stored.annotations[0]).toMatchObject({ sourceImageId: "img-a", sourceImageFrame: frame, x: 150, y: 110 });
+    });
+
+    it("notes annotations whose source image was removed instead of dropping them", async () => {
+        const frame = { x: 0, y: 0, width: 100, height: 100 };
+        backend.seed({
+            name: "Orphan",
+            images: [],
+            annotations: [{ id: "a", type: "text", text: "Ilium", x: 10, y: 10, sourceImageId: "gone", sourceImageFrame: frame }],
+        });
+        await enterEditor();
+        await openByName("Orphan");
+        expect(document.querySelectorAll(".scene-layer-annotations text")).toHaveLength(1);
+        expect($("scene-canvas-note").hidden).toBe(false);
+        expect($("scene-canvas-note").textContent).toMatch(/1 imported annotation no longer has its source image/);
+    });
+});

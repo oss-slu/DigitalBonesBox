@@ -29,6 +29,47 @@ const DEFAULT_REGION_STROKE = "#1F5E1C";
 const round = (value) => Math.round(value * 10) / 10;
 const isNumber = (value) => typeof value === "number" && Number.isFinite(value);
 
+/**
+ * Links an imported annotation to the scene image it was drawn on (PR #493
+ * review). `sourceImageId` names the image, and `sourceImageFrame` records
+ * that image's position and size at import time, in the same scene
+ * coordinates as the annotation itself. The canvas maps the annotation from
+ * this frame to wherever the image is now (moved, resized, flipped, rotated,
+ * cropped), so the annotation's stored coordinates never have to be rewritten
+ * and the link survives save and reload with the rest of the scene.
+ */
+function linkToImage(annotation, image) {
+    annotation.sourceImageId = image.id;
+    annotation.sourceImageFrame = { x: image.x, y: image.y, width: image.width, height: image.height };
+    return annotation;
+}
+
+function distanceToImage(image, x, y) {
+    const dx = Math.max(image.x - x, 0, x - (image.x + image.width));
+    const dy = Math.max(image.y - y, 0, y - (image.y + image.height));
+    return Math.hypot(dx, dy);
+}
+
+/**
+ * The image a set of points falls on: the one containing (or nearest to) the
+ * most points, earliest image first on a tie.
+ */
+function imageForPoints(images, points) {
+    const votes = new Map();
+    for (const { x, y } of points) {
+        let best = images[0];
+        for (const image of images) {
+            if (distanceToImage(image, x, y) < distanceToImage(best, x, y)) best = image;
+        }
+        votes.set(best, (votes.get(best) || 0) + 1);
+    }
+    let chosen = images[0];
+    for (const image of images) {
+        if ((votes.get(image) || 0) > (votes.get(chosen) || 0)) chosen = image;
+    }
+    return chosen;
+}
+
 async function readJsonIfPresent(filePath) {
     try {
         return JSON.parse(await fs.readFile(filePath, "utf8"));
@@ -77,7 +118,14 @@ function labelFontSize(box) {
     return Math.min(16, Math.max(10, Math.round(box.height / 30)));
 }
 
-function convertLabels(data, boneId, toScene, fontSize, warnings) {
+/**
+ * Labels and their pointer lines are placed over all of a bone's images, so
+ * each label is linked to the image its pointer lines point into (the line
+ * end farther from the label; the data uses both directions). A label and its
+ * lines share one image so they always move together. A label without lines
+ * is linked to the image under (or nearest to) its center.
+ */
+function convertLabels(data, boneId, toScene, fontSize, warnings, images) {
     const annotations = [];
     const counts = { labels: 0, lines: 0 };
 
@@ -96,7 +144,9 @@ function convertLabels(data, boneId, toScene, fontSize, warnings) {
         const centerX = (topLeft.x + bottomRight.x) / 2;
         const centerY = (topLeft.y + bottomRight.y) / 2;
         const approxWidth = text.length * fontSize * 0.6; // same estimate sceneCanvas.js uses
-        annotations.push({
+        const group = [];
+        const targets = [];
+        group.push({
             id: crypto.randomUUID(),
             type: "text",
             text,
@@ -118,8 +168,11 @@ function convertLabels(data, boneId, toScene, fontSize, warnings) {
             }
             const from = toScene(start.x, start.y);
             const to = toScene(end.x, end.y);
+            const fromDistance = Math.hypot(from.x - centerX, from.y - centerY);
+            const toDistance = Math.hypot(to.x - centerX, to.y - centerY);
+            targets.push(fromDistance > toDistance ? from : to);
             const arrowHead = line.style && line.style.arrow_head;
-            annotations.push({
+            group.push({
                 id: crypto.randomUUID(),
                 type: arrowHead && arrowHead !== "none" ? "arrow" : "line",
                 x1: round(from.x),
@@ -132,6 +185,9 @@ function convertLabels(data, boneId, toScene, fontSize, warnings) {
             });
             counts.lines += 1;
         }
+
+        const image = imageForPoints(images, targets.length > 0 ? targets : [{ x: centerX, y: centerY }]);
+        for (const annotation of group) annotations.push(linkToImage(annotation, image));
     }
     return { annotations, counts };
 }
@@ -237,16 +293,16 @@ function convertRegions(data, boneId, images, warnings) {
             const source = { type: "legacy-colored-region", boneId, name, imageId: image.id };
 
             if (region.stroke) {
-                annotations.push({
+                annotations.push(linkToImage({
                     id: crypto.randomUUID(),
                     type: "line",
                     points,
                     stroke: `#${color}`,
                     strokeWidth: round(((region.stroke_width || 38100) / dims.width) * image.width),
                     source,
-                });
+                }, image));
             } else {
-                annotations.push({
+                annotations.push(linkToImage({
                     id: crypto.randomUUID(),
                     type: "polygon",
                     points,
@@ -255,7 +311,7 @@ function convertRegions(data, boneId, images, warnings) {
                     strokeWidth: 1.5,
                     opacity: REGION_OPACITY,
                     source,
-                });
+                }, image));
             }
         }
     }
@@ -304,7 +360,7 @@ async function buildLegacyAnnotations(boneId, images, options = {}) {
             } else if (data) {
                 const area = boundingBox(images);
                 const toScene = slideToScene(area, await readLabelCrop(annotationsDir));
-                const result = convertLabels(data, boneId, toScene, labelFontSize(area), warnings);
+                const result = convertLabels(data, boneId, toScene, labelFontSize(area), warnings, images);
                 annotations.push(...result.annotations);
                 counts.labels = result.counts.labels;
                 counts.lines = result.counts.lines;

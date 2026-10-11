@@ -430,7 +430,7 @@ function renderCanvas() {
     dom.canvasNote.hidden = true;
     if (isEmpty) return;
 
-    const { svg, unsupported, width, height } = renderScene(scene, {
+    const { svg, unsupported, unlinked, width, height } = renderScene(scene, {
         selectedIndex: state.selectedImageIndex,
         cropMode: state.cropMode,
     });
@@ -444,10 +444,20 @@ function renderCanvas() {
     }
     dom.canvas.append(svg);
 
+    const notes = [];
     if (unsupported > 0) {
+        notes.push(`${plural(unsupported, "object")} can't be displayed yet but are still stored with this scene.`);
+    }
+    if (unlinked > 0) {
+        // An imported annotation whose image was removed keeps its stored
+        // position rather than disappearing (PR #493 review).
+        notes.push(unlinked === 1
+            ? "1 imported annotation no longer has its source image in this scene, so it is shown where it was imported."
+            : `${unlinked} imported annotations no longer have their source image in this scene, so they are shown where they were imported.`);
+    }
+    if (notes.length > 0) {
         dom.canvasNote.hidden = false;
-        dom.canvasNote.textContent =
-            `${plural(unsupported, "object")} can't be displayed yet but are still stored with this scene.`;
+        dom.canvasNote.textContent = notes.join(" ");
     }
 }
 

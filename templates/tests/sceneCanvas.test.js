@@ -173,3 +173,152 @@ describe("renderScene cropping", () => {
         expect(svg.querySelector(".scene-crop-outline").getAttribute("points")).toBe("0,0 200,0 200,100 0,100");
     });
 });
+
+// PR #493 review: annotations imported with a bone's images follow their
+// source image (sourceImageId + sourceImageFrame) when it is edited.
+describe("renderScene linked annotations", () => {
+    const FRAME = { x: 100, y: 100, width: 200, height: 100 };
+    const linked = (annotation) => ({ ...annotation, sourceImageId: "img-a", sourceImageFrame: FRAME });
+    const label = linked({ id: "t", type: "text", text: "Ilium", x: 150, y: 110, fontSize: 10, source: { type: "legacy-label" } });
+    const pointer = linked({ id: "l", type: "arrow", x1: 165, y1: 120, x2: 250, y2: 160, strokeWidth: 1.5, source: { type: "legacy-pointer-line" } });
+    const region = linked({
+        id: "r",
+        type: "polygon",
+        points: [[200, 150], [220, 150], [220, 170]],
+        source: { type: "legacy-colored-region", imageId: "img-a" },
+    });
+    const sourceImage = (overrides = {}) => image({ id: "img-a", ...FRAME, ...overrides });
+
+    function render(images, annotations = [label, pointer, region], options) {
+        return renderScene({ images, annotations }, options);
+    }
+    const layer = (svg) => svg.querySelector(".scene-layer-annotations");
+    function textCenter(svg) {
+        const node = layer(svg).querySelector("text");
+        const fontSize = Number(node.getAttribute("font-size"));
+        return [
+            Number(node.getAttribute("x")) + (node.textContent.length * fontSize * 0.6) / 2,
+            Number(node.getAttribute("y")) + fontSize / 2,
+        ];
+    }
+    const parsePoints = (node) => node.getAttribute("points").trim().split(/\s+/).map((pair) => pair.split(",").map(Number));
+    const linePointsOf = (svg) => parsePoints(layer(svg).querySelector("polyline"));
+    const regionPointsOf = (svg) => parsePoints(layer(svg).querySelector("polygon"));
+    function expectPoints(actual, expected) {
+        expect(actual).toHaveLength(expected.length);
+        actual.forEach(([x, y], i) => {
+            expect(x).toBeCloseTo(expected[i][0]);
+            expect(y).toBeCloseTo(expected[i][1]);
+        });
+    }
+    // The label's stored center: x 150 + (5 chars * 10 * 0.6) / 2, y 110 + 10 / 2.
+    const LABEL_CENTER = [165, 115];
+    const LINE = [[165, 120], [250, 160]];
+    const REGION = [[200, 150], [220, 150], [220, 170]];
+    const shift = (points, dx, dy) => points.map(([x, y]) => [x + dx, y + dy]);
+    // 90° about the image center (200, 150), the same direction sceneCanvas rotates images.
+    const rotate90 = (points) => points.map(([x, y]) => [200 - (y - 150), 150 + (x - 200)]);
+
+    it("draws linked annotations where they were imported while the image hasn't changed", () => {
+        const { svg, unlinked } = render([sourceImage()]);
+        expectPoints([textCenter(svg)], [LABEL_CENTER]);
+        expectPoints(linePointsOf(svg), LINE);
+        expectPoints(regionPointsOf(svg), REGION);
+        expect(unlinked).toBe(0);
+    });
+
+    it("moves a text label, pointer line, and region with their image", () => {
+        const { svg } = render([sourceImage({ x: 150, y: 70 })]);
+        expectPoints([textCenter(svg)], shift([LABEL_CENTER], 50, -30));
+        expectPoints(linePointsOf(svg), shift(LINE, 50, -30));
+        expectPoints(regionPointsOf(svg), shift(REGION, 50, -30));
+    });
+
+    it("rotates each annotation type around the image's rotation center", () => {
+        const { svg } = render([sourceImage({ rotation: 90 })]);
+        expectPoints([textCenter(svg)], rotate90([LABEL_CENTER]));
+        expectPoints(linePointsOf(svg), rotate90(LINE));
+        expectPoints(regionPointsOf(svg), rotate90(REGION));
+        // Text keeps reading left to right instead of turning with the image.
+        expect(layer(svg).querySelector("text").getAttribute("transform")).toBeNull();
+    });
+
+    it("combines a move with a rotation, rotating about the image's new center", () => {
+        const { svg } = render([sourceImage({ x: 150, y: 70, rotation: 90 })]);
+        expectPoints(linePointsOf(svg), shift(rotate90(LINE), 50, -30));
+    });
+
+    it("scales annotations with a resized image", () => {
+        const { svg } = render([sourceImage({ width: 400, height: 200 })]);
+        const scaled = (points) => points.map(([x, y]) => [100 + (x - 100) * 2, 100 + (y - 100) * 2]);
+        expectPoints([textCenter(svg)], scaled([LABEL_CENTER]));
+        expect(Number(layer(svg).querySelector("text").getAttribute("font-size"))).toBeCloseTo(20);
+        expectPoints(linePointsOf(svg), scaled(LINE));
+        expectPoints(regionPointsOf(svg), scaled(REGION));
+    });
+
+    it("mirrors annotations with a flipped image", () => {
+        const { svg } = render([sourceImage({ flipX: true })]);
+        const mirrored = (points) => points.map(([x, y]) => [400 - x, y]);
+        expectPoints(linePointsOf(svg), mirrored(LINE));
+        expectPoints(regionPointsOf(svg), mirrored(REGION));
+    });
+
+    it("clips colored regions to a cropped image's visible area but keeps labels and lines", () => {
+        const cropped = sourceImage({ cropX: 0, cropY: 0, cropWidth: 100, cropHeight: 50 });
+        const { svg } = render([cropped]);
+
+        // Crop is non-destructive and keeps the image in place, so coordinates don't change.
+        expectPoints(regionPointsOf(svg), REGION);
+        expectPoints(linePointsOf(svg), LINE);
+        const regionGroup = layer(svg).querySelector("polygon").parentNode;
+        const clipId = regionGroup.getAttribute("clip-path").match(/url\(#(.+)\)/)[1];
+        expectPoints(parsePoints(svg.querySelector(`#${clipId} polygon`)), [[100, 100], [200, 100], [200, 150], [100, 150]]);
+        expect(layer(svg).querySelector("text").parentNode).toBe(layer(svg));
+        expect(layer(svg).querySelector("polyline").parentNode).toBe(layer(svg));
+    });
+
+    it("clips regions to the crop area as it rotates with the image", () => {
+        const cropped = sourceImage({ cropX: 0, cropY: 0, cropWidth: 100, cropHeight: 50, rotation: 90 });
+        const { svg } = render([cropped]);
+        const clipId = layer(svg).querySelector("polygon").parentNode.getAttribute("clip-path").match(/url\(#(.+)\)/)[1];
+        expectPoints(parsePoints(svg.querySelector(`#${clipId} polygon`)), rotate90([[100, 100], [200, 100], [200, 150], [100, 150]]));
+    });
+
+    it("shows regions unclipped while that image's crop is being edited", () => {
+        const cropped = sourceImage({ cropX: 0, cropY: 0, cropWidth: 100, cropHeight: 50 });
+        const { svg } = render([cropped], [region], { selectedIndex: 0, cropMode: true });
+        expect(layer(svg).querySelector("polygon").parentNode).toBe(layer(svg));
+    });
+
+    it("does not move annotations when a different image is edited", () => {
+        const other = image({ id: "img-b", x: 500, y: 300, width: 100, height: 100, rotation: 45, flipX: true });
+        const { svg } = render([sourceImage(), other]);
+        expectPoints([textCenter(svg)], [LABEL_CENTER]);
+        expectPoints(linePointsOf(svg), LINE);
+        expectPoints(regionPointsOf(svg), REGION);
+    });
+
+    it("leaves annotations without a source image link where they are", () => {
+        const unlinkedLabel = { id: "manual", type: "text", text: "Ilium", x: 150, y: 110, fontSize: 10 };
+        const { svg, unlinked } = render([sourceImage({ x: 400, rotation: 90 })], [unlinkedLabel]);
+        expectPoints([textCenter(svg)], [LABEL_CENTER]);
+        expect(unlinked).toBe(0);
+    });
+
+    it("draws an annotation unchanged and counts it when its source image is gone", () => {
+        const { svg, unlinked, unsupported } = render([image({ id: "img-b" })]);
+        expectPoints([textCenter(svg)], [LABEL_CENTER]);
+        expectPoints(linePointsOf(svg), LINE);
+        expectPoints(regionPointsOf(svg), REGION);
+        expect(unlinked).toBe(3);
+        expect(unsupported).toBe(0);
+    });
+
+    it("never modifies the scene objects it is given", () => {
+        const annotations = [label, pointer, region].map((a) => JSON.parse(JSON.stringify(a)));
+        const before = JSON.parse(JSON.stringify(annotations));
+        render([sourceImage({ x: 150, y: 70, rotation: 90, flipY: true })], annotations);
+        expect(annotations).toEqual(before);
+    });
+});
