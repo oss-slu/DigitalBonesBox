@@ -457,10 +457,10 @@ describe("Scene editor: importing images - Issue 411", () => {
         await openNewScene();
 
         setFiles([{ name: "notes.pdf", type: "application/pdf" }]);
-        await waitFor(() => expect($("scene-import-error").hidden).toBe(false));
+        await waitFor(() => expect($("scene-image-import-error").hidden).toBe(false));
 
-        expect($("scene-import-error").textContent).toMatch(/notes\.pdf/);
-        expect($("scene-import-error").textContent).toMatch(/unsupported/i);
+        expect($("scene-image-import-error").textContent).toMatch(/notes\.pdf/);
+        expect($("scene-image-import-error").textContent).toMatch(/unsupported/i);
         expect(document.querySelectorAll(".scene-image-object")).toHaveLength(0);
         expect($("scene-meta").textContent).toContain("0 images");
     });
@@ -472,11 +472,11 @@ describe("Scene editor: importing images - Issue 411", () => {
             { name: "ilium.png", type: "image/png" },
             { name: "notes.pdf", type: "application/pdf" },
         ]);
-        await waitFor(() => expect($("scene-import-error").hidden).toBe(false));
+        await waitFor(() => expect($("scene-image-import-error").hidden).toBe(false));
 
         expect($("scene-meta").textContent).toContain("1 image");
         expect(document.querySelectorAll(".scene-image-object")).toHaveLength(1);
-        expect($("scene-import-error").textContent).toMatch(/notes\.pdf/);
+        expect($("scene-image-import-error").textContent).toMatch(/notes\.pdf/);
     });
 
     it("selects an image on click and deselects it on a second click", async () => {
@@ -543,10 +543,10 @@ describe("Scene editor: importing images - Issue 411", () => {
         await openNewScene();
 
         setFiles([{ name: "huge.png", type: "image/png", size: 3 * 1024 * 1024 }]);
-        await waitFor(() => expect($("scene-import-error").hidden).toBe(false));
+        await waitFor(() => expect($("scene-image-import-error").hidden).toBe(false));
 
-        expect($("scene-import-error").textContent).toMatch(/huge\.png/);
-        expect($("scene-import-error").textContent).toMatch(/too large/i);
+        expect($("scene-image-import-error").textContent).toMatch(/huge\.png/);
+        expect($("scene-image-import-error").textContent).toMatch(/too large/i);
         expect(document.querySelectorAll(".scene-image-object")).toHaveLength(0);
         expect(backend.calls.some((c) => c.method === "PATCH")).toBe(false);
     });

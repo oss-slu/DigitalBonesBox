@@ -2,6 +2,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const crypto = require("crypto");
+const { Buffer } = require("buffer"); // explicit: Jest's jsdom environment has no global Buffer
 const express = require("express");
 const request = require("supertest");
 const {
@@ -397,6 +398,56 @@ describe.each(backends)("Scenes API ($name)", (backend) => {
             const final = await request(slowApp).get(`/api/scenes/${created.body.id}`);
             expect(final.body.name).toBe("Renamed");
             expect(final.body.images).toEqual([image]);
+        });
+
+        // Merging main into PR #493: the bone-image import route (Issue #466)
+        // is also a whole-scene read-modify-write, so it must share the same
+        // per-scene lock or it can drop a directly imported image (Issue #412).
+        it("does not lose a direct image save that races a bone-image import", async () => {
+            const contentDir = fs.mkdtempSync(path.join(os.tmpdir(), "bonebox-legacy-content-"));
+            try {
+                const descriptionsDir = path.join(contentDir, "descriptions");
+                const imagesDir = path.join(contentDir, "images");
+                fs.mkdirSync(descriptionsDir);
+                fs.mkdirSync(imagesDir);
+                fs.writeFileSync(
+                    path.join(descriptionsDir, "fixture_bone_description.json"),
+                    JSON.stringify({ name: "Fixture Bone", images: ["fixture_bone_1.png"] })
+                );
+                // Minimal PNG header: enough for the image catalog to read width and height.
+                const png = Buffer.alloc(33);
+                png.writeUInt32BE(0x89504e47, 0);
+                png.writeUInt32BE(0x0d0a1a0a, 4);
+                png.writeUInt32BE(13, 8);
+                png.write("IHDR", 12, "ascii");
+                png.writeUInt32BE(200, 16);
+                png.writeUInt32BE(100, 20);
+                fs.writeFileSync(path.join(imagesDir, "fixture_bone_1.png"), png);
+
+                const slowApp = express();
+                slowApp.use(express.json({ limit: "6mb" }));
+                slowApp.use("/api/scenes", createScenesRouter(withArtificialDelay(env.newStore(), 30), {
+                    legacyContent: { descriptionsDir, imagesDir },
+                }));
+                const created = await request(slowApp).post("/api/scenes").send({});
+                const image = validImage();
+
+                const [importResponse, imageResponse] = await Promise.all([
+                    request(slowApp).post(`/api/scenes/${created.body.id}/import-legacy`).send({ boneId: "fixture_bone" }),
+                    request(slowApp).patch(`/api/scenes/${created.body.id}`).send({ image }),
+                ]);
+
+                expect(importResponse.statusCode).toBe(200);
+                expect(imageResponse.statusCode).toBe(200);
+
+                const final = await request(slowApp).get(`/api/scenes/${created.body.id}`);
+                expect(final.body.images).toHaveLength(2);
+                expect(final.body.images.map((img) => img.id)).toContain(image.id);
+                expect(final.body.images.some((img) => img.source && img.source.filename === "fixture_bone_1.png")).toBe(true);
+                expect(final.body.importLog).toHaveLength(1);
+            } finally {
+                fs.rmSync(contentDir, { recursive: true, force: true });
+            }
         });
     });
 
