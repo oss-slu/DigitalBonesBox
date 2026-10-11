@@ -568,6 +568,127 @@ describe("Scene editor: importing images - Issue 411", () => {
         expect(backend.calls.filter((c) => c.method === "PATCH" && c.body && c.body.image)).toHaveLength(2);
     });
 
+    // PR #493 review: a failed direct-upload save must stay retryable until it
+    // succeeds or the image is removed, whatever else redraws the workspace.
+    describe("failed saves stay retryable", () => {
+        const imagePatches = () => backend.calls.filter((c) => c.method === "PATCH" && c.body && c.body.image);
+        const storedImages = (name) => [...backend.scenes.values()].find((s) => s.name === name).images;
+
+        async function importWithFailedSave(files = [{ name: "ilium.png", type: "image/png" }]) {
+            for (let i = 0; i < files.length; i += 1) backend.fail("PATCH", 500);
+            setFiles(files);
+            await waitFor(() => expect($("scene-workspace-error-text").textContent)
+                .toBe(`${files.length === 1 ? "1 image" : `${files.length} images`} could not be saved and will be lost if you reload.`));
+        }
+
+        it("keeps the retry prompt through redraws, selection changes, and a scene list refresh", async () => {
+            await openNewScene();
+            await importWithFailedSave();
+
+            // Selecting and deselecting the image redraws the canvas.
+            document.querySelector(".scene-image-object").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+            await waitFor(() => expect(document.querySelectorAll(".scene-selection-outline")).toHaveLength(1));
+            document.querySelector(".scene-image-object").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+            // Switching fit mode redraws the canvas; a rename redraws the whole workspace.
+            click("scene-fit-toggle");
+            click("scene-rename");
+            $("scene-rename-input").value = "Renamed Scene";
+            $("scene-rename-form").requestSubmit();
+            await waitFor(() => expect($("scene-title").textContent).toBe("Renamed Scene"));
+            // Refreshing the scene list.
+            click("scene-library-retry");
+            await waitFor(() => expect(listNames()).toContain("Renamed Scene"));
+
+            expect($("scene-workspace-error").hidden).toBe(false);
+            expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/);
+            expect($("scene-workspace-retry").hidden).toBe(false);
+            expect(document.querySelectorAll(".scene-image-object")).toHaveLength(1);
+        });
+
+        it("does not show the prompt on another scene, and shows it again on return", async () => {
+            backend.seed({ name: "Other" });
+            await openNewScene();
+            const title = $("scene-title").textContent;
+            await importWithFailedSave();
+
+            await openByName("Other");
+            expect($("scene-workspace-error").hidden).toBe(true);
+            expect(document.querySelectorAll(".scene-image-object")).toHaveLength(0);
+
+            await openByName(title);
+            expect($("scene-workspace-error").hidden).toBe(false);
+            expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/);
+            // The unsaved image is still shown even though the server copy lacks it.
+            expect($("scene-meta").textContent).toContain("1 image");
+            expect(document.querySelectorAll(".scene-image-object")).toHaveLength(1);
+
+            click("scene-workspace-retry");
+            await waitFor(() => expect($("scene-workspace-error").hidden).toBe(true));
+            expect(storedImages(title)).toHaveLength(1);
+        });
+
+        it("keeps only the images that still failed after a partial retry, with an accurate count", async () => {
+            await openNewScene();
+            const title = $("scene-title").textContent;
+            await importWithFailedSave([
+                { name: "one.png", type: "image/png" },
+                { name: "two.png", type: "image/png" },
+            ]);
+            expect(storedImages(title)).toHaveLength(0);
+
+            backend.fail("PATCH", 500);
+            click("scene-workspace-retry");
+            await waitFor(() => expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/));
+            expect(storedImages(title)).toHaveLength(1);
+            expect(listButton(title).textContent).toContain("1 image");
+
+            click("scene-workspace-retry");
+            await waitFor(() => expect($("scene-workspace-error").hidden).toBe(true));
+            expect(storedImages(title)).toHaveLength(2);
+            expect(listButton(title).textContent).toContain("2 images");
+        });
+
+        it("never creates duplicate records when the same image is retried several times", async () => {
+            await openNewScene();
+            const title = $("scene-title").textContent;
+            await importWithFailedSave();
+
+            backend.fail("PATCH", 500);
+            click("scene-workspace-retry");
+            await waitFor(() => expect(imagePatches()).toHaveLength(2));
+            // Let that failed retry finish (the fake backend answers within a tick).
+            await new Promise((resolve) => setTimeout(resolve, 20));
+            expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/);
+
+            // A slow save: clicking retry again while it is in flight sends nothing new.
+            backend.delay("PATCH", 50);
+            click("scene-workspace-retry");
+            click("scene-workspace-retry");
+            await waitFor(() => expect(storedImages(title)).toHaveLength(1));
+            await waitFor(() => expect($("scene-workspace-error").hidden).toBe(true));
+            click("scene-workspace-retry");
+
+            expect(imagePatches()).toHaveLength(3);
+            expect(new Set(imagePatches().map((c) => c.body.image.id)).size).toBe(1);
+            expect(storedImages(title)).toHaveLength(1);
+            expect(listButton(title).textContent).toContain("1 image");
+        });
+
+        it("discards an unsaved image the user removes, without contacting the server", async () => {
+            await openNewScene();
+            await importWithFailedSave();
+            const callsBefore = backend.calls.length;
+
+            document.querySelector(".scene-image-object").dispatchEvent(new MouseEvent("click", { bubbles: true }));
+            await waitFor(() => expect($("scene-image-toolbar").hidden).toBe(false));
+            click("scene-image-remove");
+
+            expect(document.querySelectorAll(".scene-image-object")).toHaveLength(0);
+            expect($("scene-workspace-error").hidden).toBe(true);
+            expect(backend.calls.length).toBe(callsBefore);
+        });
+    });
+
     // PR #493 review: the scene list's image count was only ever refreshed by
     // a full re-list, so it kept showing "0 images" after an import until the
     // page was reloaded.

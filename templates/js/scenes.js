@@ -169,7 +169,18 @@ const state = {
     cropMode: false,
     boneOptions: null,
     importRequest: 0,
+    // Directly imported images (Issue #412) not yet confirmed saved, per scene:
+    // Map<sceneId, Map<imageId, { image, status: "saving" | "failed" }>>. Kept
+    // outside state.active so redraws, server reloads of the scene, bone imports
+    // and switching scenes can't lose them or their retry prompt. An entry is
+    // removed only when its save succeeds, the image is removed from the scene,
+    // or the scene is deleted.
+    pendingSaves: new Map(),
 };
+
+// True while the workspace alert is showing the pending-save retry prompt
+// rather than some other (one-off) error.
+let workspaceErrorIsPendingSaves = false;
 
 function deselectImage() {
     state.selectedImageIndex = null;
@@ -260,15 +271,98 @@ function hideLibraryMessage() {
 }
 
 function showWorkspaceError(message, { retry = null } = {}) {
+    workspaceErrorIsPendingSaves = false;
     dom.workspaceError.hidden = false;
     dom.workspaceErrorText.textContent = message;
     dom.workspaceRetry.hidden = !retry;
     dom.workspaceRetry.onclick = retry;
 }
 
+/**
+ * Clears a one-off workspace error. If the open scene still has direct
+ * uploads that failed to save, their retry prompt is shown instead, so a
+ * redraw or an unrelated successful action never hides it.
+ */
 function hideWorkspaceError() {
+    if (showPendingSaveError()) return;
+    workspaceErrorIsPendingSaves = false;
     dom.workspaceError.hidden = true;
     dom.workspaceRetry.onclick = null;
+}
+
+/**
+ * Starts tracking a newly imported image as not yet saved. Called as soon as
+ * the image exists, before its save starts, so nothing that replaces the open
+ * scene in the meantime (a bone import, reopening the scene) can lose it.
+ */
+function trackPendingImage(sceneId, image) {
+    let pending = state.pendingSaves.get(sceneId);
+    if (!pending) {
+        pending = new Map();
+        state.pendingSaves.set(sceneId, pending);
+    }
+    pending.set(image.id, { image, status: "queued" });
+}
+
+function failedPendingImages(sceneId) {
+    const pending = state.pendingSaves.get(sceneId);
+    if (!pending) return [];
+    return [...pending.values()].filter((entry) => entry.status === "failed").map((entry) => entry.image);
+}
+
+/**
+ * Shows the retry prompt for the open scene's failed direct-upload saves.
+ * @returns {boolean} whether there was anything to show
+ */
+function showPendingSaveError() {
+    if (!state.active) return false;
+    const sceneId = state.active.id;
+    const failed = failedPendingImages(sceneId);
+    if (failed.length === 0) return false;
+
+    const message = `${plural(failed.length, "image")} could not be saved and will be lost if you reload.`;
+    // Only touch the DOM when something changed, so redraws (e.g. every frame
+    // of a drag) don't make screen readers re-announce the alert.
+    if (dom.workspaceError.hidden || dom.workspaceErrorText.textContent !== message) {
+        dom.workspaceError.hidden = false;
+        dom.workspaceErrorText.textContent = message;
+    }
+    dom.workspaceRetry.hidden = false;
+    dom.workspaceRetry.onclick = () => retryImageSaves(sceneId);
+    workspaceErrorIsPendingSaves = true;
+    return true;
+}
+
+/**
+ * Updates the pending-save prompt after saves finish for `sceneId`, without
+ * replacing a different error the user is currently looking at.
+ */
+function refreshPendingSaveError(sceneId) {
+    if (!state.active || state.active.id !== sceneId) return;
+    if (dom.workspaceError.hidden || workspaceErrorIsPendingSaves) hideWorkspaceError();
+}
+
+/**
+ * Returns the server's copy of a scene plus its direct uploads that the
+ * server doesn't have yet (save in flight, or failed and waiting for a
+ * retry). Pending entries the server already has are confirmed saved and
+ * dropped from the pending state.
+ * @param {object} serverScene
+ * @returns {object}
+ */
+function withPendingImages(serverScene) {
+    const pending = state.pendingSaves.get(serverScene.id);
+    if (!pending) return serverScene;
+    const serverImages = serverScene.images || [];
+    const serverIds = new Set(serverImages.map((img) => img.id));
+    const unsaved = [];
+    for (const [imageId, entry] of pending) {
+        if (!serverIds.has(imageId)) unsaved.push(entry.image);
+        else if (entry.status === "failed") pending.delete(imageId);
+    }
+    if (pending.size === 0) state.pendingSaves.delete(serverScene.id);
+    if (unsaved.length === 0) return serverScene;
+    return { ...serverScene, images: [...serverImages, ...unsaved] };
 }
 
 function renderLibrary() {
@@ -388,6 +482,9 @@ async function loadLibrary() {
     try {
         state.scenes = await listScenes();
         hideLibraryMessage();
+        for (const sceneId of state.pendingSaves.keys()) {
+            if (!state.scenes.some((s) => s.id === sceneId)) state.pendingSaves.delete(sceneId);
+        }
         if (state.active && !state.scenes.some((s) => s.id === state.active.id)) {
             clearActiveScene();
             showWorkspaceError("The scene you had open is no longer available. It may have been deleted.");
@@ -414,7 +511,7 @@ async function openScene(sceneId) {
     try {
         const scene = await getScene(sceneId);
         if (requestId !== state.openRequest) return;
-        state.active = scene;
+        state.active = withPendingImages(scene);
         deselectImage();
         renderWorkspace();
         renderLibrary();
@@ -541,6 +638,7 @@ async function handleDelete() {
     hideWorkspaceError();
     try {
         await deleteScene(id);
+        state.pendingSaves.delete(id);
         state.scenes = state.scenes.filter((s) => s.id !== id);
         setBusy(false);
         if (state.active && state.active.id === id) clearActiveScene();
@@ -562,25 +660,48 @@ async function handleDelete() {
 }
 
 /**
- * Retries persisting images that previously failed to save (Issue #412). Safe
- * to call repeatedly - the server upserts by image id, so a partially-succeeded
- * previous attempt is never double-saved.
+ * Persists directly imported images (Issue #412), tracking each one in
+ * state.pendingSaves until the server confirms it. Safe to call repeatedly:
+ * an image whose save is already in flight is skipped, and the server upserts
+ * by image id, so a retry can never create a duplicate.
  * @param {string} sceneId - The scene these images belong to, captured at
  *   import time so a later retry targets the right scene even if the user has
  *   since opened a different one.
  * @param {object[]} images
  * @returns {Promise<void>}
  */
-async function retryImageSaves(sceneId, images) {
-    const stillFailing = [];
-    let savedCount = 0;
+async function saveDirectImages(sceneId, images) {
+    const pending = state.pendingSaves.get(sceneId);
+    if (!pending) return;
+    const toSave = [];
     for (const image of images) {
+        const entry = pending.get(image.id);
+        // Skip images the user already removed, and saves already in flight.
+        if (!entry || entry.status === "saving") continue;
+        entry.status = "saving";
+        toSave.push(entry);
+    }
+    if (toSave.length === 0) return;
+
+    let savedCount = 0;
+    for (const entry of toSave) {
+        const imageId = entry.image.id;
         try {
-            await saveImageToScene(sceneId, image);
-            savedCount += 1;
+            await saveImageToScene(sceneId, entry.image);
+            if (pending.get(imageId) === entry) {
+                pending.delete(imageId);
+                savedCount += 1;
+            } else {
+                // Removed by the user while this save was in flight: undo it
+                // so the image doesn't come back on the next reload.
+                removeSceneImage(sceneId, imageId).catch(() => {});
+            }
         } catch {
-            stillFailing.push(image);
+            if (pending.get(imageId) === entry) entry.status = "failed";
         }
+    }
+    if (pending.size === 0 && state.pendingSaves.get(sceneId) === pending) {
+        state.pendingSaves.delete(sceneId);
     }
 
     // Reflects the scene list's count from what's actually confirmed saved
@@ -595,14 +716,17 @@ async function retryImageSaves(sceneId, images) {
         }
     }
 
-    if (stillFailing.length === 0) {
-        hideWorkspaceError();
-        return;
-    }
-    showWorkspaceError(
-        `${plural(stillFailing.length, "image")} could not be saved and will be lost if you reload.`,
-        { retry: () => retryImageSaves(sceneId, stillFailing) }
-    );
+    refreshPendingSaveError(sceneId);
+}
+
+/**
+ * Retries every failed direct-upload save for a scene. Images that succeed
+ * leave the pending state; the rest stay, and the prompt shows the new count.
+ * @param {string} sceneId
+ * @returns {Promise<void>}
+ */
+function retryImageSaves(sceneId) {
+    return saveDirectImages(sceneId, failedPendingImages(sceneId));
 }
 
 /**
@@ -616,6 +740,21 @@ async function retryImageSaves(sceneId, images) {
 async function performImageRemoval(sceneId, image) {
     const isActiveScene = Boolean(state.active) && state.active.id === sceneId;
     const index = isActiveScene ? state.active.images.findIndex((img) => img.id === image.id) : -1;
+
+    // A direct upload the server doesn't have yet: removing it discards it
+    // locally. If its save is still in flight, saveDirectImages undoes it.
+    const pending = state.pendingSaves.get(sceneId);
+    if (pending && pending.has(image.id)) {
+        pending.delete(image.id);
+        if (pending.size === 0) state.pendingSaves.delete(sceneId);
+        if (index !== -1) {
+            state.active.images.splice(index, 1);
+            if (state.selectedImageIndex === index) deselectImage();
+            else if (state.selectedImageIndex !== null && state.selectedImageIndex > index) state.selectedImageIndex -= 1;
+        }
+        if (isActiveScene) renderWorkspace();
+        return;
+    }
 
     if (index !== -1) {
         state.active.images.splice(index, 1);
@@ -1052,6 +1191,7 @@ async function handleImportFiles(fileList) {
             const image = { id: crypto.randomUUID(), src: dataUrl, x: offset, y: offset, width, height };
             added.push(image);
             totalSrcLength += dataUrl.length;
+            trackPendingImage(sceneId, image);
             if (state.active && state.active.id === sceneId) {
                 state.active.images.push(image);
             }
@@ -1074,7 +1214,7 @@ async function handleImportFiles(fileList) {
         }
         // Always persists to the scene the import actually started on, even
         // if the user has since switched to viewing a different one.
-        await retryImageSaves(sceneId, added);
+        await saveDirectImages(sceneId, added);
     }
 }
 
@@ -1223,24 +1363,6 @@ async function showImportForm() {
     }
 }
 
-/**
- * Returns the server's copy of a scene plus any directly imported images
- * (Issue #412) that the server doesn't have yet because their save is still
- * in flight or failed and is waiting for a retry. Without this, replacing the
- * open scene with a server response (e.g. after a bone import) would make
- * those images disappear from view even though they are still being saved.
- * @param {object} localScene
- * @param {object} serverScene
- * @returns {object}
- */
-function withUnsavedImages(localScene, serverScene) {
-    const serverImages = serverScene.images || [];
-    const serverIds = new Set(serverImages.map((img) => img.id));
-    const unsaved = (localScene.images || []).filter((img) => !serverIds.has(img.id));
-    if (unsaved.length === 0) return serverScene;
-    return { ...serverScene, images: [...serverImages, ...unsaved] };
-}
-
 async function handleImport(event) {
     event.preventDefault();
     if (state.busy || !state.active) return;
@@ -1277,7 +1399,7 @@ async function handleImport(event) {
         const stillActive = Boolean(state.active) && state.active.id === sceneId;
         if (stillActive) {
             const selected = state.selectedImageIndex !== null ? state.active.images[state.selectedImageIndex] : null;
-            state.active = withUnsavedImages(state.active, scene);
+            state.active = withPendingImages(scene);
             const reselected = selected ? state.active.images.findIndex((img) => img.id === selected.id) : -1;
             if (reselected === -1) deselectImage();
             else state.selectedImageIndex = reselected;

@@ -363,3 +363,48 @@ describe("Scene editor: bone import alongside direct image import", () => {
         expect(backend.scene.images).toHaveLength(2);
     });
 });
+
+describe("Scene editor: failed direct-upload save followed by a bone import", () => {
+    it("keeps the unsaved image and its retry prompt after the import", async () => {
+        const originalFileReader = window.FileReader;
+        const originalImage = window.Image;
+        window.FileReader = class {
+            readAsDataURL(_file) {
+                setTimeout(() => {
+                    this.result = "data:image/png;base64,AAAA";
+                    if (this.onload) this.onload();
+                }, 0);
+            }
+        };
+        window.Image = class {
+            constructor() {
+                this.naturalWidth = 800;
+                this.naturalHeight = 400;
+            }
+            set src(_value) {
+                setTimeout(() => this.onload && this.onload(), 0);
+            }
+        };
+        try {
+            // The fake backend has no PATCH route, so the direct image's save fails.
+            const input = $("scene-import-input");
+            Object.defineProperty(input, "files", { value: [{ name: "photo.png", type: "image/png" }], configurable: true });
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+            await waitFor(() => expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/));
+
+            await openImportForm();
+            await chooseBone("ilium");
+            await waitFor(() => expect(imageChoices()).toHaveLength(2));
+            $("scene-import-form").requestSubmit();
+            await waitFor(() => expect($("scene-editor-status").textContent).toMatch(/^Imported 2 images/));
+
+            expect($("scene-workspace-error").hidden).toBe(false);
+            expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/);
+            expect($("scene-workspace-retry").hidden).toBe(false);
+            expect($("scene-meta").textContent).toContain("3 images");
+        } finally {
+            window.FileReader = originalFileReader;
+            window.Image = originalImage;
+        }
+    });
+});
