@@ -5,7 +5,7 @@ const rateLimit = require("express-rate-limit");
 const crypto = require("crypto");
 const fs = require("fs").promises;
 const path = require("path");
-const { buildLegacyImages, isValidBoneId, nextRowY, LegacyImportError } = require("./legacyImport");
+const { buildLegacyImages, isValidBoneId, LegacyImportError } = require("./legacyImport");
 const { buildLegacyAnnotations } = require("./legacyAnnotations");
 
 const MAX_IMPORT_LOG_ENTRIES = 50;
@@ -24,6 +24,11 @@ const MAX_IMAGE_SRC_LENGTH = 2_800_000;
 // (ids/positions/annotations/timestamps are tiny next to base64 image data).
 const MAX_SCENE_IMAGES_TOTAL_LENGTH = 3_800_000;
 const SAFE_IMAGE_SRC_PREFIX = /^data:image\//i;
+// What a saved scene image may point at: a same-origin path (e.g. a bone image
+// at /api/images/...), a web URL, or embedded image data. blob: URLs only live
+// as long as the page that made them, and script URLs must never be stored.
+const PERSISTABLE_IMAGE_SRC = /^(\/(?!\/)|\.\/|https?:\/\/|data:image\/)/i;
+const MAX_SCENE_OBJECTS = 1000;
 
 class SceneStorageUnavailableError extends Error {}
 class SceneLockTimeoutError extends Error {}
@@ -162,6 +167,76 @@ function applyImagePatch(existingImage, fields) {
     return { image: merged };
 }
 
+function isPlainObject(value) {
+    return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+/**
+ * Validates the content of a full-scene save (Issues #451, #452): `images`,
+ * `annotations`, and optionally `importLog` (the record of bone imports, Issue
+ * #467). Known image fields are type-checked with the same rules as
+ * applyImagePatch; unknown fields on images and annotations (e.g. an imported
+ * image's `source`, or an annotation's `sourceImageId`) are kept as-is.
+ * @param {object} body
+ * @param {{ requireArrays?: boolean }} [options] when false, missing arrays
+ *   default to empty (creating a scene); when true both must be sent (saving).
+ * @returns {{ error: string } | { images: object[], annotations: object[], importLog?: object[] }}
+ */
+function validateSceneContent(body, { requireArrays = true } = {}) {
+    const images = body.images === undefined && !requireArrays ? [] : body.images;
+    const annotations = body.annotations === undefined && !requireArrays ? [] : body.annotations;
+    if (!Array.isArray(images) || !Array.isArray(annotations)) {
+        return { error: "images and annotations must both be arrays" };
+    }
+    if (images.length > MAX_SCENE_OBJECTS || annotations.length > MAX_SCENE_OBJECTS) {
+        return { error: `A scene can have at most ${MAX_SCENE_OBJECTS} images and ${MAX_SCENE_OBJECTS} annotations` };
+    }
+
+    let totalSrcLength = 0;
+    for (const [index, image] of images.entries()) {
+        if (!isPlainObject(image)) {
+            return { error: `images[${index}] must be an object` };
+        }
+        if (typeof image.src !== "string" || !PERSISTABLE_IMAGE_SRC.test(image.src)) {
+            return { error: `images[${index}].src is not an image source that can be saved` };
+        }
+        if (image.src.length > MAX_IMAGE_SRC_LENGTH) {
+            return { error: `images[${index}] is too large (max 2MB)` };
+        }
+        const result = applyImagePatch(image, {});
+        if (result.error) {
+            return { error: `images[${index}]: ${result.error}` };
+        }
+        totalSrcLength += image.src.length;
+    }
+    if (totalSrcLength > MAX_SCENE_IMAGES_TOTAL_LENGTH) {
+        return { error: "This scene is over its total image size limit; remove an image and try again" };
+    }
+
+    const badAnnotation = annotations.findIndex((annotation) => !isPlainObject(annotation));
+    if (badAnnotation !== -1) {
+        return { error: `annotations[${badAnnotation}] must be an object` };
+    }
+
+    const content = { images, annotations };
+    if (body.importLog !== undefined) {
+        const log = body.importLog;
+        if (!Array.isArray(log) || log.length > MAX_SCENE_OBJECTS || !log.every(isPlainObject)) {
+            return { error: "importLog must be a list of import records" };
+        }
+        content.importLog = log.slice(-MAX_IMPORT_LOG_ENTRIES);
+    }
+    return content;
+}
+
+// Strictly increasing per scene, so two writes in the same millisecond still
+// get different versions for the PUT `baseUpdatedAt` check.
+function nextUpdatedAt(previous) {
+    const now = Date.now();
+    const previousMs = Date.parse(previous);
+    return new Date(Number.isFinite(previousMs) && previousMs >= now ? previousMs + 1 : now).toISOString();
+}
+
 function toSummary(scene) {
     return {
         id: scene.id,
@@ -258,8 +333,8 @@ function createFileSceneStore(scenesDir = path.join(__dirname, "data", "scenes")
     return { list, get, save, remove, withLock: createKeyedMutex() };
 }
 
-// How long a PATCH will wait for another PATCH on the same scene before giving
-// up (returns 409 "busy" rather than hanging indefinitely), and how long a
+// How long a write will wait for another write on the same scene before giving
+// up (returns 423 "busy" rather than hanging indefinitely), and how long a
 // held lock survives if its holder crashes before releasing it.
 const SCENE_LOCK_WAIT_MS = 3000;
 const SCENE_LOCK_POLL_MS = 50;
@@ -388,19 +463,31 @@ function isNameTaken(scenes, name, exceptId = null) {
     return scenes.some((s) => s.id !== exceptId && s.name.toLowerCase() === lowered);
 }
 
-function nextDefaultName(scenes) {
-    if (!isNameTaken(scenes, DEFAULT_SCENE_NAME)) return DEFAULT_SCENE_NAME;
+function nextAvailableName(scenes, base) {
+    if (!isNameTaken(scenes, base)) return base;
     let n = 2;
-    while (isNameTaken(scenes, `${DEFAULT_SCENE_NAME} ${n}`)) n += 1;
-    return `${DEFAULT_SCENE_NAME} ${n}`;
+    while (isNameTaken(scenes, `${base} ${n}`)) n += 1;
+    return `${base} ${n}`;
+}
+
+function nextDefaultName(scenes) {
+    return nextAvailableName(scenes, DEFAULT_SCENE_NAME);
+}
+
+// "<name> copy", numbered if taken. The original name is shortened first so
+// the result (including a number suffix) stays within the name length limit.
+function nextCopyName(scenes, name) {
+    const base = `${name.slice(0, MAX_SCENE_NAME_LENGTH - 10).trimEnd()} copy`;
+    return nextAvailableName(scenes, base);
 }
 
 function sendStoreError(res, error, message) {
     if (error instanceof SceneStorageUnavailableError) {
         return res.status(503).json({ error: error.message });
     }
+    // 423 rather than 409 so a busy scene can't be mistaken for a name conflict.
     if (error instanceof SceneLockTimeoutError) {
-        return res.status(409).json({ error: error.message });
+        return res.status(423).json({ error: error.message });
     }
     console.error(`${message}:`, error.message);
     return res.status(500).json({ error: message });
@@ -443,15 +530,23 @@ function createScenesRouter(store = resolveSceneStore(), options = {}) {
     });
 
     /**
-     * Creates a new blank scene with a unique id. Name is optional and defaults
-     * to "Untitled Scene" (numbered if taken). Issues #421, #423.
+     * Creates a new scene with a unique id. Name is optional and defaults to
+     * "Untitled Scene" (numbered if taken). Issues #421, #423. The scene starts
+     * blank unless `images`, `annotations`, and `importLog` are sent, which lets
+     * a working copy whose scene was deleted elsewhere be saved as a new scene
+     * in one request, so a failure can't leave an empty scene behind (Issue #456).
      */
     router.post("/", async (req, res) => {
         try {
+            const body = isPlainObject(req.body) ? req.body : {};
+            const content = validateSceneContent(body, { requireArrays: false });
+            if (content.error) {
+                return res.status(400).json({ error: content.error });
+            }
             const scenes = await store.list();
             let name;
-            if (req.body && req.body.name !== undefined) {
-                const result = normalizeSceneName(req.body.name);
+            if (body.name !== undefined) {
+                const result = normalizeSceneName(body.name);
                 if (result.error) {
                     return res.status(400).json({ error: result.error });
                 }
@@ -467,8 +562,9 @@ function createScenesRouter(store = resolveSceneStore(), options = {}) {
             const scene = {
                 id: crypto.randomUUID(),
                 name,
-                images: [],
-                annotations: [],
+                images: content.images,
+                annotations: content.annotations,
+                ...(content.importLog ? { importLog: content.importLog } : {}),
                 createdAt: now,
                 updatedAt: now,
             };
@@ -617,7 +713,7 @@ function createScenesRouter(store = resolveSceneStore(), options = {}) {
                 }
 
                 if (changed) {
-                    scene.updatedAt = new Date().toISOString();
+                    scene.updatedAt = nextUpdatedAt(scene.updatedAt);
                     await store.save(scene);
                 }
                 res.json(scene);
@@ -637,7 +733,9 @@ function createScenesRouter(store = resolveSceneStore(), options = {}) {
                 return res.status(400).json({ error: "Invalid sceneId" });
             }
 
-            const deleted = await store.remove(sceneId);
+            // Under the scene's lock so a save that already read the scene
+            // can't write it back after it has been deleted.
+            const deleted = await store.withLock(sceneId, () => store.remove(sceneId));
             if (!deleted) {
                 return res.status(404).json({ error: "Scene not found" });
             }
@@ -648,16 +746,109 @@ function createScenesRouter(store = resolveSceneStore(), options = {}) {
     });
 
     /**
-     * Imports an existing bone's images into a scene. Issue #466.
-     * Body: { boneId, filenames?, annotations? }. `filenames` selects which of the bone's images
+     * Saves a scene's full content in one request (Issues #451, #452, #454):
+     * `images`, `annotations`, and (if sent) `importLog` replace the stored
+     * ones together, so a scene is always stored as one coherent state. An
+     * optional `name` renames it in the same write. When `baseUpdatedAt` is
+     * sent and no longer matches the stored version, the save is refused with
+     * 412 so a stale copy can't silently replace newer content saved from
+     * somewhere else.
+     */
+    router.put("/:sceneId", async (req, res) => {
+        const { sceneId } = req.params;
+        try {
+            const body = isPlainObject(req.body) ? req.body : {};
+            const content = validateSceneContent(body);
+            if (content.error) {
+                return res.status(400).json({ error: content.error });
+            }
+            let name;
+            if (body.name !== undefined) {
+                const result = normalizeSceneName(body.name);
+                if (result.error) {
+                    return res.status(400).json({ error: result.error });
+                }
+                name = result.name;
+            }
+            if (body.baseUpdatedAt !== undefined && typeof body.baseUpdatedAt !== "string") {
+                return res.status(400).json({ error: "baseUpdatedAt must be a string" });
+            }
+
+            await store.withLock(sceneId, async () => {
+                const scene = await store.get(sceneId);
+                if (!scene) {
+                    res.status(404).json({ error: "Scene not found" });
+                    return;
+                }
+                if (body.baseUpdatedAt !== undefined && body.baseUpdatedAt !== scene.updatedAt) {
+                    res.status(412).json({
+                        error: "This scene was changed somewhere else after you opened it",
+                        updatedAt: scene.updatedAt,
+                    });
+                    return;
+                }
+                if (name !== undefined && isNameTaken(await store.list(), name, sceneId)) {
+                    res.status(409).json({ error: `A scene named "${name}" already exists` });
+                    return;
+                }
+
+                const updated = {
+                    ...scene,
+                    ...content,
+                    name: name === undefined ? scene.name : name,
+                    updatedAt: nextUpdatedAt(scene.updatedAt),
+                };
+                await store.save(updated);
+                res.json(updated);
+            });
+        } catch (error) {
+            sendStoreError(res, error, "Failed to save scene");
+        }
+    });
+
+    /**
+     * Creates an independent copy of a saved scene with its own id and a
+     * "<name> copy" name, numbered if taken (Issue #455).
+     */
+    router.post("/:sceneId/duplicate", async (req, res) => {
+        const { sceneId } = req.params;
+        try {
+            await store.withLock(sceneId, async () => {
+                const source = await store.get(sceneId);
+                if (!source) {
+                    res.status(404).json({ error: "Scene not found" });
+                    return;
+                }
+                const now = new Date().toISOString();
+                const copy = {
+                    ...JSON.parse(JSON.stringify(source)),
+                    id: crypto.randomUUID(),
+                    name: nextCopyName(await store.list(), source.name),
+                    createdAt: now,
+                    updatedAt: now,
+                };
+                await store.save(copy);
+                res.status(201).location(`${req.baseUrl}/${copy.id}`).json(copy);
+            });
+        } catch (error) {
+            sendStoreError(res, error, "Failed to duplicate scene");
+        }
+    });
+
+    /**
+     * Builds the scene objects for an existing bone's images, ready to add to a
+     * scene's working copy. Issue #466. Nothing is stored: the client adds the
+     * result to its working copy, and it is saved with the user's other
+     * changes by the normal Save (PUT), including its version check (Issue #451).
+     * Body: { boneId, filenames?, annotations?, originY? }. `filenames` selects which of the bone's images
      * to import (default: all of them). `annotations` ({ labels, regions }, Issue #467) also imports
      * the bone's labels and pointer lines and/or colored regions (default: none).
-     * Every import is recorded in the scene's importLog, including anything that couldn't be
-     * converted. Images are added on a new row below the scene's existing
-     * images, in the order the viewer shows them. Images that can't be imported
-     * are listed in `warnings`; if none can be imported the scene is unchanged.
-     * Like PATCH, the read-modify-write runs under the per-scene lock so an
-     * import racing a direct image save (Issue #412) can't drop either change.
+     * `originY` is where the new row of images starts, normally just below the
+     * working copy's existing images (default 0). Images are placed in the
+     * order the viewer shows them. The response's `importLogEntry` records the
+     * import, including anything that couldn't be converted, for the client to
+     * add to the scene's importLog. Images that can't be imported are listed in
+     * `warnings`; if none can be, the response is 422.
      */
     router.post("/:sceneId/import-legacy", async (req, res) => {
         const boneId = req.body ? req.body.boneId : undefined;
@@ -684,54 +875,43 @@ function createScenesRouter(store = resolveSceneStore(), options = {}) {
         if (!validInclude) {
             return res.status(400).json({ error: "annotations must be an object like { labels: true, regions: true }" });
         }
+        const originY = req.body ? req.body.originY : undefined;
+        if (originY !== undefined && !isFiniteNumber(originY)) {
+            return res.status(400).json({ error: "originY must be a number" });
+        }
 
-        const { sceneId } = req.params;
         try {
-            await store.withLock(sceneId, async () => {
-                const scene = await store.get(sceneId);
-                if (!scene) {
-                    res.status(404).json({ error: "Scene not found" });
-                    return;
-                }
-
-                const result = await buildLegacyImages(boneId, {
-                    ...options.legacyContent,
-                    filenames,
-                    origin: { x: 0, y: nextRowY(scene) },
+            const result = await buildLegacyImages(boneId, {
+                ...options.legacyContent,
+                filenames,
+                origin: { x: 0, y: originY === undefined ? 0 : originY },
+            });
+            if (result.images.length === 0) {
+                return res.status(422).json({
+                    error: `No images could be imported for ${result.name}`,
+                    warnings: result.warnings,
                 });
-                if (result.images.length === 0) {
-                    res.status(422).json({
-                        error: `No images could be imported for ${result.name}`,
-                        warnings: result.warnings,
-                    });
-                    return;
-                }
+            }
 
-                const annotationResult = await buildLegacyAnnotations(boneId, result.images, {
-                    include: include || {},
-                    allImagesImported: result.images.length === result.totalImages,
-                    annotationsDir: options.legacyContent && options.legacyContent.annotationsDir,
-                });
-                const warnings = [...result.warnings, ...annotationResult.warnings];
-                const now = new Date().toISOString();
-
-                scene.images = [...(scene.images || []), ...result.images];
-                scene.annotations = [...(scene.annotations || []), ...annotationResult.annotations];
-                scene.importLog = [...(scene.importLog || []), {
-                    at: now,
+            const annotationResult = await buildLegacyAnnotations(boneId, result.images, {
+                include: include || {},
+                allImagesImported: result.images.length === result.totalImages,
+                annotationsDir: options.legacyContent && options.legacyContent.annotationsDir,
+            });
+            const warnings = [...result.warnings, ...annotationResult.warnings];
+            res.json({
+                images: result.images,
+                annotations: annotationResult.annotations,
+                importLogEntry: {
+                    at: new Date().toISOString(),
                     boneId: result.boneId,
                     images: result.images.length,
                     annotations: annotationResult.counts,
                     warnings: warnings.slice(0, MAX_LOGGED_WARNINGS),
-                }].slice(-MAX_IMPORT_LOG_ENTRIES);
-                scene.updatedAt = now;
-                await store.save(scene);
-                res.json({
-                    scene,
-                    imported: { boneId: result.boneId, name: result.name, count: result.images.length },
-                    importedAnnotations: annotationResult.counts,
-                    warnings,
-                });
+                },
+                imported: { boneId: result.boneId, name: result.name, count: result.images.length },
+                importedAnnotations: annotationResult.counts,
+                warnings,
             });
         } catch (error) {
             if (error instanceof LegacyImportError) {
@@ -753,7 +933,11 @@ module.exports = {
     normalizeSceneName,
     normalizeImage,
     applyImagePatch,
+    validateSceneContent,
+    SceneLockTimeoutError,
     DEFAULT_SCENE_NAME,
+    MAX_SCENE_OBJECTS,
+    MAX_IMPORT_LOG_ENTRIES,
     RELEASE_LOCK_SCRIPT,
     SCENE_LOCK_TTL_MS,
     MAX_IMAGE_SRC_LENGTH,
