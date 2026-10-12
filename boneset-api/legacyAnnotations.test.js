@@ -287,8 +287,10 @@ describe("buildLegacyAnnotations - Issue 467", () => {
 describe("POST /api/scenes/:sceneId/import-legacy with annotations - Issue 467", () => {
     const createScene = async (name) => (await request(app).post("/api/scenes").send({ name })).body;
     const importInto = (sceneId, body) => request(app).post(`/api/scenes/${sceneId}/import-legacy`).send(body);
+    const saveScene = (scene, content) => request(app).put(`/api/scenes/${scene.id}`)
+        .send({ ...content, baseUpdatedAt: scene.updatedAt });
 
-    it("adds the selected annotations to the scene and saves them", async () => {
+    it("returns the selected annotations, and stores them only when the scene is saved", async () => {
         const scene = await createScene("Ilium With Labels");
         const response = await importInto(scene.id, { boneId: "ilium", annotations: BOTH });
 
@@ -296,17 +298,27 @@ describe("POST /api/scenes/:sceneId/import-legacy with annotations - Issue 467",
         const { labels, lines, regions } = response.body.importedAnnotations;
         expect(labels).toBeGreaterThan(0);
         expect(regions).toBeGreaterThan(0);
-        expect(response.body.scene.annotations).toHaveLength(labels + lines + regions);
-        response.body.scene.annotations.forEach(expectDrawable);
+        expect(response.body.annotations).toHaveLength(labels + lines + regions);
+        response.body.annotations.forEach(expectDrawable);
+        expect((await request(app).get(`/api/scenes/${scene.id}`)).body.annotations).toEqual([]);
 
+        const { images, annotations } = response.body;
+        expect((await saveScene(scene, { images, annotations })).statusCode).toBe(200);
         const reopened = await request(app).get(`/api/scenes/${scene.id}`);
-        expect(reopened.body.annotations).toEqual(response.body.scene.annotations);
+        expect(reopened.body.annotations).toEqual(annotations);
     });
 
-    it("records each import, including notes about anything not converted, on the scene", async () => {
+    it("records each import, including notes about anything not converted, in the saved import log", async () => {
         const scene = await createScene("Import Log");
-        await importInto(scene.id, { boneId: "ilium", annotations: { regions: true } });
-        await importInto(scene.id, { boneId: "femur_head" });
+        const first = (await importInto(scene.id, { boneId: "ilium", annotations: { regions: true } })).body;
+        const second = (await importInto(scene.id, { boneId: "femur_head" })).body;
+        expect((await request(app).get(`/api/scenes/${scene.id}`)).body.importLog).toBeUndefined();
+
+        await saveScene(scene, {
+            images: [...first.images, ...second.images],
+            annotations: [...first.annotations, ...second.annotations],
+            importLog: [first.importLogEntry, second.importLogEntry],
+        });
 
         const { body } = await request(app).get(`/api/scenes/${scene.id}`);
         expect(body.importLog).toHaveLength(2);
@@ -316,15 +328,14 @@ describe("POST /api/scenes/:sceneId/import-legacy with annotations - Issue 467",
     });
 
     // PR #493 review: imported annotations keep a stable link to their image.
-    it("keeps each annotation's source image link through an image edit and a reload", async () => {
+    it("keeps each annotation's source image link through an image edit, a save, and a reload", async () => {
         const scene = await createScene("Linked Annotations");
-        const imported = (await importInto(scene.id, { boneId: "ilium", annotations: BOTH })).body.scene;
-        const [image] = imported.images;
+        const imported = (await importInto(scene.id, { boneId: "ilium", annotations: BOTH })).body;
+        const [image, ...otherImages] = imported.images;
+        const moved = { ...image, x: image.x + 120, y: image.y + 60, rotation: 90 };
 
-        const moved = await request(app).patch(`/api/scenes/${scene.id}`).send({
-            updateImage: { id: image.id, x: image.x + 120, y: image.y + 60, rotation: 90 },
-        });
-        expect(moved.statusCode).toBe(200);
+        const saved = await saveScene(scene, { images: [moved, ...otherImages], annotations: imported.annotations });
+        expect(saved.statusCode).toBe(200);
 
         const { body: reopened } = await request(app).get(`/api/scenes/${scene.id}`);
         expect(reopened.images[0]).toMatchObject({ id: image.id, x: image.x + 120, y: image.y + 60, rotation: 90 });
@@ -340,7 +351,7 @@ describe("POST /api/scenes/:sceneId/import-legacy with annotations - Issue 467",
     it("imports no annotations unless they are requested", async () => {
         const scene = await createScene("Images Only");
         const response = await importInto(scene.id, { boneId: "ilium" });
-        expect(response.body.scene.annotations).toEqual([]);
+        expect(response.body.annotations).toEqual([]);
     });
 
     it("rejects an invalid annotations option", async () => {

@@ -10,9 +10,12 @@ const {
     createFileSceneStore,
     createRedisSceneStore,
     resolveSceneStore,
+    SceneLockTimeoutError,
     RELEASE_LOCK_SCRIPT,
     SCENE_LOCK_TTL_MS,
     MAX_IMAGE_SRC_LENGTH,
+    MAX_SCENE_OBJECTS,
+    MAX_IMPORT_LOG_ENTRIES,
 } = require("./scenes");
 
 function validImage(overrides = {}) {
@@ -426,10 +429,10 @@ describe.each(backends)("Scenes API ($name)", (backend) => {
             expect(final.body.images).toEqual([image]);
         });
 
-        // Merging main into PR #493: the bone-image import route (Issue #466)
-        // is also a whole-scene read-modify-write, so it must share the same
-        // per-scene lock or it can drop a directly imported image (Issue #412).
-        it("does not lose a direct image save that races a bone-image import", async () => {
+        // Issue #451: a bone-image import (Issue #466) only builds content for
+        // the client's working copy, so it never reads, locks, or writes the
+        // stored scene and can't race a save at all.
+        it("imports a bone's images without touching the stored scene", async () => {
             const contentDir = fs.mkdtempSync(path.join(os.tmpdir(), "bonebox-legacy-content-"));
             try {
                 const descriptionsDir = path.join(contentDir, "descriptions");
@@ -450,27 +453,37 @@ describe.each(backends)("Scenes API ($name)", (backend) => {
                 png.writeUInt32BE(100, 20);
                 fs.writeFileSync(path.join(imagesDir, "fixture_bone_1.png"), png);
 
-                const slowApp = express();
-                slowApp.use(express.json({ limit: "6mb" }));
-                slowApp.use("/api/scenes", createScenesRouter(withArtificialDelay(env.newStore(), 30), {
+                const store = env.newStore();
+                const created = await request(buildApp(store)).post("/api/scenes").send({});
+                await request(buildApp(store)).patch(`/api/scenes/${created.body.id}`).send({ image: validImage() });
+                const before = (await request(buildApp(store)).get(`/api/scenes/${created.body.id}`)).body;
+
+                const touched = [];
+                const watchedStore = { ...store };
+                for (const method of ["get", "list", "save", "remove", "withLock"]) {
+                    watchedStore[method] = (...args) => {
+                        touched.push(method);
+                        return store[method](...args);
+                    };
+                }
+                const importApp = express();
+                importApp.use(express.json({ limit: "6mb" }));
+                importApp.use("/api/scenes", createScenesRouter(watchedStore, {
                     legacyContent: { descriptionsDir, imagesDir },
                 }));
-                const created = await request(slowApp).post("/api/scenes").send({});
-                const image = validImage();
 
-                const [importResponse, imageResponse] = await Promise.all([
-                    request(slowApp).post(`/api/scenes/${created.body.id}/import-legacy`).send({ boneId: "fixture_bone" }),
-                    request(slowApp).patch(`/api/scenes/${created.body.id}`).send({ image }),
-                ]);
+                const response = await request(importApp)
+                    .post(`/api/scenes/${created.body.id}/import-legacy`)
+                    .send({ boneId: "fixture_bone", originY: 120 });
 
-                expect(importResponse.statusCode).toBe(200);
-                expect(imageResponse.statusCode).toBe(200);
+                expect(response.statusCode).toBe(200);
+                expect(response.body.images).toHaveLength(1);
+                expect(response.body.images[0]).toMatchObject({ y: 120, source: { filename: "fixture_bone_1.png" } });
+                expect(response.body.importLogEntry).toMatchObject({ boneId: "fixture_bone", images: 1 });
+                expect(touched).toEqual([]);
 
-                const final = await request(slowApp).get(`/api/scenes/${created.body.id}`);
-                expect(final.body.images).toHaveLength(2);
-                expect(final.body.images.map((img) => img.id)).toContain(image.id);
-                expect(final.body.images.some((img) => img.source && img.source.filename === "fixture_bone_1.png")).toBe(true);
-                expect(final.body.importLog).toHaveLength(1);
+                const after = (await request(buildApp(store)).get(`/api/scenes/${created.body.id}`)).body;
+                expect(after).toEqual(before);
             } finally {
                 fs.rmSync(contentDir, { recursive: true, force: true });
             }
@@ -730,6 +743,302 @@ describe.each(backends)("Scenes API ($name)", (backend) => {
         it("returns 404 when deleting an unknown scene", async () => {
             const response = await request(app).delete(`/api/scenes/${UNKNOWN_ID}`);
             expect(response.statusCode).toBe(404);
+        });
+
+        // A save that already read the scene must not write it back after a
+        // delete from another tab or client, bringing the scene back.
+        it("is not undone by a save that was already in progress", async () => {
+            const slowApp = buildApp(withArtificialDelay(env.newStore(), 60));
+            const created = await request(slowApp).post("/api/scenes").send({});
+            const id = created.body.id;
+
+            // supertest only sends once the request is awaited or then()'d.
+            const save = request(slowApp).put(`/api/scenes/${id}`)
+                .send({ images: [validImage()], annotations: [] })
+                .then((response) => response);
+            await new Promise((resolve) => setTimeout(resolve, 20));
+            const deleted = await request(slowApp).delete(`/api/scenes/${id}`);
+
+            expect((await save).statusCode).toBe(200);
+            expect(deleted.statusCode).toBe(204);
+            expect((await request(slowApp).get(`/api/scenes/${id}`)).statusCode).toBe(404);
+        });
+    });
+
+    // Issues #451-454: saving a scene's whole working copy in one request.
+    describe("PUT /api/scenes/:sceneId - Issues 451-454", () => {
+        const complexContent = () => ({
+            images: [
+                { ...validImage({ id: "img-a" }), rotation: 15, flipX: true, cropX: 0, cropY: 0, cropWidth: 50, cropHeight: 25 },
+                {
+                    id: "img-b", src: "/api/images/ilium_image1.jpg", x: 0, y: 300, width: 235, height: 371, rotation: 0,
+                    source: { type: "legacy-image", boneId: "ilium", filename: "ilium_image1.jpg" },
+                },
+            ],
+            annotations: [
+                { id: "a1", type: "polygon", points: [[0, 0], [1, 0], [1, 1]], fill: "#ff000055" },
+                {
+                    id: "a2", type: "text", text: "Ilium", x: 5, y: 6,
+                    sourceImageId: "img-b", sourceImageFrame: { x: 0, y: 300, width: 235, height: 371 },
+                },
+            ],
+            importLog: [{ at: "2026-10-12T00:00:00.000Z", boneId: "ilium", images: 1, warnings: [] }],
+        });
+        const save = (id, body) => request(app).put(`/api/scenes/${id}`).send(body);
+
+        it("stores the whole working copy exactly, and a fresh store loads it back", async () => {
+            const created = await createScene({ name: "Round Trip" });
+            const content = complexContent();
+
+            const response = await save(created.body.id, { ...content, baseUpdatedAt: created.body.updatedAt });
+            expect(response.statusCode).toBe(200);
+            expect(response.body).toMatchObject({ ...content, id: created.body.id, name: "Round Trip" });
+            expect(response.body.createdAt).toBe(created.body.createdAt);
+
+            const reloaded = await request(buildApp(env.newStore())).get(`/api/scenes/${created.body.id}`);
+            expect(reloaded.body).toEqual(response.body);
+        });
+
+        it("replaces the arrays rather than merging them, and keeps the import log unless one is sent", async () => {
+            const created = await createScene();
+            await save(created.body.id, complexContent());
+
+            const response = await save(created.body.id, { images: [], annotations: [{ id: "only", type: "text", text: "x", x: 0, y: 0 }] });
+            expect(response.body.images).toEqual([]);
+            expect(response.body.annotations.map((a) => a.id)).toEqual(["only"]);
+            expect(response.body.importLog).toEqual(complexContent().importLog);
+        });
+
+        it("keeps only the most recent import log entries", async () => {
+            const created = await createScene();
+            const importLog = Array.from({ length: MAX_IMPORT_LOG_ENTRIES + 5 }, (_, i) => ({ boneId: `bone_${i}` }));
+
+            const response = await save(created.body.id, { images: [], annotations: [], importLog });
+            expect(response.body.importLog).toHaveLength(MAX_IMPORT_LOG_ENTRIES);
+            expect(response.body.importLog[0].boneId).toBe("bone_5");
+        });
+
+        it("updates the list's counts", async () => {
+            const created = await createScene();
+            await save(created.body.id, complexContent());
+
+            const list = await request(app).get("/api/scenes");
+            expect(list.body.scenes[0]).toMatchObject({ imageCount: 2, annotationCount: 2 });
+        });
+
+        it("doesn't affect other scenes", async () => {
+            const a = await createScene({ name: "A" });
+            const b = await createScene({ name: "B" });
+            await save(a.body.id, complexContent());
+
+            const reloaded = await request(app).get(`/api/scenes/${b.body.id}`);
+            expect(reloaded.body).toEqual(b.body);
+        });
+
+        it("refuses a save from a stale copy with 412 and the current version", async () => {
+            const created = await createScene();
+            const first = await save(created.body.id, { images: [], annotations: [], baseUpdatedAt: created.body.updatedAt });
+            expect(first.statusCode).toBe(200);
+
+            const stale = await save(created.body.id, { ...complexContent(), baseUpdatedAt: created.body.updatedAt });
+            expect(stale.statusCode).toBe(412);
+            expect(stale.body.updatedAt).toBe(first.body.updatedAt);
+            expect((await request(app).get(`/api/scenes/${created.body.id}`)).body.images).toEqual([]);
+
+            const current = await save(created.body.id, { ...complexContent(), baseUpdatedAt: first.body.updatedAt });
+            expect(current.statusCode).toBe(200);
+        });
+
+        it("treats a rename as a new version too", async () => {
+            const created = await createScene();
+            await request(app).patch(`/api/scenes/${created.body.id}`).send({ name: "Renamed elsewhere" });
+
+            const stale = await save(created.body.id, { images: [], annotations: [], baseUpdatedAt: created.body.updatedAt });
+            expect(stale.statusCode).toBe(412);
+        });
+
+        it("gives back-to-back writes in the same millisecond different versions", async () => {
+            const created = await createScene();
+            const frozen = Date.parse(created.body.updatedAt) + 1000;
+            const spy = jest.spyOn(Date, "now").mockReturnValue(frozen);
+            try {
+                const first = await save(created.body.id, { images: [], annotations: [] });
+                const second = await save(created.body.id, { images: [], annotations: [] });
+                expect(Date.parse(second.body.updatedAt)).toBeGreaterThan(Date.parse(first.body.updatedAt));
+
+                const stale = await save(created.body.id, { images: [], annotations: [], baseUpdatedAt: first.body.updatedAt });
+                expect(stale.statusCode).toBe(412);
+            } finally {
+                spy.mockRestore();
+            }
+        });
+
+        it("overwrites without a version check when baseUpdatedAt is omitted", async () => {
+            const created = await createScene();
+            await save(created.body.id, complexContent());
+            const response = await save(created.body.id, { images: [], annotations: [] });
+            expect(response.statusCode).toBe(200);
+        });
+
+        it("can rename in the same save, refusing a taken name", async () => {
+            await createScene({ name: "Taken" });
+            const created = await createScene({ name: "Original" });
+
+            const taken = await save(created.body.id, { images: [], annotations: [], name: "taken" });
+            expect(taken.statusCode).toBe(409);
+            expect((await save(created.body.id, { images: [], annotations: [], name: "  " })).statusCode).toBe(400);
+
+            const renamed = await save(created.body.id, { images: [], annotations: [], name: " New name " });
+            expect(renamed.body.name).toBe("New name");
+        });
+
+        it("returns 404 for an unknown scene and 400 for a malformed id", async () => {
+            expect((await save(UNKNOWN_ID, { images: [], annotations: [] })).statusCode).toBe(404);
+            expect((await save("not-an-id", { images: [], annotations: [] })).statusCode).toBe(400);
+        });
+
+        it.each([
+            ["no arrays", {}],
+            ["images missing", { annotations: [] }],
+            ["annotations missing", { images: [] }],
+            ["images not an array", { images: {}, annotations: [] }],
+            ["an image that isn't an object", { images: ["x"], annotations: [] }],
+            ["a blob: src", { images: [validImage({ src: "blob:http://x/1" })], annotations: [] }],
+            ["a javascript: src", { images: [validImage({ src: "javascript:alert(1)" })], annotations: [] }],
+            ["a protocol-relative src", { images: [validImage({ src: "//evil.example/x.png" })], annotations: [] }],
+            ["a non-numeric size", { images: [validImage({ width: "big" })], annotations: [] }],
+            ["a zero size", { images: [validImage({ height: 0 })], annotations: [] }],
+            ["a crop outside the image", { images: [validImage({ cropX: 90, cropY: 0, cropWidth: 50, cropHeight: 10 })], annotations: [] }],
+            ["a non-boolean flip", { images: [validImage({ flipX: "yes" })], annotations: [] }],
+            ["an annotation that isn't an object", { images: [], annotations: [null] }],
+            ["an import log that isn't a list", { images: [], annotations: [], importLog: {} }],
+            ["an import log entry that isn't an object", { images: [], annotations: [], importLog: ["x"] }],
+            ["a non-string baseUpdatedAt", { images: [], annotations: [], baseUpdatedAt: 5 }],
+        ])("rejects %s with 400 and stores nothing", async (_label, body) => {
+            const created = await createScene();
+            const response = await save(created.body.id, body);
+            expect(response.statusCode).toBe(400);
+            expect((await request(app).get(`/api/scenes/${created.body.id}`)).body).toEqual(created.body);
+        });
+
+        it("enforces the object count and image size limits", async () => {
+            const created = await createScene();
+            const many = Array.from({ length: MAX_SCENE_OBJECTS + 1 }, () => ({ type: "text", text: "x", x: 0, y: 0 }));
+            expect((await save(created.body.id, { images: [], annotations: many })).statusCode).toBe(400);
+
+            const tooBig = validImage({ src: `data:image/png;base64,${"A".repeat(MAX_IMAGE_SRC_LENGTH)}` });
+            expect((await save(created.body.id, { images: [tooBig], annotations: [] })).statusCode).toBe(400);
+
+            const big = () => validImage({ src: `data:image/png;base64,${"A".repeat(MAX_IMAGE_SRC_LENGTH - 100)}` });
+            const total = await save(created.body.id, { images: [big(), big()], annotations: [] });
+            expect(total.statusCode).toBe(400);
+            expect(total.body.error).toMatch(/size limit/i);
+        });
+
+        it("doesn't lose a rename that races a save", async () => {
+            const slowApp = buildApp(withArtificialDelay(env.newStore(), 30));
+            const created = await request(slowApp).post("/api/scenes").send({});
+            const image = validImage();
+
+            const [renamed, saved] = await Promise.all([
+                request(slowApp).patch(`/api/scenes/${created.body.id}`).send({ name: "Renamed" }),
+                request(slowApp).put(`/api/scenes/${created.body.id}`).send({ images: [image], annotations: [] }),
+            ]);
+
+            expect(renamed.statusCode).toBe(200);
+            expect(saved.statusCode).toBe(200);
+            const final = await request(slowApp).get(`/api/scenes/${created.body.id}`);
+            expect(final.body.name).toBe("Renamed");
+            expect(final.body.images).toEqual([image]);
+        });
+
+        it("returns 423 (not 409) when the scene stays locked by another write", async () => {
+            const created = await createScene();
+            const busyApp = buildApp({
+                ...env.newStore(),
+                withLock: async () => {
+                    throw new SceneLockTimeoutError("Scene is busy, try again");
+                },
+            });
+
+            const saved = await request(busyApp).put(`/api/scenes/${created.body.id}`).send({ images: [], annotations: [] });
+            const renamed = await request(busyApp).patch(`/api/scenes/${created.body.id}`).send({ name: "Busy" });
+            expect(saved.statusCode).toBe(423);
+            expect(renamed.statusCode).toBe(423);
+        });
+    });
+
+    // Issue #456: a working copy whose scene was deleted elsewhere is saved as
+    // a new scene in one request, so a failure can't leave an empty scene.
+    describe("POST /api/scenes with content - Issue 456", () => {
+        it("creates the scene with the given content", async () => {
+            const content = {
+                images: [validImage()],
+                annotations: [{ id: "a", type: "text", text: "x", x: 0, y: 0 }],
+                importLog: [{ boneId: "ilium" }],
+            };
+            const response = await createScene({ name: "Recovered", ...content });
+
+            expect(response.statusCode).toBe(201);
+            expect(response.body).toMatchObject({ name: "Recovered", ...content });
+            const reloaded = await request(app).get(`/api/scenes/${response.body.id}`);
+            expect(reloaded.body).toEqual(response.body);
+        });
+
+        it("rejects invalid content or a taken name without creating anything", async () => {
+            await createScene({ name: "Taken" });
+
+            expect((await createScene({ images: [validImage({ src: "blob:x" })] })).statusCode).toBe(400);
+            expect((await createScene({ name: "Taken", images: [validImage()], annotations: [] })).statusCode).toBe(409);
+            const list = await request(app).get("/api/scenes");
+            expect(list.body.scenes.map((s) => s.name)).toEqual(["Taken"]);
+        });
+    });
+
+    // Issue #455: Duplicate a Scene
+    describe("POST /api/scenes/:sceneId/duplicate - Issue 455", () => {
+        const duplicate = (id) => request(app).post(`/api/scenes/${id}/duplicate`);
+
+        it("copies the saved content under a new id and a \"copy\" name", async () => {
+            const created = await createScene({
+                name: "Pelvis",
+                images: [validImage()],
+                annotations: [{ id: "a", type: "text", text: "x", x: 0, y: 0 }],
+                importLog: [{ boneId: "ilium" }],
+            });
+
+            const response = await duplicate(created.body.id);
+            expect(response.statusCode).toBe(201);
+            expect(response.headers.location).toBe(`/api/scenes/${response.body.id}`);
+            expect(response.body.id).not.toBe(created.body.id);
+            expect(response.body.name).toBe("Pelvis copy");
+            expect(response.body.images).toEqual(created.body.images);
+            expect(response.body.annotations).toEqual(created.body.annotations);
+            expect(response.body.importLog).toEqual(created.body.importLog);
+        });
+
+        it("numbers the copy if the name is taken and keeps it within the name limit", async () => {
+            const created = await createScene({ name: "Pelvis" });
+            await duplicate(created.body.id);
+            expect((await duplicate(created.body.id)).body.name).toBe("Pelvis copy 2");
+
+            const long = await createScene({ name: "L".repeat(100) });
+            const copy = await duplicate(long.body.id);
+            expect(copy.body.name.length).toBeLessThanOrEqual(100);
+            expect(copy.body.name).toMatch(/ copy$/);
+        });
+
+        it("is independent of the original", async () => {
+            const created = await createScene({ name: "Original", images: [validImage()] });
+            const copy = await duplicate(created.body.id);
+
+            await request(app).put(`/api/scenes/${copy.body.id}`).send({ images: [], annotations: [] });
+            const original = await request(app).get(`/api/scenes/${created.body.id}`);
+            expect(original.body.images).toEqual(created.body.images);
+        });
+
+        it("returns 404 for an unknown scene", async () => {
+            expect((await duplicate(UNKNOWN_ID)).statusCode).toBe(404);
         });
     });
 });

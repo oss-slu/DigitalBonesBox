@@ -164,38 +164,60 @@ describe("buildLegacyImages - Issue 466", () => {
     });
 });
 
+// Issue #451: an import only builds content for the client's working copy;
+// the scene is stored only when the user saves (PUT).
 describe("POST /api/scenes/:sceneId/import-legacy - Issue 466", () => {
     const createScene = async (name) => (await request(app).post("/api/scenes").send({ name })).body;
-    const importInto = (sceneId, boneId, filenames) =>
-        request(app).post(`/api/scenes/${sceneId}/import-legacy`).send(filenames ? { boneId, filenames } : { boneId });
+    const importInto = (sceneId, boneId, filenames, extra = {}) =>
+        request(app).post(`/api/scenes/${sceneId}/import-legacy`)
+            .send({ boneId, ...(filenames ? { filenames } : {}), ...extra });
 
-    it("links a bone's images to a scene and saves them", async () => {
+    it("returns a bone's images for the working copy without changing the saved scene", async () => {
         const scene = await createScene("Import Ilium");
         const response = await importInto(scene.id, "ilium");
 
         expect(response.statusCode).toBe(200);
         expect(response.body.imported).toEqual({ boneId: "ilium", name: "Ilium", count: 2 });
         expect(response.body.warnings).toEqual([]);
-        expect(response.body.scene.images).toHaveLength(2);
+        expect(response.body.images).toHaveLength(2);
+        expect(response.body.scene).toBeUndefined();
+        expect(response.body.importLogEntry).toMatchObject({ boneId: "ilium", images: 2 });
 
         const reopened = await request(app).get(`/api/scenes/${scene.id}`);
-        expect(reopened.body.images).toEqual(response.body.scene.images);
+        expect(reopened.body).toEqual(scene);
     });
 
-    it("links only the selected image when one is chosen", async () => {
+    it("is saved with the scene by a normal save", async () => {
+        const scene = await createScene("Import Then Save");
+        const { body: imported } = await importInto(scene.id, "ilium");
+
+        const saved = await request(app).put(`/api/scenes/${scene.id}`).send({
+            images: imported.images,
+            annotations: imported.annotations,
+            importLog: [imported.importLogEntry],
+            baseUpdatedAt: scene.updatedAt,
+        });
+        expect(saved.statusCode).toBe(200);
+
+        const reopened = await request(app).get(`/api/scenes/${scene.id}`);
+        expect(reopened.body.images).toEqual(imported.images);
+        expect(reopened.body.importLog).toEqual([imported.importLogEntry]);
+    });
+
+    it("returns only the selected image when one is chosen", async () => {
         const scene = await createScene("Import One Image");
         const response = await importInto(scene.id, "ilium", ["ilium_image2.jpg"]);
 
         expect(response.statusCode).toBe(200);
         expect(response.body.imported.count).toBe(1);
-        expect(response.body.scene.images.map((image) => image.source.filename)).toEqual(["ilium_image2.jpg"]);
+        expect(response.body.images.map((image) => image.source.filename)).toEqual(["ilium_image2.jpg"]);
     });
 
     it("keeps the original images and bone data accessible", async () => {
         const scene = await createScene("Import Femur");
         const { body } = await importInto(scene.id, "femur");
 
-        for (const image of body.scene.images) {
+        for (const image of body.images) {
             const file = await request(app).get(image.src);
             expect(file.statusCode).toBe(200);
             expect(file.headers["content-type"]).toMatch(/^image\//);
@@ -206,19 +228,21 @@ describe("POST /api/scenes/:sceneId/import-legacy - Issue 466", () => {
         expect(boneData.body.images.map((image) => image.filename)).toEqual(readDescriptionImages("femur"));
     });
 
-    it("places a second import on a new row below the first", async () => {
+    it("starts the row at the given originY (the client passes the row below its working copy)", async () => {
         const scene = await createScene("Two Imports");
-        const first = (await importInto(scene.id, "sternum")).body.scene.images;
-        const second = (await importInto(scene.id, "humerus")).body.scene.images;
+        const first = (await importInto(scene.id, "sternum")).body.images;
+        const originY = nextRowY({ images: first });
+        const second = (await importInto(scene.id, "humerus", undefined, { originY })).body.images;
 
-        expect(second).toHaveLength(first.length + 2);
+        expect(first.every((image) => image.y === 0)).toBe(true);
         const firstBottom = Math.max(...first.map((image) => image.y + image.height));
-        for (const image of second.slice(first.length)) {
+        expect(second.length).toBeGreaterThan(0);
+        for (const image of second) {
             expect(image.y).toBe(firstBottom + IMAGE_GAP);
         }
     });
 
-    it("returns 422 and leaves the scene unchanged when there are no images to import", async () => {
+    it("returns 422 when there are no images to import", async () => {
         const scene = await createScene("Nothing To Import");
         const response = await importInto(scene.id, "lower_limb");
 
@@ -233,10 +257,9 @@ describe("POST /api/scenes/:sceneId/import-legacy - Issue 466", () => {
         expect((await importInto(scene.id, undefined)).statusCode).toBe(400);
         expect((await importInto(scene.id, "../server")).statusCode).toBe(400);
         expect((await importInto(scene.id, "not_a_real_bone")).statusCode).toBe(404);
-        expect((await request(app).post(`/api/scenes/${scene.id}/import-legacy`)
-            .send({ boneId: "ilium", filenames: [] })).statusCode).toBe(400);
-        expect((await request(app).post(`/api/scenes/${scene.id}/import-legacy`)
-            .send({ boneId: "ilium", filenames: "ilium_image1.jpg" })).statusCode).toBe(400);
-        expect((await importInto("00000000-0000-4000-8000-000000000000", "ilium")).statusCode).toBe(404);
+        expect((await importInto(scene.id, "ilium", [])).statusCode).toBe(400);
+        expect((await importInto(scene.id, "ilium", "ilium_image1.jpg")).statusCode).toBe(400);
+        expect((await importInto(scene.id, "ilium", undefined, { originY: "below" })).statusCode).toBe(400);
+        expect((await importInto("not-a-scene-id", "ilium")).statusCode).toBe(400);
     });
 });
