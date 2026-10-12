@@ -2746,6 +2746,12 @@ button:disabled {
     margin: 0;
 }
 
+.scene-alert-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
 .scene-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -2770,6 +2776,42 @@ button:disabled {
     margin: var(--space-1) 0 0;
     font-size: 0.9rem;
     color: var(--text-secondary);
+}
+
+.scene-save-status {
+    margin: var(--space-1) 0 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.scene-save-status:empty {
+    display: none;
+}
+
+.scene-save-status[data-state="saved"] {
+    color: #166534;
+}
+
+.scene-save-status[data-state="saved"]::before {
+    content: "✓ ";
+}
+
+.scene-save-status[data-state="unsaved"],
+.scene-save-status[data-state="saving"] {
+    color: #92400e;
+}
+
+.scene-save-status[data-state="unsaved"]::before,
+.scene-save-status[data-state="saving"]::before {
+    content: "● ";
+}
+
+.scene-save-status[data-state="failed"] {
+    color: #b91c1c;
+}
+
+.scene-save-status[data-state="failed"]::before {
+    content: "⚠ ";
 }
 
 .scene-rename-form {
