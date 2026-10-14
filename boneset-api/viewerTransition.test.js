@@ -33,9 +33,21 @@ afterAll(() => {
 });
 
 const createScene = async (name) => (await request(app).post("/api/scenes").send({ name })).body;
-const importInto = (sceneId, boneId) =>
-    request(app).post(`/api/scenes/${sceneId}/import-legacy`).send({ boneId, annotations: { labels: true, regions: true } });
+   // Import only builds the content now (#466); save it like the editor's Save does (#451).
+   async function importInto(sceneId, boneId) {
+       const imported = await request(app)
+           .post(`/api/scenes/${sceneId}/import-legacy`)
+           .send({ boneId, annotations: { labels: true, regions: true } });
+       if (imported.statusCode !== 200) return imported;
 
+       const scene = (await request(app).get(`/api/scenes/${sceneId}`)).body;
+       return request(app).put(`/api/scenes/${sceneId}`).send({
+           images: [...scene.images, ...imported.body.images],
+           annotations: [...scene.annotations, ...imported.body.annotations],
+           importLog: [...(scene.importLog || []), imported.body.importLogEntry],
+           baseUpdatedAt: scene.updatedAt,
+       });
+   }
 // Everything the viewer loads for one item, so we can check it doesn't change.
 async function viewerContent(boneId) {
     const boneData = await request(app).get(`/api/bone-data/?boneId=${boneId}`);
