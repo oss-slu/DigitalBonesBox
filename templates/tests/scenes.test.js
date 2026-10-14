@@ -11,6 +11,7 @@ function createFakeBackend() {
     const overrides = [];
     const calls = [];
     let counter = 0;
+    let version = 0;
 
     const respond = (status, body) => ({
         ok: status >= 200 && status < 300,
@@ -31,8 +32,9 @@ function createFakeBackend() {
     const fetch = jest.fn(async (url, options = {}) => {
         const method = (options.method || "GET").toUpperCase();
         const body = options.body ? JSON.parse(options.body) : undefined;
-        const id = decodeURIComponent(url.replace(/^\/api\/scenes\/?/, "")) || null;
-        calls.push({ method, id, body });
+        const [, rawId = "", action = null] = url.match(/^\/api\/scenes\/?([^/]*)(?:\/(.+))?$/);
+        const id = decodeURIComponent(rawId) || null;
+        calls.push(action ? { method, id, action, body } : { method, id, body });
 
         const index = overrides.findIndex((o) => o.method === method && (!o.id || o.id === id));
         if (index !== -1) {
@@ -42,64 +44,64 @@ function createFakeBackend() {
             if (override.status) return respond(override.status, { error: override.error || "Forced error" });
         }
 
-        const now = new Date(Date.now() + counter).toISOString();
+        // Every write gets a strictly later version, like the real server.
+        const now = new Date(Date.parse("2026-10-01T00:00:00.000Z") + (version += 1) * 1000).toISOString();
+        const nextFreeName = (base) => {
+            let name = base;
+            for (let n = 2; nameTaken(name); n += 1) name = `${base} ${n}`;
+            return name;
+        };
         if (!id && method === "GET") return respond(200, { scenes: [...scenes.values()].map(summary) });
         if (!id && method === "POST") {
+            if (body.name && nameTaken(body.name)) return respond(409, { error: "Name taken" });
             counter += 1;
-            let name = "Untitled Scene";
-            for (let n = 2; nameTaken(name); n += 1) name = `Untitled Scene ${n}`;
-            const scene = { id: `scene-${counter}`, name, images: [], annotations: [], createdAt: now, updatedAt: now };
+            const scene = {
+                id: `scene-${counter}`,
+                name: body.name || nextFreeName("Untitled Scene"),
+                images: body.images || [],
+                annotations: body.annotations || [],
+                ...(body.importLog ? { importLog: body.importLog } : {}),
+                createdAt: now,
+                updatedAt: now,
+            };
             scenes.set(scene.id, scene);
             return respond(201, scene);
         }
 
         const scene = scenes.get(id);
         if (!scene) return respond(404, { error: "Scene not found" });
+        if (action === "duplicate" && method === "POST") {
+            counter += 1;
+            const copy = {
+                ...JSON.parse(JSON.stringify(scene)),
+                id: `scene-${counter}`,
+                name: nextFreeName(`${scene.name} copy`),
+                createdAt: now,
+                updatedAt: now,
+            };
+            scenes.set(copy.id, copy);
+            return respond(201, copy);
+        }
+        if (action) return respond(404, { error: "Not found" });
         if (method === "GET") return respond(200, scene);
         if (method === "PATCH") {
-            const hasKnownField = body && (
-                body.name !== undefined ||
-                body.image !== undefined ||
-                body.updateImage !== undefined ||
-                body.removeImageId !== undefined ||
-                body.reorderImageIds !== undefined
-            );
-            if (!hasKnownField) {
-                return respond(400, {
-                    error: "name, image, updateImage, removeImageId, or reorderImageIds is required",
-                });
+            const name = (body.name || "").trim();
+            if (!name) return respond(400, { error: "Scene name cannot be empty" });
+            if (nameTaken(name, id)) return respond(409, { error: "Name taken" });
+            scene.name = name;
+            scene.updatedAt = now;
+            return respond(200, scene);
+        }
+        if (method === "PUT") {
+            if (!Array.isArray(body.images) || !Array.isArray(body.annotations)) {
+                return respond(400, { error: "images and annotations must be arrays" });
             }
-            if (body.name !== undefined) {
-                const name = (body.name || "").trim();
-                if (!name) return respond(400, { error: "Scene name cannot be empty" });
-                if (nameTaken(name, id)) return respond(409, { error: "Name taken" });
-                scene.name = name;
+            if (body.baseUpdatedAt && body.baseUpdatedAt !== scene.updatedAt) {
+                return respond(412, { error: "Scene has changed", updatedAt: scene.updatedAt });
             }
-            if (body.image !== undefined) {
-                const alreadyPresent = scene.images.some((img) => img.id === body.image.id);
-                if (!alreadyPresent) scene.images.push(body.image);
-            }
-            if (body.updateImage !== undefined) {
-                const { id: imageId, ...fields } = body.updateImage;
-                const target = scene.images.find((img) => img.id === imageId);
-                if (!target) return respond(404, { error: "Image not found" });
-                Object.assign(target, fields);
-            }
-            if (body.removeImageId !== undefined) {
-                scene.images = scene.images.filter((img) => img.id !== body.removeImageId);
-            }
-            if (body.reorderImageIds !== undefined) {
-                const ids = body.reorderImageIds;
-                const currentIds = scene.images.map((img) => img.id);
-                const isSamePermutation =
-                    Array.isArray(ids) &&
-                    ids.length === currentIds.length &&
-                    [...ids].sort().join() === [...currentIds].sort().join();
-                if (!isSamePermutation) {
-                    return respond(400, { error: "reorderImageIds must match the scene's current images" });
-                }
-                scene.images = ids.map((imgId) => scene.images.find((img) => img.id === imgId));
-            }
+            scene.images = body.images;
+            scene.annotations = body.annotations;
+            if (body.importLog !== undefined) scene.importLog = body.importLog;
             scene.updatedAt = now;
             return respond(200, scene);
         }
@@ -136,6 +138,12 @@ function createFakeBackend() {
         delay(method, ms, { id } = {}) {
             overrides.push({ method, id, delay: ms });
         },
+        // Another user saving a scene from somewhere else.
+        changeElsewhere(id, change) {
+            const scene = scenes.get(id);
+            change(scene);
+            scene.updatedAt = new Date(Date.parse("2026-10-01T00:00:00.000Z") + (version += 1) * 1000).toISOString();
+        },
     };
 }
 
@@ -156,6 +164,8 @@ const click = (id) => $(id).click();
 const listNames = () => [...document.querySelectorAll(".scene-list-name")].map((n) => n.textContent);
 const listButton = (name) =>
     [...document.querySelectorAll(".scene-list-item")].find((b) => b.querySelector(".scene-list-name").textContent === name);
+const storedScene = (name) => [...backend.scenes.values()].find((s) => s.name === name);
+const storedImages = (name) => storedScene(name).images;
 
 let backend;
 let scenesModule;
@@ -516,27 +526,33 @@ describe("Scene editor: importing images - Issue 411", () => {
         document.querySelector(".scene-image-object").dispatchEvent(new MouseEvent("click", { bubbles: true }));
         await waitFor(() => expect(document.querySelectorAll(".scene-selection-outline")).toHaveLength(1));
 
+        jest.spyOn(window, "confirm").mockReturnValue(true);
         await openByName("Other");
 
         expect(document.querySelectorAll(".scene-image-object")).toHaveLength(1);
         expect(document.querySelectorAll(".scene-selection-outline")).toHaveLength(0);
     });
 
-    // Issue #412: persisting an imported image so it survives a reload.
-    it("persists an imported image by PATCHing the scene", async () => {
+    // Issue #412: an imported image is part of the working copy and is stored
+    // by the next Save (Issue #452), not by its own request.
+    it("keeps an imported image in the working copy until the scene is saved", async () => {
         await openNewScene();
+        const title = $("scene-title").textContent;
+        const writesBefore = backend.calls.length;
 
         setFiles([{ name: "ilium.png", type: "image/png" }]);
-        await waitFor(() =>
-            expect(backend.calls.some((c) => c.method === "PATCH" && c.body && c.body.image)).toBe(true)
-        );
+        await waitFor(() => expect($("scene-meta").textContent).toContain("1 image"));
+        expect(backend.calls.length).toBe(writesBefore);
+        expect(storedImages(title)).toHaveLength(0);
+        expect($("scene-save-status").textContent).toBe("Unsaved changes");
+        await waitFor(() => expect($("scene-editor-status").textContent).toBe("1 image added to the scene. Save to keep it."));
 
-        const patchCall = backend.calls.find((c) => c.method === "PATCH" && c.body && c.body.image);
-        expect(patchCall.body.image).toMatchObject({ src: "data:image/png;base64,AAAA" });
-        expect(typeof patchCall.body.image.id).toBe("string");
-
-        const storedScene = [...backend.scenes.values()][0];
-        expect(storedScene.images).toHaveLength(1);
+        click("scene-save");
+        await waitFor(() => expect($("scene-save-status").textContent).toBe("Saved"));
+        const put = backend.calls.find((c) => c.method === "PUT");
+        expect(put.body.images).toEqual([expect.objectContaining({ src: "data:image/png;base64,AAAA" })]);
+        expect(typeof put.body.images[0].id).toBe("string");
+        expect(storedImages(title)).toHaveLength(1);
     });
 
     it("rejects a file over the size cap client-side without contacting the server", async () => {
@@ -548,158 +564,20 @@ describe("Scene editor: importing images - Issue 411", () => {
         expect($("scene-image-import-error").textContent).toMatch(/huge\.png/);
         expect($("scene-image-import-error").textContent).toMatch(/too large/i);
         expect(document.querySelectorAll(".scene-image-object")).toHaveLength(0);
-        expect(backend.calls.some((c) => c.method === "PATCH")).toBe(false);
+        expect(backend.calls.some((c) => ["PATCH", "PUT"].includes(c.method))).toBe(false);
+        expect(scenesModule.hasUnsavedChanges()).toBe(false);
     });
 
-    it("keeps a save-failed image visible and lets the user retry", async () => {
-        await openNewScene();
-        backend.fail("PATCH", 500);
-
-        setFiles([{ name: "ilium.png", type: "image/png" }]);
-        await waitFor(() => expect($("scene-workspace-error").hidden).toBe(false));
-
-        // Still visible locally even though persistence failed.
-        expect(document.querySelectorAll(".scene-image-object")).toHaveLength(1);
-        expect($("scene-workspace-error-text").textContent).toMatch(/could not be saved/i);
-
-        click("scene-workspace-retry");
-        await waitFor(() => expect($("scene-workspace-error").hidden).toBe(true));
-
-        expect(backend.calls.filter((c) => c.method === "PATCH" && c.body && c.body.image)).toHaveLength(2);
-    });
-
-    // PR #493 review: a failed direct-upload save must stay retryable until it
-    // succeeds or the image is removed, whatever else redraws the workspace.
-    describe("failed saves stay retryable", () => {
-        const imagePatches = () => backend.calls.filter((c) => c.method === "PATCH" && c.body && c.body.image);
-        const storedImages = (name) => [...backend.scenes.values()].find((s) => s.name === name).images;
-
-        async function importWithFailedSave(files = [{ name: "ilium.png", type: "image/png" }]) {
-            for (let i = 0; i < files.length; i += 1) backend.fail("PATCH", 500);
-            setFiles(files);
-            await waitFor(() => expect($("scene-workspace-error-text").textContent)
-                .toBe(`${files.length === 1 ? "1 image" : `${files.length} images`} could not be saved and will be lost if you reload.`));
-        }
-
-        it("keeps the retry prompt through redraws, selection changes, and a scene list refresh", async () => {
-            await openNewScene();
-            await importWithFailedSave();
-
-            // Selecting and deselecting the image redraws the canvas.
-            document.querySelector(".scene-image-object").dispatchEvent(new MouseEvent("click", { bubbles: true }));
-            await waitFor(() => expect(document.querySelectorAll(".scene-selection-outline")).toHaveLength(1));
-            document.querySelector(".scene-image-object").dispatchEvent(new MouseEvent("click", { bubbles: true }));
-            // Switching fit mode redraws the canvas; a rename redraws the whole workspace.
-            click("scene-fit-toggle");
-            click("scene-rename");
-            $("scene-rename-input").value = "Renamed Scene";
-            $("scene-rename-form").requestSubmit();
-            await waitFor(() => expect($("scene-title").textContent).toBe("Renamed Scene"));
-            // Refreshing the scene list.
-            click("scene-library-retry");
-            await waitFor(() => expect(listNames()).toContain("Renamed Scene"));
-
-            expect($("scene-workspace-error").hidden).toBe(false);
-            expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/);
-            expect($("scene-workspace-retry").hidden).toBe(false);
-            expect(document.querySelectorAll(".scene-image-object")).toHaveLength(1);
-        });
-
-        it("does not show the prompt on another scene, and shows it again on return", async () => {
-            backend.seed({ name: "Other" });
-            await openNewScene();
-            const title = $("scene-title").textContent;
-            await importWithFailedSave();
-
-            await openByName("Other");
-            expect($("scene-workspace-error").hidden).toBe(true);
-            expect(document.querySelectorAll(".scene-image-object")).toHaveLength(0);
-
-            await openByName(title);
-            expect($("scene-workspace-error").hidden).toBe(false);
-            expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/);
-            // The unsaved image is still shown even though the server copy lacks it.
-            expect($("scene-meta").textContent).toContain("1 image");
-            expect(document.querySelectorAll(".scene-image-object")).toHaveLength(1);
-
-            click("scene-workspace-retry");
-            await waitFor(() => expect($("scene-workspace-error").hidden).toBe(true));
-            expect(storedImages(title)).toHaveLength(1);
-        });
-
-        it("keeps only the images that still failed after a partial retry, with an accurate count", async () => {
-            await openNewScene();
-            const title = $("scene-title").textContent;
-            await importWithFailedSave([
-                { name: "one.png", type: "image/png" },
-                { name: "two.png", type: "image/png" },
-            ]);
-            expect(storedImages(title)).toHaveLength(0);
-
-            backend.fail("PATCH", 500);
-            click("scene-workspace-retry");
-            await waitFor(() => expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/));
-            expect(storedImages(title)).toHaveLength(1);
-            expect(listButton(title).textContent).toContain("1 image");
-
-            click("scene-workspace-retry");
-            await waitFor(() => expect($("scene-workspace-error").hidden).toBe(true));
-            expect(storedImages(title)).toHaveLength(2);
-            expect(listButton(title).textContent).toContain("2 images");
-        });
-
-        it("never creates duplicate records when the same image is retried several times", async () => {
-            await openNewScene();
-            const title = $("scene-title").textContent;
-            await importWithFailedSave();
-
-            backend.fail("PATCH", 500);
-            click("scene-workspace-retry");
-            await waitFor(() => expect(imagePatches()).toHaveLength(2));
-            // Let that failed retry finish (the fake backend answers within a tick).
-            await new Promise((resolve) => setTimeout(resolve, 20));
-            expect($("scene-workspace-error-text").textContent).toMatch(/^1 image could not be saved/);
-
-            // A slow save: clicking retry again while it is in flight sends nothing new.
-            backend.delay("PATCH", 50);
-            click("scene-workspace-retry");
-            click("scene-workspace-retry");
-            await waitFor(() => expect(storedImages(title)).toHaveLength(1));
-            await waitFor(() => expect($("scene-workspace-error").hidden).toBe(true));
-            click("scene-workspace-retry");
-
-            expect(imagePatches()).toHaveLength(3);
-            expect(new Set(imagePatches().map((c) => c.body.image.id)).size).toBe(1);
-            expect(storedImages(title)).toHaveLength(1);
-            expect(listButton(title).textContent).toContain("1 image");
-        });
-
-        it("discards an unsaved image the user removes, without contacting the server", async () => {
-            await openNewScene();
-            await importWithFailedSave();
-            const callsBefore = backend.calls.length;
-
-            document.querySelector(".scene-image-object").dispatchEvent(new MouseEvent("click", { bubbles: true }));
-            await waitFor(() => expect($("scene-image-toolbar").hidden).toBe(false));
-            click("scene-image-remove");
-
-            expect(document.querySelectorAll(".scene-image-object")).toHaveLength(0);
-            expect($("scene-workspace-error").hidden).toBe(true);
-            expect(backend.calls.length).toBe(callsBefore);
-        });
-    });
-
-    // PR #493 review: the scene list's image count was only ever refreshed by
-    // a full re-list, so it kept showing "0 images" after an import until the
-    // page was reloaded.
-    it("updates the scene list's image count after an import without waiting for a reload", async () => {
+    it("updates the scene list's image count once the import is saved", async () => {
         await openNewScene();
         const title = $("scene-title").textContent;
 
         setFiles([{ name: "ilium.png", type: "image/png" }]);
         await waitFor(() => expect($("scene-meta").textContent).toContain("1 image"));
+        expect(listButton(title).textContent).toMatch(/0 images/);
 
-        expect(listButton(title).textContent).toMatch(/1 image/);
+        click("scene-save");
+        await waitFor(() => expect(listButton(title).textContent).toMatch(/1 image/));
     });
 
     // PR #493 review: switching scenes while an earlier file in the same
@@ -729,9 +607,12 @@ describe("Scene editor: importing images - Issue 411", () => {
         // it afterward, which isn't guaranteed.
         await new Promise((resolve) => setTimeout(resolve, 60));
         expect(scenesModule.getActiveScene().images).toHaveLength(0);
+        expect(scenesModule.hasUnsavedChanges()).toBe(false);
 
+        // It was never saved to the scene it started on either.
         await openByName(originalTitle);
-        await waitFor(() => expect(document.querySelectorAll(".scene-image-object")).toHaveLength(1));
+        expect(scenesModule.getActiveScene().images).toHaveLength(0);
+        expect(storedImages(originalTitle)).toHaveLength(0);
     });
 });
 
@@ -741,7 +622,15 @@ function selectImage(index) {
         .dispatchEvent(new MouseEvent("click", { bubbles: true }));
 }
 
-// Issues #418/#419: removing an image and reordering the stack.
+const sceneWrites = () => backend.calls.filter((c) => ["PATCH", "PUT"].includes(c.method));
+
+async function saveAndWait() {
+    click("scene-save");
+    await waitFor(() => expect($("scene-save-status").textContent).toBe("Saved"));
+}
+
+// Issues #418/#419: removing an image and reordering the stack. Each edit
+// changes the working copy only; Save stores it.
 describe("Scene editor: remove and reorder images", () => {
     async function openSceneWithTwoImages() {
         backend.seed({
@@ -779,70 +668,35 @@ describe("Scene editor: remove and reorder images", () => {
         expect($("scene-image-backward").disabled).toBe(false);
     });
 
-    it("removes the selected image, persists it, and updates the scene list count", async () => {
+    it("removes the selected image from the working copy, and Save stores it", async () => {
         await openSceneWithTwoImages();
         selectImage(0);
 
         click("scene-image-remove");
-        await waitFor(() => expect(document.querySelectorAll(".scene-image-object")).toHaveLength(1));
-
+        expect(document.querySelectorAll(".scene-image-object")).toHaveLength(1);
         expect(scenesModule.getActiveScene().images.map((img) => img.id)).toEqual(["img-b"]);
         expect($("scene-image-toolbar").hidden).toBe(true);
+        expect(sceneWrites()).toEqual([]);
+        expect(storedImages("Pair").map((img) => img.id)).toEqual(["img-a", "img-b"]);
+
+        await saveAndWait();
+        expect(storedImages("Pair").map((img) => img.id)).toEqual(["img-b"]);
         expect(listButton("Pair").textContent).toMatch(/1 image/);
-
-        const patchCall = backend.calls.find((c) => c.method === "PATCH" && c.body && c.body.removeImageId);
-        expect(patchCall.body.removeImageId).toBe("img-a");
-        expect([...backend.scenes.values()][0].images.map((img) => img.id)).toEqual(["img-b"]);
     });
 
-    it("restores the image and offers a retry if removal fails", async () => {
-        await openSceneWithTwoImages();
-        selectImage(0);
-        backend.fail("PATCH", 500);
-
-        click("scene-image-remove");
-        await waitFor(() => expect($("scene-workspace-error").hidden).toBe(false));
-
-        expect(document.querySelectorAll(".scene-image-object")).toHaveLength(2);
-        expect(scenesModule.getActiveScene().images.map((img) => img.id)).toEqual(["img-a", "img-b"]);
-
-        click("scene-workspace-retry");
-        await waitFor(() => expect($("scene-workspace-error").hidden).toBe(true));
-        expect(scenesModule.getActiveScene().images.map((img) => img.id)).toEqual(["img-b"]);
-    });
-
-    it("brings an image forward and sends it backward, persisting the new order", async () => {
+    it("brings an image forward and sends it backward in the working copy", async () => {
         await openSceneWithTwoImages();
         selectImage(0);
 
         click("scene-image-forward");
-        await waitFor(() =>
-            expect(scenesModule.getActiveScene().images.map((img) => img.id)).toEqual(["img-b", "img-a"])
-        );
-        let reorderCall = backend.calls.filter((c) => c.method === "PATCH" && c.body && c.body.reorderImageIds).pop();
-        expect(reorderCall.body.reorderImageIds).toEqual(["img-b", "img-a"]);
-
+        expect(scenesModule.getActiveScene().images.map((img) => img.id)).toEqual(["img-b", "img-a"]);
         click("scene-image-backward");
-        await waitFor(() =>
-            expect(scenesModule.getActiveScene().images.map((img) => img.id)).toEqual(["img-a", "img-b"])
-        );
-        reorderCall = backend.calls.filter((c) => c.method === "PATCH" && c.body && c.body.reorderImageIds).pop();
-        expect(reorderCall.body.reorderImageIds).toEqual(["img-a", "img-b"]);
-    });
-
-    it("reverts the order and offers a retry if reordering fails", async () => {
-        await openSceneWithTwoImages();
-        selectImage(0);
-        backend.fail("PATCH", 500);
-
-        click("scene-image-forward");
-        await waitFor(() => expect($("scene-workspace-error").hidden).toBe(false));
         expect(scenesModule.getActiveScene().images.map((img) => img.id)).toEqual(["img-a", "img-b"]);
+        click("scene-image-forward");
+        expect(sceneWrites()).toEqual([]);
 
-        click("scene-workspace-retry");
-        await waitFor(() =>
-            expect(scenesModule.getActiveScene().images.map((img) => img.id)).toEqual(["img-b", "img-a"])
-        );
+        await saveAndWait();
+        expect(storedImages("Pair").map((img) => img.id)).toEqual(["img-b", "img-a"]);
     });
 });
 
@@ -862,62 +716,31 @@ describe("Scene editor: rotate and flip images", () => {
         await openSceneWithOneImage();
 
         click("scene-image-rotate-right-90");
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0].rotation).toBe(90));
-
+        expect(scenesModule.getActiveScene().images[0].rotation).toBe(90);
         click("scene-image-rotate-left-15");
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0].rotation).toBe(75));
-
+        expect(scenesModule.getActiveScene().images[0].rotation).toBe(75);
         click("scene-image-rotate-left-90");
         click("scene-image-rotate-left-90");
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0].rotation).toBe(255));
+        expect(scenesModule.getActiveScene().images[0].rotation).toBe(255);
+        expect(sceneWrites()).toEqual([]);
 
-        const lastPatch = backend.calls.filter((c) => c.method === "PATCH" && c.body.updateImage).pop();
-        expect(lastPatch.body.updateImage).toMatchObject({ id: "img-a", rotation: 255 });
+        await saveAndWait();
+        expect(storedImages("Solo")[0]).toMatchObject({ id: "img-a", rotation: 255 });
     });
 
-    it("toggles flipX and flipY independently and persists each", async () => {
+    it("toggles flipX and flipY independently", async () => {
         await openSceneWithOneImage();
 
         click("scene-image-flip-horizontal");
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0].flipX).toBe(true));
+        expect(scenesModule.getActiveScene().images[0].flipX).toBe(true);
         expect(scenesModule.getActiveScene().images[0].flipY).toBeFalsy();
-
         click("scene-image-flip-vertical");
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0].flipY).toBe(true));
-
+        expect(scenesModule.getActiveScene().images[0].flipY).toBe(true);
         click("scene-image-flip-horizontal");
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0].flipX).toBe(false));
+        expect(scenesModule.getActiveScene().images[0].flipX).toBe(false);
 
-        const patchCalls = backend.calls.filter((c) => c.method === "PATCH" && c.body.updateImage);
-        expect(patchCalls.map((c) => c.body.updateImage)).toEqual([
-            { id: "img-a", flipX: true },
-            { id: "img-a", flipY: true },
-            { id: "img-a", flipX: false },
-        ]);
-    });
-
-    it("reverts a failed rotation and offers a retry", async () => {
-        await openSceneWithOneImage();
-        backend.fail("PATCH", 500);
-
-        click("scene-image-rotate-right-90");
-        await waitFor(() => expect($("scene-workspace-error").hidden).toBe(false));
-        expect(scenesModule.getActiveScene().images[0].rotation).toBeFalsy();
-
-        click("scene-workspace-retry");
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0].rotation).toBe(90));
-    });
-
-    it("reverts a failed flip and offers a retry", async () => {
-        await openSceneWithOneImage();
-        backend.fail("PATCH", 500);
-
-        click("scene-image-flip-horizontal");
-        await waitFor(() => expect($("scene-workspace-error").hidden).toBe(false));
-        expect(scenesModule.getActiveScene().images[0].flipX).toBeFalsy();
-
-        click("scene-workspace-retry");
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0].flipX).toBe(true));
+        await saveAndWait();
+        expect(storedImages("Solo")[0]).toMatchObject({ flipX: false, flipY: true });
     });
 });
 
@@ -949,19 +772,21 @@ describe("Scene editor: move and resize images", () => {
         document.dispatchEvent(new MouseEvent("mouseup", { clientX: to.x, clientY: to.y }));
     }
 
-    it("moves the selected image by the drag delta and persists the new position", async () => {
+    it("moves the selected image by the drag delta and marks the scene unsaved", async () => {
         await openSceneWithOneImage();
         mockSvgScale();
         const imageNode = document.querySelector("[data-scene-image-index=\"0\"]");
 
         drag(imageNode, { x: 0, y: 0 }, { x: 30, y: 20 });
 
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0]).toMatchObject({ x: 130, y: 120 }));
-        const patchCall = backend.calls.filter((c) => c.method === "PATCH" && c.body.updateImage).pop();
-        expect(patchCall.body.updateImage).toMatchObject({ id: "img-a", x: 130, y: 120 });
+        expect(scenesModule.getActiveScene().images[0]).toMatchObject({ x: 130, y: 120 });
+        expect($("scene-save-status").textContent).toBe("Unsaved changes");
+        expect(sceneWrites()).toEqual([]);
+        await saveAndWait();
+        expect(storedImages("Solo")[0]).toMatchObject({ x: 130, y: 120 });
     });
 
-    it("does not move the image or fire a save for a mousedown/mouseup with no real movement", async () => {
+    it("does not move the image or mark a change for a mousedown/mouseup with no real movement", async () => {
         await openSceneWithOneImage();
         mockSvgScale();
         const imageNode = document.querySelector("[data-scene-image-index=\"0\"]");
@@ -969,7 +794,7 @@ describe("Scene editor: move and resize images", () => {
         drag(imageNode, { x: 0, y: 0 }, { x: 0, y: 0 });
 
         expect(scenesModule.getActiveScene().images[0]).toMatchObject({ x: 100, y: 100 });
-        expect(backend.calls.some((c) => c.method === "PATCH" && c.body.updateImage)).toBe(false);
+        expect(scenesModule.hasUnsavedChanges()).toBe(false);
     });
 
     it("keeps the image selected after a move drag instead of the resulting click deselecting it", async () => {
@@ -999,27 +824,12 @@ describe("Scene editor: move and resize images", () => {
 
         drag(handle, { x: 0, y: 0 }, { x: 40, y: 0 });
 
-        await waitFor(() => {
-            const image = scenesModule.getActiveScene().images[0];
-            expect(image.width).toBeCloseTo(240);
-            expect(image.height).toBeCloseTo(120);
-            expect(image.x).toBeCloseTo(80);
-            expect(image.y).toBeCloseTo(90);
-        });
-    });
-
-    it("reverts a failed move and offers a retry", async () => {
-        await openSceneWithOneImage();
-        mockSvgScale();
-        backend.fail("PATCH", 500);
-        const imageNode = document.querySelector("[data-scene-image-index=\"0\"]");
-
-        drag(imageNode, { x: 0, y: 0 }, { x: 30, y: 20 });
-        await waitFor(() => expect($("scene-workspace-error").hidden).toBe(false));
-        expect(scenesModule.getActiveScene().images[0]).toMatchObject({ x: 100, y: 100 });
-
-        click("scene-workspace-retry");
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0]).toMatchObject({ x: 130, y: 120 }));
+        const image = scenesModule.getActiveScene().images[0];
+        expect(image.width).toBeCloseTo(240);
+        expect(image.height).toBeCloseTo(120);
+        expect(image.x).toBeCloseTo(80);
+        expect(image.y).toBeCloseTo(90);
+        expect(scenesModule.hasUnsavedChanges()).toBe(true);
     });
 });
 
@@ -1070,7 +880,7 @@ describe("Scene editor: crop an image", () => {
         expect(document.querySelectorAll(".scene-crop-outline")).toHaveLength(1);
     });
 
-    it("drags the se handle to shrink the crop rect and persists it on release", async () => {
+    it("drags the se handle to shrink the crop rect, and Save stores it", async () => {
         await openSceneWithOneImage(); // 200x100
         mockSvgScale();
         click("scene-image-crop-start");
@@ -1078,12 +888,10 @@ describe("Scene editor: crop an image", () => {
 
         drag(handle, { x: 0, y: 0 }, { x: -50, y: -20 });
 
-        await waitFor(() => {
-            const image = scenesModule.getActiveScene().images[0];
-            expect(image).toMatchObject({ cropX: 0, cropY: 0, cropWidth: 150, cropHeight: 80 });
-        });
-        const patchCall = backend.calls.filter((c) => c.method === "PATCH" && c.body.updateImage).pop();
-        expect(patchCall.body.updateImage).toMatchObject({ id: "img-a", cropWidth: 150, cropHeight: 80 });
+        expect(scenesModule.getActiveScene().images[0]).toMatchObject({ cropX: 0, cropY: 0, cropWidth: 150, cropHeight: 80 });
+        expect(scenesModule.hasUnsavedChanges()).toBe(true);
+        await saveAndWait();
+        expect(storedImages("Solo")[0]).toMatchObject({ cropWidth: 150, cropHeight: 80 });
     });
 
     it("drags the nw handle, anchoring at the opposite corner of the crop rect", async () => {
@@ -1094,28 +902,22 @@ describe("Scene editor: crop an image", () => {
 
         drag(handle, { x: 0, y: 0 }, { x: 40, y: 20 });
 
-        await waitFor(() => {
-            const image = scenesModule.getActiveScene().images[0];
-            expect(image).toMatchObject({ cropX: 40, cropY: 20, cropWidth: 160, cropHeight: 80 });
-        });
+        expect(scenesModule.getActiveScene().images[0]).toMatchObject({ cropX: 40, cropY: 20, cropWidth: 160, cropHeight: 80 });
     });
 
-    it("resets the crop back to fully visible and persists it", async () => {
+    it("resets the crop back to fully visible", async () => {
         await openSceneWithOneImage();
         mockSvgScale();
         click("scene-image-crop-start");
         drag(document.querySelector("[data-corner=\"se\"]"), { x: 0, y: 0 }, { x: -50, y: -20 });
-        await waitFor(() => expect(scenesModule.getActiveScene().images[0].cropWidth).toBe(150));
+        expect(scenesModule.getActiveScene().images[0].cropWidth).toBe(150);
 
         click("scene-image-crop-reset");
 
-        await waitFor(() => {
-            const image = scenesModule.getActiveScene().images[0];
-            expect(image).toMatchObject({ cropX: 0, cropY: 0, cropWidth: 200, cropHeight: 100 });
-        });
+        expect(scenesModule.getActiveScene().images[0]).toMatchObject({ cropX: 0, cropY: 0, cropWidth: 200, cropHeight: 100 });
     });
 
-    it("exits crop mode without an extra save when nothing was dragged", async () => {
+    it("exits crop mode without marking a change when nothing was dragged", async () => {
         await openSceneWithOneImage();
         click("scene-image-crop-start");
         const callsBefore = backend.calls.length;
@@ -1123,6 +925,7 @@ describe("Scene editor: crop an image", () => {
         click("scene-image-crop-done");
 
         expect(backend.calls.length).toBe(callsBefore);
+        expect(scenesModule.hasUnsavedChanges()).toBe(false);
         expect($("scene-image-toolbar").hidden).toBe(false);
         expect(document.querySelectorAll(".scene-crop-outline")).toHaveLength(0);
     });
@@ -1140,7 +943,7 @@ describe("Scene editor: imported annotations follow their image", () => {
         ];
     }
 
-    it("rotates a linked label with its image and keeps it there after reopening the scene", async () => {
+    it("rotates a linked label with its image and keeps it there after saving and reopening the scene", async () => {
         const frame = { x: 100, y: 100, width: 200, height: 100 };
         backend.seed({ name: "Other" });
         backend.seed({
@@ -1167,13 +970,13 @@ describe("Scene editor: imported annotations follow their image", () => {
         document.querySelector(".scene-image-object").dispatchEvent(new MouseEvent("click", { bubbles: true }));
         await waitFor(() => expect($("scene-image-toolbar").hidden).toBe(false));
         click("scene-image-rotate-right-90");
-        await waitFor(() => expect(backend.calls.some((c) => c.method === "PATCH" && c.body && c.body.updateImage)).toBe(true));
 
         // 90° about the image center (200, 150).
         let [x, y] = labelCenter();
         expect(x).toBeCloseTo(235);
         expect(y).toBeCloseTo(115);
 
+        await saveAndWait();
         await openByName("Other");
         await openByName("Linked");
         [x, y] = labelCenter();
@@ -1195,5 +998,381 @@ describe("Scene editor: imported annotations follow their image", () => {
         expect(document.querySelectorAll(".scene-layer-annotations text")).toHaveLength(1);
         expect($("scene-canvas-note").hidden).toBe(false);
         expect($("scene-canvas-note").textContent).toMatch(/1 imported annotation no longer has its source image/);
+    });
+});
+
+// Issues #451-#456: the open scene is a working copy. Save stores it as one
+// versioned write; a change made elsewhere since it was loaded is a conflict.
+describe("Scene editor: save, load, update, duplicate - Issues 451-456", () => {
+    const IMAGE = { id: "img-a", src: "/images/a.png", x: 0, y: 0, width: 100, height: 50 };
+    let pelvis;
+
+    beforeEach(async () => {
+        pelvis = backend.seed({
+            name: "Pelvis",
+            images: [{ ...IMAGE }],
+            annotations: [{ id: "note", type: "text", text: "Ilium", x: 5, y: 5 }],
+            updatedAt: "2026-09-01T00:00:00.000Z",
+        });
+        backend.seed({ name: "Other" });
+        await enterEditor();
+        await openByName("Pelvis");
+    });
+
+    function rotate() {
+        selectImage(0);
+        click("scene-image-rotate-right-90");
+    }
+
+    it("shows Saved with Save disabled until something changes (Issue 453)", async () => {
+        expect($("scene-save-status").textContent).toBe("Saved");
+        expect($("scene-save-status").dataset.state).toBe("saved");
+        expect($("scene-save").disabled).toBe(true);
+        expect(scenesModule.hasUnsavedChanges()).toBe(false);
+
+        rotate();
+        expect($("scene-save-status").textContent).toBe("Unsaved changes");
+        expect($("scene-save-status").dataset.state).toBe("unsaved");
+        expect($("scene-save").disabled).toBe(false);
+        await waitFor(() => expect($("scene-editor-status").textContent).toBe("Unsaved changes."));
+    });
+
+    it("stores the whole working copy in one PUT based on the loaded version (Issue 452)", async () => {
+        rotate();
+        click("scene-image-flip-horizontal");
+
+        await saveAndWait();
+
+        const puts = backend.calls.filter((c) => c.method === "PUT");
+        expect(puts).toEqual([{
+            method: "PUT",
+            id: pelvis.id,
+            body: {
+                images: [{ ...IMAGE, rotation: 90, flipX: true }],
+                annotations: pelvis.annotations,
+                baseUpdatedAt: "2026-09-01T00:00:00.000Z",
+            },
+        }]);
+        expect($("scene-save").disabled).toBe(true);
+        await waitFor(() => expect($("scene-editor-status").textContent).toBe("Saved Pelvis."));
+    });
+
+    it("saves again from the version it just stored, without a false conflict (Issue 454)", async () => {
+        rotate();
+        await saveAndWait();
+        const firstVersion = storedScene("Pelvis").updatedAt;
+
+        click("scene-image-rotate-right-90");
+        await saveAndWait();
+
+        const puts = backend.calls.filter((c) => c.method === "PUT");
+        expect(puts[1].body.baseUpdatedAt).toBe(firstVersion);
+        expect(storedScene("Pelvis").images[0].rotation).toBe(180);
+        expect($("scene-workspace-error").hidden).toBe(true);
+    });
+
+    it("loads exactly what was saved (Issue 453)", async () => {
+        rotate();
+        await saveAndWait();
+        const saved = JSON.parse(JSON.stringify(storedScene("Pelvis")));
+
+        await openByName("Other");
+        await openByName("Pelvis");
+        expect(scenesModule.getActiveScene()).toEqual(saved);
+        expect($("scene-save-status").textContent).toBe("Saved");
+    });
+
+    it("keeps an edit made while the save was in flight unsaved", async () => {
+        rotate();
+        backend.delay("PUT", 40);
+        click("scene-save");
+        expect($("scene-save-status").textContent).toBe("Saving…");
+        expect($("scene-save").disabled).toBe(true);
+        click("scene-image-flip-vertical");
+
+        await waitFor(() => expect(storedScene("Pelvis").images[0].rotation).toBe(90));
+        await waitFor(() => expect($("scene-save-status").textContent).toBe("Unsaved changes"));
+        expect(storedScene("Pelvis").images[0].flipY).toBeUndefined();
+        expect(scenesModule.getActiveScene().images[0].flipY).toBe(true);
+    });
+
+    describe("unsaved-changes warning (related to #444)", () => {
+        it("asks before opening another scene, and keeps the copy when cancelled", async () => {
+            rotate();
+            const confirm = jest.spyOn(window, "confirm").mockReturnValue(false);
+
+            listButton("Other").click();
+            expect(confirm).toHaveBeenCalledWith("Discard unsaved changes to \"Pelvis\"?");
+            expect($("scene-title").textContent).toBe("Pelvis");
+            expect(scenesModule.getActiveScene().images[0].rotation).toBe(90);
+            expect(backend.calls.filter((c) => c.method === "GET" && c.id).map((c) => c.id)).toEqual([pelvis.id]);
+        });
+
+        it("discards the copy without storing it when the user agrees", async () => {
+            rotate();
+            jest.spyOn(window, "confirm").mockReturnValue(true);
+
+            await openByName("Other");
+            await openByName("Pelvis");
+            expect(scenesModule.getActiveScene().images[0].rotation).toBeUndefined();
+            expect(sceneWrites()).toEqual([]);
+        });
+
+        it("asks before creating a new scene", () => {
+            rotate();
+            const confirm = jest.spyOn(window, "confirm").mockReturnValue(false);
+            click("scene-new");
+            expect(confirm).toHaveBeenCalled();
+            expect(backend.calls.some((c) => c.method === "POST")).toBe(false);
+        });
+
+        it("does not ask when there is nothing to lose", async () => {
+            const confirm = jest.spyOn(window, "confirm");
+            await openByName("Other");
+            expect(confirm).not.toHaveBeenCalled();
+        });
+
+        it("asks the browser to confirm leaving the page only while there are unsaved changes", async () => {
+            const leave = () => {
+                const event = new Event("beforeunload", { cancelable: true });
+                window.dispatchEvent(event);
+                return event.defaultPrevented;
+            };
+            expect(leave()).toBe(false);
+            rotate();
+            expect(leave()).toBe(true);
+            await saveAndWait();
+            expect(leave()).toBe(false);
+        });
+
+        it("mentions unsaved changes when deleting", () => {
+            rotate();
+            const confirm = jest.spyOn(window, "confirm").mockReturnValue(false);
+            click("scene-delete");
+            expect(confirm.mock.calls[0][0]).toMatch(/Your unsaved changes will also be lost\.$/);
+        });
+    });
+
+    describe("save failures (Issue 456)", () => {
+        it("keeps the changes and offers a retry when the save fails", async () => {
+            rotate();
+            backend.fail("PUT", 500);
+
+            click("scene-save");
+            await waitFor(() => expect($("scene-save-status").textContent).toBe("Save failed"));
+            expect($("scene-save-status").dataset.state).toBe("failed");
+            expect($("scene-workspace-error-text").textContent).toBe(
+                "Something went wrong on the server. Try again. Your changes are still here."
+            );
+            expect($("scene-workspace-retry").textContent).toBe("Retry save");
+            expect(scenesModule.getActiveScene().images[0].rotation).toBe(90);
+            expect($("scene-save").disabled).toBe(false);
+
+            click("scene-workspace-retry");
+            await waitFor(() => expect($("scene-save-status").textContent).toBe("Saved"));
+            expect(storedScene("Pelvis").images[0].rotation).toBe(90);
+            expect($("scene-workspace-error").hidden).toBe(true);
+        });
+
+        it("keeps the failure prompt through later edits, redraws, and a list refresh", async () => {
+            rotate();
+            backend.failNetwork("PUT");
+            click("scene-save");
+            await waitFor(() => expect($("scene-workspace-error").hidden).toBe(false));
+            const prompt = $("scene-workspace-error-text").textContent;
+            expect(prompt).toMatch(/Couldn't reach the server/);
+
+            click("scene-image-flip-horizontal");
+            click("scene-fit-toggle");
+            selectImage(0);
+            click("scene-library-retry");
+            await waitFor(() => expect($("scene-library-message").hidden).toBe(true));
+
+            expect($("scene-workspace-error").hidden).toBe(false);
+            expect($("scene-workspace-error-text").textContent).toBe(prompt);
+            expect($("scene-workspace-retry").textContent).toBe("Retry save");
+            expect($("scene-save-status").textContent).toBe("Save failed");
+        });
+
+        it("explains a scene that is too large to save", async () => {
+            rotate();
+            backend.fail("PUT", 413);
+            click("scene-save");
+            await waitFor(() => expect($("scene-workspace-error-text").textContent).toMatch(/too large to save/));
+        });
+
+        it("offers to overwrite or reload when the scene changed elsewhere", async () => {
+            rotate();
+            backend.changeElsewhere(pelvis.id, (scene) => {
+                scene.annotations = [];
+            });
+            const theirVersion = storedScene("Pelvis").updatedAt;
+
+            click("scene-save");
+            await waitFor(() => expect($("scene-workspace-error-text").textContent)
+                .toBe("This scene was changed somewhere else after you opened it. " +
+                    "Overwrite it with your version, or reload the saved version and lose your changes."));
+            expect($("scene-workspace-retry").textContent).toBe("Overwrite with my version");
+            expect($("scene-workspace-secondary").hidden).toBe(false);
+            expect(storedScene("Pelvis").annotations).toEqual([]);
+
+            click("scene-workspace-retry");
+            await waitFor(() => expect($("scene-save-status").textContent).toBe("Saved"));
+            const puts = backend.calls.filter((c) => c.method === "PUT");
+            expect(puts.map((c) => c.body.baseUpdatedAt)).toEqual(["2026-09-01T00:00:00.000Z", theirVersion]);
+            expect(storedScene("Pelvis").annotations).toHaveLength(1);
+        });
+
+        it("reloads the other version when the user chooses to lose their changes", async () => {
+            rotate();
+            backend.changeElsewhere(pelvis.id, (scene) => {
+                scene.annotations = [];
+            });
+            click("scene-save");
+            await waitFor(() => expect($("scene-workspace-secondary").hidden).toBe(false));
+            expect($("scene-workspace-secondary").textContent).toBe("Reload saved version");
+
+            click("scene-workspace-secondary");
+            await waitFor(() => expect(scenesModule.getActiveScene().annotations).toEqual([]));
+            expect(scenesModule.getActiveScene().images[0].rotation).toBeUndefined();
+            expect(scenesModule.hasUnsavedChanges()).toBe(false);
+            expect($("scene-workspace-error").hidden).toBe(true);
+        });
+
+        it("does not mistake its own rename for a change made elsewhere", async () => {
+            rotate();
+            click("scene-rename");
+            $("scene-rename-input").value = "Hip";
+            $("scene-rename-form").requestSubmit();
+            await waitFor(() => expect($("scene-title").textContent).toBe("Hip"));
+            expect($("scene-save-status").textContent).toBe("Unsaved changes");
+
+            await saveAndWait();
+            expect(storedScene("Hip").images[0].rotation).toBe(90);
+        });
+
+        it("still reports a change made elsewhere even after renaming", async () => {
+            rotate();
+            backend.changeElsewhere(pelvis.id, (scene) => {
+                scene.annotations = [];
+            });
+            click("scene-rename");
+            $("scene-rename-input").value = "Hip";
+            $("scene-rename-form").requestSubmit();
+            await waitFor(() => expect($("scene-title").textContent).toBe("Hip"));
+
+            click("scene-save");
+            await waitFor(() => expect($("scene-workspace-error-text").textContent).toMatch(/changed somewhere else/));
+            expect(storedScene("Hip").annotations).toEqual([]);
+        });
+
+        describe("when the scene was deleted elsewhere", () => {
+            beforeEach(async () => {
+                rotate();
+                backend.scenes.delete(pelvis.id);
+                click("scene-save");
+                await waitFor(() => expect($("scene-workspace-retry").textContent).toBe("Save as new scene"));
+            });
+
+            it("keeps the working copy and offers to save it as a new scene or discard it", () => {
+                expect($("scene-workspace-error-text").textContent)
+                    .toMatch(/no longer available.*Your unsaved changes are still here\./);
+                expect($("scene-workspace-secondary").textContent).toBe("Discard changes");
+                expect(scenesModule.getActiveScene().images[0].rotation).toBe(90);
+            });
+
+            it("saves it as a new scene, with its content, in one request", async () => {
+                const postsBefore = backend.calls.filter((c) => c.method === "POST").length;
+                click("scene-workspace-retry");
+                await waitFor(() => expect($("scene-editor-status").textContent).toBe("Saved as Pelvis."));
+
+                const posts = backend.calls.filter((c) => c.method === "POST").slice(postsBefore);
+                expect(posts).toHaveLength(1);
+                expect(posts[0].body).toEqual({
+                    name: "Pelvis",
+                    images: [{ ...IMAGE, rotation: 90 }],
+                    annotations: pelvis.annotations,
+                });
+                const created = storedScene("Pelvis");
+                expect(created.id).not.toBe(pelvis.id);
+                expect(created.images[0].rotation).toBe(90);
+                expect(scenesModule.getActiveScene().id).toBe(created.id);
+                expect($("scene-save-status").textContent).toBe("Saved");
+                expect($("scene-workspace-error").hidden).toBe(true);
+
+                // Later saves go to the new scene.
+                click("scene-image-flip-horizontal");
+                await saveAndWait();
+                expect(storedScene("Pelvis").images[0].flipX).toBe(true);
+            });
+
+            it("uses a default name when the old name was taken in the meantime", async () => {
+                backend.seed({ name: "Pelvis" });
+                click("scene-workspace-retry");
+                await waitFor(() => expect($("scene-editor-status").textContent).toBe("Saved as Untitled Scene."));
+                expect(storedScene("Untitled Scene").images[0].rotation).toBe(90);
+            });
+
+            it("keeps both choices and creates nothing when saving as new fails", async () => {
+                const scenesBefore = backend.scenes.size;
+                backend.fail("POST", 500);
+                click("scene-workspace-retry");
+                await waitFor(() => expect($("scene-workspace-error-text").textContent)
+                    .toMatch(/^Something went wrong on the server/));
+
+                expect(backend.scenes.size).toBe(scenesBefore);
+                expect($("scene-workspace-retry").textContent).toBe("Save as new scene");
+                expect($("scene-workspace-secondary").textContent).toBe("Discard changes");
+                expect(scenesModule.getActiveScene().images[0].rotation).toBe(90);
+
+                click("scene-workspace-retry");
+                await waitFor(() => expect($("scene-editor-status").textContent).toBe("Saved as Pelvis."));
+            });
+
+            it("closes the scene when the user discards the changes", async () => {
+                click("scene-workspace-secondary");
+                await waitFor(() => expect(listNames()).toEqual(["Other"]));
+                expect($("scene-workspace-scene").hidden).toBe(true);
+                expect(scenesModule.hasUnsavedChanges()).toBe(false);
+            });
+        });
+    });
+
+    describe("duplicate (Issue 455)", () => {
+        it("opens an independent copy of the saved scene", async () => {
+            click("scene-duplicate");
+            await waitFor(() => expect($("scene-title").textContent).toBe("Pelvis copy"));
+
+            const copy = scenesModule.getActiveScene();
+            expect(copy.id).not.toBe(pelvis.id);
+            expect(copy.images).toEqual(pelvis.images);
+            expect(listNames()).toEqual(["Pelvis", "Other", "Pelvis copy"]);
+
+            rotate();
+            await saveAndWait();
+            expect(storedScene("Pelvis copy").images[0].rotation).toBe(90);
+            expect(storedScene("Pelvis").images[0].rotation).toBeUndefined();
+        });
+
+        it("asks first when there are unsaved changes, since the copy is of the saved version", async () => {
+            rotate();
+            const confirm = jest.spyOn(window, "confirm").mockReturnValue(false);
+            click("scene-duplicate");
+            expect(confirm.mock.calls[0][0]).toMatch(/copies the last saved version/);
+            expect(backend.calls.some((c) => c.action === "duplicate")).toBe(false);
+
+            confirm.mockReturnValue(true);
+            click("scene-duplicate");
+            await waitFor(() => expect($("scene-title").textContent).toBe("Pelvis copy"));
+            expect(scenesModule.getActiveScene().images[0].rotation).toBeUndefined();
+        });
+
+        it("keeps the scene open and offers a retry when duplicating fails", async () => {
+            backend.fail("POST", 500);
+            click("scene-duplicate");
+            await waitFor(() => expect($("scene-workspace-error").hidden).toBe(false));
+            expect($("scene-title").textContent).toBe("Pelvis");
+            expect($("scene-workspace-retry").hidden).toBe(false);
+        });
     });
 });

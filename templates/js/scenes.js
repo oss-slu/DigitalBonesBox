@@ -4,9 +4,10 @@ import { OPEN_SCENE_EVENT, SHOW_IN_VIEWER_EVENT, sceneSources, readableName } fr
 const SCENES_URL = "/api/scenes";
 
 export class SceneApiError extends Error {
-    constructor(status, message) {
+    constructor(status, message, body = null) {
         super(message);
         this.status = status;
+        this.body = body;
     }
 }
 
@@ -30,7 +31,7 @@ async function request(path = "", options = {}) {
         body = null;
     }
     if (!response.ok) {
-        throw new SceneApiError(response.status, (body && body.error) || `HTTP ${response.status}`);
+        throw new SceneApiError(response.status, (body && body.error) || `HTTP ${response.status}`, body);
     }
     return body;
 }
@@ -42,8 +43,14 @@ export async function listScenes() {
     return body.scenes;
 }
 
-export function createScene() {
-    return request("", { method: "POST", body: "{}" });
+/**
+ * Creates a scene: blank, or with `content` ({ name?, images, annotations,
+ * importLog? }) to store a working copy as a new scene in one request.
+ * @param {object} [content]
+ * @returns {Promise<object>} The new scene.
+ */
+export function createScene(content = {}) {
+    return request("", { method: "POST", body: JSON.stringify(content) });
 }
 
 export function getScene(sceneId) {
@@ -55,52 +62,25 @@ export function renameScene(sceneId, name) {
 }
 
 /**
- * Persists one newly imported image on a scene (Issue #412). The server upserts
- * by `image.id`, so retrying this call for the same image is always safe.
+ * Stores a scene's whole working copy in one request (Issues #451/#452). The
+ * arrays are always sent together so the stored scene is one coherent state.
  * @param {string} sceneId
- * @param {{id: string, src: string, x: number, y: number, width: number, height: number}} image
- * @returns {Promise<object>} The updated scene.
+ * @param {{images: object[], annotations: object[], importLog?: object[], name?: string, baseUpdatedAt?: string}} content
+ *   `baseUpdatedAt` is the version this copy was loaded from; the server
+ *   answers 412 if the stored scene has changed since.
+ * @returns {Promise<object>} The saved scene.
  */
-export function saveImageToScene(sceneId, image) {
-    return request(scenePath(sceneId), { method: "PATCH", body: JSON.stringify({ image }) });
+export function saveScene(sceneId, content) {
+    return request(scenePath(sceneId), { method: "PUT", body: JSON.stringify(content) });
 }
 
 /**
- * Partially updates an existing image's fields - position, size, rotation,
- * flip, or crop (Issues #413-417). Only the given fields are touched.
+ * Creates an independent copy of a scene's last saved version (Issue #455).
  * @param {string} sceneId
- * @param {string} imageId
- * @param {object} fields
- * @returns {Promise<object>} The updated scene.
+ * @returns {Promise<object>} The new scene.
  */
-export function updateSceneImage(sceneId, imageId, fields) {
-    return request(scenePath(sceneId), {
-        method: "PATCH",
-        body: JSON.stringify({ updateImage: { id: imageId, ...fields } }),
-    });
-}
-
-/**
- * Removes one image from a scene by id (Issue #418). A retry after a prior
- * success is always safe - the server treats "already gone" as success too.
- * @param {string} sceneId
- * @param {string} imageId
- * @returns {Promise<object>} The updated scene.
- */
-export function removeSceneImage(sceneId, imageId) {
-    return request(scenePath(sceneId), { method: "PATCH", body: JSON.stringify({ removeImageId: imageId }) });
-}
-
-/**
- * Reorders a scene's images to match the given id order (Issue #419). The
- * server rejects any order that isn't an exact permutation of the scene's
- * current image ids.
- * @param {string} sceneId
- * @param {string[]} orderedIds
- * @returns {Promise<object>} The updated scene.
- */
-export function reorderSceneImages(sceneId, orderedIds) {
-    return request(scenePath(sceneId), { method: "PATCH", body: JSON.stringify({ reorderImageIds: orderedIds }) });
+export function duplicateScene(sceneId) {
+    return request(`${scenePath(sceneId)}/duplicate`, { method: "POST", body: "{}" });
 }
 
 export function deleteScene(sceneId) {
@@ -108,18 +88,23 @@ export function deleteScene(sceneId) {
 }
 
 /**
- * Adds an existing bone's images, and optionally its annotations, to a scene. Issues #466, #467.
+ * Builds the scene objects for an existing bone's images, and optionally its
+ * annotations, to add to the working copy. Issues #466, #467. Nothing is
+ * stored until the scene is saved (Issue #451).
  * @param {string} sceneId
  * @param {string} boneId
  * @param {string[]} [filenames] which of the bone's images to add (default: all)
  * @param {{ labels?: boolean, regions?: boolean }} [annotations] which annotations to add (default: none)
- * @returns {Promise<{ scene: object, imported: { boneId: string, name: string, count: number },
+ * @param {number} [originY] where the new row of images starts
+ * @returns {Promise<{ images: object[], annotations: object[], importLogEntry: object,
+ *   imported: { boneId: string, name: string, count: number },
  *   importedAnnotations?: { labels: number, lines: number, regions: number }, warnings: object[] }>}
  */
-export function importLegacyImages(sceneId, boneId, filenames, annotations) {
+export function importLegacyImages(sceneId, boneId, filenames, annotations, originY) {
     const body = { boneId };
     if (filenames) body.filenames = filenames;
     if (annotations) body.annotations = annotations;
+    if (originY !== undefined) body.originY = originY;
     return request(`${scenePath(sceneId)}/import-legacy`, {
         method: "POST",
         body: JSON.stringify(body),
@@ -129,7 +114,7 @@ export function importLegacyImages(sceneId, boneId, filenames, annotations) {
 /**
  * Turns an API error into a message a user can act on.
  * @param {Error} error
- * @param {"rename"|"load"|"open"|"create"|"delete"|"import"} context
+ * @param {"rename"|"load"|"open"|"create"|"delete"|"import"|"save"|"duplicate"} context
  */
 export function describeError(error, context) {
     const status = error instanceof SceneApiError ? error.status : 0;
@@ -137,20 +122,24 @@ export function describeError(error, context) {
         case 0:
             return "Couldn't reach the server. Check your connection and try again.";
         case 400:
-            return context === "rename"
-                ? "Enter a scene name (up to 100 characters)."
-                : `The request was rejected: ${error.message}.`;
+            if (context === "rename") return "Enter a scene name (up to 100 characters).";
+            if (context === "save") return `The scene couldn't be saved: ${error.message}.`;
+            return `The request was rejected: ${error.message}.`;
         case 404:
             if (context === "import" && !/scene not found/i.test(error.message)) {
                 return "That item has no saved content to import.";
             }
             return "This scene is no longer available. It may have been deleted.";
         case 409:
-            return /busy/i.test(error.message)
-                ? "The scene is busy right now (another save is in progress). Try again in a moment."
-                : "Another scene already uses that name. Choose a different name.";
+            return "Another scene already uses that name. Choose a different name.";
+        case 412:
+            return "This scene was changed somewhere else after you opened it.";
+        case 413:
+            return "This scene is too large to save. Remove or replace a large image and try again.";
         case 422:
             return "That item has no images to import. Choose a different bone.";
+        case 423:
+            return "The scene is busy right now (another save is in progress). Try again in a moment.";
         case 429:
             return "Too many requests. Wait a moment and try again.";
         case 503:
@@ -160,9 +149,29 @@ export function describeError(error, context) {
     }
 }
 
+// `active` is the in-browser working copy that every edit and import changes;
+// nothing is stored until the user saves (Issue #451). `saved` is the last
+// version the server confirmed. Unsaved changes are tracked by revision
+// counters instead of comparing the two copies, which can hold megabytes of
+// base64 image data. `activeToken` changes whenever a different scene (or
+// none) becomes active, so a slow response can tell it no longer belongs to
+// the open working copy.
 const state = {
     scenes: [],
     active: null,
+    saved: null,
+    revision: 0,
+    savedRevision: 0,
+    activeToken: 0,
+    saving: false,
+    saveFailed: false,
+    // The stored version a 412 reported, so "Overwrite" replaces exactly that.
+    conflictUpdatedAt: null,
+    // The open scene was deleted elsewhere; Save stores the copy as a new scene.
+    missing: false,
+    // The save-failure prompt. It stays up through redraws until the working
+    // copy is saved or discarded, so a later edit can't hide it.
+    saveAlert: null,
     openRequest: 0,
     fitToWidth: true,
     busy: false,
@@ -170,22 +179,38 @@ const state = {
     cropMode: false,
     boneOptions: null,
     importRequest: 0,
-    // Directly imported images (Issue #412) not yet confirmed saved, per scene:
-    // Map<sceneId, Map<imageId, { image, status: "saving" | "failed" }>>. Kept
-    // outside state.active so redraws, server reloads of the scene, bone imports
-    // and switching scenes can't lose them or their retry prompt. An entry is
-    // removed only when its save succeeds, the image is removed from the scene,
-    // or the scene is deleted.
-    pendingSaves: new Map(),
 };
-
-// True while the workspace alert is showing the pending-save retry prompt
-// rather than some other (one-off) error.
-let workspaceErrorIsPendingSaves = false;
 
 function deselectImage() {
     state.selectedImageIndex = null;
     state.cropMode = false;
+}
+
+const clone = (value) => JSON.parse(JSON.stringify(value));
+
+/** Whether the open scene has edits or imports that haven't been saved yet. */
+export function hasUnsavedChanges() {
+    return Boolean(state.active) && state.revision !== state.savedRevision;
+}
+
+function setActiveScene(scene) {
+    state.active = scene;
+    state.saved = scene ? clone(scene) : null;
+    state.revision = 0;
+    state.savedRevision = 0;
+    state.activeToken += 1;
+    state.saveFailed = false;
+    state.conflictUpdatedAt = null;
+    state.missing = false;
+    state.saveAlert = null;
+    deselectImage();
+}
+
+/** The parts of a scene a save stores. */
+function sceneContent(scene) {
+    const content = { images: scene.images, annotations: scene.annotations };
+    if (Array.isArray(scene.importLog)) content.importLog = scene.importLog;
+    return content;
 }
 
 let dom = null;
@@ -196,10 +221,10 @@ let dom = null;
 // this a move/resize drag would immediately deselect the image it just moved.
 let suppressNextClick = false;
 
-// Issues #411/#412: importing an image into a scene and persisting it. The
-// image is read as a base64 data: URL - that same string is both the immediate
-// preview `src` and what gets saved to the scene document, so there's only one
-// representation to reason about (see saveImageToScene in the API section above).
+// Issues #411/#412: importing an image into a scene. The image is read as a
+// base64 data: URL - that same string is both the immediate preview `src` and
+// what gets saved with the scene, so there's only one representation to
+// reason about (see saveScene in the API section above).
 const SUPPORTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp", "image/svg+xml"];
 const MAX_IMPORT_DIMENSION = 320;
 const IMPORT_OFFSET_STEP = 24;
@@ -212,6 +237,21 @@ const MAX_IMPORT_FILE_SIZE = 2 * 1024 * 1024;
 // request/response cap) - same "check and skip clearly before uploading"
 // philosophy as the per-file checks above; the server is the real enforcement.
 const MAX_SCENE_IMAGES_TOTAL_LENGTH = 3_800_000;
+// Mirror IMAGE_GAP in boneset-api/legacyImport.js and MAX_IMPORT_LOG_ENTRIES
+// in boneset-api/scenes.js.
+const IMPORT_ROW_GAP = 40;
+const MAX_IMPORT_LOG_ENTRIES = 50;
+
+/**
+ * The y position just below the working copy's images, so a bone import
+ * starts on its own row instead of covering what's already there.
+ * @param {object[]} images
+ */
+function nextImportRowY(images) {
+    if (!images || images.length === 0) return 0;
+    const bottom = images.reduce((max, image) => Math.max(max, (Number(image.y) || 0) + (Number(image.height) || 0)), 0);
+    return bottom + IMPORT_ROW_GAP;
+}
 
 function readFileAsDataUrl(file) {
     return new Promise((resolve, reject) => {
@@ -251,14 +291,84 @@ function plural(count, word) {
 
 function setBusy(busy) {
     state.busy = busy;
-    dom.newButton.disabled = busy;
-    dom.emptyNewButton.disabled = busy;
-    dom.renameButton.disabled = busy || !state.active;
-    dom.deleteButton.disabled = busy || !state.active;
+    updateControls();
+}
+
+function saveStatus() {
+    if (!state.active) return null;
+    if (state.saving) return { state: "saving", text: "Saving…" };
+    if (state.saveFailed && hasUnsavedChanges()) return { state: "failed", text: "Save failed" };
+    if (hasUnsavedChanges()) return { state: "unsaved", text: "Unsaved changes" };
+    return { state: "saved", text: "Saved" };
+}
+
+function handleBeforeUnload(event) {
+    if (!hasUnsavedChanges() || !dom.editorView.isConnected) return;
+    event.preventDefault();
+    event.returnValue = "";
+}
+
+// Only listening while there's something to lose keeps the page eligible for
+// the browser's back/forward cache the rest of the time.
+let unloadGuardActive = false;
+function syncUnloadGuard() {
+    const needed = hasUnsavedChanges();
+    if (needed === unloadGuardActive) return;
+    unloadGuardActive = needed;
+    if (needed) window.addEventListener("beforeunload", handleBeforeUnload);
+    else window.removeEventListener("beforeunload", handleBeforeUnload);
+}
+
+function updateControls() {
+    const locked = state.busy || state.saving;
+    dom.newButton.disabled = locked;
+    dom.emptyNewButton.disabled = locked;
+    dom.renameButton.disabled = locked || !state.active;
+    dom.deleteButton.disabled = locked || !state.active;
+    dom.duplicateButton.disabled = locked || !state.active;
+    dom.saveButton.disabled = locked || !hasUnsavedChanges();
     if (dom.importToggle) {
-        dom.importToggle.disabled = busy || !state.active;
-        dom.importSubmit.disabled = busy || !state.boneOptions;
+        dom.importToggle.disabled = state.busy || !state.active;
+        dom.importSubmit.disabled = state.busy || !state.boneOptions;
     }
+
+    const status = saveStatus();
+    dom.saveStatus.textContent = status ? status.text : "";
+    if (status) dom.saveStatus.dataset.state = status.state;
+    else delete dom.saveStatus.dataset.state;
+    syncUnloadGuard();
+}
+
+/** Records a change to the working copy (Issue #451). Callers re-render. */
+function markChanged() {
+    if (!state.active) return;
+    const wasSaved = !hasUnsavedChanges();
+    state.revision += 1;
+    if (wasSaved) announce("Unsaved changes.");
+    updateControls();
+}
+
+/**
+ * Applies a change to the open scene's working copy and marks it unsaved, for
+ * editing tools outside this module (e.g. future annotation tools).
+ * @param {(scene: object) => void} mutator
+ */
+export function updateActiveScene(mutator) {
+    if (!state.active) return;
+    mutator(state.active);
+    markChanged();
+    renderWorkspace();
+}
+
+/**
+ * Asks before an action that would replace the open scene's unsaved changes
+ * (Issue #451, related to #444). Nothing is discarded here: the caller only
+ * replaces the working copy once its own request succeeds.
+ * @returns {boolean} Whether to go ahead.
+ */
+function confirmDiscard() {
+    if (!hasUnsavedChanges()) return true;
+    return window.confirm(`Discard unsaved changes to "${state.active.name}"?`);
 }
 
 function showLibraryMessage(message, { retry = false } = {}) {
@@ -271,99 +381,44 @@ function hideLibraryMessage() {
     dom.libraryMessage.hidden = true;
 }
 
-function showWorkspaceError(message, { retry = null } = {}) {
-    workspaceErrorIsPendingSaves = false;
-    dom.workspaceError.hidden = false;
-    dom.workspaceErrorText.textContent = message;
-    dom.workspaceRetry.hidden = !retry;
-    dom.workspaceRetry.onclick = retry;
-}
-
 /**
- * Clears a one-off workspace error. If the open scene still has direct
- * uploads that failed to save, their retry prompt is shown instead, so a
- * redraw or an unrelated successful action never hides it.
+ * @param {string} message
+ * @param {{ retry?: Function, retryLabel?: string, secondary?: { label: string, action: Function } }} [options]
  */
-function hideWorkspaceError() {
-    if (showPendingSaveError()) return;
-    workspaceErrorIsPendingSaves = false;
-    dom.workspaceError.hidden = true;
-    dom.workspaceRetry.onclick = null;
-}
-
-/**
- * Starts tracking a newly imported image as not yet saved. Called as soon as
- * the image exists, before its save starts, so nothing that replaces the open
- * scene in the meantime (a bone import, reopening the scene) can lose it.
- */
-function trackPendingImage(sceneId, image) {
-    let pending = state.pendingSaves.get(sceneId);
-    if (!pending) {
-        pending = new Map();
-        state.pendingSaves.set(sceneId, pending);
-    }
-    pending.set(image.id, { image, status: "queued" });
-}
-
-function failedPendingImages(sceneId) {
-    const pending = state.pendingSaves.get(sceneId);
-    if (!pending) return [];
-    return [...pending.values()].filter((entry) => entry.status === "failed").map((entry) => entry.image);
-}
-
-/**
- * Shows the retry prompt for the open scene's failed direct-upload saves.
- * @returns {boolean} whether there was anything to show
- */
-function showPendingSaveError() {
-    if (!state.active) return false;
-    const sceneId = state.active.id;
-    const failed = failedPendingImages(sceneId);
-    if (failed.length === 0) return false;
-
-    const message = `${plural(failed.length, "image")} could not be saved and will be lost if you reload.`;
+function showWorkspaceError(message, { retry = null, retryLabel = "Try again", secondary = null } = {}) {
     // Only touch the DOM when something changed, so redraws (e.g. every frame
     // of a drag) don't make screen readers re-announce the alert.
     if (dom.workspaceError.hidden || dom.workspaceErrorText.textContent !== message) {
         dom.workspaceError.hidden = false;
         dom.workspaceErrorText.textContent = message;
     }
-    dom.workspaceRetry.hidden = false;
-    dom.workspaceRetry.onclick = () => retryImageSaves(sceneId);
-    workspaceErrorIsPendingSaves = true;
-    return true;
+    dom.workspaceRetry.hidden = !retry;
+    dom.workspaceRetry.textContent = retryLabel;
+    dom.workspaceRetry.onclick = retry ? () => retry() : null;
+    dom.workspaceSecondary.hidden = !secondary;
+    dom.workspaceSecondary.textContent = secondary ? secondary.label : "";
+    dom.workspaceSecondary.onclick = secondary ? () => secondary.action() : null;
+}
+
+/** Shows a save-failure prompt that stays up until the working copy is saved or discarded. */
+function showSaveAlert(message, options) {
+    state.saveAlert = { message, options };
+    showWorkspaceError(message, options);
 }
 
 /**
- * Updates the pending-save prompt after saves finish for `sceneId`, without
- * replacing a different error the user is currently looking at.
+ * Clears a one-off workspace error. While the working copy has a failed save,
+ * its prompt is shown instead, so a redraw or a later edit never hides it.
  */
-function refreshPendingSaveError(sceneId) {
-    if (!state.active || state.active.id !== sceneId) return;
-    if (dom.workspaceError.hidden || workspaceErrorIsPendingSaves) hideWorkspaceError();
-}
-
-/**
- * Returns the server's copy of a scene plus its direct uploads that the
- * server doesn't have yet (save in flight, or failed and waiting for a
- * retry). Pending entries the server already has are confirmed saved and
- * dropped from the pending state.
- * @param {object} serverScene
- * @returns {object}
- */
-function withPendingImages(serverScene) {
-    const pending = state.pendingSaves.get(serverScene.id);
-    if (!pending) return serverScene;
-    const serverImages = serverScene.images || [];
-    const serverIds = new Set(serverImages.map((img) => img.id));
-    const unsaved = [];
-    for (const [imageId, entry] of pending) {
-        if (!serverIds.has(imageId)) unsaved.push(entry.image);
-        else if (entry.status === "failed") pending.delete(imageId);
+function hideWorkspaceError() {
+    if (state.saveAlert && hasUnsavedChanges()) {
+        showWorkspaceError(state.saveAlert.message, state.saveAlert.options);
+        return;
     }
-    if (pending.size === 0) state.pendingSaves.delete(serverScene.id);
-    if (unsaved.length === 0) return serverScene;
-    return { ...serverScene, images: [...serverImages, ...unsaved] };
+    state.saveAlert = null;
+    dom.workspaceError.hidden = true;
+    dom.workspaceRetry.onclick = null;
+    dom.workspaceSecondary.onclick = null;
 }
 
 function renderLibrary() {
@@ -517,13 +572,49 @@ function openSceneFromViewer(sceneId) {
 }
 
 function clearActiveScene() {
-    state.active = null;
-    deselectImage();
+    setActiveScene(null);
     state.openRequest += 1;
     dom.workspace.removeAttribute("aria-busy");
     dom.workspaceLoading.hidden = true;
     renderWorkspace();
     renderLibrary();
+}
+
+/**
+ * The open scene no longer exists on the server. Without unsaved changes the
+ * workspace just closes; with them, the working copy stays on screen and the
+ * user chooses to save it as a new scene or discard it (Issue #456).
+ * @param {string} message
+ */
+function handleActiveSceneMissing(message) {
+    if (!hasUnsavedChanges()) {
+        clearActiveScene();
+        showWorkspaceError(message);
+        return;
+    }
+    state.missing = true;
+    state.saveFailed = true;
+    updateControls();
+    showSaveAlert(`${message} Your unsaved changes are still here.`, {
+        retry: saveAsNewScene,
+        retryLabel: "Save as new scene",
+        secondary: { label: "Discard changes", action: discardMissingScene },
+    });
+}
+
+function discardMissingScene() {
+    clearActiveScene();
+    announce("Changes discarded.");
+    loadLibrary();
+}
+
+function updateSummary(scene) {
+    const summary = state.scenes.find((s) => s.id === scene.id);
+    if (!summary) return;
+    summary.name = scene.name;
+    summary.imageCount = scene.images.length;
+    summary.annotationCount = scene.annotations.length;
+    summary.updatedAt = scene.updatedAt;
 }
 
 async function loadLibrary() {
@@ -532,12 +623,8 @@ async function loadLibrary() {
     try {
         state.scenes = await listScenes();
         hideLibraryMessage();
-        for (const sceneId of state.pendingSaves.keys()) {
-            if (!state.scenes.some((s) => s.id === sceneId)) state.pendingSaves.delete(sceneId);
-        }
-        if (state.active && !state.scenes.some((s) => s.id === state.active.id)) {
-            clearActiveScene();
-            showWorkspaceError("The scene you had open is no longer available. It may have been deleted.");
+        if (state.active && !state.missing && !state.scenes.some((s) => s.id === state.active.id)) {
+            handleActiveSceneMissing("The scene you had open is no longer available. It may have been deleted.");
         }
         renderLibrary();
     } catch (error) {
@@ -549,10 +636,18 @@ async function loadLibrary() {
     }
 }
 
-async function openScene(sceneId) {
-    if (state.active && state.active.id === sceneId) return;
+/**
+ * @param {string} sceneId
+ * @param {{ force?: boolean }} [options] `force` reloads the saved version
+ *   without asking, even if this scene is already open (used after the user
+ *   chose to discard their copy in a save conflict).
+ */
+async function openScene(sceneId, { force = false } = {}) {
+    if (!force && state.active && state.active.id === sceneId) return;
+    if (!force && !confirmDiscard()) return;
 
     const requestId = ++state.openRequest;
+    if (force) state.saveAlert = null;
     hideWorkspaceError();
     dom.workspace.setAttribute("aria-busy", "true");
     dom.workspaceLoading.hidden = false;
@@ -561,8 +656,7 @@ async function openScene(sceneId) {
     try {
         const scene = await getScene(sceneId);
         if (requestId !== state.openRequest) return;
-        state.active = withPendingImages(scene);
-        deselectImage();
+        setActiveScene(scene);
         renderWorkspace();
         renderLibrary();
         announce(`Opened ${scene.name}.`);
@@ -585,15 +679,15 @@ async function openScene(sceneId) {
 }
 
 async function handleCreate() {
-    if (state.busy) return;
+    if (state.busy || state.saving) return;
+    if (!confirmDiscard()) return;
     setBusy(true);
     hideWorkspaceError();
     announce("Creating scene…");
     try {
         const scene = await createScene();
         state.openRequest += 1;
-        state.active = scene;
-        deselectImage();
+        setActiveScene(scene);
         await loadLibrary();
         setBusy(false);
         renderWorkspace();
@@ -632,9 +726,14 @@ function showRenameError(message) {
     dom.renameInput.focus();
 }
 
+/** Whether two scenes have the same saved content (not just the same name). */
+function sameContent(a, b) {
+    return JSON.stringify(sceneContent(a)) === JSON.stringify(sceneContent(b));
+}
+
 async function handleRename(event) {
     event.preventDefault();
-    if (!state.active || state.busy) return;
+    if (!state.active || state.busy || state.saving) return;
 
     const name = dom.renameInput.value.trim();
     if (!name) {
@@ -652,9 +751,18 @@ async function handleRename(event) {
     dom.renameSubmit.disabled = true;
     try {
         const updated = await renameScene(sceneId, name);
+        // A rename only touches the name, so unsaved content stays unsaved.
+        // If nothing else changed the stored scene, the saved baseline moves
+        // to the renamed version so the next save isn't mistaken for a stale
+        // copy. If someone else saved in between, the baseline stays put and
+        // the next save gets the usual conflict prompt.
         if (state.active && state.active.id === sceneId) {
             state.active.name = updated.name;
-            state.active.updatedAt = updated.updatedAt;
+            state.saved.name = updated.name;
+            if (sameContent(updated, state.saved)) {
+                state.active.updatedAt = updated.updatedAt;
+                state.saved.updatedAt = updated.updatedAt;
+            }
         }
         const summary = state.scenes.find((s) => s.id === sceneId);
         if (summary) summary.name = updated.name;
@@ -667,9 +775,9 @@ async function handleRename(event) {
         setBusy(false);
         const message = describeError(error, "rename");
         if (error.status === 404) {
-            clearActiveScene();
+            hideRenameForm();
+            handleActiveSceneMissing(message);
             await loadLibrary();
-            showWorkspaceError(message);
         } else {
             showRenameError(message);
         }
@@ -680,15 +788,16 @@ async function handleRename(event) {
 }
 
 async function handleDelete() {
-    if (!state.active || state.busy) return;
+    if (!state.active || state.busy || state.saving) return;
     const { id, name } = state.active;
-    if (!window.confirm(`Delete "${name}"? This permanently removes the scene and can't be undone.`)) return;
+    const unsavedNote = hasUnsavedChanges() ? " Your unsaved changes will also be lost." : "";
+    if (!window.confirm(`Delete "${name}"? This permanently removes the scene and can't be undone.${unsavedNote}`)) return;
 
     setBusy(true);
+    state.saveAlert = null;
     hideWorkspaceError();
     try {
         await deleteScene(id);
-        state.pendingSaves.delete(id);
         state.scenes = state.scenes.filter((s) => s.id !== id);
         setBusy(false);
         if (state.active && state.active.id === id) clearActiveScene();
@@ -710,195 +819,194 @@ async function handleDelete() {
 }
 
 /**
- * Persists directly imported images (Issue #412), tracking each one in
- * state.pendingSaves until the server confirms it. Safe to call repeatedly:
- * an image whose save is already in flight is skipped, and the server upserts
- * by image id, so a retry can never create a duplicate.
- * @param {string} sceneId - The scene these images belong to, captured at
- *   import time so a later retry targets the right scene even if the user has
- *   since opened a different one.
- * @param {object[]} images
- * @returns {Promise<void>}
+ * Saves the open scene's working copy - every edit and import since the last
+ * save - in one request (Issue #452). The server refuses it with 412 if the
+ * stored scene changed after this copy was loaded, unless `overwrite` is set
+ * after the user chose to replace that newer version (Issue #456).
+ * @param {{ overwrite?: boolean }} [options]
  */
-async function saveDirectImages(sceneId, images) {
-    const pending = state.pendingSaves.get(sceneId);
-    if (!pending) return;
-    const toSave = [];
-    for (const image of images) {
-        const entry = pending.get(image.id);
-        // Skip images the user already removed, and saves already in flight.
-        if (!entry || entry.status === "saving") continue;
-        entry.status = "saving";
-        toSave.push(entry);
-    }
-    if (toSave.length === 0) return;
+async function handleSave({ overwrite = false } = {}) {
+    if (!state.active || state.saving || state.busy) return;
+    if (state.missing) return saveAsNewScene();
+    const token = state.activeToken;
+    const scene = state.active;
+    const sentRevision = state.revision;
+    const baseUpdatedAt = overwrite && state.conflictUpdatedAt ? state.conflictUpdatedAt : state.saved.updatedAt;
+    const body = { ...sceneContent(scene) };
+    if (baseUpdatedAt) body.baseUpdatedAt = baseUpdatedAt;
 
-    let savedCount = 0;
-    for (const entry of toSave) {
-        const imageId = entry.image.id;
-        try {
-            await saveImageToScene(sceneId, entry.image);
-            if (pending.get(imageId) === entry) {
-                pending.delete(imageId);
-                savedCount += 1;
-            } else {
-                // Removed by the user while this save was in flight: undo it
-                // so the image doesn't come back on the next reload.
-                removeSceneImage(sceneId, imageId).catch(() => {});
-            }
-        } catch {
-            if (pending.get(imageId) === entry) entry.status = "failed";
+    state.saving = true;
+    state.saveFailed = false;
+    state.saveAlert = null;
+    hideWorkspaceError();
+    updateControls();
+    try {
+        const updated = await saveScene(scene.id, body);
+        state.saving = false;
+        // Edits made while the request was in flight stay unsaved: only the
+        // revision that was sent is now saved.
+        if (token === state.activeToken) {
+            state.saved = clone(updated);
+            state.savedRevision = sentRevision;
+            state.conflictUpdatedAt = null;
+            scene.name = updated.name;
+            scene.updatedAt = updated.updatedAt;
+            hideWorkspaceError();
         }
-    }
-    if (pending.size === 0 && state.pendingSaves.get(sceneId) === pending) {
-        state.pendingSaves.delete(sceneId);
-    }
-
-    // Reflects the scene list's count from what's actually confirmed saved
-    // (not the optimistic local count), regardless of whether this scene is
-    // still the one open - it was going stale until the next full reload
-    // otherwise (PR #493 review).
-    if (savedCount > 0) {
-        const summary = state.scenes.find((s) => s.id === sceneId);
-        if (summary) {
-            summary.imageCount += savedCount;
-            renderLibrary();
+        updateSummary(updated);
+        updateControls();
+        renderLibrary();
+        announce(`Saved ${updated.name}.`);
+    } catch (error) {
+        state.saving = false;
+        if (token !== state.activeToken) {
+            updateControls();
+            return;
         }
+        handleSaveError(error);
     }
-
-    refreshPendingSaveError(sceneId);
 }
 
-/**
- * Retries every failed direct-upload save for a scene. Images that succeed
- * leave the pending state; the rest stay, and the prompt shows the new count.
- * @param {string} sceneId
- * @returns {Promise<void>}
- */
-function retryImageSaves(sceneId) {
-    return saveDirectImages(sceneId, failedPendingImages(sceneId));
-}
-
-/**
- * Removes one image from a scene, optimistically and persisted (Issue #418).
- * Re-entrant by design so its own retry can just call it again: it always
- * re-finds the image's current position before acting, which is what makes a
- * restore-then-retry sequence work correctly.
- * @param {string} sceneId
- * @param {{id: string}} image
- */
-async function performImageRemoval(sceneId, image) {
-    const isActiveScene = Boolean(state.active) && state.active.id === sceneId;
-    const index = isActiveScene ? state.active.images.findIndex((img) => img.id === image.id) : -1;
-
-    // A direct upload the server doesn't have yet: removing it discards it
-    // locally. If its save is still in flight, saveDirectImages undoes it.
-    const pending = state.pendingSaves.get(sceneId);
-    if (pending && pending.has(image.id)) {
-        pending.delete(image.id);
-        if (pending.size === 0) state.pendingSaves.delete(sceneId);
-        if (index !== -1) {
-            state.active.images.splice(index, 1);
-            if (state.selectedImageIndex === index) deselectImage();
-            else if (state.selectedImageIndex !== null && state.selectedImageIndex > index) state.selectedImageIndex -= 1;
-        }
-        if (isActiveScene) renderWorkspace();
+function handleSaveError(error) {
+    const message = describeError(error, "save");
+    state.saveFailed = true;
+    updateControls();
+    announce(`Save failed. ${message}`);
+    if (error.status === 404) {
+        handleActiveSceneMissing(message);
         return;
     }
-
-    if (index !== -1) {
-        state.active.images.splice(index, 1);
-        if (state.selectedImageIndex === index) deselectImage();
-        renderWorkspace();
+    if (error.status === 412) {
+        state.conflictUpdatedAt = (error.body && error.body.updatedAt) || null;
+        showSaveAlert(
+            `${message} Overwrite it with your version, or reload the saved version and lose your changes.`,
+            {
+                retry: () => handleSave({ overwrite: true }),
+                retryLabel: "Overwrite with my version",
+                secondary: { label: "Reload saved version", action: () => openScene(state.active.id, { force: true }) },
+            }
+        );
+        return;
     }
-    const summary = state.scenes.find((s) => s.id === sceneId);
-    if (summary) {
-        summary.imageCount = Math.max(0, summary.imageCount - 1);
-        renderLibrary();
-    }
+    showSaveAlert(`${message} Your changes are still here.`, { retry: () => handleSave(), retryLabel: "Retry save" });
+}
 
+/**
+ * Keeps a working copy whose scene was deleted elsewhere by storing it as a
+ * new scene (Issue #456), in one request so a failure can't leave an empty
+ * scene behind. Keeps its name if it's still free, otherwise the server's
+ * default name. On failure the working copy and both choices stay.
+ */
+async function saveAsNewScene() {
+    if (!state.active || state.saving || state.busy) return;
+    const token = state.activeToken;
+    const scene = state.active;
+    const revision = state.revision;
+    const content = sceneContent(scene);
+
+    state.saving = true;
+    state.saveFailed = false;
+    state.saveAlert = null;
+    hideWorkspaceError();
+    updateControls();
+    announce("Saving as a new scene\u2026");
     try {
-        await removeSceneImage(sceneId, image.id);
-        hideWorkspaceError();
-    } catch {
-        if (state.active && state.active.id === sceneId && !state.active.images.some((img) => img.id === image.id)) {
-            state.active.images.splice(index === -1 ? state.active.images.length : index, 0, image);
-            renderWorkspace();
+        let created;
+        try {
+            created = await createScene({ ...content, name: scene.name });
+        } catch (error) {
+            if (error.status !== 409) throw error;
+            created = await createScene(content);
         }
-        if (summary) {
-            summary.imageCount += 1;
-            renderLibrary();
+        state.saving = false;
+        if (token !== state.activeToken) {
+            updateControls();
+            await loadLibrary();
+            return;
         }
-        showWorkspaceError("Could not remove the image. It has been restored - try again.", {
-            retry: () => performImageRemoval(sceneId, image),
-        });
+        Object.assign(scene, { id: created.id, name: created.name, createdAt: created.createdAt, updatedAt: created.updatedAt });
+        state.saved = clone(created);
+        state.savedRevision = revision;
+        state.missing = false;
+        state.saveFailed = false;
+        renderWorkspace();
+        await loadLibrary();
+        announce(`Saved as ${created.name}.`);
+    } catch (error) {
+        state.saving = false;
+        if (token !== state.activeToken) {
+            updateControls();
+            return;
+        }
+        const message = describeError(error, "save");
+        announce(`Save failed. ${message}`);
+        handleActiveSceneMissing(`${message} The scene you had open was deleted.`);
     }
 }
 
+/**
+ * Opens a copy of the open scene's last saved version (Issue #455). Unsaved
+ * changes aren't part of the copy, so the user is asked first.
+ */
+async function handleDuplicate() {
+    if (!state.active || state.busy || state.saving) return;
+    const { id, name } = state.active;
+    if (hasUnsavedChanges() && !window.confirm(
+        `"${name}" has unsaved changes. The duplicate copies the last saved version, ` +
+        "and your unsaved changes will be discarded when the copy opens. Continue?"
+    )) return;
+
+    setBusy(true);
+    hideWorkspaceError();
+    announce("Duplicating scene\u2026");
+    try {
+        const copy = await duplicateScene(id);
+        state.openRequest += 1;
+        state.saveAlert = null;
+        setActiveScene(copy);
+        await loadLibrary();
+        setBusy(false);
+        renderWorkspace();
+        renderLibrary();
+        announce(`Opened ${copy.name}, a copy of ${name}.`);
+        dom.sceneTitle.focus();
+    } catch (error) {
+        setBusy(false);
+        const message = describeError(error, "duplicate");
+        if (error.status === 404) {
+            handleActiveSceneMissing(message);
+            await loadLibrary();
+        } else {
+            showWorkspaceError(message, { retry: handleDuplicate });
+        }
+        announce(message);
+    }
+}
+
+/** Removes the selected image from the working copy (Issue #418). */
 function handleImageRemove() {
     if (!state.active || state.selectedImageIndex === null) return;
-    const image = state.active.images[state.selectedImageIndex];
-    if (!image) return;
-    performImageRemoval(state.active.id, image);
+    const index = state.selectedImageIndex;
+    if (!state.active.images[index]) return;
+    state.active.images.splice(index, 1);
+    deselectImage();
+    markChanged();
+    renderWorkspace();
 }
 
 /**
- * Persists a field-level change already applied to `image` (the caller has
- * already set the new values and rendered them - this just saves and handles
- * failure). On failure, reverts exactly the touched fields back to `previous`
- * and offers a retry that re-applies `fields` and tries again - used by both
- * the button-driven updates below and by drag-release in initializeSceneEditor
- * (Issues #413-417: position, resize, rotate, flip, crop all share this path).
- * @param {string} sceneId
- * @param {number} index - The image's index at the time of the change, used
- *   to confirm it's still the same image object before reverting/re-rendering.
- * @param {object} image
- * @param {object} previous - The pre-change values for exactly the touched fields.
- * @param {object} fields - The new values that were set, e.g. `{ rotation: 90 }`.
- */
-async function persistImageFields(sceneId, index, image, previous, fields) {
-    try {
-        await updateSceneImage(sceneId, image.id, fields);
-        hideWorkspaceError();
-    } catch {
-        if (state.active && state.active.id === sceneId && state.active.images[index] === image) {
-            Object.assign(image, previous);
-            renderWorkspace();
-        }
-        showWorkspaceError("Could not save the change. Try again.", {
-            retry: () => {
-                if (state.active && state.active.id === sceneId && state.active.images[index] === image) {
-                    Object.assign(image, fields);
-                    renderWorkspace();
-                }
-                persistImageFields(sceneId, index, image, previous, fields);
-            },
-        });
-    }
-}
-
-/**
- * Applies a field-level change to the selected image - optimistic locally,
- * then persisted via persistImageFields. For button-driven changes (rotate
- * stepper, flip) where nothing has been applied yet, unlike a drag which
- * applies its own changes live frame-by-frame before calling
- * persistImageFields directly at release.
+ * Applies a field-level change to the selected image in the working copy
+ * (Issues #413-417: position, resize, rotate, flip, crop). Used by the
+ * toolbar buttons; a drag applies its own changes live frame-by-frame.
  * @param {object} fields - The new values to set, e.g. `{ rotation: 90 }`.
  */
 function applySelectedImageUpdate(fields) {
     if (!state.active || state.selectedImageIndex === null) return;
-    const scene = state.active;
-    const sceneId = scene.id;
-    const index = state.selectedImageIndex;
-    const image = scene.images[index];
+    const image = state.active.images[state.selectedImageIndex];
     if (!image) return;
-
-    const previous = {};
-    for (const key of Object.keys(fields)) previous[key] = image[key];
     Object.assign(image, fields);
+    markChanged();
     renderWorkspace();
-
-    persistImageFields(sceneId, index, image, previous, fields);
 }
 
 /**
@@ -934,32 +1042,16 @@ function flipSelectedImage(axis) {
  * same guard for any other caller.
  * @param {1 | -1} direction
  */
-async function moveSelectedImage(direction) {
+function moveSelectedImage(direction) {
     if (!state.active || state.selectedImageIndex === null) return;
-    const scene = state.active;
-    const sceneId = scene.id;
+    const images = state.active.images;
     const index = state.selectedImageIndex;
     const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= scene.images.length) return;
-
-    const images = scene.images;
+    if (targetIndex < 0 || targetIndex >= images.length) return;
     [images[index], images[targetIndex]] = [images[targetIndex], images[index]];
     state.selectedImageIndex = targetIndex;
+    markChanged();
     renderWorkspace();
-
-    try {
-        await reorderSceneImages(sceneId, images.map((img) => img.id));
-        hideWorkspaceError();
-    } catch {
-        if (state.active && state.active.id === sceneId) {
-            [images[index], images[targetIndex]] = [images[targetIndex], images[index]];
-            state.selectedImageIndex = index;
-            renderWorkspace();
-        }
-        showWorkspaceError("Could not reorder images. Try again.", {
-            retry: () => moveSelectedImage(direction),
-        });
-    }
 }
 
 // Issues #413/#414: dragging a selected image to move it, or dragging one of
@@ -1021,7 +1113,6 @@ function startImageDrag(event, svg, corner) {
     const scene = state.active;
     const index = state.selectedImageIndex;
     const image = scene.images[index];
-    const sceneId = scene.id;
     const scale = getSceneScale(svg);
     const startClientX = event.clientX;
     const startClientY = event.clientY;
@@ -1063,15 +1154,7 @@ function startImageDrag(event, svg, corner) {
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
         suppressNextClick = didDrag;
-        if (!didDrag) return;
-
-        const fields = corner
-            ? { x: image.x, y: image.y, width: image.width, height: image.height }
-            : { x: image.x, y: image.y };
-        const previous = corner
-            ? { x: startX, y: startY, width: startWidth, height: startHeight }
-            : { x: startX, y: startY };
-        persistImageFields(sceneId, index, image, previous, fields);
+        if (didDrag) markChanged();
     }
 
     document.addEventListener("mousemove", onMouseMove);
@@ -1137,7 +1220,6 @@ function startCropDrag(event, svg, corner) {
     const scene = state.active;
     const index = state.selectedImageIndex;
     const image = scene.images[index];
-    const sceneId = scene.id;
     const scale = getSceneScale(svg);
     const startClientX = event.clientX;
     const startClientY = event.clientY;
@@ -1163,11 +1245,7 @@ function startCropDrag(event, svg, corner) {
         document.removeEventListener("mousemove", onMouseMove);
         document.removeEventListener("mouseup", onMouseUp);
         suppressNextClick = didDrag;
-        if (!didDrag) return;
-
-        const fields = { cropX: image.cropX, cropY: image.cropY, cropWidth: image.cropWidth, cropHeight: image.cropHeight };
-        const previous = { cropX: startCrop.x, cropY: startCrop.y, cropWidth: startCrop.width, cropHeight: startCrop.height };
-        persistImageFields(sceneId, index, image, previous, fields);
+        if (didDrag) markChanged();
     }
 
     document.addEventListener("mousemove", onMouseMove);
@@ -1182,13 +1260,13 @@ function enterCropMode() {
 }
 
 /** Exits crop-editing mode - a pure view toggle, since any actual crop
- * adjustment was already persisted at the end of its own drag gesture. */
+ * adjustment was already applied to the working copy by its drag gesture. */
 function exitCropMode() {
     state.cropMode = false;
     renderCanvas();
 }
 
-/** Clears the selected image's crop back to fully visible, persisted immediately. */
+/** Clears the selected image's crop back to fully visible. */
 function resetSelectedImageCrop() {
     if (!state.active || state.selectedImageIndex === null) return;
     const image = state.active.images[state.selectedImageIndex];
@@ -1198,18 +1276,17 @@ function resetSelectedImageCrop() {
 
 /**
  * Imports one or more image files into the currently open scene as new,
- * unselected image objects, and persists each one (Issues #411/#412).
- * Unsupported or oversized files are skipped with a combined error message
- * rather than aborting the whole import.
+ * unselected image objects in the working copy (Issues #411/#412). They're
+ * stored with the next Save. Unsupported or oversized files are skipped with
+ * a combined error message rather than aborting the whole import.
  * @param {FileList|File[]} fileList - Files chosen via the import input.
  * @returns {Promise<void>}
  */
 async function handleImportFiles(fileList) {
     if (!state.active || !fileList || fileList.length === 0) return;
-    const sceneId = state.active.id;
-    // Captured once up front so later iterations don't depend on state.active,
-    // which can change mid-loop if the user opens a different scene while an
-    // earlier file is still being read (PR #493 review).
+    // The user can open a different scene while a file is still being read;
+    // images read for the scene they left are dropped with it.
+    const token = state.activeToken;
     const baseImageCount = state.active.images.length;
     let totalSrcLength = state.active.images.reduce((sum, img) => sum + img.src.length, 0);
 
@@ -1241,15 +1318,13 @@ async function handleImportFiles(fileList) {
             const image = { id: crypto.randomUUID(), src: dataUrl, x: offset, y: offset, width, height };
             added.push(image);
             totalSrcLength += dataUrl.length;
-            trackPendingImage(sceneId, image);
-            if (state.active && state.active.id === sceneId) {
-                state.active.images.push(image);
-            }
+            if (token === state.activeToken) state.active.images.push(image);
         } catch {
             skipped.push(`${file.name} (could not be read)`);
         }
     }
 
+    if (token !== state.activeToken) return;
     if (skipped.length > 0) {
         const addedPart = added.length > 0 ? `${plural(added.length, "image")} added. ` : "";
         dom.imageImportError.hidden = false;
@@ -1258,13 +1333,9 @@ async function handleImportFiles(fileList) {
     }
 
     if (added.length > 0) {
-        if (state.active && state.active.id === sceneId) {
-            renderWorkspace();
-            announce(`${plural(added.length, "image")} added to the scene.`);
-        }
-        // Always persists to the scene the import actually started on, even
-        // if the user has since switched to viewing a different one.
-        await saveDirectImages(sceneId, added);
+        markChanged();
+        renderWorkspace();
+        announce(`${plural(added.length, "image")} added to the scene. Save to keep ${added.length === 1 ? "it" : "them"}.`);
     }
 }
 
@@ -1436,7 +1507,9 @@ async function handleImport(event) {
     const label = dom.importSelect.selectedOptions[0].textContent.replace(/^\u2014\s*/, "");
     // Captured before any await: the scene list stays clickable during an
     // import, so state.active may be a different scene by the time it finishes.
+    const token = state.activeToken;
     const sceneId = state.active.id;
+    const originY = nextImportRowY(state.active.images);
     setBusy(true);
     dom.importError.hidden = true;
     announce(`Importing images from ${label}\u2026`);
@@ -1444,20 +1517,26 @@ async function handleImport(event) {
         const annotations = dom.importLabels
             ? { labels: dom.importLabels.checked, regions: dom.importRegions.checked }
             : undefined;
-        const { scene, imported, importedAnnotations, warnings } =
-            await importLegacyImages(sceneId, boneId, filenames, annotations);
-        const stillActive = Boolean(state.active) && state.active.id === sceneId;
-        if (stillActive) {
-            const selected = state.selectedImageIndex !== null ? state.active.images[state.selectedImageIndex] : null;
-            state.active = withPendingImages(scene);
-            const reselected = selected ? state.active.images.findIndex((img) => img.id === selected.id) : -1;
-            if (reselected === -1) deselectImage();
-            else state.selectedImageIndex = reselected;
+        const result = await importLegacyImages(sceneId, boneId, filenames, annotations, originY);
+        const { imported, importedAnnotations, warnings } = result;
+        if (token !== state.activeToken) {
+            setBusy(false);
+            hideImportForm();
+            announce(`The import from ${imported.name} was dropped because a different scene was opened.`);
+            return;
         }
+        // The import only changes the working copy; it's stored with the
+        // user's other edits on the next Save (Issue #452).
+        const scene = state.active;
+        scene.images.push(...(result.images || []));
+        scene.annotations = [...(scene.annotations || []), ...(result.annotations || [])];
+        if (result.importLogEntry) {
+            scene.importLog = [...(scene.importLog || []), result.importLogEntry].slice(-MAX_IMPORT_LOG_ENTRIES);
+        }
+        markChanged();
         setBusy(false);
         hideImportForm();
         renderWorkspace();
-        await loadLibrary();
 
         const annotationCount = importedAnnotations
             ? importedAnnotations.labels + importedAnnotations.lines + importedAnnotations.regions
@@ -1465,7 +1544,8 @@ async function handleImport(event) {
         let message = annotationCount > 0
             ? `Imported ${plural(imported.count, "image")} and ${plural(annotationCount, "annotation")} from ${imported.name}.`
             : `Imported ${plural(imported.count, "image")} from ${imported.name}.`;
-        if (warnings && warnings.length > 0 && stillActive) {
+        message += " Save to keep the import.";
+        if (warnings && warnings.length > 0) {
             message += ` ${plural(warnings.length, "import note")} below.`;
             dom.canvasNote.hidden = false;
             dom.canvasNote.textContent = `Import notes: ${warnings
@@ -1530,10 +1610,14 @@ export function initializeSceneEditor(root = document) {
         workspaceError: $("scene-workspace-error"),
         workspaceErrorText: $("scene-workspace-error-text"),
         workspaceRetry: $("scene-workspace-retry"),
+        workspaceSecondary: $("scene-workspace-secondary"),
         titleRow: $("scene-title-row"),
         sceneTitle: $("scene-title"),
         sceneMeta: $("scene-meta"),
         sceneSources: $("scene-sources"),
+        saveStatus: $("scene-save-status"),
+        saveButton: $("scene-save"),
+        duplicateButton: $("scene-duplicate"),
         renameButton: $("scene-rename"),
         deleteButton: $("scene-delete"),
         renameForm: $("scene-rename-form"),
@@ -1604,6 +1688,8 @@ export function initializeSceneEditor(root = document) {
         }
     });
     dom.deleteButton.addEventListener("click", handleDelete);
+    if (dom.saveButton) dom.saveButton.addEventListener("click", () => handleSave());
+    if (dom.duplicateButton) dom.duplicateButton.addEventListener("click", handleDuplicate);
     dom.fitToggle.addEventListener("click", () => setFitToWidth(!state.fitToWidth));
     if (dom.importToggle) {
         dom.importToggle.addEventListener("click", () => {
