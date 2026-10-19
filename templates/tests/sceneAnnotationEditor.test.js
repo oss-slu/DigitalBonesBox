@@ -5,7 +5,12 @@ const fs = require("fs");
 const path = require("path");
 
 const pageHtml = fs.readFileSync(path.join(__dirname, "..", "boneset.html"), "utf8");
-const bodyHtml = pageHtml.match(/<body[^>]*>([\s\S]*)<\/body>/i)[1].replace(/<script[\s\S]*?<\/script>/gi, "");
+// The page's markup without its scripts. Parsed and stripped as a DOM rather
+// than with a regex, which can't reliably remove every <script> (CodeQL
+// js/incomplete-multi-character-sanitization).
+const pageDocument = new DOMParser().parseFromString(pageHtml, "text/html");
+pageDocument.querySelectorAll("script").forEach((script) => script.remove());
+const bodyHtml = pageDocument.body.innerHTML;
 
 const V0 = "2026-10-01T00:00:00.000Z";
 
